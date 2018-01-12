@@ -1,0 +1,56 @@
+#!/usr/bin python3
+import fileinput
+
+f = open('updated_model.txt','w')
+
+search_radius = ['3490000.','3485000.','3480000.']
+
+rho_var = 1 + 0.1
+vpv_var = 1 - 0.1
+vsv_var = 1 - 0.2
+qka_var = 1
+qmu_var = 1
+vph_var = 1
+vsh_var = 1
+eta_var = 1
+
+
+
+for line in fileinput.input():
+    change_value = False
+    for s in search_radius:
+        if (s in line) and (s == str.split(line)[0]):
+            change_value = True
+    if (change_value):        
+        line_unmodified = line
+        parameters = str.split(line)
+        radius = float(parameters[0])
+        rho = float(parameters[1]) * rho_var
+        vpv = float(parameters[2]) * vpv_var
+        vsv = float(parameters[3]) * vsv_var
+        qka = float(parameters[4]) * qka_var
+        qmu = float(parameters[5]) * qmu_var
+        vph = float(parameters[6]) * vph_var
+        vsh = float(parameters[7]) * vsh_var
+        eta = float(parameters[8]) * eta_var
+        line = line.replace(parameters[1], '{:.2f}'.format(rho))
+        line = line.replace(parameters[2], '{:.2f}'.format(vpv))
+        line = line.replace(parameters[3], '{:.2f}'.format(vsv))
+        if (search_radius[0] == str.split(line)[0]):
+            line = '#          Discontinuity, depth:    ' + str(6371-radius/1000.0) + ' km\n' + line
+        line_modified = line
+                # print (line)
+        f.write(line)
+            
+    else:
+        # print (line)
+        f.write(line)
+
+
+print('Previous lines: ')
+print (line_unmodified)
+
+print('Modified lines: ')
+print (line_modified)
+
+f.close()

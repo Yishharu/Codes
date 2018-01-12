@@ -1,0 +1,48 @@
+#!/usr/bin python3
+
+from scipy import signal
+import obspy
+from obspy import read
+from obspy.core import Stream
+from obspy.core import Trace
+from obspy.core import event
+from obspy import UTCDateTime
+import obspy.signal
+import matplotlib.pyplot as plt
+import os.path
+import time
+import glob
+import shutil
+import numpy as np
+import sys
+import matplotlib.colors as colors
+import matplotlib.cm as cm
+import matplotlib
+matplotlib.rcParams.update({'font.size':20}) # Sets fontsize in figure
+
+# Set phase to plot
+phase = 'Sdiff'
+# Set component to plot
+component = 'BAT'
+# Set distance
+distance = 106
+centerfreq = np.linspace(2,50,20)
+
+s = distance
+# Load file
+seisfile = '/raid3/zl382/Data/Synthetics/' +  events[0] + '/SYN_' + str(s) + '.PICKLE'
+seis = read(seisfile,format='PICKLE')
+seis.resample(10)   # Resampling makes things quicker
+
+Sdifftime = seis[0].stats['traveltimes'][phase] # find time of phase
+
+# Cut window around phase on selected component
+tr=seis.select(channel=component)[0]
+w0=np.argmin(np.abs(tr.times()-Sdifftime+100))
+w1 = np.argmin(np.abs(tr.times()-Sdifftime-190))
+
+# Copy trace
+tr1=tr.copy()
+tr1=tr1.filter('bandpass', freqmin=1/40.,freqmax=1/10.)
+# Plot reference phase with wide filter
+plt.plot(tr.times()[w0:w1]-Sdifftime,tr1.data[w0:w1]/np.max(np.abs(tr1.data[w0:w1])),'k')
