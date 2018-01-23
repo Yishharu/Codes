@@ -1,0 +1,24 @@
+EXTERNAL
+
+SUB shell (n, arr())
+
+    LET aln2i = 1.442695
+    LET tiny = .00001
+
+    LET m = n
+    LET lognb2 = int(log(n) * aln2i + tiny)
+    FOR nn = 1 to lognb2
+        LET m = int(m / 2)
+        LET k = n - m
+        FOR j = 1 to k
+             FOR i = j to 1 step -m
+                 LET l = i + m
+                 IF arr(l) >= arr(i) then EXIT FOR
+                 LET t = arr(i)
+                 LET arr(i) = arr(l)
+                 LET arr(l) = t
+             NEXT i
+        NEXT j
+    NEXT nn
+
+END SUB

@@ -1,0 +1,54 @@
+PROGRAM d12r13(input,output);
+(* driver for routine FOURN *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   ndim = 3;
+   ndat2 = 1024;
+TYPE
+   RealArrayNDAT2 = ARRAY [1..ndat2] OF real;
+   IntegerArrayNDIM = ARRAY [1..ndim] OF integer;
+VAR
+   i,isign,j,k,l,ll,ndum: integer;
+   data: RealArrayNDAT2;
+   nn: IntegerArrayNDIM;
+
+(*$I FOURN.PAS *)
+
+BEGIN
+   ndum := 2;
+   FOR i := 1 TO ndim DO BEGIN
+      ndum := ndum*2;
+      nn[i] := ndum
+   END;
+   FOR k := 1 TO nn[1] DO BEGIN
+      FOR j := 1 TO nn[2] DO BEGIN
+         FOR i := 1 TO nn[3] DO BEGIN
+            l := k+(j-1)*nn[1]+(i-1)*nn[2]*nn[1];
+            ll := 2*l-1;
+            data[ll] := ll;
+            data[ll+1] := ll+1
+         END
+      END
+   END;
+   isign := +1;
+   fourn(data,nn,ndim,isign);
+   isign := -1;
+   writeln('Double 3-dimensional transform');
+   writeln;
+   writeln('Double transf.':22,'Original data':24,'Ratio':20);
+   writeln('real':10,'imag.':13,'real':12,'imag.':13,'real':11,'imag.':13);
+   writeln;
+   fourn(data,nn,ndim,isign);
+   FOR i := 1 TO 4 DO BEGIN
+      j := 2*i;
+      k := 2*j;
+      l := k+(j-1)*nn[1]+(i-1)*nn[2]*nn[1];
+      ll := 2*l-1;
+      writeln(data[ll]:12:2,data[ll+1]:12:2,ll:10,ll+1:12,
+         data[ll]/ll:14:2,data[ll+1]/(ll+1):12:2)
+   END;
+   writeln;
+   writeln('The product of transform lengths is:',nn[1]*nn[2]*nn[3]:4)
+END.

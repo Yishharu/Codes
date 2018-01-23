@@ -1,0 +1,27 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE FUNCTION FINT! (X!)
+DECLARE SUB QROMB (DUM!, A!, B!, SS!)
+
+'PROGRAM D4R4
+'Driver for routine QROMB
+CLS
+PIO2 = 1.5707963#
+A = 0!
+B = PIO2
+PRINT "Integral of FUNC computed with QROMB"
+PRINT "Actual value of integral is  ";
+PRINT USING "#.######"; FINT(B) - FINT(A)
+CALL QROMB(DUM, A, B, S)
+PRINT "Result from routine QROMB is  ";
+PRINT USING "#.######"; S
+END
+
+FUNCTION FINT (X)
+'Integral of FUNC
+FINT = 4! * X * (X ^ 2 - 7!) * SIN(X) - (X ^ 4 - 14! * X ^ 2 + 28!) * COS(X)
+END FUNCTION
+
+FUNCTION FUNC (X)
+FUNC = X ^ 2 * (X ^ 2 - 2!) * SIN(X)
+END FUNCTION
+

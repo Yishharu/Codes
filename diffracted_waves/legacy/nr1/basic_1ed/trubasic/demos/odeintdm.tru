@@ -1,0 +1,50 @@
+PROGRAM D15r4
+
+! Driver for odeint
+
+LIBRARY "odeint", "bessj0", "bessj1", "bessj"
+DECLARE FUNCTION bessj0, bessj1, bessj
+
+LET nvar = 4
+DIM ystart(0)
+MAT redim ystart(nvar)
+
+! The following quantities are COMMON with odeint,
+! but are dimensioned here.
+
+DECLARE PUBLIC kmax, kount, dxsav, xp(), yp(,)
+MAT Redim xp(200), yp(10,200)
+
+CLEAR
+LET x1 = 1
+LET x2 = 10
+LET ystart(1) = bessj0(x1)
+LET ystart(2) = bessj1(x1)
+LET ystart(3) = bessj(2, x1)
+LET ystart(4) = bessj(3, x1)
+LET eps = .0001
+LET h1 = .1
+LET hmin = 0
+LET kmax = 100
+LET dxsav = (x2 - x1) / 20
+
+CALL odeint (ystart(), nvar, x1, x2, eps, h1, hmin, nok, nbad, dum, rkqc)
+
+PRINT "Successful steps:          "; nok
+PRINT "Bad steps:                 "; nbad
+PRINT "Stored intermediate values:"; kount
+PRINT
+PRINT "       x          Integral       Bessj(3,x)"
+FOR i = 1 to kount
+    PRINT using "#####.####": xp(i);
+    PRINT using "--------#.######": yp(4, i), bessj(3, xp(i))
+NEXT i
+
+END
+
+SUB derivs (x, y(), dydx())
+    LET dydx(1) = -y(2)
+    LET dydx(2) = y(1) - (1 / x) * y(2)
+    LET dydx(3) = y(2) - (2 / x) * y(3)
+    LET dydx(4) = y(3) - (3 / x) * y(4)
+END SUB

@@ -1,0 +1,40 @@
+PROGRAM D3r13
+
+! Driver for routine splin2
+
+LIBRARY "splin2", "splie2"
+
+LET m = 10
+LET n = 10
+DIM x1(0), x2(0), y(0,0), y2(0,0)
+MAT redim x1(m), x2(n), y(m, n), y2(m, n)
+
+CLEAR
+FOR i = 1 to m
+    LET x1(i) = .2 * i
+NEXT i
+FOR i = 1 to n
+    LET x2(i) = .2 * i
+NEXT i
+FOR i = 1 to m
+    FOR j = 1 to n
+        LET x1x2 = x1(i) * x2(j)
+        LET y(i, j) = x1x2 * exp(-x1x2)
+    NEXT j
+NEXT i
+
+CALL splie2 (x1(), x2(), y(,), m, n, y2(,))
+
+PRINT "       x1          x2        splin2      actual"
+FOR i = 1 to 10
+    LET xx1 = .1 * i
+    LET xx2 = xx1 ^ 2
+
+    CALL splin2 (x1(), x2(), y(,), y2(,), m, n, xx1, xx2, f)
+
+    LET x1x2 = xx1 * xx2
+    LET ff = x1x2 * exp(-x1x2)
+    PRINT using "----#.######": xx1, xx2, f, ff
+NEXT i
+
+END

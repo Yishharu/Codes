@@ -1,0 +1,42 @@
+DECLARE FUNCTION EQUIV% (I!, J!)
+DECLARE SUB ECLAZZ (NF!(), N!, DUM!)
+
+'PROGRAM D8R11
+'Driver for routine ECLAZZ
+CLS
+N = 15
+DIM NF(N), NFLAG(N), NSAV(N)
+CALL ECLAZZ(NF(), N, DUM)
+FOR I = 1 TO N
+  NFLAG(I) = 1
+NEXT I
+PRINT "Numbers from 1-15 divided according to"
+PRINT "their value modulo 4:"
+PRINT
+LCLAS = 0
+FOR I = 1 TO N
+  NCLASS = NF(I)
+  IF NFLAG(NCLASS) <> 0 THEN
+    NFLAG(NCLASS) = 0
+    LCLAS = LCLAS + 1
+    K = 0
+    FOR J = I TO N
+      IF NF(J) = NF(I) THEN
+        K = K + 1
+        NSAV(K) = J
+      END IF
+    NEXT J
+    PRINT "Class"; LCLAS; ":  ";
+    FOR J = 1 TO K
+      PRINT USING "###"; NSAV(J);
+    NEXT J
+    PRINT
+  END IF
+NEXT I
+END
+
+FUNCTION EQUIV% (I, J)
+EQUIV% = 0
+IF (I MOD 4) = (J MOD 4) THEN EQUIV% = -1
+END FUNCTION
+

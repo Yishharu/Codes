@@ -1,0 +1,67 @@
+PROGRAM D13r14
+
+! Driver for routine cntab2
+! Contingency table data in file table.dat
+
+LIBRARY "cntab2"
+
+LET ni = 9
+LET nmon = 12
+DIM nmbr(0,0), fate$(0), mon$(0)
+MAT redim nmbr(ni, nmon), fate$(ni), mon$(nmon)
+
+CLEAR
+OPEN #1: name "table.dat", access input
+LINE INPUT #1: dum$
+LINE INPUT #1: title$
+LINE INPUT #1: dum$
+LET text$ = dum$[1:15]
+FOR i = 1 to 12
+    LET mon$(i) = dum$[5*i+11 : 5*i+15]
+NEXT i
+LINE INPUT #1: dum$
+FOR i = 1 to ni
+    LINE INPUT #1: dum$
+    LET fate$(i) = dum$[1:15]
+    FOR j = 1 to 12
+        LET nmbr(i, j) = val(dum$[5*j+11 : 5*j+15])
+    NEXT j
+NEXT i
+CLOSE #1
+
+PRINT title$
+PRINT
+PRINT "               ";
+FOR i = 1 to 12
+    PRINT mon$(i);
+NEXT i
+PRINT
+FOR i = 1 to ni
+    PRINT fate$(i);
+    FOR j = 1 to 12
+        PRINT using "#####": nmbr(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+
+CALL cntab2 (nmbr(,), ni, nmon, h, hx, hy, hygx, hxgy, uygx, uxgy, uxy)
+
+PRINT "Entropy of table          ";
+PRINT using "#######.####": h
+PRINT "Entropy of x-distribution ";
+PRINT using "#######.####": hx
+PRINT "Entropy of y-distribution ";
+PRINT using "#######.####": hy
+PRINT "Entropy of y given x      ";
+PRINT using "#######.####": hygx
+PRINT "Entropy of x given y      ";
+PRINT using "#######.####": hxgy
+PRINT "Dependency of y on x      ";
+PRINT using "#######.####": uygx
+PRINT "Dependency of x on y      ";
+PRINT using "#######.####": uxgy
+PRINT "Symmetrical dependency    ";
+PRINT using "#######.####": uxy
+
+END

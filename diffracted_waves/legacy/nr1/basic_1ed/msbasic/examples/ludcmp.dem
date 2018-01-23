@@ -1,0 +1,104 @@
+DECLARE SUB LUDCMP (A!(), N!, NP!, INDX!(), D!)
+
+'PROGRAM D2R2
+'Driver for routine LUDCMP
+CLS
+NP = 20
+DIM A(NP, NP), XL(NP, NP), XU(NP, NP)
+DIM INDX(NP), JNDX(NP), X(NP, NP)
+OPEN "MATRX1.DAT" FOR INPUT AS #1
+LINE INPUT #1, DUM$
+DO
+  LINE INPUT #1, DUM$
+  LINE INPUT #1, DUM$
+  N = VAL(MID$(DUM$, 1, 2))
+  M = VAL(MID$(DUM$, 3, 2))
+  LINE INPUT #1, DUM$
+  FOR K = 1 TO N
+    LINE INPUT #1, DUM$
+    FOR L = 1 TO N
+      A(K, L) = VAL(MID$(DUM$, 4 * L - 3, 4))
+    NEXT L
+  NEXT K
+  LINE INPUT #1, DUM$
+  FOR L = 1 TO M
+    LINE INPUT #1, DUM$
+    FOR K = 1 TO N
+      X(K, L) = VAL(MID$(DUM$, 4 * K - 3, 4))
+    NEXT K
+  NEXT L
+  'Print out A-matrix for comparison with product of lower
+  'and upper decomposition matrices.
+  PRINT "Original matrix:"
+  FOR K = 1 TO N
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; A(K, L);
+    NEXT L
+    PRINT
+  NEXT K
+  'Perform the decomposition
+  CALL LUDCMP(A(), N, NP, INDX(), D)
+  'Compose separately the lower and upper matrices
+  FOR K = 1 TO N
+    FOR L = 1 TO N
+      IF L > K THEN
+        XU(K, L) = A(K, L)
+        XL(K, L) = 0!
+      ELSEIF L < K THEN
+        XU(K, L) = 0!
+        XL(K, L) = A(K, L)
+      ELSE
+        XU(K, L) = A(K, L)
+        XL(K, L) = 1!
+      END IF
+    NEXT L
+  NEXT K
+  'Compute product of lower and upper matrices for
+  'comparison with original matrix.
+  FOR K = 1 TO N
+    JNDX(K) = K
+    FOR L = 1 TO N
+      X(K, L) = 0!
+      FOR J = 1 TO N
+        X(K, L) = X(K, L) + XL(K, J) * XU(J, L)
+      NEXT J
+    NEXT L
+  NEXT K
+  PRINT "Product of lower and upper matrices (unscrambled):"
+  FOR K = 1 TO N
+    DUM = JNDX(INDX(K))
+    JNDX(INDX(K)) = JNDX(K)
+    JNDX(K) = DUM
+  NEXT K
+  FOR K = 1 TO N
+    FOR J = 1 TO N
+      IF JNDX(J) = K THEN
+        FOR L = 1 TO N
+          PRINT USING "#####.######"; X(J, L);
+        NEXT L
+        PRINT
+      END IF
+    NEXT J
+  NEXT K
+  PRINT "Lower matrix of the decomposition:"
+  FOR K = 1 TO N
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; XL(K, L);
+    NEXT L
+    PRINT
+  NEXT K
+  PRINT "Upper matrix of the decomposition:"
+  FOR K = 1 TO N
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; XU(K, L);
+    NEXT L
+    PRINT
+  NEXT K
+  PRINT "***********************************"
+  PRINT "Press RETURN for next problem:"
+  LINE INPUT DUM$
+  LINE INPUT #1, TXT$
+LOOP WHILE TXT$ <> "END"
+CLOSE #1
+END
+

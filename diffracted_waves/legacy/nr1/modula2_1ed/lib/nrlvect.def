@@ -1,0 +1,197 @@
+DEFINITION MODULE NRLVect;
+
+(* EXPORT QUALIFIED LVector; *)
+
+   FROM NRSystem IMPORT LongReal;
+
+   CONST
+      MaxLVectorLength = 2000;
+   TYPE
+      LVector;
+      PtrToLongReals = POINTER TO ARRAY [0..MaxLVectorLength-1] OF LongReal;
+   VAR 
+      NilLVector: LVector;
+
+   PROCEDURE NewLVector(values: ARRAY OF LongReal): LVector;
+
+      (* 
+       * This procedure creates a new vector from the numbers of "values".
+       * Possible structures of "values":
+       *   1. ARRAY OF LongReal, where every element of the array is a real 
+       *      number.
+       *   2. ARRAY OF LongReal, where the numbers are followed by NilReal.
+       *      The role of NilLongReal is the same as the role of "0C" in
+       *      the Modula-2 strings.
+       *)
+
+   PROCEDURE EmptyLVector(length: INTEGER): LVector;
+
+      (* 
+       * It creates a new vector with length "length", if
+       * length > 0. Otherwise it returns NilLVector;
+       * The elements in vector are undefined.
+       *)
+
+   PROCEDURE CreateLVector(    n:      INTEGER;
+                           VAR vector: LVector;
+                           VAR values: PtrToLongReals);
+
+      (* 
+       * It creates a new vector with length n, if n > 0.  
+       * It returns the reference variable "vector" and a pointer to the elements
+       * of the vector in "values". If n = 0: vector = NilLVector, values = NIL.
+       * The elements in vector are undefined.
+       *)
+
+   PROCEDURE DisposeLVector(VAR vector: LVector (* in/out *));
+
+      (*
+       * The input "vector" is deallocated. 
+       * Output: "vector"=NilLVector;
+       * Use this procedure only for vectors created before!
+       *)
+
+   PROCEDURE LengthOfLVector(vector: LVector): INTEGER;
+
+      (* 
+       * It returns the number of elements of vector.
+       *)
+
+   PROCEDURE LVectorPtr(vector: LVector): PtrToLongReals;
+
+      (* 
+       * This procedure returns a pointer to an array of reals, 
+       * where the numbers from vector can be found. This array is 
+       * defined for the indices: [0..LengthOfLVector(vector)-1].
+       *)
+
+   PROCEDURE GetLVectorAttr(    vector: LVector;
+                           VAR length: INTEGER;
+                           VAR values: PtrToLongReals);
+
+      (* 
+       * length: The length of the vector;
+       * values: Pointer to an array of reals, where the numbers from 
+       *         vector can be found. This array is defined for the 
+       *         indices: [0..length-1].
+       *)
+
+   PROCEDURE GetLVectorValues(    vector: LVector;
+                             VAR length: INTEGER;
+                             VAR values: ARRAY OF LongReal);
+
+      (* 
+       * length: The length of the vector;
+       * values: The numbers in vector. If there is enough place in
+       *         values, then the numbers are followed by NilLongReal.
+       * If vector = NilLVector then length := 0, values[0] := NilLongReal.
+       *)
+
+   PROCEDURE SetElement(vector: LVector;
+                        ix:     INTEGER;
+                        number: LongReal);
+
+      (* 
+       * Sets the element with index ix to number. 
+       * 0 <= ix <= LengthOfLVector(vector)-1.
+       * If ix > LengthOfLVector(vector)-1 -> no change in vector.
+       *)
+
+   PROCEDURE GetElement(    vector: LVector;
+                            ix:     INTEGER;
+                        VAR number: LongReal);
+
+      (* 
+       * number := the element with index ix in vector. 
+       * 0 <= ix <= LengthOfLVector(vector)-1.
+       * If ix > LengthOfLVector(vector)-1 -> number := NilLongReal.
+       *)
+
+   PROCEDURE InsertElement(VAR vector:  LVector; (* in/out *)
+                               i:       INTEGER;
+                               valueIn: LongReal);
+
+      (* 
+       * A new vector will be created from the values of vector
+       * and valueIn. The index of valueIn in the new vector is i.
+       * 0 <= i <= (length of input vector).
+       *)
+
+   PROCEDURE DeleteElement(VAR vector: LVector; (* in/out *)
+                               i:      INTEGER);
+
+      (* 
+       * The value with index i will be deleted from vector. 
+       * The values of vector will be rearranged.
+       * 0 <= i <= (length of input vector - 1).
+       *)
+
+   PROCEDURE Increase(vector: LVector; 
+                      value:   LongReal);
+
+      (* 
+       * values[i] of vector := values[i] + value
+       * 0 <= i <= (length of vector - 1).
+       *)
+
+   PROCEDURE Decrease(vector: LVector; 
+                      value:   LongReal);
+
+
+      (* 
+       * values[i] of vector := values[i] - value
+       * 0 <= i <= (length of vector - 1).
+       *)
+
+   PROCEDURE SetLVector(source, dest: LVector);
+
+      (* 
+       * If (source # NilLVector) AND (dest # NilLVector) AND
+       *    (LengthOfLVector(source) = (LengthOfLVector(dest)) THEN
+       *   values of dest := values of source
+       * else error.
+       *)
+
+   PROCEDURE DuplicateLVector(    source: LVector;
+                        VAR dest:   LVector);
+      (* 
+       * This procedure creates a new vector in dest, and copies
+       * the numbers from source to dest. 
+       *)
+
+   PROCEDURE CopyLVector(    source: LVector;
+                             n:      INTEGER;
+                         VAR dest:   LVector);
+      (* 
+       * This procedure creates a new vector in dest, and copies
+       * the n elements of source into dest, if 1 <= n <= length(source).
+       *    n = 0: dest = NilLVector.
+       *    n > length(source): dest is the duplicate of source. 
+       *)
+
+   PROCEDURE MinLVector(vector: LVector): LongReal;
+
+      (* 
+       * It returns the minimal element of the vector.
+       *)
+
+
+   PROCEDURE MaxLVector(vector: LVector): LongReal;
+
+      (* 
+       * It returns the maximal element of the vector.
+       *)
+
+   (*
+    * Remarks:
+    *    The following procedures allocate memory for a vector:
+    *       - NewLVector
+    *       - CopyVector
+    *       - CreateLVector
+    *       - DuplicateLVector
+    *
+    *    The following procedures deallocate memory:
+    *       - DisposeLVector
+    *)
+
+END NRLVect.

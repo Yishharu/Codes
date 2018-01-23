@@ -1,0 +1,48 @@
+MODULE ran2
+
+    ! Ran2 is coded as a module in order to
+    ! provide the "static" array ir(), which allows the routine
+    ! to add an additional level of randomness; i.e., to NOT
+    ! just give the next number in the rnd sequence.
+
+    SHARE iff, ir(97)
+    SHARE m, ia, ic, rm, iy, iidum
+
+    ! These constants are established during program startup,
+    ! rather than upon each call to the routine.
+
+    LET iff = 0
+    LET m = 714025
+    LET ia = 1366
+    LET ic = 150889
+    LET rm = 1 / m
+
+    FUNCTION ran2 (idum)
+
+        ! This initialization cannot be placed in the module startup
+        ! inasmuch as it depends upon the actual value of idum.
+        ! In addition, the value of idum must be remembered between
+        ! uses of ran2.  This is done here through the use of the
+        ! shared variable iidum.
+
+        IF iff = 0 then
+           LET iff = 1
+           LET iidum = abs(idum)
+           LET iidum = mod(ic + iidum, m)
+           FOR j = 1 to 97
+               LET iidum = mod(ia * iidum + ic, m)
+               LET ir(j) = iidum
+           NEXT j
+           LET iidum = mod(ia * iidum + ic, m)
+           LET iy = iidum
+        END IF
+
+        LET j = 1 + int((97 * iy) / m)
+        LET iy = ir(j)
+        LET ran2 = iy * rm
+        LET iidum = mod(ia * iidum + ic, m)
+        LET ir(j) = iidum
+
+    END FUNCTION
+
+END MODULE

@@ -1,0 +1,86 @@
+DECLARE SUB COVSRT (COVAR!(), NCVM!, MA!, LISTA!(), MFIT!)
+
+'PROGRAM D14R3
+'Driver for routine COVSRT
+CLS
+MA = 10
+MFIT = 5
+DIM COVAR(MA, MA), LISTA(MFIT)
+FOR I = 1 TO MA
+  FOR J = 1 TO MA
+    COVAR(I, J) = 0!
+    IF I <= 5 AND J <= 5 THEN
+      COVAR(I, J) = I + J - 1
+    END IF
+  NEXT J
+NEXT I
+PRINT " Original matrix"
+FOR I = 1 TO MA
+  FOR J = 1 TO MA
+    PRINT USING "##.#"; COVAR(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT " press RETURN to continue..."
+LINE INPUT DUM$
+PRINT
+'Test 1 - spread by 2
+PRINT " Test #1 - Spread by two"
+FOR I = 1 TO MFIT
+  LISTA(I) = 2 * I
+NEXT I
+CALL COVSRT(COVAR(), MA, MA, LISTA(), MFIT)
+FOR I = 1 TO MA
+  FOR J = 1 TO MA
+    PRINT USING "##.#"; COVAR(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT " press RETURN to continue..."
+LINE INPUT DUM$
+PRINT
+'Test 2 - reverse
+PRINT " Test #2 - Reverse"
+FOR I = 1 TO MA
+  FOR J = 1 TO MA
+    COVAR(I, J) = 0!
+    IF I <= 5 AND J <= 5 THEN
+      COVAR(I, J) = I + J - 1
+    END IF
+  NEXT J
+NEXT I
+FOR I = 1 TO MFIT
+  LISTA(I) = MFIT + 1 - I
+NEXT I
+CALL COVSRT(COVAR(), MA, MA, LISTA(), MFIT)
+FOR I = 1 TO MA
+  FOR J = 1 TO MA
+    PRINT USING "##.#"; COVAR(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT " press RETURN to continue..."
+LINE INPUT DUM$
+PRINT
+'Test 3 - spread and reverse
+PRINT " Test #3 - Spread and reverse"
+FOR I = 1 TO MA
+  FOR J = 1 TO MA
+    COVAR(I, J) = 0!
+    IF I <= 5 AND J <= 5 THEN
+      COVAR(I, J) = I + J - 1
+    END IF
+  NEXT J
+NEXT I
+FOR I = 1 TO MFIT
+  LISTA(I) = MA + 2 - 2 * I
+NEXT I
+CALL COVSRT(COVAR(), MA, MA, LISTA(), MFIT)
+FOR I = 1 TO MA
+  FOR J = 1 TO MA
+    PRINT USING "##.#"; COVAR(I, J);
+  NEXT J
+  PRINT
+NEXT I
+END
+

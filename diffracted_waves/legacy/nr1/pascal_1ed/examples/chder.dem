@@ -1,0 +1,53 @@
+PROGRAM d5r7(input,output);
+(* driver for routine CHDER *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+CONST
+   nval = 40;
+   pio2 = 1.5707963;
+TYPE
+   RealArrayNP = ARRAY [1..nval] OF real;
+VAR
+   a,b,x: real;
+   i,mval: integer;
+   c,cder: RealArrayNP;
+
+FUNCTION func(x: real): real;
+BEGIN
+   func := sqr(x)*(sqr(x)-2.0)*sin(x)
+END;
+
+FUNCTION fder(x: real): real;
+BEGIN
+   fder := 4.0*x*(sqr(x)-1.0)*sin(x)+sqr(x)*(sqr(x)-2.0)*cos(x)
+END;
+
+(*$I CHEBEV.PAS *)
+
+(*$I CHEBFT.PAS *)
+
+(*$I CHDER.PAS *)
+
+BEGIN
+   a := -pio2;
+   b := pio2;
+   chebft(a,b,c,nval);
+(* test derivative *)
+   WHILE true DO BEGIN
+      writeln;
+      writeln('How many terms in Chebyshev evaluation?');
+      write('Enter n between 6 and ',nval:2,'. (n := 0 to end).  ');
+      readln(mval);
+      IF (mval <= 0) OR (mval > nval) THEN GOTO 99;
+      chder(a,b,c,cder,mval);
+      writeln;
+      writeln('x':9,'actual':14,'Cheby. deriv.':16);
+      FOR i := -8 TO 8 DO BEGIN
+         x := i*pio2/10.0;
+         writeln(x:12:6,fder(x):12:6,chebev(a,b,cder,mval,x):12:6)
+      END
+   END;
+99:
+END.

@@ -1,0 +1,41 @@
+PROGRAM D1r4
+
+! Driver for routine caldat
+! Check whether caldat properly undoes the operation of julday
+
+LIBRARY "caldat", "julday"
+DECLARE FUNCTION julday
+
+DIM namq$(12)
+
+MAT READ namq$
+DATA "January", "February", "March", "April", "May", "June", "July"
+DATA "August", "September", "October", "November", "December"
+
+CLEAR
+OPEN #1: name "dates.dat", access input
+LINE INPUT #1: dum$
+LINE INPUT #1: dum$
+LET n = val(dum$[1:3])
+PRINT "Original date:                        Reconstructed date:"
+PRINT "Month     Day  Year    Julian Day     Month     Day  Year"
+PRINT
+FOR i = 1 to n
+    LINE INPUT #1: dum$
+    LET im = val(dum$[1:2])
+    LET id = val(dum$[3:5])
+    LET iy = val(dum$[7:10])
+    LET iycopy = iy
+
+    LET j = julday(im, id, iycopy)
+    CALL caldat (j, imm, idd, iyy)
+
+    PRINT namq$(im); tab(12);
+    PRINT using "##": id;
+    PRINT using "-----#": iy;
+    PRINT "     "; j; "     "; namq$(imm); tab(50);
+    PRINT using "##": idd;
+    PRINT using "-----#": iyy
+NEXT i
+
+END

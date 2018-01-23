@@ -1,0 +1,17 @@
+DEFINITION MODULE PolIntM;
+
+   (* EXPORT QUALIFIED PolInt; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE PolInt(    XA, YA: Vector; 
+                        x:      REAL; 
+                    VAR y, dy:  REAL); 
+   (*
+     Given arrays XA[0, n-1] and YA[0, n-1], and given a value x,
+     this routine returns a value y, and an error estimate dy.
+     If P(x) is the polynomial of degree n-1 such that 
+     P(XAi) = YAi, i=1,...,n, then the returned value y=P(x).
+   *)
+
+END PolIntM.

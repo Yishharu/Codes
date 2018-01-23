@@ -1,0 +1,45 @@
+DECLARE SUB SVDVAR (V!(), MA!, NP!, W!(), CVM!(), NCVM!)
+DECLARE SUB SVDFIT (X!(), Y!(), SIG!(), NDATA!, A!(), MA!, U!(), V!(), W!(), MP!, NP!, CHISQ!, FUNCS$)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D14R4
+'Driver for routine SVDFIT
+CLS
+NPT = 100
+SPREAD = .02
+NPOL = 5
+DIM X(NPT), Y(NPT), SIG(NPT), A(NPOL), CVM(NPOL, NPOL)
+DIM U(NPT, NPOL), V(NPOL, NPOL), W(NPOL)
+'Polynomial fit
+IDUM& = -911
+MP = NPT
+NP = NPOL
+FOR I = 1 TO NPT
+  X(I) = .02 * I
+  Y(I) = 1! + X(I) * (2! + X(I) * (3! + X(I) * (4! + X(I) * 5!)))
+  Y(I) = Y(I) * (1! + SPREAD * GASDEV(IDUM&))
+  SIG(I) = Y(I) * SPREAD
+NEXT I
+CALL SVDFIT(X(), Y(), SIG(), NPT, A(), NPOL, U(), V(), W(), MP, NP, CHISQ, "FPOLY")
+CALL SVDVAR(V(), NPOL, NP, W(), CVM(), NPOL)
+PRINT "Polynomial fit:"
+FOR I = 1 TO NPOL
+  PRINT USING "#####.######"; A(I);
+  PRINT "  +-";
+  PRINT USING "###.######"; SQR(CVM(I, I))
+NEXT I
+PRINT "Chi-squared";
+PRINT USING "#####.######"; CHISQ
+PRINT
+CALL SVDFIT(X(), Y(), SIG(), NPT, A(), NPOL, U(), V(), W(), MP, NP, CHISQ, "FLEG")
+CALL SVDVAR(V(), NPOL, NP, W(), CVM(), NPOL)
+PRINT "Legendre polynomial fit"
+FOR I = 1 TO NPOL
+  PRINT USING "#####.######"; A(I);
+  PRINT "  +-";
+  PRINT USING "###.######"; SQR(CVM(I, I))
+NEXT I
+PRINT "Chi-squared";
+PRINT USING "#####.######"; CHISQ
+END
+

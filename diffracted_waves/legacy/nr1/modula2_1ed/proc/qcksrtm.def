@@ -1,0 +1,13 @@
+DEFINITION MODULE QckSrtM;
+
+   (* EXPORT QUALIFIED QckSrt; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE QckSrt(ARR: Vector); 
+   (*
+     Sorts an array ARR[0, n-1] into ascending numerical order using the 
+     Quicksort algorithm. ARR is replaced on output by its sorted rearrangement.
+   *)
+
+END QckSrtM.

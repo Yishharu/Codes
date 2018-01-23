@@ -1,0 +1,31 @@
+PROGRAM D4r4
+
+! Driver for routine qromb
+
+LIBRARY "qromb"
+
+DECLARE FUNCTION fint             ! Defined below
+
+CLEAR
+LET pio2 = pi/2
+LET a = 0
+LET b = pio2
+PRINT "Integral of func computed with qromb"
+PRINT "Actual value of integral is  ";
+PRINT using "#.######": fint(b) - fint(a)
+
+CALL qromb (dum, a, b, s)
+
+PRINT "Result from routine qromb is  ";
+PRINT using "#.######": s
+
+END
+
+FUNCTION fint (x)
+    ! Integral of func
+    LET fint = 4 * x * (x ^ 2 - 7) * sin(x) - (x ^ 4 - 14 * x ^ 2 + 28) * cos(x)
+END FUNCTION
+
+FUNCTION func (x)
+    LET func = x ^ 2 * (x ^ 2 - 2) * sin(x)
+END FUNCTION

@@ -1,0 +1,60 @@
+EXTERNAL
+
+FUNCTION el2 (x, qqc, aa, bb)
+
+    LET ca = .0003
+    LET cb = 1e-09
+
+    IF x = 0 then
+       LET el2 = 0
+
+    ELSEIF qqc <> 0 then
+       LET qc = qqc
+       LET a = aa
+       LET b = bb
+       LET c = x^2
+       LET d = 1 + c
+       LET p = sqr((1 + qc^2 * c) / d)
+       LET d = x / d
+       LET c = d / (2 * p)
+       LET z = a - b
+       LET eye = a
+       LET a = .5 * (b + a)
+       LET y = abs(1 / x)
+       LET f = 0
+       LET l = 0
+       LET em = 1
+       LET qc = abs(qc)
+       DO
+          LET b = eye * qc + b
+          LET e = em * qc
+          LET g = e / p
+          LET d = f * g + d
+          LET f = c
+          LET eye = a
+          LET p = g + p
+          LET c = .5 * (d / p + c)
+          LET g = em
+          LET em = qc + em
+          LET a = .5 * (b / em + a)
+          LET y = -e / y + y
+          IF y = 0 then LET y = sqr(e) * cb
+          IF abs(g - qc) > ca * g then
+             LET qc = sqr(e) * 2
+             LET l = l + l
+             IF y < 0 then LET l = l + 1
+          ELSE
+             EXIT DO
+          END IF
+       LOOP
+       IF y < 0 then LET l = l + 1
+       LET e = (atn(em / y) + pi * l) * a / em
+       IF x < 0 then LET e = -e
+       LET el2 = e + c * z
+
+    ELSE
+       PRINT "failure in el2"
+       EXIT FUNCTION
+    END IF
+
+END FUNCTION

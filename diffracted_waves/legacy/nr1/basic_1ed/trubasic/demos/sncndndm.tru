@@ -1,0 +1,37 @@
+PROGRAM D6r30
+
+! Driver for routine sncndn
+
+LIBRARY "sncndn"
+
+CLEAR
+OPEN #1: name "fncval.dat", access input
+DO
+   LINE INPUT #1: text$
+LOOP while text$ <> "Jacobian Elliptic Function"
+
+LINE INPUT #1: nval$
+LET nval = val(nval$[1:3])
+PRINT text$
+PRINT "  mc       u       Actual           sn          sn^2+cn^2  ";
+PRINT "(mc)*(sn^2)+dn^2"
+FOR i = 1 to nval
+    LINE INPUT #1: dum$
+    LET em = val(dum$[1:6])
+    LET uu = val(dum$[7:12])
+    LET value = val(dum$[13:1000])
+    LET emmc = 1 - em
+
+    CALL sncndn (uu, emmc, sn, cn, dn)
+
+    LET resul1 = sn * sn + cn * cn
+    LET resul2 = em * sn * sn + dn * dn
+    PRINT using "##.##": emmc;
+    PRINT using "----#.##": uu;
+    PRINT using "    #.#####^^^^": value, sn;
+    PRINT using "------#.#####": resul1;
+    PRINT using "-------#.#####": resul2
+NEXT i
+CLOSE #1
+
+END

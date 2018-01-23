@@ -1,0 +1,31 @@
+DECLARE SUB KSTWO (DATA1!(), N1!, DATA2!(), N2!, D!, PROB!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D13R11
+'Driver for routine KSTWO
+CLS
+N1 = 2000
+N2 = 1000
+EPS = .1
+DIM DATA1(N1), DATA2(N2)
+IDUM& = -1357
+FOR J = 1 TO N1
+  DATA1(J) = GASDEV(IDUM&)
+NEXT J
+PRINT "    Variance Ratio      K-S Statistic      Probability"
+PRINT
+IDUM& = -2468
+FOR I = 1 TO 11
+  VAR = 1! + (I - 1) * EPS
+  FACTR = SQR(VAR)
+  FOR J = 1 TO N2
+    DATA2(J) = FACTR * GASDEV(IDUM&)
+  NEXT J
+  CALL KSTWO(DATA1(), N1, DATA2(), N2, D, PROB)
+  PRINT USING "########.######"; VAR;
+  PRINT USING "############.######"; D;
+  PRINT "          ";
+  PRINT USING ".####^^^^"; PROB
+NEXT I
+END
+

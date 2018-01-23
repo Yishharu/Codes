@@ -1,0 +1,47 @@
+PROGRAM d13r11(input,output);
+(* driver for routine KSTWO *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n1 = 500;
+   n2 = 100;
+   eps = 0.2;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayN12 = ARRAY [1..n1] OF real;   (* max of n1 and n2 *)
+   RealArrayNP = RealArrayN12;
+VAR
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   GasdevIset: integer;
+   GasdevGset: real;
+   i,idum,j: integer;
+   d,factr,prob,varnce: real;
+   data1,data2: RealArrayN12;
+
+(*$I PROBKS.PAS *)
+
+(*$I SORT.PAS *)
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+(*$I KSTWO.PAS *)
+
+BEGIN
+   GasdevIset := 0;
+   idum := -1357;
+   FOR i := 1 TO n1 DO data1[i] := gasdev(idum);
+   writeln('variance ratio':18,'k-s statistic':15,'probability':14);
+   idum := -2468;
+   FOR i := 1 TO 11 DO BEGIN
+      varnce := 1.0+(i-1)*eps;
+      factr := sqrt(varnce);
+      FOR j := 1 TO n2 DO
+         data2[j] := factr*gasdev(idum);
+      kstwo(data1,n1,data2,n2,d,prob);
+      writeln(varnce:15:6,d:15:6,prob:15:6)
+   END
+END.

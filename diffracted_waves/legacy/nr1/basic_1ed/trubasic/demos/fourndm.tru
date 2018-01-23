@@ -1,0 +1,51 @@
+PROGRAM D12r13
+
+! Driver for routine fourn
+
+LIBRARY "fourn"
+
+LET ndim = 3
+LET ndat = 1024
+DIM nn(0), datq(0)
+MAT redim nn(ndim), datq(ndat)
+
+CLEAR
+FOR i = 1 to ndim
+    LET nn(i) = 2 * (2 ^ i)
+NEXT i
+FOR i = 1 to nn(3)
+    FOR j = 1 to nn(2)
+        FOR k = 1 to nn(1)
+            LET l = k + (j - 1) * nn(1) + (i - 1) * nn(2) * nn(1)
+            LET ll = 2 * l - 1
+            LET datq(ll) = ll
+            LET datq(ll + 1) = ll + 1
+        NEXT k
+    NEXT j
+NEXT i
+LET isign = 1
+
+CALL fourn (datq(), nn(), ndim, isign)
+
+LET isign = -1
+PRINT "Double 3-dimensional Transform"
+PRINT
+PRINT "        Double Transf.           Original Data               Ratio"
+PRINT "      real        imag.        real        imag.       real        ";
+PRINT "imag."
+PRINT
+
+CALL fourn (datq(), nn(), ndim, isign)
+
+FOR i = 1 to 4
+    LET j = 2 * i
+    LET k = 2 * j
+    LET l = k + (j - 1) * nn(1) + (i - 1) * nn(2) * nn(1)
+    LET ll = 2 * l - 1
+    PRINT using "--------#.##": datq(ll), datq(ll+1), ll, ll+1;
+    PRINT using "--------#.##": datq(ll) / ll, datq(ll+1) / (ll+1)
+NEXT i
+PRINT
+PRINT "The product of transform lengths is:"; nn(1) * nn(2) * nn(3)
+
+END

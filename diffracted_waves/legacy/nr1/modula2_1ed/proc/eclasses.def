@@ -1,0 +1,24 @@
+DEFINITION MODULE EClasses;
+
+   (* EXPORT QUALIFIED EClass, EClazz; *)
+
+   FROM NRIVect IMPORT IVector; 
+
+   TYPE EquivFunction = PROCEDURE (INTEGER, INTEGER): BOOLEAN;
+
+   PROCEDURE EClass(NF, LISTA, LISTAB: IVector); 
+   (*
+     Given m equivalences between pairs of n individual elements
+     in the form of the input arrays LISTA[0, m-1] and LISTB[0, m-1], this routine
+     returns in NF[0, n-1] the number of the equivalence class of each of the
+     n elements, integers between 1 and n (not all such integers used).
+   *)
+
+   PROCEDURE EClazz(NF: IVector; equiv: EquivFunction); 
+   (*
+     Given a user-supplied boolean function equiv that tells
+     whether a pair of elements, each in the range 1...n, are related,
+     return in NF[0, n-1] equivalence class numbers for each element.
+   *)
+
+END EClasses.

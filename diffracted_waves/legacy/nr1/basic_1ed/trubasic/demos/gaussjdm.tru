@@ -1,0 +1,93 @@
+PROGRAM D2r1
+
+! Driver program for subroutine gaussj
+
+! Reads matrices from file matrx1.dat and feeds them to gaussj
+
+LIBRARY "gaussj"
+
+LET np = 20
+DIM a(0,0), b(0,0), ai(0,0), x(0,0), u(0,0), t(0,0)
+MAT redim a(np,np), b(np,np), ai(np,np), x(np,np), u(np,np), t(np,np)
+
+CLEAR
+OPEN #1: name "matrx1.dat", access input
+DO
+   LINE INPUT #1: dum$
+   IF dum$ = "END" then
+      CLOSE #1
+      EXIT DO
+   END IF
+
+   LINE INPUT #1: dum$
+   LINE INPUT #1: dum$
+   LET n = val(dum$[1:1])
+   LET m = val(dum$[3:3])
+   LINE INPUT #1: dum$
+   FOR k = 1 to n
+       LINE INPUT #1: dum$
+       FOR l = 1 to n
+           LET a(k, l) = val(dum$[4*l-3:4*l])
+       NEXT l
+   NEXT k
+   LINE INPUT #1: dum$
+   FOR l = 1 to m
+       LINE INPUT #1: dum$
+       FOR k = 1 to n
+           LET b(k, l) = val(dum$[4*k-3:4*k])
+       NEXT k
+   NEXT l
+
+   ! Save matrices for later testing of results
+
+   MAT ai = a
+   MAT x = b
+
+   ! Invert matrix
+
+   PRINT
+
+   CALL gaussj (ai(,), n, np, x(,), m, np)
+
+   PRINT "Inverse of Matrix A : "
+   FOR k = 1 to n
+       FOR l = 1 to n
+           PRINT using "----#.######": ai(k, l);
+       NEXT l
+       PRINT
+   NEXT k
+
+   ! Test results
+
+   ! Check inverse
+
+   PRINT "A times A-inverse (compare with unit matrix)"
+
+   MAT u = a*ai
+   FOR k = 1 to n
+       FOR l = 1 to n
+           PRINT using "----#.######": u(k, l);
+       NEXT l
+       PRINT
+   NEXT k
+
+   ! Check vector solutions
+
+   PRINT "Check the following vectors for equality:"
+   PRINT "          Original   Matrix*Sol'n"
+
+   MAT t = a*x
+   FOR l = 1 to m
+       PRINT "Vector  "; str$(l); ":"
+       FOR k = 1 to n
+           PRINT "       ";
+           PRINT using "----#.######": b(k, l), t(k, l)
+       NEXT k
+   NEXT l
+
+   PRINT "***********************************"
+   PRINT "press Enter for next problem ...";
+   LINE INPUT dum$
+LOOP
+
+END

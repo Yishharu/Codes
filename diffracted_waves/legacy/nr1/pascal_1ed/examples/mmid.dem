@@ -1,0 +1,66 @@
+PROGRAM d15r5(input,output);
+(* driver for routine MMID *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nvar = 4;
+   x1 = 1.0;
+   htot = 0.5;
+TYPE
+   RealArrayNVAR = ARRAY [1..nvar] OF real;
+VAR
+   b1,b2,b3,b4,xf: real;
+   i,ii: integer;
+   y,yout,dydx: RealArrayNVAR;
+
+(*$I BESSJ0.PAS *)
+
+(*$I BESSJ1.PAS *)
+
+(*$I BESSJ.PAS *)
+
+PROCEDURE derivs(x: real; VAR y,dydx: RealArrayNVAR);
+(* Programs using DERIVS must define the type
+TYPE
+   RealArrayNVAR = ARRAY [1..4] OF real;
+in the calling routine. *)
+BEGIN
+   dydx[1] := -y[2];
+   dydx[2] := y[1]-(1.0/x)*y[2];
+   dydx[3] := y[2]-(2.0/x)*y[3];
+   dydx[4] := y[3]-(3.0/x)*y[4]
+END;
+
+(*$I MMID.PAS *)
+
+BEGIN
+   y[1] := bessj0(x1);
+   y[2] := bessj1(x1);
+   y[3] := bessj(2,x1);
+   y[4] := bessj(3,x1);
+   dydx[1] := -y[2];
+   dydx[2] := y[1]-y[2];
+   dydx[3] := y[2]-2.0*y[3];
+   dydx[4] := y[3]-3.0*y[4];
+   xf := x1+htot;
+   b1 := bessj0(xf);
+   b2 := bessj1(xf);
+   b3 := bessj(2,xf);
+   b4 := bessj(3,xf);
+   writeln('First four Bessel functions:');
+   FOR ii := 1 TO 10 DO BEGIN
+      i := 5*ii;
+      mmid(y,dydx,nvar,x1,htot,i,yout);
+      writeln;
+      writeln('x := ',x1:5:2,
+         ' to ',x1+htot:5:2,' in ',i:2,' steps');
+      writeln('integration':14,'bessj':9);
+      writeln(yout[1]:12:6,b1:12:6);
+      writeln(yout[2]:12:6,b2:12:6);
+      writeln(yout[3]:12:6,b3:12:6);
+      writeln(yout[4]:12:6,b4:12:6);
+      writeln('press return to continue...');
+      readln
+   END
+END.

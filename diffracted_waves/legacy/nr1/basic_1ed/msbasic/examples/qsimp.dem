@@ -1,0 +1,27 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE FUNCTION FINT! (X!)
+DECLARE SUB QSIMP (DUM!, A!, B!, S!)
+
+'PROGRAM D4R3
+'Driver for routine QSIMP
+CLS
+PIO2 = 1.5707963#
+A = 0!
+B = PIO2
+PRINT "Integral of FUNC computed with QSIMP"
+PRINT "Actual value of integral is  ";
+PRINT USING "#.######"; FINT(B) - FINT(A)
+CALL QSIMP(DUM, A, B, S)
+PRINT "Result from routine QSIMP is  ";
+PRINT USING "#.######"; S
+END
+
+FUNCTION FINT (X)
+'Integral of FUNC
+FINT = 4! * X * (X ^ 2 - 7!) * SIN(X) - (X ^ 4 - 14! * X ^ 2 + 28!) * COS(X)
+END FUNCTION
+
+FUNCTION FUNC (X)
+FUNC = X ^ 2 * (X ^ 2 - 2!) * SIN(X)
+END FUNCTION
+

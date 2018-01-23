@@ -1,0 +1,30 @@
+MODULE midpnt
+
+    SHARE it, s                   ! STATIC, must be preserved between calls
+
+    SUB midpnt (dum, a, b, s, n)
+
+        DECLARE FUNCTION func     ! Supplied by the user
+
+        IF n = 1 then
+           LET s = (b - a) * func(.5 * (a + b))
+           LET it = 1
+        ELSE
+           LET tnm = it
+           LET del = (b - a) / (3 * tnm)
+           LET ddel = del + del
+           LET x = a + .5 * del
+           LET sum = 0
+           FOR j = 1 to it
+               LET sum = sum + func(x)
+               LET x = x + ddel
+               LET sum = sum + func(x)
+               LET x = x + del
+           NEXT j
+           LET s = (s + (b - a) * sum / tnm) / 3
+           LET it = 3 * it
+        END IF
+
+    END SUB
+
+END MODULE

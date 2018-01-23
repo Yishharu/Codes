@@ -1,0 +1,82 @@
+DECLARE SUB SHOOTF (NVAR!, V1!(), V2!(), DELV1!(), DELV2!(), N1!, N2!, X1!, X2!, XF!, EPS!, H1!, HMIN!, F!(), DV1!(), DV2!())
+
+'PROGRAM D16R2
+'Driver for routine SHOOTF
+CLS
+NVAR = 3
+N1 = 2
+N2 = 1
+DELTA = .001
+EPS = .000001
+DXX = .0001
+DIM V1(N2), DELV1(N2), V2(N1), DELV2(N1), DV1(N2), DV2(N1), F(NVAR)
+DO
+  PRINT "INPUT M,N,C-SQUARED (999 TO STOP)"
+  INPUT M, N, C2
+  PRINT
+  IF C2 = 999! THEN END
+  IF N < M OR M < 0 THEN PRINT "Improper arguments"
+LOOP WHILE N < M OR M < 0
+FACTR = 1!
+IF M <> 0 THEN
+  Q1 = N
+  FOR I = 1 TO M
+    FACTR = -.5 * FACTR * (N + I) * (Q1 / I)
+    Q1 = Q1 - 1!
+  NEXT I
+END IF
+DX = DXX
+V1(1) = N * (N + 1) - M * (M + 1) + C2 / 2!
+IF (N - M) MOD 2 = 0 THEN
+  V2(1) = FACTR
+ELSE
+  V2(1) = -FACTR
+END IF
+V2(2) = V1(1) + 1!
+DELV1(1) = DELTA * V1(1)
+DELV2(1) = DELTA * FACTR
+DELV2(2) = DELV1(1)
+H1 = .1
+HMIN = 0!
+X1 = -1! + DX
+X2 = 1! - DX
+XF = 0!
+PRINT "                  Mu(-1)              Y(1-dx)             Mu(+1)"
+DO
+  CALL SHOOTF(NVAR, V1(), V2(), DELV1(), DELV2(), N1, N2, X1, X2, XF, EPS, H1, HMIN, F(), DV1(), DV2())
+  PRINT
+  PRINT "   V ";
+  PRINT USING "#############.######"; V1(1); V2(1); V2(2)
+  PRINT "   DV";
+  PRINT USING "#############.######"; DV1(1); DV2(1); DV2(2)
+LOOP WHILE ABS(DV1(1)) > ABS(EPS * V1(1))
+END
+
+SUB DERIVS (X, Y(), DYDX())
+SHARED C2, M, N
+DYDX(1) = Y(2)
+DYDX(3) = 0!
+DYDX(2) = (2! * X * (M + 1!) * Y(2) - (Y(3) - C2 * X * X) * Y(1)) / (1! - X * X)
+END SUB
+
+SUB LOAD1 (X1, V1(), Y())
+SHARED C2, M, N, FACTR, DX
+Y(3) = V1(1)
+Y(2) = -(Y(3) - C2) * FACTR / 2! / (M + 1!)
+Y(1) = FACTR + Y(2) * DX
+END SUB
+
+SUB LOAD2 (X2, V2(), Y())
+SHARED C2, M, N
+Y(3) = V2(2)
+Y(1) = V2(1)
+Y(2) = (Y(3) - C2) * Y(1) / 2! / (M + 1!)
+END SUB
+
+SUB SCORE (XF, Y(), F())
+SHARED C2, M, N
+FOR I = 1 TO 3
+  F(I) = Y(I)
+NEXT I
+END SUB
+

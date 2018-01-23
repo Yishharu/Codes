@@ -1,0 +1,45 @@
+EXTERNAL
+
+SUB balanc (a(,), n, np)
+
+    LET radix = 2
+    LET sqrdx = 4
+    DO
+       LET last = 1
+       FOR i = 1 to n
+           LET c = 0
+           LET r = 0
+           FOR j = 1 to n
+               IF j <> i then
+                  LET c = c + abs(a(j, i))
+                  LET r = r + abs(a(i, j))
+               END IF
+           NEXT j
+           IF c <> 0 and r <> 0 then
+              LET g = r / radix
+              LET f = 1
+              LET s = c + r
+              DO WHILE c < g
+                 LET f = f * radix
+                 LET c = c * sqrdx
+              LOOP
+              LET g = r * radix
+              DO WHILE c > g
+                 LET f = f / radix
+                 LET c = c / sqrdx
+              LOOP
+              IF (c + r) / f < .95 * s then
+                 LET last = 0
+                 LET g = 1 / f
+                 FOR j = 1 to n
+                     LET a(i, j) = a(i, j) * g
+                 NEXT j
+                 FOR j = 1 to n
+                     LET a(j, i) = a(j, i) * f
+                 NEXT j
+              END IF
+           END IF
+       NEXT i
+    LOOP while last = 0
+
+END SUB

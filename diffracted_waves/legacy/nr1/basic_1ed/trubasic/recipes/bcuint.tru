@@ -1,0 +1,29 @@
+EXTERNAL
+
+SUB bcuint (y(), y1(), y2(), y12(), x1l, x1u, x2l, x2u, x1, x2, ansy, ansy1, ansy2)
+
+    LIBRARY "bcucof"
+
+    DIM c(4, 4)
+
+    CALL bcucof (y(), y1(), y2(), y12(), x1u - x1l, x2u - x2l, c(,))
+
+    IF x1u = x1l or x2u = x2l then
+       PRINT "Bad input"
+       EXIT SUB
+    END IF
+
+    LET t = (x1 - x1l) / (x1u - x1l)
+    LET u = (x2 - x2l) / (x2u - x2l)
+    LET ansy = 0
+    LET ansy2 = 0
+    LET ansy1 = 0
+    FOR i = 4 to 1 step -1
+        LET ansy = t * ansy + ((c(i, 4) * u + c(i, 3)) * u + c(i, 2)) * u + c(i, 1)
+        LET ansy2 = t * ansy2 + (3 * c(i, 4) * u + 2 * c(i, 3)) * u + c(i, 2)
+        LET ansy1 = u * ansy1 + (3 * c(4, i) * t + 2 * c(3, i)) * t + c(2, i)
+    NEXT i
+    LET ansy1 = ansy1 / (x1u - x1l)
+    LET ansy2 = ansy2 / (x2u - x2l)
+
+END SUB

@@ -1,0 +1,21 @@
+EXTERNAL
+
+FUNCTION evlmem (fdt, cof(), m, pm)
+
+    LET theta = 2 * pi * fdt
+    LET wpr = cos(theta)
+    LET wpi = sin(theta)
+    LET wr = 1
+    LET wi = 0
+    LET sumr = 1
+    LET sumi = 0
+    FOR i = 1 to m
+        LET wtemp = wr
+        LET wr = wr * wpr - wi * wpi
+        LET wi = wi * wpr + wtemp * wpi
+        LET sumr = sumr - cof(i) * wr
+        LET sumi = sumi - cof(i) * wi
+    NEXT i
+    LET evlmem = pm / (sumr^2 + sumi^2)
+
+END FUNCTION

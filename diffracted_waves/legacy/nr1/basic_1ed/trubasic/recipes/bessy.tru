@@ -1,0 +1,23 @@
+EXTERNAL
+
+FUNCTION bessy (n, x)
+
+    LIBRARY "bessy1", "bessy0"
+    DECLARE FUNCTION bessy0, bessy1
+
+    IF n < 2 then
+       PRINT "Bad argument n in bessy"
+       EXIT FUNCTION
+    END IF
+
+    LET tox = 2 / x
+    LET by = bessy1(x)
+    LET bym = bessy0(x)
+    FOR j = 1 to n - 1
+        LET byp = j * tox * by - bym
+        LET bym = by
+        LET by = byp
+    NEXT j
+    LET bessy = by
+
+END FUNCTION

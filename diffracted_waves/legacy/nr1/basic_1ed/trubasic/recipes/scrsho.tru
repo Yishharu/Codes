@@ -1,0 +1,75 @@
+EXTERNAL
+
+SUB scrsho (dum)
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    LET iscr = 60
+    LET jscr = 21
+    DIM y(0), scr$(0,0)
+    MAT redim y(iscr), scr$(iscr, jscr)
+
+    LET blank$ = " "
+    LET zero$ = "-"
+    LET yy$ = "l"
+    LET xx$ = "-"
+    LET ff$ = "x"
+    DO
+       PRINT "Enter X1,X2 (= to stop)";
+       INPUT x1, x2
+       IF x1 = x2 then EXIT SUB
+       FOR j = 1 to jscr
+           LET scr$(1, j) = yy$
+           LET scr$(iscr, j) = yy$
+       NEXT j
+       FOR i = 2 to iscr - 1
+           LET scr$(i, 1) = xx$
+           LET scr$(i, jscr) = xx$
+           FOR j = 2 to jscr - 1
+               LET scr$(i, j) = blank$
+           NEXT j
+       NEXT i
+       LET dx = (x2 - x1) / (iscr - 1)
+       LET x = x1
+       LET ybig = 0
+       LET ysml = ybig
+       FOR i = 1 to iscr
+           LET y(i) = func(x)
+           IF y(i) < ysml then LET ysml = y(i)
+           IF y(i) > ybig then LET ybig = y(i)
+           LET x = x + dx
+       NEXT i
+       IF ybig = ysml then LET ybig = ysml + 1
+       LET dyj = (jscr - 1) / (ybig - ysml)
+       LET jz = 1 - ysml * dyj
+       FOR i = 1 to iscr
+           LET scr$(i, jz) = zero$
+           LET j = 1 + (y(i) - ysml) * dyj
+           LET scr$(i, j) = ff$
+       NEXT i
+       PRINT using "##.###^^^^": ybig;
+       PRINT " ";
+       FOR i = 1 to iscr
+           PRINT scr$(i, jscr);
+       NEXT i
+       PRINT
+       FOR j = jscr - 1 to 2 step -1
+           PRINT "           ";
+           FOR i = 1 to iscr
+               PRINT scr$(i, j);
+           NEXT i
+           PRINT
+       NEXT j
+       PRINT using "##.###^^^^": ysml;
+       PRINT " ";
+       FOR i = 1 to iscr
+           PRINT scr$(i, 1);
+       NEXT i
+       PRINT
+       PRINT "           ";
+       PRINT using "##.###^^^^": x1;
+       PRINT repeat$(" ", 40);    ! Same as space$(40)
+       PRINT using "##.###^^^^": x2
+    LOOP
+
+END SUB

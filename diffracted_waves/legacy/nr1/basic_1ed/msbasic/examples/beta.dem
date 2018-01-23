@@ -1,0 +1,28 @@
+DECLARE FUNCTION BETA! (Z!, W!)
+
+'PROGRAM D6R5
+'Driver for routine BETA
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "Beta Function"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT TEXT$
+PRINT "   W     Z             Actual              BETA(W,Z)"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  W = VAL(MID$(DUM$, 1, 6))
+  Z = VAL(MID$(DUM$, 7, 6))
+  VALUE = VAL(MID$(DUM$, 13))
+  PRINT USING "##.##"; W;
+  PRINT USING "###.##"; Z;
+  PRINT "         ";
+  PRINT USING "#.######^^^^"; VALUE;
+  PRINT "         ";
+  PRINT USING "#.######^^^^"; BETA(W, Z)
+NEXT I
+CLOSE #1
+END
+

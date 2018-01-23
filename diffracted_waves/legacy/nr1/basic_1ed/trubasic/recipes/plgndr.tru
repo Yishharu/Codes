@@ -1,0 +1,36 @@
+EXTERNAL
+
+FUNCTION plgndr (l, m, x)
+
+    IF m < 0 or m > l or abs(x) > 1 then
+       PRINT "bad arguments"
+       EXIT FUNCTION
+    END IF
+
+    LET pmm = 1
+    IF m > 0 then
+       LET somx2 = sqr((1 - x) * (1 + x))
+       LET fact = 1
+       FOR i = 1 to m
+           LET pmm = -pmm * fact * somx2
+           LET fact = fact + 2
+       NEXT i
+    END IF
+
+    IF l = m then
+       LET plgndr = pmm
+    ELSE
+       LET pmmp1 = x * (2 * m + 1) * pmm
+       IF l = m + 1 then
+          LET plgndr = pmmp1
+       ELSE
+          FOR ll = m + 2 to l
+              LET pll = (x * (2 * ll - 1) * pmmp1 - (ll + m - 1) * pmm) / (ll - m)
+              LET pmm = pmmp1
+              LET pmmp1 = pll
+          NEXT ll
+          LET plgndr = pll
+       END IF
+    END IF
+
+END FUNCTION

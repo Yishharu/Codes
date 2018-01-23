@@ -1,0 +1,41 @@
+DEFINITION MODULE DirSet;
+
+  (* EXPORT QUALIFIED Powell, LinMin, F1Dim; *)
+
+   FROM NRMath IMPORT VectorFunction;
+   FROM NRVect IMPORT Vector;
+   FROM NRMatr IMPORT Matrix;
+
+   PROCEDURE Powell(    P:     Vector; 
+                        XI:    Matrix; 
+                        ftol:  REAL; 
+                    VAR iter:  INTEGER; 
+                    VAR fret:  REAL;
+                        vFunc: VectorFunction); 
+   (*
+     Minimization of a function vFunc of n variables.
+     Input consists of an initial starting point P[n]; an initial matrix XI[n, n]
+     whose columns contain the initial set of directions (usually the n unit 
+     vectors); and ftol, the fractional tolerance in the function value such that
+     failure to decrease by more than this amount on one iteration signals 
+     doneness.  On output, P is set to the best point found, XI is the 
+     then-current direction set, fret is the returned function value at P, and
+     iter is the number of iterations taken. The routine LinMin is used.
+   *)
+
+   PROCEDURE LinMin(P, XI: Vector; VAR fret: REAL; vFunc: VectorFunction); 
+   (*
+     Given an n dimensional point P[n] and an n dimensional direction XI[n], 
+     moves and resets P to where the function func(P) takes on a minimum along
+     the direction XI from P, and replaces XI by the actual vector displacement 
+     that P was moved.  Also returns as fret the value of func at the returned 
+     location P. This is actually all accomplished by calling the routines 
+     MnBrak and Brent.
+   *)
+
+   PROCEDURE F1Dim(x: REAL; LinMinPCom, LinMinXCom: Vector; vFunc: VectorFunction): REAL; 
+   (*
+     Must accompany LinMin.
+   *)
+
+END DirSet.

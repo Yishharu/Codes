@@ -1,0 +1,19 @@
+EXTERNAL
+
+SUB fleg (x, pl(), nl)
+
+    LET pl(1) = 1
+    LET pl(2) = x
+    IF nl > 2 then
+       LET twox = 2 * x
+       LET f2 = x
+       LET d = 1
+       FOR j = 3 to nl
+           LET f1 = d
+           LET f2 = f2 + twox
+           LET d = d + 1
+           LET pl(j) = (f2 * pl(j - 1) - f1 * pl(j - 2)) / d
+       NEXT j
+    END IF
+
+END SUB

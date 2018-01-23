@@ -1,0 +1,36 @@
+EXTERNAL
+
+SUB rk4 (y(), dydx(), n, x, h, yout(), dum)
+
+    ! The subroutine derivs is supplied by the user
+
+    DIM yt(0), dyt(0), dym(0)
+    MAT redim yt(n), dyt(n), dym(n)
+
+    LET hh = h * .5
+    LET h6 = h / 6
+    LET xh = x + hh
+    FOR i = 1 to n
+        LET yt(i) = y(i) + hh * dydx(i)
+    NEXT i
+
+    CALL derivs (xh, yt(), dyt())
+
+    FOR i = 1 to n
+        LET yt(i) = y(i) + hh * dyt(i)
+    NEXT i
+
+    CALL derivs (xh, yt(), dym())
+
+    FOR i = 1 to n
+        LET yt(i) = y(i) + h * dym(i)
+        LET dym(i) = dyt(i) + dym(i)
+    NEXT i
+
+    CALL derivs (x + h, yt(), dyt())
+
+    FOR i = 1 to n
+        LET yout(i) = y(i) + h6 * (dydx(i) + dyt(i) + 2 * dym(i))
+    NEXT i
+
+END SUB

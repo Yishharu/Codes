@@ -1,0 +1,43 @@
+EXTERNAL
+
+SUB elmhes (a(,), n, np)
+
+    FOR m = 2 to n - 1
+        LET x = 0
+        LET i = m
+        FOR j = m to n
+            IF abs(a(j, m - 1)) > abs(x) then
+               LET x = a(j, m - 1)
+               LET i = j
+            END IF
+        NEXT j
+        IF i <> m then
+           FOR j = m - 1 to n
+               LET y = a(i, j)
+               LET a(i, j) = a(m, j)
+               LET a(m, j) = y
+           NEXT j
+           FOR j = 1 to n
+               LET y = a(j, i)
+               LET a(j, i) = a(j, m)
+               LET a(j, m) = y
+           NEXT j
+        END IF
+        IF x <> 0 then
+           FOR i = m + 1 to n
+               LET y = a(i, m - 1)
+               IF y <> 0 then
+                  LET y = y / x
+                  LET a(i, m - 1) = y
+                  FOR j = m to n
+                      LET a(i, j) = a(i, j) - y * a(m, j)
+                  NEXT j
+                  FOR j = 1 to n
+                      LET a(j, m) = a(j, m) + y * a(j, i)
+                  NEXT j
+               END IF
+           NEXT i
+        END IF
+    NEXT m
+
+END SUB

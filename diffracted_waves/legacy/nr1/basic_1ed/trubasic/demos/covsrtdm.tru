@@ -1,0 +1,85 @@
+PROGRAM D14r3
+
+! Driver for routine covsrt
+
+LIBRARY "covsrt"
+
+LET ma = 10
+LET mfit = 5
+DIM covar(0,0), lista(0)
+MAT redim covar(ma, ma), lista(mfit)
+
+CLEAR
+
+CALL setupcov
+
+PRINT " Original matrix"
+
+CALL printcov
+
+PRINT " press Enter to continue..."
+LINE INPUT dum$
+
+PRINT
+PRINT " Test #1 - spread by two"
+FOR i = 1 to mfit
+    LET lista(i) = 2 * i
+NEXT i
+
+CALL covsrt (covar(,), ma, ma, lista(), mfit)
+
+CALL printcov
+
+PRINT " press Enter to continue..."
+LINE INPUT dum$
+
+PRINT
+PRINT " Test #2 - reverse"
+
+CALL setupcov
+
+FOR i = 1 to mfit
+    LET lista(i) = mfit + 1 - i
+NEXT i
+
+CALL covsrt (covar(,), ma, ma, lista(), mfit)
+
+CALL printcov
+
+PRINT " press Enter to continue..."
+LINE INPUT dum$
+
+PRINT
+PRINT " Test #3 - spread and reverse"
+
+CALL setupcov
+
+FOR i = 1 to mfit
+    LET lista(i) = ma + 2 - 2 * i
+NEXT i
+
+CALL covsrt (covar(,), ma, ma, lista(), mfit)
+
+CALL printcov
+
+! Now the two internal subroutines
+
+SUB setupcov
+    MAT covar = zer
+    FOR i = 1 to 5
+        FOR j = 1 to 5
+            LET covar(i, j) = i + j - 1
+        NEXT j
+    NEXT i
+END SUB
+
+SUB printcov
+    FOR i = 1 to ma
+        FOR j = 1 to ma
+            PRINT using "##.#": covar(i, j);
+        NEXT j
+        PRINT
+    NEXT i
+END SUB
+
+END

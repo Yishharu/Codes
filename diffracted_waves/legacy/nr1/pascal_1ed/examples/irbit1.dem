@@ -1,0 +1,43 @@
+PROGRAM d7r10 (input,output);
+(* driver for routine IRBIT1 *)
+(* calculate distribution of runs of zeros *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nbin = 15;
+   ntries = 500;
+TYPE
+   RealArrayNBIN = ARRAY [1..nbin] OF real;
+VAR
+   i,iflg,ipts,iseed,j,n,idum: integer;
+   twoinv: real;
+   delay: RealArrayNBIN;
+
+(*$I IRBIT1.PAS *)
+
+BEGIN
+   iseed := 1234;
+   FOR i := 1 TO nbin DO delay[i] := 0.0;
+   writeln('distribution of runs of n zeros');
+   writeln('n':6,'probability':22,'expected':18);
+   ipts := 0;
+   FOR i := 1 TO ntries DO BEGIN
+      IF irbit1(iseed) = 1 THEN BEGIN
+         ipts := ipts+1;
+         iflg := 0;
+         FOR j := 1 TO nbin DO BEGIN
+            idum := irbit1(iseed);
+            IF (idum = 1) AND (iflg = 0) THEN BEGIN
+               iflg := 1;
+               delay[j] := delay[j]+1.0
+            END
+         END
+      END
+   END;
+   twoinv := 0.5;
+   FOR n := 1 TO nbin DO BEGIN
+      writeln((n-1):6,(delay[n]/ipts):19:4,twoinv:20:4);
+      twoinv := twoinv/2.0
+   END
+END.

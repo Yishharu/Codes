@@ -1,0 +1,42 @@
+PROGRAM D15r9
+
+! Driver for routine pzextr
+! Feed values from a rational function
+! fn(x)=(1-x+x^3)/(x+1)^n
+
+LIBRARY "pzextr"
+
+LET nv = 4
+DIM yest(0), yz(0), dy(0)
+MAT redim yest(nv), yz(nv), dy(nv)
+
+CLEAR
+LET nuse = 5
+FOR i = 1 to 10
+    LET iest = i
+    LET xest = 1 / i
+    LET dum = 1 - xest + xest^3
+    FOR j = 1 to nv
+        LET dum = dum / (xest + 1)
+        LET yest(j) = dum
+    NEXT j
+
+    CALL pzextr (iest, xest, yest(), yz(), dy(), nv, nuse)
+
+    PRINT "i = "; i
+    PRINT "Extrap. Function:";
+    FOR j = 1 to nv
+        PRINT using "----#.######": yz(j);
+    NEXT j
+    PRINT
+    PRINT "Estimated Error: ";
+    FOR j = 1 to nv
+        PRINT using "----#.######": dy(j);
+    NEXT j
+    PRINT
+    PRINT
+NEXT i
+PRINT "Actual values:   ";
+PRINT using "#####.######": 1, 1, 1, 1
+
+END

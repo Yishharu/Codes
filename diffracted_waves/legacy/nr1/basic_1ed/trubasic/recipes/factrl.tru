@@ -1,0 +1,31 @@
+MODULE factrl
+
+    SHARE a(33)
+
+    LET ntop = 0
+    LET a(1) = 1
+
+    FUNCTION factrl (n)
+
+        LIBRARY "gammln"
+
+        DECLARE FUNCTION gammln
+
+        IF n < 0 then
+           PRINT "negative factorial"
+           EXIT FUNCTION
+        ELSEIF n <= ntop then
+           LET factrl = a(n + 1)
+        ELSEIF n <= 32 then
+           FOR j = ntop + 1 to n
+               LET a(j + 1) = j * a(j)
+           NEXT j
+           LET ntop = n
+           LET factrl = a(n + 1)
+        ELSE
+           LET factrl = exp(gammln(n + 1))
+        END IF
+
+    END FUNCTION
+
+END MODULE

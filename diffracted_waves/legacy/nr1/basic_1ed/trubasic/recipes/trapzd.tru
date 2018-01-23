@@ -1,0 +1,27 @@
+MODULE trapzd
+
+    SHARE it, s                   ! STATIC, must be preserved between calls
+
+    SUB trapzd (dum, a, b, s, n)
+
+        DECLARE FUNCTION func     ! Supplied by the user
+
+        IF n = 1 then
+           LET s = .5 * (b - a) * (func(a) + func(b))
+           LET it = 1
+        ELSE
+           LET tnm = it
+           LET del = (b - a) / tnm
+           LET x = a + .5 * del
+           LET sum = 0
+           FOR j = 1 to it
+               LET sum = sum + func(x)
+               LET x = x + del
+           NEXT j
+           LET s = .5 * (s + (b - a) * sum / tnm)
+           LET it = 2 * it
+        END IF
+
+    END SUB
+
+END MODULE

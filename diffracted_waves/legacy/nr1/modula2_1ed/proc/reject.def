@@ -1,0 +1,27 @@
+DEFINITION MODULE Reject;
+
+   (* EXPORT QUALIFIED BnlDev, GamDev, PoiDev; *)
+
+   PROCEDURE BnlDev(pp: REAL; n: INTEGER; VAR idum: INTEGER): REAL; 
+   (*
+     Returns as a floating-point number an integer value that is
+     a random deviate drawn from a binomial distribution of n trials
+     each of probability pp, using Ran3 as a source of uniform random 
+     deviates.
+   *)
+
+   PROCEDURE GamDev(VAR ia, idum: INTEGER): REAL; 
+   (*
+     Returns a deviate distributed as a gamma distribution of integer order ia,
+     i.e.a waiting time to the iath event in a Poisson process of unit mean,
+     using Ran3 as the source of uniform deviates.
+   *)
+
+   PROCEDURE PoiDev(xm: REAL; VAR idum: INTEGER): REAL; 
+   (*
+     Returns as a floating-point number an integer value that is
+     a random deviate drawn from a Poisson distribution of mean xm, using
+     Ran3 as a source of uniform random deviates.
+   *)
+
+END Reject.

@@ -1,0 +1,99 @@
+PROGRAM d12r1(input,output);
+(* driver for routine FOUR1 *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nn = 32;
+   nn2 = 64; (* 2*nn *)
+TYPE
+   RealArrayNN2 = ARRAY [1..nn2] OF real;
+VAR
+   ii,i,isign: integer;
+   data,dcmp: RealArrayNN2;
+
+PROCEDURE prntft(data: RealArrayNN2; nn: integer);
+VAR
+   ii,mm,n: integer;
+BEGIN
+   writeln('n':4,'real(n)':13,'imag.(n)':13,'real(N-n)':12,'imag.(N-n)':13);
+   writeln(0:4,data[1]:14:6,data[2]:12:6,data[1]:12:6,data[2]:12:6);
+   mm := nn DIV 2;
+   FOR ii := 1 TO mm DO BEGIN
+      n := 2*ii+1;
+      writeln(((n-1) DIV 2):4,data[n]:14:6,data[n+1]:12:6,
+         data[2*nn+2-n]:12:6,data[2*nn+3-n]:12:6)
+   END;
+   writeln(' press RETURN to continue ...');
+   readln
+END;
+
+(*$I FOUR1.PAS *)
+
+BEGIN
+   writeln('h(t) := real-valued even-function');
+   writeln('h(n) := h(N-n) and real?');
+   FOR ii := 1 TO nn DO BEGIN
+      i := 2*ii-1;
+      data[i] := 1.0/(sqr((i-nn-1.0)/nn)+1.0);
+      data[i+1] := 0.0
+   END;
+   isign := 1;
+   four1(data,nn,isign);
+   prntft(data,nn);
+   writeln('h(t) := imaginary-valued even-function');
+   writeln('h(n) := h(N-n) and imaginary?');
+   FOR ii := 1 TO nn DO BEGIN
+      i := 2*ii-1;
+      data[i+1] := 1.0/(sqr((i-nn-1.0)/nn)+1.0);
+      data[i] := 0.0
+   END;
+   isign := 1;
+   four1(data,nn,isign);
+   prntft(data,nn);
+   writeln('h(t) := real-valued odd-function');
+   writeln('h(n) := -h(N-n) and imaginary?');
+   FOR ii := 1 TO nn DO BEGIN
+      i := 2*ii-1;
+      data[i] := ((i-nn-1.0)/nn)/(sqr((i-nn-1.0)/nn)+1.0);
+      data[i+1] := 0.0
+   END;
+   data[1] := 0.0;
+   isign := 1;
+   four1(data,nn,isign);
+   prntft(data,nn);
+   writeln('h(t) := imaginary-valued odd-function');
+   writeln('h(n) := -h(N-n) and real?');
+   FOR ii := 1 TO nn DO BEGIN
+      i := 2*ii-1;
+      data[i+1] := ((i-nn-1.0)/nn)/(sqr((i-nn-1.0)/nn)+1.0);
+      data[i] := 0.0
+   END;
+   data[2] := 0.0;
+   isign := 1;
+   four1(data,nn,isign);
+   prntft(data,nn);
+(* transform, inverse-transform test *)
+   FOR ii := 1 TO nn DO BEGIN
+      i := 2*ii-1;
+      data[i] := 1.0/(sqr(0.5*(i-nn-1.0)/nn)+1.0);
+      dcmp[i] := data[i];
+      data[i+1] := (0.25*(i-nn-1.0)/nn)
+            *exp(-sqr(0.5*(i-nn-1.0)/nn));
+      dcmp[i+1] := data[i+1]
+   END;
+   isign := 1;
+   four1(data,nn,isign);
+   isign := -1;
+   four1(data,nn,isign);
+   writeln;
+   writeln('double fourier transform:':33,'original data:':23);
+   writeln;
+   writeln('k':4,'real h(k)':14,'imag h(k)':13,
+      'real h(k)':17,'imag h(k)':12);
+   FOR ii := 1 TO nn DIV 2 DO BEGIN
+      i := 2*ii-1;
+      writeln(((i+1) DIV 2):4,dcmp[i]:14:6,dcmp[i+1]:12:6,
+         data[i]/nn:17:6,data[i+1]/nn:12:6)
+   END
+END.

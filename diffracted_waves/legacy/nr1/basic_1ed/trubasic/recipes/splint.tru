@@ -1,0 +1,26 @@
+EXTERNAL
+
+SUB splint (xa(), ya(), y2a(), n, x, y)
+
+    LET klo = 1
+    LET khi = n
+    DO while khi - klo > 1
+       LET k = (khi + klo) / 2
+       IF xa(k) > x then
+          LET khi = k
+       ELSE
+          LET klo = k
+       END IF
+    LOOP
+    LET h = xa(khi) - xa(klo)
+    IF h = 0 then
+       PRINT "Bad xa input."
+       EXIT SUB
+    END IF
+
+    LET a = (xa(khi) - x) / h
+    LET b = (x - xa(klo)) / h
+    LET y = a * ya(klo) + b * ya(khi)
+    LET y = y + ((a^3 - a) * y2a(klo) + (b^3 - b) * y2a(khi)) * (h^2) / 6
+
+END SUB

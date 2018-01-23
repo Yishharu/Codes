@@ -1,0 +1,10 @@
+EXTERNAL
+
+SUB fpoly (x, p(), np)
+
+    LET p(1) = 1
+    FOR j = 2 to np
+        LET p(j) = p(j - 1) * x
+    NEXT j
+
+END SUB

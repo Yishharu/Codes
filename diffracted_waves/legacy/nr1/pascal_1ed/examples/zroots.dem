@@ -1,0 +1,36 @@
+PROGRAM d9r11(input,output);
+(* driver for routine ZROOTS *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   m = 4;
+   mp1 = 5;        (* mp1=m+1 *)
+TYPE
+   Complex = RECORD
+                r,i: real
+             END;
+   ComplexArrayMp1 = ARRAY [1..mp1] OF Complex;
+VAR
+   i: integer;
+   polish: boolean;
+   a,roots: ComplexArrayMp1;
+
+(*$I LAGUER.PAS *)
+
+(*$I ZROOTS.PAS *)
+
+BEGIN
+   a[1].r := 0.0; a[1].i := 2.0;
+   a[2].r := 0.0; a[2].i := 0.0;
+   a[3].r := -1.0; a[3].i := -2.0;
+   a[4].r := 0.0; a[4].i := 0.0;
+   a[5].r := 1.0; a[5].i := 0.0;
+   writeln('Roots of the polynomial x^4-(1+2i)*x^2+2i');
+   polish := true;
+   zroots(a,m,roots,polish);
+   writeln;
+   writeln('root #':14,'real':13,'imag.':13);
+   FOR i := 1 TO m DO
+      writeln(i:11,' ':5,roots[i].r:12:6,roots[i].i:12:6);
+END.

@@ -1,0 +1,22 @@
+EXTERNAL
+
+SUB splie2 (x1a(), x2a(), ya(,), m, n, y2a(,))
+
+    LIBRARY "spline"
+
+    DIM ytmp(0), y2tmp(0)
+    MAT redim ytmp(n), y2tmp(n)
+
+    FOR j = 1 to m
+        FOR k = 1 to n
+            LET ytmp(k) = ya(j, k)
+        NEXT k
+
+        CALL spline (x2a(), ytmp(), n, 1e30, 1e30, y2tmp())
+
+        FOR k = 1 to n
+            LET y2a(j, k) = y2tmp(k)
+        NEXT k
+    NEXT j
+
+END SUB

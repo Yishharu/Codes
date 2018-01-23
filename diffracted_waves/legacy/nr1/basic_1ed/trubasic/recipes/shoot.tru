@@ -1,0 +1,44 @@
+EXTERNAL
+
+SUB shoot (nvar, v(), delv(), n2, x1, x2, eps, h1, hmin, f(), dv())
+
+    LIBRARY "odeint", "ludcmp", "lubksb"
+
+    ! Subroutines load and score are defined in main program
+
+    DECLARE PUBLIC kmax           ! COMMON with the subroutine odeint
+
+    DIM y(0), dfdv(0,0), indx(0)
+    MAT redim y(nvar), dfdv(nvar, nvar), indx(nvar)
+
+    LET kmax = 0
+
+    CALL load (x1, v(), y())
+    CALL odeint (y(), nvar, x1, x2, eps, h1, hmin, nok, nbad, dum, dum)
+    CALL score (x2, y(), f())
+
+    FOR iv = 1 to n2
+        LET sav = v(iv)
+        LET v(iv) = v(iv) + delv(iv)
+
+        CALL load (x1, v(), y())
+        CALL odeint (y(), nvar, x1, x2, eps, h1, hmin, nok, nbad, dum, dum)
+        CALL score (x2, y(), dv())
+
+        FOR i = 1 to n2
+            LET dfdv(i, iv) = (dv(i) - f(i)) / delv(iv)
+        NEXT i
+        LET v(iv) = sav
+    NEXT iv
+    FOR iv = 1 to n2
+        LET dv(iv) = -f(iv)
+    NEXT iv
+
+    CALL ludcmp (dfdv(,), n2, nvar, indx(), det)
+    CALL lubksb (dfdv(,), n2, nvarp, indx(), dv())
+
+    FOR iv = 1 to n2
+        LET v(iv) = v(iv) + dv(iv)
+    NEXT iv
+
+END SUB

@@ -1,0 +1,26 @@
+DECLARE FUNCTION GAMMQ! (A!, X!)
+
+'PROGRAM D6R7
+'Driver for routine GAMMQ
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "Incomplete Gamma Function"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT TEXT$
+PRINT "    A          X       Actual     GAMMQ(A,X)"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  A = VAL(MID$(DUM$, 1, 6))
+  X = VAL(MID$(DUM$, 7, 16))
+  VALUE = VAL(MID$(DUM$, 23))
+  PRINT USING "####.##"; A;
+  PRINT USING "#####.######"; X;
+  PRINT USING "#####.######"; 1! - VALUE;
+  PRINT USING "#####.######"; GAMMQ(A, X)
+NEXT I
+CLOSE #1
+END
+

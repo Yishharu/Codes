@@ -1,0 +1,60 @@
+DECLARE SUB FRPRMN (P!(), N!, FTOL!, ITER!, FRET!)
+DECLARE FUNCTION BESSJ0! (X!)
+DECLARE FUNCTION BESSJ1! (X!)
+DECLARE FUNCTION F1DIM! (X!)
+DECLARE FUNCTION FUNC2! (X!(), N!)
+DECLARE FUNCTION FUNC! (X!)
+COMMON NCOM, PCOM(), XICOM()
+
+'PROGRAM D10R9
+'Driver for routine FRPRMN
+CLS
+NDIM = 3
+FTOL = .000001
+PIO2 = 1.5707963#
+DIM P(NDIM), PCOM(50), XICOM(50)
+PRINT "Program finds the minimum of a function"
+PRINT "with different trial starting vectors."
+PRINT "True minimum is (0.5,0.5,0.5)"
+PRINT
+FOR K = 0 TO 4
+  ANGL = PIO2 * K / 4!
+  P(1) = 2! * COS(ANGL)
+  P(2) = 2! * SIN(ANGL)
+  P(3) = 0!
+  PRINT "Starting vector: (";
+  PRINT USING "#.####"; P(1);
+  PRINT ",";
+  PRINT USING "#.####"; P(2);
+  PRINT ",";
+  PRINT USING "#.####"; P(3);
+  PRINT ")"
+  CALL FRPRMN(P(), NDIM, FTOL, ITER, FRET)
+  PRINT "Iterations:"; ITER
+  PRINT "Solution vector: (";
+  PRINT USING "#.####"; P(1);
+  PRINT ",";
+  PRINT USING "#.####"; P(2);
+  PRINT ",";
+  PRINT USING "#.####"; P(3);
+  PRINT ")"
+  PRINT "Func. value at solution   ";
+  PRINT USING ".######^^^^"; FRET
+  PRINT
+NEXT K
+END
+
+SUB DFUNC (X(), DF())
+DF(1) = BESSJ1(X(1) - .5) * BESSJ0(X(2) - .5) * BESSJ0(X(3) - .5)
+DF(2) = BESSJ0(X(1) - .5) * BESSJ1(X(2) - .5) * BESSJ0(X(3) - .5)
+DF(3) = BESSJ0(X(1) - .5) * BESSJ0(X(2) - .5) * BESSJ1(X(3) - .5)
+END SUB
+
+FUNCTION FUNC (X)
+FUNC = F1DIM(X)
+END FUNCTION
+
+FUNCTION FUNC2 (X(), N)
+FUNC2 = 1! - BESSJ0(X(1) - .5) * BESSJ0(X(2) - .5) * BESSJ0(X(3) - .5)
+END FUNCTION
+

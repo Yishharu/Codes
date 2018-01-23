@@ -1,0 +1,36 @@
+DECLARE SUB RKDUMB (VSTART!(), NVAR!, X1!, X2!, NSTEP!, DUM!)
+DECLARE FUNCTION BESSJ! (A!, X!)
+DECLARE FUNCTION BESSJ0! (X!)
+DECLARE FUNCTION BESSJ1! (X!)
+COMMON XX(), Y()
+
+'PROGRAM D15R2
+'Driver for routine RKDUMB
+CLS
+NVAR = 4
+NSTEP = 150
+DIM VSTART(NVAR), XX(200), Y(10, 200)
+X1 = 1!
+VSTART(1) = BESSJ0(X1)
+VSTART(2) = BESSJ1(X1)
+VSTART(3) = BESSJ(2, X1)
+VSTART(4) = BESSJ(3, X1)
+X2 = 20!
+CALL RKDUMB(VSTART(), NVAR, X1, X2, NSTEP, DUM)
+PRINT "       X       Integrated    BESSJ3"
+PRINT
+FOR I = 1 TO INT(NSTEP / 10)
+  J = 10 * I
+  PRINT USING "#####.####"; XX(J);
+  PRINT "  ";
+  PRINT USING "#####.######"; Y(4, J); BESSJ(3, XX(J))
+NEXT I
+END
+
+SUB DERIVS (X, Y(), DYDX())
+DYDX(1) = -Y(2)
+DYDX(2) = Y(1) - (1! / X) * Y(2)
+DYDX(3) = Y(2) - (2! / X) * Y(3)
+DYDX(4) = Y(3) - (3! / X) * Y(4)
+END SUB
+

@@ -1,0 +1,33 @@
+DECLARE FUNCTION CEL! (AKC!, P!, A!, B!)
+DECLARE FUNCTION FUNC! (PHI!)
+DECLARE FUNCTION RAN3! (IDUM&)
+DECLARE SUB QSIMP (DUM!, AGO!, ASTOP!, S!)
+
+'PROGRAM D6R29
+'Driver for routine CEL
+CLS
+PIO2 = 1.5707963#
+PRINT "Complete Elliptic Integral"
+PRINT "     kc         p         a         b        CEL    Integral"
+IDUM& = -55
+AGO = 0!
+ASTOP = PIO2
+FOR I = 1 TO 20
+  AKC = .1 + RAN3(IDUM&)
+  IDUM = 0
+  A = 10! * RAN3(IDUM&)
+  B = 10! * RAN3(IDUM&)
+  P = .1 + RAN3(IDUM&)
+  CALL QSIMP(DUM, AGO, ASTOP, S)
+  PRINT USING "###.######"; AKC; P; A; B; CEL(AKC, P, A, B); S
+NEXT I
+END
+
+FUNCTION FUNC (PHI)
+SHARED A, B, P, AKC
+CS = COS(PHI)
+CSQ = CS * CS
+SSQ = 1! - CSQ
+FUNC = (A * CSQ + B * SSQ) / (CSQ + P * SSQ) / SQR(CSQ + AKC * AKC * SSQ)
+END FUNCTION
+

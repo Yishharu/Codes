@@ -1,0 +1,29 @@
+PROGRAM d6r5(input,output,dfile);
+(* driver for routine BETA *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   StrArray13 = string[13];
+VAR
+   i,nval: integer;
+   val,w,z: real;
+   txt: StrArray13;
+   dfile: text;
+
+(*$I GAMMLN.PAS *)
+
+(*$I BETA.PAS *)
+
+BEGIN
+   NROpen(dfile,'fncval.dat');
+   REPEAT readln(dfile,txt) UNTIL txt = 'Beta Function';
+   readln(dfile,nval);
+   writeln(txt);
+   writeln('w':5,'z':6,'actual':16,'beta(w,z)':20);
+   FOR i := 1 TO nval DO BEGIN
+      readln(dfile,w,z,val);
+      writeln(w:6:2,z:6:2,' ':5,val:13,' ':5,beta(w,z):13)
+   END;
+   close(dfile)
+ END.

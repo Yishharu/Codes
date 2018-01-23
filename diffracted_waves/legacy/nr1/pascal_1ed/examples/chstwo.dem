@@ -1,0 +1,57 @@
+PROGRAM d13r9(input,output);
+(* driver for routine CHSTWO *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nbins = 10;
+   npts = 2000;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayNBINS = ARRAY [1..nbins] OF real;
+VAR
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   chsq,df,prob,x: real;
+   i,ibin,idum,j: integer;
+   bins1,bins2: RealArrayNBINS;
+
+(*$I GAMMLN.PAS *)
+
+(*$I GSER.PAS *)
+
+(*$I GCF.PAS *)
+
+(*$I GAMMQ.PAS *)
+
+(*$I RAN3.PAS *)
+
+(*$I EXPDEV.PAS *)
+
+(*$I CHSTWO.PAS *)
+
+BEGIN
+   idum := -18;
+   FOR j := 1 TO nbins DO BEGIN
+      bins1[j] := 0.0;
+      bins2[j] := 0.0
+   END;
+   FOR i := 1 TO npts DO BEGIN
+      x := expdev(idum);
+      ibin := trunc(x*nbins/3.0)+1;
+      IF ibin <= nbins THEN
+         bins1[ibin] := bins1[ibin]+1.0;
+      x := expdev(idum);
+      ibin := trunc(x*nbins/3.0)+1;
+      IF ibin <= nbins THEN
+         bins2[ibin] := bins2[ibin]+1.0
+   END;
+   chstwo(bins1,bins2,nbins,-1,df,chsq,prob);
+   writeln;
+   writeln('dataset 1':15,'dataset 2':15);
+   FOR i := 1 TO nbins DO
+      writeln(bins1[i]:13:2,bins2[i]:15:2);
+   writeln;
+   writeln('chi-squared:':18,chsq:12:4);
+   writeln('probability:':18,prob:12:4)
+END.

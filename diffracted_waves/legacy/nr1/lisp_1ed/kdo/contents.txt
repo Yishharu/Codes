@@ -1,0 +1,75 @@
+Header file.  Utility functions:
+fref -- Offset array-referencing
+signp -- Flip sign of x if y is negative
+dfloat -- Convert number to double-float
+dfloat-check -- Make sure number from user is a double-float
+------------------------------------------------------------------------------
+1 Introduction:
+flmoon julday caldat
+------------------------------------------------------------------------------
+2 Linear Equations:
+gaussj ludcmp lubksb tridag mprove vander toeplz svdcmp 
+svbksb sparse 
+------------------------------------------------------------------------------
+3 Evaluation of Functions:
+polint ratint
+spline splint locate hunt polcoe polcof polin2 
+bcucof bcuint splie2 splin2
+------------------------------------------------------------------------------
+4 Integration of Functions:
+trapzd qtrap qsimp qromb 
+midpnt qromo midinf midsql midsqu midexp qgaus 
+gauleg quadf quad2d quad3d quad4d 
+-----------------------------------------------------------------------------
+5 Evaluation of Functions:
+eulsum ddpoly poldiv chebft chevev chint 
+chder chebpc pcshft 
+-----------------------------------------------------------------------------
+6 Special Functions:
+gammln factrl bico factln beta gammp gammq 
+gser gcf erf erfc erfcc betai betacf
+bessj0 bessy0 bessj1 bessy1 bessj bessy 
+bessi0 bessk0 bessi1 bessk1 bessi bessk plgndr 
+cel el2 sncndn 
+----------------------------------------------------------------------------
+7 Random Numbers:
+ran0 ran1 ran2 ran3 expdev gasdev gamdev
+poidev bnldev irbit1 irbit2 ran4 
+des ks cyfun 
+-----------------------------------------------------------------------------
+8 Sorting:
+piksrt piksr2 shell sort1 sort2 indexx 
+sort3 rank qcksrt eclass eclazz 
+------------------------------------------------------------------------------
+9 Root Finding:
+scrsho zbrac zbrak rtbis rtflsp rtsec zbrent 
+rtnewt rtsafe laguer zroots qroot mnewt 
+------------------------------------------------------------------------------
+10 Minimization and Maximization of Functions:
+mnbrak golden brent dbrent amoeba 
+powell frprmn dfpmin simplex anneal 
+-----------------------------------------------------------------------------
+11 Eigenproblems:
+jacobi eigsrt tred2 tqli elmhes hqr 
+------------------------------------------------------------------------------
+12 Fast Fourier Transform:
+four1 twofft realft sinft cosft convlv 
+correl memcof evlmem 
+fixrts predic fourn
+------------------------------------------------------------------------------
+13 Statistical dEscription of Data:
+moment mdian1 mdian2 ttest avevar tutest tptest ftest chsone chstwo 
+ksone kstwo probks cntab1 cntab2 
+pearsn spear crank kendl1 kendl2 smooft 
+-------------------------------------------------------------------------------
+14 Modelling of Data:
+fit lfit covsrt svdfit svdvar mrqmin  medfit 
+-------------------------------------------------------------------------------
+15 Integration of Ordinary Differential Equations:
+rk4 rkdumb rkqc odeint mmid bsstep 
+------------------------------------------------------------------------------
+16 Two Point Boundary Value Problems:
+shoot shootf solvde 
+------------------------------------------------------------------------------
+17 Partial Differential Equations
+sor adi 

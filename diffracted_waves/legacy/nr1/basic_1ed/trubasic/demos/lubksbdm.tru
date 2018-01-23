@@ -1,0 +1,81 @@
+PROGRAM D2r3
+
+! Driver for routine lubksb
+
+LIBRARY "lubksb", "ludcmp"
+
+LET np = 20
+DIM a(0,0), b(0,0), indx(0), c(0,0), x(0)
+MAT redim a(np, np), b(np, np), indx(np), c(np, np), x(np)
+
+CLEAR
+OPEN #1: name "matrx1.dat", access input
+LINE INPUT #1: dum$
+DO
+   LINE INPUT #1: dum$
+   LINE INPUT #1: dum$
+   LET n = val(dum$[1:1])
+   LET m = val(dum$[3:3])
+   LINE INPUT #1: dum$
+   FOR k = 1 to n
+       LINE INPUT #1: dum$
+       FOR l = 1 to n
+           LET a(k, l) = val(dum$[4*l-3 : 4*l])
+       NEXT l
+   NEXT k
+   LINE INPUT #1: dum$
+   FOR l = 1 to m
+       LINE INPUT #1: dum$
+       FOR k = 1 to n
+           LET b(k, l) = val(dum$[4*k-3 : 4*k])
+       NEXT k
+   NEXT l
+
+   ! Save matrix A for later testing
+
+   FOR l = 1 to n
+       FOR k = 1 to n
+           LET c(k, l) = a(k, l)
+       NEXT k
+   NEXT l
+
+   ! Do LU decomposition
+
+   CALL ludcmp (c(,), n, np, indx(), p)
+
+   ! Solve equations for each right-hand vector
+
+   FOR k = 1 to m
+       FOR l = 1 to n
+           LET x(l) = b(l, k)
+       NEXT l
+
+       CALL lubksb (c(,), n, np, indx(), x())
+
+       ! Test results with original matrix
+
+       PRINT "Right-hand side vector:"
+       FOR l = 1 to n
+           PRINT using "----#.######": b(l, k);
+       NEXT l
+       PRINT
+       PRINT "Result of matrix applied to sol'n vector"
+       FOR l = 1 to n
+           LET b(l, k) = 0
+           FOR j = 1 to n
+               LET b(l, k) = b(l, k) + a(l, j) * x(j)
+           NEXT j
+       NEXT l
+       FOR l = 1 to n
+           PRINT using "----#.######": b(l, k);
+       NEXT l
+       PRINT
+       PRINT "***********************************"
+   NEXT k
+   PRINT "Press Enter for next problem ..."
+   LINE INPUT dum$
+
+   LINE INPUT #1: txt$
+LOOP while txt$ <> "END"
+
+END

@@ -1,0 +1,56 @@
+DECLARE SUB LUDCMP (A!(), N!, NP!, INDX!(), D!)
+DECLARE SUB LUBKSB (A!(), N!, NP!, INDX!(), B!())
+DECLARE SUB MPROVE (A!(), ALUD!(), N!, NP!, INDX!(), B!(), X!())
+DECLARE FUNCTION RAN3! (IDUM&)
+
+'PROGRAM D2R5
+'Driver for routine MPROVE
+CLS
+N = 5
+NP = 5
+DIM A(NP, NP), INDX(N), B(N), X(N), AA(NP, NP)
+FOR J = 1 TO NP
+  FOR I = 1 TO NP
+    READ A(I, J)
+  NEXT I
+NEXT J
+DATA 1.0,2.0,1.0,4.0,5.0,2.0,3.0,1.0,5.0,1.0,3.0,4.0,1.0,1.0,2.0,4.0,5.0,1.0
+DATA 2.0,3.0,5.0,1.0,1.0,3.0,4.0
+FOR I = 1 TO N
+  READ B(I)
+NEXT I
+DATA 1.0,1.0,1.0,1.0,1.0
+FOR I = 1 TO N
+  X(I) = B(I)
+  FOR J = 1 TO N
+    AA(I, J) = A(I, J)
+  NEXT J
+NEXT I
+CALL LUDCMP(AA(), N, NP, INDX(), D)
+CALL LUBKSB(AA(), N, NP, INDX(), X())
+PRINT "Solution vector for the equations:"
+FOR I = 1 TO N
+  PRINT USING "#####.######"; X(I);
+NEXT I
+PRINT
+PRINT
+'Now phoney up X and let MPROVE fit it
+IDUM& = -13
+FOR IQ = 1 TO N
+  X(IQ) = X(IQ) * (1! + .2 * RAN3(IDUM&))
+NEXT IQ
+PRINT "Solution vector with noise added:"
+FOR I = 1 TO N
+  PRINT USING "#####.######"; X(I);
+NEXT I
+PRINT
+PRINT
+CALL MPROVE(A(), AA(), N, NP, INDX(), B(), X())
+PRINT "Solution vector recovered by MPROVE:"
+FOR I = 1 TO N
+  PRINT USING "#####.######"; X(I);
+NEXT I
+PRINT
+PRINT
+END
+

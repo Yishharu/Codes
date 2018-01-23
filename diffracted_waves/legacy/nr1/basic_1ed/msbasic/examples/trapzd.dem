@@ -1,0 +1,30 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE FUNCTION FINT! (X!)
+DECLARE SUB TRAPZD (DUM!, A!, B!, S!, N!)
+
+'PROGRAM D4R1
+'Driver for routine TRAPZD
+CLS
+NMAX = 14
+PIO2 = 1.5707963#
+A = 0!
+B = PIO2
+PRINT "Integral of FUNC with 2^(n-1) points"
+PRINT "Actual value of integral is  ";
+PRINT USING "#.######"; FINT(B) - FINT(A)
+PRINT "     n        Approx. Integral"
+FOR I = 1 TO NMAX
+  CALL TRAPZD(DUM, A, B, S, I)
+  PRINT USING "######"; I;
+  PRINT USING "#############.######"; S
+NEXT I
+END
+
+FUNCTION FINT (X)
+FINT = 4! * X * (X ^ 2 - 7!) * SIN(X) - (X ^ 4 - 14! * X ^ 2 + 28!) * COS(X)
+END FUNCTION
+
+FUNCTION FUNC (X)
+FUNC = X ^ 2 * (X ^ 2 - 2!) * SIN(X)
+END FUNCTION
+

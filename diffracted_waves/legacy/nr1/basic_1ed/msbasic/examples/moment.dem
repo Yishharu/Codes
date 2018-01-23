@@ -1,0 +1,38 @@
+DECLARE SUB MOMENT (DATQ!(), N!, AVE!, ADEV!, SDEV!, VAR!, SKEW!, CURT!)
+
+'PROGRAM D13R1
+'Driver for routine MOMENT
+CLS
+PI = 3.14159265#
+NPTS = 10000
+NBIN = 100
+NDAT = NPTS + NBIN
+DIM DATQ(NDAT)
+I = 1
+FOR J = 1 TO NBIN
+  X = PI * J / NBIN
+  NLIM = CINT(SIN(X) * PI / 2! * NPTS / NBIN)
+  FOR K = 1 TO NLIM
+    DATQ(I) = X
+    I = I + 1
+  NEXT K
+NEXT J
+PRINT "Moments of a sinusoidal distribution"
+PRINT
+CALL MOMENT(DATQ(), I - 1, AVE, ADEV, SDEV, VAR, SKEW, CURT)
+PRINT "                           Calculated    Expected"
+PRINT
+PRINT "Mean :                  ";
+PRINT USING "#######.####"; AVE; PI / 2!
+PRINT "Average Deviation :     ";
+PRINT USING "#######.####"; ADEV; .570796
+PRINT "Standard Deviation :    ";
+PRINT USING "#######.####"; SDEV; .683667
+PRINT "Variance :              ";
+PRINT USING "#######.####"; VAR; .467401
+PRINT "Skewness :              ";
+PRINT USING "#######.####"; SKEW; 0!
+PRINT "Kurtosis :              ";
+PRINT USING "#######.####"; CURT; -.806249
+END
+

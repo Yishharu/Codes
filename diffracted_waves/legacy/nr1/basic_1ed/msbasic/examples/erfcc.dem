@@ -1,0 +1,25 @@
+DECLARE FUNCTION ERFCC! (X!)
+
+'PROGRAM D6R12
+'Driver for routine ERFCC
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "Error Function"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT "Complementary error function"
+PRINT "   X      Actual     ERFCC(X)"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  X = VAL(MID$(DUM$, 1, 6))
+  VALUE = VAL(MID$(DUM$, 7))
+  VALUE = 1! - VALUE
+  PRINT USING "##.##"; X;
+  PRINT USING "####.#######"; VALUE;
+  PRINT USING "####.#######"; ERFCC(X)
+NEXT I
+CLOSE #1
+END
+

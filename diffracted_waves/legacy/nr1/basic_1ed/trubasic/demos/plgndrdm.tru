@@ -1,0 +1,38 @@
+PROGRAM D6r27
+
+! Driver for routine plgndr
+
+LIBRARY "plgndr"
+DECLARE FUNCTION plgndr
+
+CLEAR
+OPEN #1: name "fncval.dat", access input
+DO
+   LINE INPUT #1: text$
+LOOP while text$ <> "Legendre Polynomials"
+
+LINE INPUT #1: nval$
+LET nval = val(nval$[1:3])
+PRINT text$
+PRINT "   n   m          x              Actual        plgndr(n,m,x)"
+FOR i = 1 to nval
+    LINE INPUT #1: dum$
+    LET n = val(dum$[1:6])
+    LET m = val(dum$[7:12])
+    LET x = val(dum$[13:24])
+    LET value = val(dum$[25:1000])
+    LET fac = 1
+    IF m > 0 then
+       FOR j = n - m + 1 to n + m
+           LET fac = fac * j
+       NEXT j
+    END IF
+    LET fac = 2 * fac / (2 * n + 1)
+    LET value = value * sqr(fac)
+    PRINT using "####": n, m;
+    PRINT "     ";
+    PRINT using "     #.######^^^^": x, value, plgndr(n, m, x)
+NEXT i
+CLOSE #1
+
+END

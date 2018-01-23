@@ -1,0 +1,26 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE FUNCTION FINT! (X!)
+DECLARE SUB QTRAP (DUM!, A!, B!, S!)
+
+'PROGRAM D4R2
+'Driver for routine QTRAP
+CLS
+PIO2 = 1.5707963#
+A = 0!
+B = PIO2
+PRINT "Integral of FUNC computed with QTRAP"
+PRINT "Actual value of integral is  ";
+PRINT USING "#.######"; FINT(B) - FINT(A)
+CALL QTRAP(DUM, A, B, S)
+PRINT "Result from routine QTRAP is  ";
+PRINT USING "#.######"; S
+END
+
+FUNCTION FINT (X)
+FINT = 4! * X * (X ^ 2 - 7!) * SIN(X) - (X ^ 4 - 14! * X ^ 2 + 28!) * COS(X)
+END FUNCTION
+
+FUNCTION FUNC (X)
+FUNC = X ^ 2 * (X ^ 2 - 2!) * SIN(X)
+END FUNCTION
+

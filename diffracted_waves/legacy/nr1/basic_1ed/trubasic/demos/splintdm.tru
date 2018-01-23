@@ -1,0 +1,58 @@
+PROGRAM D3r4
+
+! Driver for routine splint, which calls spline
+
+LIBRARY "splint", "spline"
+
+LET np = 10
+DIM xa(0), ya(0), y2(0)
+MAT redim xa(np), ya(np), y2(np)
+
+CLEAR
+FOR nfunc = 1 to 2
+    IF nfunc = 1 then
+       PRINT "Sine function from 0 to pi"
+       FOR i = 1 to np
+           LET xa(i) = i * pi / np
+           LET ya(i) = sin(xa(i))
+       NEXT i
+       LET yp1 = cos(xa(1))
+       LET ypn = cos(xa(np))
+    ELSEIF nfunc = 2 then
+       PRINT "Exponential function from 0 to 1"
+       FOR i = 1 to np
+           LET xa(i) = 1 * i / np
+           LET ya(i) = exp(xa(i))
+       NEXT i
+       LET yp1 = exp(xa(1))
+       LET ypn = exp(xa(np))
+    ELSE
+       EXIT FOR
+    END IF
+
+    ! Call spline to get second derivatives
+
+    CALL spline (xa(), ya(), np, yp1, ypn, y2())
+
+    ! Call splint for interpolations
+
+    PRINT "        x         f(x)    interpolation"
+    FOR i = 1 to 10
+        IF nfunc = 1 then
+           LET x = (-.05 + i / 10) * pi
+           LET f = sin(x)
+        ELSEIF nfunc = 2 then
+           LET x = -.05 + i / 10
+           LET f = exp(x)
+        END IF
+
+        CALL splint(xa(), ya(), y2(), np, x, y)
+
+        PRINT using "----#.######": x, f, y
+    NEXT i
+    PRINT "***********************************"
+    PRINT "Press Enter to continue ...";
+    LINE INPUT dum$
+NEXT nfunc
+
+END

@@ -1,0 +1,19 @@
+DEFINITION MODULE TRED2M;
+
+   (* EXPORT QUALIFIED TRED2; *)
+
+   FROM NRVect IMPORT Vector;
+   FROM NRMatr IMPORT Matrix;
+
+   PROCEDURE TRED2(A: Matrix; DD, E: Vector); 
+   (*
+     Householder reduction of a real, symmetric, matrix A[n, n].  On output,
+     A is replaced by the orthogonal matrix Q effecting the transformation.  
+     D[n] returns the diagonal elements of the tridiagonal matrix, and E[n] 
+     the off-diagonal elements, with E[0]=0.  Several statements, as noted in 
+     comments, can be omitted if only eigenvalues are to be found, in which case 
+     A contains no useful information on output. Otherwise they are to be 
+     included.
+   *)
+
+END TRED2M.

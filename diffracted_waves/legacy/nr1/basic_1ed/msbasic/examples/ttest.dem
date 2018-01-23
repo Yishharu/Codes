@@ -1,0 +1,31 @@
+DECLARE SUB TTEST (DATA1!(), N1!, DATA2!(), N2!, T!, PROB!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D13R4
+'Driver for routine TTEST
+CLS
+NPTS = 1024
+MPTS = 512
+EPS = .02
+NSHFT = 10
+DIM DATA1(NPTS), DATA2(MPTS)
+'Generate Gaussian distributed data
+IDUM& = -5
+FOR I = 1 TO NPTS
+  DATA1(I) = GASDEV(IDUM&)
+NEXT I
+IDUM& = -11
+FOR I = 1 TO MPTS
+  DATA2(I) = INT(NSHFT / 2!) * EPS + GASDEV(IDUM&)
+NEXT I
+PRINT "        Shift         T      Probability"
+FOR I = 1 TO NSHFT + 1
+  CALL TTEST(DATA1(), NPTS, DATA2(), MPTS, T, PROB)
+  SHIFT = (I - 1) * EPS
+  PRINT USING "#########.##"; SHIFT; T; PROB
+  FOR J = 1 TO NPTS
+    DATA1(J) = DATA1(J) + EPS
+  NEXT J
+NEXT I
+END
+

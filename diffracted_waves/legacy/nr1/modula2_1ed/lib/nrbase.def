@@ -1,0 +1,12 @@
+DEFINITION MODULE NRBase;
+
+(* EXPORT QUALIFIED Equal; *)
+
+   PROCEDURE Equal(line, text: ARRAY OF CHAR): BOOLEAN;
+  
+	   (*
+	    * Returns TRUE, if the input strings line and text are equal,
+	    * otherwise returns FALSE.
+	    *)
+
+END NRBase.

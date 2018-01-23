@@ -1,0 +1,25 @@
+DECLARE SUB ANNEAL (X!(), Y!(), IORDER!(), NCITY!)
+DECLARE FUNCTION RAN3! (IDUM&)
+
+'PROGRAM D10R13
+CLS
+NCITY = 10
+DIM X(NCITY), Y(NCITY), IORDER(NCITY)
+'Create points of sale
+IDUM& = -111
+FOR I = 1 TO NCITY
+  X(I) = RAN3(IDUM&)
+  Y(I) = RAN3(IDUM&)
+  IORDER(I) = I
+NEXT I
+CALL ANNEAL(X(), Y(), IORDER(), NCITY)
+PRINT "*** System Frozen ***"
+PRINT "Final path:"
+PRINT " city      x         y"
+FOR I = 1 TO NCITY
+  II = IORDER(I)
+  PRINT USING "####"; II;
+  PRINT USING "#####.####"; X(II); Y(II)
+NEXT I
+END
+

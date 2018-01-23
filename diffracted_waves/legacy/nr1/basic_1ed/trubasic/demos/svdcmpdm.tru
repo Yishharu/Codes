@@ -1,0 +1,95 @@
+PROGRAM D2r9
+
+! Driver for routine svdcmp
+
+LIBRARY "svdcmp"
+
+LET np = 20
+DIM a(0,0), u(0,0), w(0), v(0,0)
+MAT redim a(np, np), u(np, np), w(np), v(np, np)
+
+CLEAR
+OPEN #1: name "matrx3.dat", access input
+DO
+   LINE INPUT #1: dum$
+   IF dum$ = "END" then EXIT DO
+   LINE INPUT #1: dum$
+   LINE INPUT #1: dum$
+   LET m = val(dum$[1:1])
+   LET n = val(dum$[3:3])
+   LINE INPUT #1: dum$
+
+   ! Copy original matrix into u
+
+   FOR k = 1 to m
+       LINE INPUT #1: dum$
+       FOR l = 1 to n
+           LET a(k, l) = val(dum$[4*l-3:4*l])
+           LET u(k, l) = a(k, l)
+       NEXT l
+   NEXT k
+   IF n > m then
+      FOR k = m + 1 to n
+          FOR l = 1 to n
+              LET a(k, l) = 0
+              LET u(k, l) = 0
+          NEXT l
+      NEXT k
+      LET m = n
+   END IF
+
+   ! Perform decomposition
+
+   CALL svdcmp (u(,), m, n, np, np, w(), v(,))
+
+   ! Print results
+
+   PRINT "Decomposition matrices:"
+   PRINT "Matrix u"
+   FOR k = 1 to m
+       FOR l = 1 to n
+           PRINT using "----#.######": u(k, l);
+       NEXT l
+       PRINT
+   NEXT k
+   PRINT "Diagonal of matrix w"
+   FOR k = 1 to n
+       PRINT using "----#.######": w(k);
+   NEXT k
+   PRINT
+   PRINT "Matrix v-transpose"
+   FOR k = 1 to n
+       FOR l = 1 to n
+           PRINT using "----#.######": v(l, k);
+       NEXT l
+       PRINT
+   NEXT k
+   PRINT "Check product against original matrix:"
+   PRINT "Original matrix:"
+   FOR k = 1 to m
+       FOR l = 1 to n
+           PRINT using "----#.######": a(k, l);
+       NEXT l
+       PRINT
+   NEXT k
+   PRINT "Product u*w*(v-transpose):"
+   FOR k = 1 to m
+       FOR l = 1 to n
+           LET a(k, l) = 0
+           FOR j = 1 to n
+               LET a(k, l) = a(k, l) + u(k, j) * w(j) * v(l, j)
+           NEXT j
+       NEXT l
+       FOR l = 1 to n
+           PRINT using "----#.######": a(k, l);
+       NEXT l
+       PRINT
+   NEXT k
+   PRINT "***********************************"
+   PRINT "Press Enter for next problem ..."
+   LINE INPUT dum$
+LOOP
+
+CLOSE #1
+
+END

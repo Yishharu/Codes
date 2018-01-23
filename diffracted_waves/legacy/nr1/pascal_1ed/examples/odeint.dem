@@ -1,0 +1,64 @@
+PROGRAM d15r4(input,output);
+(* driver for ODEINT *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 4;
+TYPE
+   RealArrayNVAR = ARRAY [1..n] OF real;
+   RealArray200 = ARRAY [1..200] OF real;
+   RealArrayNby200 = ARRAY [1..n,1..200] OF real;
+VAR
+   OdeintDxsav,eps,h1,hmin,x1,x2: real;
+   i,OdeintKmax,OdeintKount,nbad,nok: integer;
+   ystart: RealArrayNVAR;
+   OdeintXp: RealArray200;
+   OdeintYp: RealArrayNby200;
+
+(*$I BESSJ0.PAS *)
+
+(*$I BESSJ1.PAS *)
+
+(*$I BESSJ.PAS *)
+
+PROCEDURE derivs(x: real; VAR y,dydx: RealArrayNVAR);
+(* Programs using routine DERIVS must define the type
+TYPE
+   RealArrayNVAR = ARRAY [1..4] OF real;
+in the calling routine. *)
+BEGIN
+   dydx[1] := -y[2];
+   dydx[2] := y[1]-(1.0/x)*y[2];
+   dydx[3] := y[2]-(2.0/x)*y[3];
+   dydx[4] := y[3]-(3.0/x)*y[4]
+END;
+
+(*$I RK4.PAS *)
+
+(*$I RKQC.PAS *)
+
+(*$I ODEINT.PAS *)
+
+BEGIN
+   x1 := 1.0;
+   x2 := 10.0;
+   ystart[1] := bessj0(x1);
+   ystart[2] := bessj1(x1);
+   ystart[3] := bessj(2,x1);
+   ystart[4] := bessj(3,x1);
+   eps := 1.0e-4;
+   h1 := 0.1;
+   hmin := 0.0;
+   OdeintKmax := 100;
+   OdeintDxsav := (x2-x1)/20.0;
+   odeint(ystart,n,x1,x2,eps,h1,hmin,nok,nbad);
+   writeln;
+   writeln('successful steps:',' ':13,nok:3);
+   writeln('bad steps:',' ':20,nbad:3);
+   writeln('stored intermediate values:','   ',OdeintKount:3);
+   writeln;
+   writeln('x':8,'integral':18,'bessj(3,x)':15);
+   FOR i := 1 TO OdeintKount DO
+      writeln(OdeintXp[i]:10:4,OdeintYp[4,i]:16:6,bessj(3,OdeintXp[i]):14:6)
+END.

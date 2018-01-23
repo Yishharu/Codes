@@ -1,0 +1,48 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE SUB MNBRAK (AX!, BX!, CX!, FA!, FB!, FC!, DUM!)
+DECLARE FUNCTION GOLDEN! (AX!, BX!, CX!, DUM!, TOL!, XMIN!)
+DECLARE FUNCTION BESSJ0! (X!)
+DECLARE FUNCTION BESSJ1! (X!)
+
+'PROGRAM D10R2
+'Driver for routine GOLDEN
+CLS
+TOL = .000001
+EQL = .001
+DIM AMIN(20)
+NMIN = 0
+PRINT "Minima of the function BESSJ0"
+PRINT
+PRINT "    Min. #       X       BESSJ0(X)    BESSJ1(X)"
+PRINT
+FOR I = 1 TO 100
+  AX = I
+  BX = I + 1!
+  CALL MNBRAK(AX, BX, CX, FA, FB, FC, DUM)
+  G = GOLDEN(AX, BX, CX, DUM, TOL, XMIN)
+  IF NMIN = 0 THEN
+    AMIN(1) = XMIN
+    NMIN = 1
+    PRINT USING "#######"; NMIN;
+    PRINT "   ";
+    PRINT USING "#####.######"; XMIN; BESSJ0(XMIN); BESSJ1(XMIN)
+  ELSE
+    IFLAG = 0
+    FOR J = 1 TO NMIN
+      IF ABS(XMIN - AMIN(J)) <= EQL * XMIN THEN IFLAG = 1
+    NEXT J
+    IF IFLAG = 0 THEN
+      NMIN = NMIN + 1
+      AMIN(NMIN) = XMIN
+      PRINT USING "#######"; NMIN;
+      PRINT "   ";
+      PRINT USING "#####.######"; XMIN; BESSJ0(XMIN); BESSJ1(XMIN)
+    END IF
+  END IF
+NEXT I
+END
+
+FUNCTION FUNC (X)
+FUNC = BESSJ0(X)
+END FUNCTION
+

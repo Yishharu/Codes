@@ -1,0 +1,70 @@
+EXTERNAL
+
+SUB mnbrak (ax, bx, cx, fa, fb, fc, dum)
+
+    DECLARE FUNCTION func   ! Supplied by the user
+
+    LET gold = 1.618034
+    LET glimit = 100
+    LET tiny = 1e-20
+
+    LET fa = func(ax)
+    LET fb = func(bx)
+    IF fb > fa then
+       LET dum = ax
+       LET ax = bx
+       LET bx = dum
+       LET dum = fb
+       LET fb = fa
+       LET fa = dum
+    END IF
+    LET cx = bx + gold * (bx - ax)
+    LET fc = func(cx)
+    DO while fb > fc
+       LET r = (bx - ax) * (fb - fc)
+       LET q = (bx - cx) * (fb - fa)
+       LET dum = q - r
+       IF abs(dum) < tiny then LET dum = tiny
+       LET u = bx - ((bx - cx) * q - (bx - ax) * r) / (2 * dum)
+       LET ulim = bx + glimit * (cx - bx)
+       IF (bx - u) * (u - cx) > 0 then
+          LET fu = func(u)
+          IF fu < fc then
+             LET ax = bx
+             LET fa = fb
+             LET bx = u
+             LET fb = fu
+             EXIT SUB
+          ELSEIF fu > fb then
+             LET cx = u
+             LET fc = fu
+             EXIT SUB
+          END IF
+          LET u = cx + gold * (cx - bx)
+          LET fu = func(u)
+       ELSEIF (cx - u) * (u - ulim) > 0 then
+          LET fu = func(u)
+          IF fu < fc then
+             LET bx = cx
+             LET cx = u
+             LET u = cx + gold * (cx - bx)
+             LET fb = fc
+             LET fc = fu
+             LET fu = func(u)
+          END IF
+       ELSEIF (u - ulim) * (ulim - cx) >= 0 then
+          LET u = ulim
+          LET fu = func(u)
+       ELSE
+          LET u = cx + gold * (cx - bx)
+          LET fu = func(u)
+       END IF
+       LET ax = bx
+       LET bx = cx
+       LET cx = u
+       LET fa = fb
+       LET fb = fc
+       LET fc = fu
+    LOOP
+
+END SUB

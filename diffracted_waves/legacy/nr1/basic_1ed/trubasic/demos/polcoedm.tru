@@ -1,0 +1,56 @@
+PROGRAM D3r7
+
+! Driver for routine polcoe
+
+LIBRARY "polcoe"
+
+LET np = 5
+DIM xa(0), ya(0), coeff(0)
+MAT redim xa(np), ya(np), coeff(np)
+
+CLEAR
+FOR nfunc = 1 to 2
+    IF nfunc = 1 then
+       PRINT "Sine function from 0 to pi"
+       FOR i = 1 to np
+           LET xa(i) = i * pi / np
+           LET ya(i) = sin(xa(i))
+       NEXT i
+    ELSEIF nfunc = 2 then
+       PRINT "Exponential function from 0 to 1"
+       FOR i = 1 to np
+           LET xa(i) = 1 * i / np
+           LET ya(i) = exp(xa(i))
+       NEXT i
+    ELSE
+       EXIT FOR
+    END IF
+
+    CALL polcoe (xa(), ya(), np, coeff())
+
+    PRINT "    Coefficients"
+    FOR i = 1 to np
+        PRINT using "----#.######": coeff(i);
+    NEXT i
+    PRINT
+    PRINT "        x         f(x)     polynomial"
+    FOR i = 1 to 10
+        IF nfunc = 1 then
+           LET x = (-.05 + i / 10) * pi
+           LET f = sin(x)
+        ELSEIF nfunc = 2 then
+           LET x = -.05 + i / 10
+           LET f = exp(x)
+        END IF
+        LET sum = coeff(np)
+        FOR j = np - 1 to 1 step -1
+            LET sum = coeff(j) + sum * x
+        NEXT j
+        PRINT using "----#.######": x, f, sum
+    NEXT i
+    PRINT "***********************************"
+    PRINT "Press Enter to continue ..."
+    LINE INPUT dum$
+NEXT nfunc
+
+END

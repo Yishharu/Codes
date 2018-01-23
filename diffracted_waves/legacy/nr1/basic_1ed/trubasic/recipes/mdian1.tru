@@ -1,0 +1,16 @@
+EXTERNAL
+
+SUB mdian1 (x(), n, xmed)
+
+    LIBRARY "sort"
+
+    CALL sort (n, x())
+
+    LET n2 = int(n / 2)
+    IF 2 * n2 = n then
+       LET xmed = .5 * (x(n2) + x(n2 + 1))
+    ELSE
+       LET xmed = x(n2 + 1)
+    END IF
+
+END SUB

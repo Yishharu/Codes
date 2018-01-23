@@ -1,0 +1,59 @@
+EXTERNAL
+
+FUNCTION rtsafe (dum, x1, x2, xacc)
+
+    ! The subroutine funcd is supplied by the user
+
+    LET maxit = 100
+
+    CALL funcd (x1, fl, df)
+    CALL funcd (x2, fh, df)
+
+    IF fl * fh >= 0 then
+       PRINT "Root must be bracketed"
+       EXIT FUNCTION
+    END IF
+
+    IF fl < 0 then
+       LET xl = x1
+       LET xh = x2
+    ELSE
+       LET xh = x1
+       LET xl = x2
+    END IF
+    LET trtsafe = .5 * (x1 + x2)
+    LET dxold = abs(x2 - x1)
+    LET dx = dxold
+
+    CALL funcd (trtsafe, f, df)
+
+    FOR j = 1 to maxit
+        LET dum = ((trtsafe - xh) * df - f) * ((trtsafe - xl) * df - f)
+        IF dum >= 0 or abs(2 * f) > abs(dxold * df) then
+           LET dxold = dx
+           LET dx = .5 * (xh - xl)
+           LET trtsafe = xl + dx
+           LET rtsafe = trtsafe
+           IF xl = trtsafe then EXIT FUNCTION
+        ELSE
+           LET dxold = dx
+           LET dx = f / df
+           LET temp = trtsafe
+           LET trtsafe = trtsafe - dx
+           LET rtsafe = trtsafe
+           IF temp = trtsafe then EXIT FUNCTION
+        END IF
+        LET rtsafe = trtsafe
+        IF abs(dx) < xacc then EXIT FUNCTION
+
+        CALL funcd (trtsafe, f, df)
+
+        IF f < 0 then
+           LET xl = trtsafe
+        ELSE
+           LET xh = trtsafe
+        END IF
+    NEXT j
+    PRINT "rtsafe exceeding maximum iterations"
+
+END FUNCTION

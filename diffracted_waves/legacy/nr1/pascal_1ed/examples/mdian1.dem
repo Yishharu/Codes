@@ -1,0 +1,43 @@
+PROGRAM d13r1(input,output);
+(* driver for routine MDIAN1 *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npts = 50;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayNP = ARRAY [1..npts] OF real;
+VAR
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   GasdevIset: integer;
+   GasdevGset: real;
+   i,j,idum: integer;
+   xmed: real;
+   data: RealArrayNP;
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+(*$I SORT.PAS *)
+
+(*$I MDIAN1.PAS *)
+
+BEGIN
+   GasdevIset := 0;
+   idum := -5;
+   FOR i := 1 TO npts DO data[i] := gasdev(idum);
+   mdian1(data,npts,xmed);
+   writeln('Data drawn from a gaussian distribution');
+   writeln('with zero mean and unit variance');
+   writeln;
+   writeln('Median of data set is',xmed:9:6);
+   writeln;
+   writeln('Sorted data');
+   FOR i := 1 TO npts DIV 5 DO BEGIN
+      FOR j := 1 TO 5 DO write(data[5*i-5+j]:12:6);
+      writeln
+   END
+END.

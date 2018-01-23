@@ -1,0 +1,36 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE SUB SCRSHO (FUNC!)
+DECLARE FUNCTION DF1DIM! (X!)
+COMMON NCOM, PCOM(), XICOM()
+
+'PROGRAM D10R10    
+'Driver for routine DF1DIM
+CLS
+NDIM = 3
+DIM P(NDIM), XI(NDIM), PCOM(50), XICOM(50)
+FOR I = 1 TO NDIM
+  READ P(I)
+NEXT I
+DATA 0.0,0.0,0.0
+NCOM = NDIM
+PRINT "Enter vector direction along which to"
+PRINT "plot the function. Minimum is in the"
+PRINT "direction 1.0,1.0,1.0 - Enter X,Y,Z:"
+INPUT XI(1), XI(2), XI(3)
+FOR J = 1 TO NDIM
+  PCOM(J) = P(J)
+  XICOM(J) = XI(J)
+NEXT J
+CALL SCRSHO(DUM)
+END
+
+SUB DFUNC (X(), DF())
+FOR I = 1 TO 3
+  DF(I) = (X(I) - 1!) ^ 2
+NEXT I
+END SUB
+
+FUNCTION FUNC (X)
+FUNC = DF1DIM(X)
+END FUNCTION
+

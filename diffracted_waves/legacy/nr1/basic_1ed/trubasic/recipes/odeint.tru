@@ -1,0 +1,86 @@
+MODULE odeint
+
+    ! These variables are used in odeint and shared with odeintdm.
+
+    PUBLIC kmax, kount, dxsav, xp(0), yp(0,0)    ! COMMON
+
+    SHARE maxstp, two, zero, tiny
+
+    LET maxstp = 10000
+    LET two = 2
+    LET zero = 0
+    LET tiny = 1e-30
+
+    SUB odeint (ystart(), nvar, x1, x2, eps, h1, hmin, nok, nbad, dum1, dum2)
+
+        LIBRARY "rkqc"
+
+        ! The subroutine derivs is defined in the main program
+
+        DIM yscal(0), y(0), dydx(0)
+        MAT redim yscal(nvar), y(nvar), dydx(nvar)
+
+        LET x = x1
+        LET h = abs(h1) * sgn(x2 - x1)
+        LET nok = 0
+        LET nbad = 0
+        LET kount = 0
+        FOR i = 1 to nvar
+            LET y(i) = ystart(i)
+        NEXT i
+        IF kmax > 0 then LET xsav = x - dxsav * two
+
+        FOR nstp = 1 to maxstp
+
+            CALL derivs (x, y(), dydx())
+
+            FOR i = 1 to nvar
+                LET yscal(i) = abs(y(i)) + abs(h * dydx(i)) + tiny
+            NEXT i
+            IF kmax > 0 then
+               IF abs(x - xsav) > abs(dxsav) then
+                  IF kount < kmax - 1 then
+                     LET kount = kount + 1
+                     LET xp(kount) = x
+                     FOR i = 1 to nvar
+                         LET yp(i, kount) = y(i)
+                     NEXT i
+                     LET xsav = x
+                  END IF
+               END IF
+            END IF
+            IF (x + h - x2) * (x + h - x1) > zero then LET h = x2 - x
+
+            CALL rkqc (y(), dydx(), nvar, x, h, eps, yscal(), hdid, hnext, dum)
+
+            IF hdid = h then
+               LET nok = nok + 1
+            ELSE
+               LET nbad = nbad + 1
+            END IF
+            IF (x - x2) * (x2 - x1) >= zero then
+               FOR i = 1 to nvar
+                   LET ystart(i) = y(i)
+               NEXT i
+               IF kmax <> 0 then
+                  LET kount = kount + 1
+                  LET xp(kount) = x
+                  FOR i = 1 to nvar
+                      LET yp(i, kount) = y(i)
+                  NEXT i
+               END IF
+               EXIT SUB           ! Normal exit
+
+            END IF
+            IF abs(hnext) < hmin then
+               PRINT "Stepsize smaller than minimum."
+               EXIT SUB
+            END IF
+
+            LET h = hnext
+        NEXT nstp
+        PRINT "Too many steps."
+
+    END SUB
+
+END MODULE

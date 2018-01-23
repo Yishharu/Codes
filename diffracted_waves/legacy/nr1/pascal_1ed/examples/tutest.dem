@@ -1,0 +1,58 @@
+PROGRAM d13r5(input,output);
+(* driver for routine TUTEST *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npts = 3000;
+   mpts = 600;
+   eps = 0.03;
+   var1 = 1.0;
+   var2 = 4.0;
+   nshft = 10;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayN12 = ARRAY [1..npts] OF real;   (* max of npts and mpts *)
+   RealArrayNP = RealArrayN12;
+VAR
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   GasdevIset: integer;
+   GasdevGset: real;
+   fctr1,fctr2,prob,t: real;
+   i,idum,j: integer;
+   data1,data2: RealArrayN12;
+
+(*$I AVEVAR.PAS *)
+
+(*$I GAMMLN.PAS *)
+
+(*$I BETACF.PAS *)
+
+(*$I BETAI.PAS *)
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+(*$I TUTEST.PAS *)
+
+BEGIN
+(* generate two gaussian distributions of different variance *)
+   GasdevIset := 0;
+   idum := -1773;
+   fctr1 := sqrt(var1);
+   FOR i := 1 TO npts DO data1[i] := fctr1*gasdev(idum);
+   fctr2 := sqrt(var2);
+   FOR i := 1 TO mpts DO data2[i] := (nshft DIV 2)*eps+fctr2*gasdev(idum);
+   writeln;
+   writeln('Distribution #1 : variance = ',var1:6:2);
+   writeln('Distribution #2 : variance = ',var2:6:2);
+   writeln;
+   writeln('shift':7,'t':8,'probability':16);
+   FOR i := 1 TO nshft+1 DO BEGIN
+      tutest(data1,npts,data2,mpts,t,prob);
+      writeln((i-1)*eps:6:2,t:10:2,prob:11:2);
+      FOR j := 1 TO npts DO data1[j] := data1[j]+eps
+   END
+END.

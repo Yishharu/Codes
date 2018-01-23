@@ -1,0 +1,39 @@
+PROGRAM d13r4(input,output);
+(* driver for routine AVEVAR *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npts = 1000;
+   eps = 0.1;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayNP = ARRAY [1..npts] OF real;
+VAR
+   GasdevIset: integer;
+   GasdevGset: real;
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   i,idum,j: integer;
+   ave,shift,vrnce: real;
+   data: RealArrayNP;
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+(*$I AVEVAR.PAS *)
+
+BEGIN
+(* generate gaussian distributed data *)
+   GasdevIset := 0;
+   idum := -5;
+   writeln('shift':9,'average':11,'variance':12);
+   FOR i := 1 TO 11 DO BEGIN
+      shift := (i-1)*eps;
+      FOR j := 1 TO npts DO
+         data[j] := shift+i*gasdev(idum);
+      avevar(data,npts,ave,vrnce);
+      writeln(shift:8:2,ave:11:2,vrnce:12:2)
+   END
+END.

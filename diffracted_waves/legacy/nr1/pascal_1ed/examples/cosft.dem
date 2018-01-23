@@ -1,0 +1,64 @@
+PROGRAM d12r5(input,output);
+(* driver for routine COSFT *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+CONST
+   eps = 1.0e-3;
+   np = 16;
+   width = 30.0;
+   pi = 3.1415926;
+TYPE
+   RealArrayNN2 = ARRAY [1..np] OF real;
+   RealArrayNP = RealArrayNN2;
+VAR
+   big,per,scal,small: real;
+   i,jj,j,nlim: integer;
+   data: RealArrayNN2;
+
+(*$I FOUR1.PAS *)
+
+(*$I REALFT.PAS *)
+
+(*$I COSFT.PAS *)
+
+BEGIN
+   WHILE true DO BEGIN
+      writeln('period of cosine in channels (2-',np:2,')');
+      readln(per);
+      IF per <= 0.0 THEN GOTO 99;
+      FOR i := 1 TO np DO data[i] := cos(2.0*pi*(i-1)/per);
+      cosft(data,np,+1);
+      big := -1.0e10;
+      small := 1.0e10;
+      FOR i := 1 TO np DO BEGIN
+         IF data[i] < small THEN small := data[i];
+         IF data[i] > big THEN big := data[i]
+      END;
+      scal := width/(big-small);
+      FOR i := 1 TO np DO BEGIN
+         nlim := round(scal*(data[i]-small)+eps);
+         write(i:4,' ');
+         FOR j := 1 TO nlim+1 DO write('*');
+         writeln
+      END;
+      writeln('press RETURN to continue ...');
+      readln;
+      cosft(data,np,-1);
+      big := -1.0e10;
+      small := 1.0e10;
+      FOR i := 1 TO np DO BEGIN
+         IF data[i] < small THEN small := data[i];
+         IF data[i] > big THEN big := data[i]
+      END;
+      scal := width/(big-small);
+      FOR i := 1 TO np DO BEGIN
+         nlim := round(scal*(data[i]-small)+eps);
+         write(i:4,' ');
+         FOR j := 1 TO nlim+1 DO write('*');
+         writeln
+      END
+   END;
+99:
+END.

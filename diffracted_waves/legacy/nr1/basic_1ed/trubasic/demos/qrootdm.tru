@@ -1,0 +1,47 @@
+PROGRAM D9r12
+
+! Driver for routine qroot
+
+LIBRARY "qroot"
+
+LET n = 7
+LET ntry = 10
+DIM p(0), b(0), c(0)
+MAT redim p(n), b(ntry), c(ntry)
+
+CLEAR
+LET eps = .000001
+LET tiny = .00001
+MAT READ p
+DATA 10.0, -18.0, 25.0, -24.0, 16.0, -6.0, 1.0
+
+PRINT "p(x) = x^6 - 6x^5 + 16x^4 - 24x^3 + 25x^2 - 18x + 10"
+PRINT "Quadratic factors x^2 + bx + c"
+PRINT
+PRINT "Factor       b           c"
+PRINT
+LET nroot = 0
+FOR i = 1 to ntry
+    LET c(i) = .5 * i
+    LET b(i) = -.5 * i
+
+    CALL qroot (p(), n, b(i), c(i), eps)
+
+    IF nroot = 0 then
+       PRINT using "###": nroot;
+       PRINT using "------#.######": b(i), c(i)
+       LET nroot = 1
+    ELSE
+       LET nflag = 0
+       FOR j = 1 to nroot
+           IF abs(b(i) - b(j)) < tiny and abs(c(i) - c(j)) < tiny then LET nflag = 1
+       NEXT j
+       IF nflag = 0 then
+          PRINT using "###": nroot;
+          PRINT using "------#.######": b(i), c(i)
+          LET nroot = nroot + 1
+       END IF
+    END IF
+NEXT i
+
+END

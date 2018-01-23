@@ -1,0 +1,55 @@
+PROGRAM d15r1(input,output);
+(* driver for routine RK4 *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 4;
+TYPE
+   RealArrayNVAR = ARRAY [1..n] OF real;
+VAR
+   h,x: real;
+   i,j: integer;
+   y,dydx,yout: RealArrayNVAR;
+
+(*$I BESSJ0.PAS *)
+
+(*$I BESSJ1.PAS *)
+
+(*$I BESSJ.PAS *)
+
+PROCEDURE derivs(x: real; VAR y,dydx: RealArrayNVAR);
+BEGIN
+   dydx[1] := -y[2];
+   dydx[2] := y[1]-(1.0/x)*y[2];
+   dydx[3] := y[2]-(2.0/x)*y[3];
+   dydx[4] := y[3]-(3.0/x)*y[4]
+END;
+
+(*$I RK4.PAS *)
+
+BEGIN
+   x := 1.0;
+   y[1] := bessj0(x);
+   y[2] := bessj1(x);
+   y[3] := bessj(2,x);
+   y[4] := bessj(3,x);
+   dydx[1] := -y[2];
+   dydx[2] := y[1]-y[2];
+   dydx[3] := y[2]-2.0*y[3];
+   dydx[4] := y[3]-3.0*y[4];
+   writeln;
+   writeln('Bessel function:':16,'j0':5,
+         'j1':12,'j3':12,'j4':12);
+   FOR i := 1 TO 5 DO BEGIN
+      h := 0.2*i;
+      rk4(y,dydx,n,x,h,yout);
+      writeln;
+      writeln('for a step size of:',h:6:2);
+      write('rk4: ':11);
+      FOR j := 1 TO 4 DO write(yout[j]:12:6);
+      writeln;
+      writeln('actual: ':11,bessj0(x+h):12:6,
+         bessj1(x+h):12:6,bessj(2,x+h):12:6,bessj(3,x+h):12:6)
+   END
+END.

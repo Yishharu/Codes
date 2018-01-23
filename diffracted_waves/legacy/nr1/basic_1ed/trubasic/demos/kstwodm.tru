@@ -1,0 +1,37 @@
+PROGRAM D13r11
+
+! Driver for routine kstwo
+
+LIBRARY "kstwo", "gasdev"
+DECLARE FUNCTION gasdev
+
+LET n1 = 2000
+LET n2 = 1000
+DIM data1(0), data2(0)
+MAT redim data1(n1), data2(n2)
+
+CLEAR
+LET eps = .1
+LET idum = -1357
+FOR j = 1 to n1
+    LET data1(j) = gasdev(idum)
+NEXT j
+PRINT "    Variance ratio      K-S statistic      Probability"
+PRINT
+LET idum = -2468
+FOR i = 1 to 11
+    LET var = 1 + (i - 1) * eps
+    LET factr = sqr(var)
+    FOR j = 1 to n2
+        LET data2(j) = factr * gasdev(idum)
+    NEXT j
+
+    CALL kstwo (data1(), n1, data2(), n2, d, prob)
+
+    PRINT using "-------#.######": var;
+    PRINT using "-----------#.######": d;
+    PRINT "          ";
+    PRINT using ".####^^^^": prob
+NEXT i
+
+END

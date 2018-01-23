@@ -1,0 +1,35 @@
+EXTERNAL
+
+SUB mnewt (ntrial, x(), n, tolx, tolf)
+
+    ! Subroutine usrfun supplied by the user
+
+    LIBRARY "ludcmp", "lubksb"
+
+    DIM alpha(0,0), beta(0), indx(0)
+    MAT redim alpha(n, n), beta(n), indx(n)
+
+    FOR k = 1 to ntrial
+
+        CALL usrfun (x(), alpha(,), beta())
+
+        LET errf = 0
+        FOR i = 1 to n
+            LET errf = errf + abs(beta(i))
+        NEXT i
+        IF errf <= tolf then EXIT SUB
+
+        CALL ludcmp (alpha(,), n, n, indx(), d)
+        CALL lubksb (alpha(,), n, n, indx(), beta())
+
+        LET errx = 0
+        FOR i = 1 to n
+            LET errx = errx + abs(beta(i))
+            LET x(i) = x(i) + beta(i)
+        NEXT i
+
+        IF errx <= tolx then EXIT SUB
+
+    NEXT k
+
+END SUB

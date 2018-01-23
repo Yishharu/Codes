@@ -1,0 +1,14 @@
+DEFINITION MODULE ZBrentM;
+
+   (* EXPORT QUALIFIED ZBrent; *)
+
+   FROM NRMath IMPORT RealFunction;
+
+   PROCEDURE ZBrent(fx: RealFunction; x1, x2, tol: REAL): REAL; 
+   (*
+     Using Brent's method, find the root of a function fx known to lie between
+     x1 and x2. The root, returned as ZBrent, will be refined until its accuracy
+     is tol.
+   *)
+
+END ZBrentM.

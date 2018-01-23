@@ -1,0 +1,30 @@
+EXTERNAL
+
+FUNCTION julday (mm, id, iyyy)
+
+    FUNCTION fint(x)      ! The Fortran INT function
+        LET fint = truncate(x,0)
+    END FUNCTION
+
+    LET igreg = 588829   ! 15 + 31*(10 + 12 + 1582)
+    IF iyyy = 0 then
+       PRINT "There is no Year Zero."
+       EXIT FUNCTION
+    END IF
+
+    IF iyyy < 0 then LET iyyy = iyyy + 1
+    IF mm > 2 then
+       LET jy = iyyy
+       LET jm = mm + 1
+    ELSE
+       LET jy = iyyy - 1
+       LET jm = mm + 13
+    END IF
+    LET jd = fint(365.25 * jy) + fint(30.6001 * jm) + id + 1720995
+    IF id + 31 * (mm + 12 * iyyy) >= igreg then
+       LET ja = fint(.01 * jy)
+       LET jd = jd + 2 - ja + fint(.25 * ja)
+    END IF
+    LET julday = jd
+
+END FUNCTION

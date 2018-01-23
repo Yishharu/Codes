@@ -1,0 +1,33 @@
+EXTERNAL
+
+SUB polcof (xa(), ya(), n, cof())
+
+    LIBRARY "polint"
+
+    DIM x(0), y(0)
+    MAT redim x(n), y(n)
+
+    FOR j = 1 to n
+        LET x(j) = xa(j)
+        LET y(j) = ya(j)
+    NEXT j
+    FOR j = 1 to n
+
+        CALL polint (x(), y(), n + 1 - j, 0, cof(j), dy)
+
+        LET xmin = 1e+38
+        LET k = 0
+        FOR i = 1 to n + 1 - j
+            IF abs(x(i)) < xmin then
+               LET xmin = abs(x(i))
+               LET k = i
+            END IF
+            IF x(i) <> 0 then LET y(i) = (y(i) - cof(j)) / x(i)
+        NEXT i
+        FOR i = k + 1 to n + 1 - j
+            LET y(i - 1) = y(i)
+            LET x(i - 1) = x(i)
+        NEXT i
+    NEXT j
+
+END SUB

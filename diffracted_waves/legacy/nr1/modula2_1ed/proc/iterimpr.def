@@ -1,0 +1,18 @@
+DEFINITION MODULE IterImpr;
+
+   (* EXPORT QUALIFIED Mprove; *)
+
+   FROM NRMatr  IMPORT Matrix;
+   FROM NRIVect IMPORT IVector;
+   FROM NRVect  IMPORT Vector;
+
+   PROCEDURE Mprove(A, ALUD: Matrix; INDX: IVector; B, X: Vector); 
+   (*
+     Improves a solution vector x[0, n-1] of the linear set of equations 
+     A x = b.  The matrix A[n, n], and the vectors B[n] and X are input.  
+     Also input is ALUD[n, n], the LU decomposition of a as returned by LUDCMP, 
+     and the vector INDX[0, n-1] also returned by that routine.  On output, 
+     only x is modified, to an improved set of values.
+   *)
+
+END IterImpr.

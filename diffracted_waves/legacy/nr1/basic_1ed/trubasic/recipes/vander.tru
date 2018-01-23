@@ -1,0 +1,38 @@
+EXTERNAL
+
+SUB vander (x(), w(), q(), n)
+
+    DIM c(0)
+    MAT redim c(n)
+
+    IF n = 1 then
+       LET w(1) = q(1)
+    ELSE
+       MAT c = zer
+       LET c(n) = -x(1)
+       FOR i = 2 to n
+           LET xx = -x(i)
+           FOR j = n + 1 - i to n - 1
+               LET c(j) = c(j) + xx * c(j + 1)
+           NEXT j
+           LET c(n) = c(n) + xx
+       NEXT i
+
+       FOR i = 1 to n
+           LET xx = x(i)
+           LET t = 1
+           LET b = 1
+           LET s = q(n)
+           LET k = n
+           FOR j = 2 to n
+               LET k1 = k - 1
+               LET b = c(k) + xx * b
+               LET s = s + q(k1) * b
+               LET t = xx * t + b
+               LET k = k1
+           NEXT j
+           LET w(i) = s / t
+       NEXT i
+    END IF
+
+END SUB

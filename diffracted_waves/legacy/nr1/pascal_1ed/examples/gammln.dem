@@ -1,0 +1,38 @@
+PROGRAM d6r1(input,output,dfile);
+(* driver for routine GAMMLN *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   pi = 3.1415926;
+TYPE
+   StrArray14 = string[14];
+VAR
+   i,nval: integer;
+   actual,calc,x,y: real;
+   txt: StrArray14;
+   dfile: text;
+
+(*$I GAMMLN.PAS *)
+
+BEGIN
+   NROpen(dfile,'fncval.dat');
+   REPEAT readln(dfile,txt) UNTIL txt = 'Gamma Function';
+   readln(dfile,nval);
+   writeln('gamma function:');
+   writeln('x':10,'actual':21,'from gammln(x)':22);
+   FOR i := 1 TO nval DO BEGIN
+      readln(dfile,x,actual);
+      IF x > 0.0 THEN BEGIN
+         IF x >= 1.0 THEN
+            calc := exp(gammln(x))
+         ELSE
+            calc := exp(gammln(x+1.0))/x
+      END ELSE BEGIN
+         y := 1.0-x;
+         calc := pi*exp(-gammln(y))/sin(pi*y)
+      END;
+      writeln(x:12:2,'       ',actual:13,'       ',calc:13)
+   END;
+   close(dfile)
+END.

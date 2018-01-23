@@ -1,0 +1,60 @@
+EXTERNAL
+
+SUB scrplo
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    LET gran = 100
+    DIM y(0:0)
+    MAT redim y(0:gran)
+
+    OPEN #1: screen 0, 1, .1, 1
+    OPEN #2: screen 0, 1, 0, .09
+    DO
+       WINDOW #2
+       CLEAR
+       PRINT "Enter x1,x2 (= to stop)";
+       INPUT x1, x2
+       IF x1 = x2 then EXIT SUB
+       LET dx = (x2 - x1) / gran
+
+       LET x = x1
+       LET ybig = 0
+       LET ysml = ybig
+       FOR i = 0 to gran
+           LET y(i) = func(x)
+           IF y(i) < ysml then LET ysml = y(i)
+           IF y(i) > ybig then LET ybig = y(i)
+           LET x = x + dx
+       NEXT i
+       IF ybig = ysml then LET ybig = ysml + 1
+       LET x0 = x1 - .2*(x2 - x1)
+       LET dy = (ybig - ysml)/20
+       LET y0 = ysml - 2*dy
+
+       WINDOW #1
+       SET WINDOW x0, x2, y0, ybig
+       CLEAR
+       ASK max cursor ycur, xcur
+       LET dxcur = (x2-x0)/xcur
+       LET dycur = (ybig-y0)/ycur
+       BOX LINES x1, x2, ysml, ybig
+       PLOT LINES: x1,0; x2,0
+       PLOT LINES: 0,ysml; 0,ybig
+       LET label$ = str$(ybig)
+       PLOT TEXT, at x1-(len(label$)+1)*dxcur, ybig-dycur: label$
+       LET label$ = str$(ysml)
+       PLOT TEXT, at x1-(len(label$)+1)*dxcur, ysml: label$
+       PLOT TEXT, at x1, ysml-dycur: str$(x1)
+       LET label$ = str$(x2)
+       PLOT TEXT, at x2-len(label$)*dxcur, ysml-dycur: label$
+
+       LET x = x1
+       FOR i = 0 to gran
+           PLOT LINES: x,y(i);
+           LET x = x + dx
+       NEXT i
+       PLOT
+    LOOP
+
+END SUB

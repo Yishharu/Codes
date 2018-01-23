@@ -1,0 +1,41 @@
+DEFINITION MODULE BraBis;
+
+(* EXPORT QUALIFIED RtBis, ZBrac, ZBrak; *)
+
+   FROM NRMath IMPORT RealFunction;
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE RtBis(fx: RealFunction; x1, x2, xacc: REAL): REAL; 
+   (*
+     Using bisection, find the root of a function fx
+     known to lie between x1 and x2. The root, returned
+     as RtBis, will be refined until its accuracy is (+-)xacc.
+   *)
+
+   PROCEDURE ZBrac(    fx:     RealFunction;
+                   VAR x1, x2: REAL; 
+                   VAR succes: BOOLEAN); 
+   (*
+     Given a function fx and an initial guessed range
+     x1 to x2, the routine expands the range geometrically until
+     a root is bracketed by the returned values x1 and x2 (in
+     which case success returns as TRUE) or until the range
+     becomes unacceptably large (in which case success returns as FALSE).
+     Success is guaranteed for a function which has opposite
+     signs for sufficiently large and small arguments.
+   *)
+
+   PROCEDURE ZBrak(    fx:       RealFunction;
+                       x1, x2:   REAL; 
+                       n:        INTEGER; 
+                       XB1, XB2: Vector; 
+                   VAR nb:       INTEGER); 
+   (*
+     Given a function fx defined on the interval from x1 to x2
+     subdivide the interval into n equally spaced segments, and search for
+     zero crossings of the function.
+     nb is input as the maximum number of roots sought, and is reset
+     to the number of bracketing pairs XB1[1, nb], XB2[1, nb] that are found.
+   *)
+
+END BraBis.

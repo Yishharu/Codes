@@ -1,0 +1,55 @@
+EXTERNAL
+
+SUB cntab2 (nn(,), ni, nj, h, hx, hy, hygx, hxgy, uygx, uxgy, uxy)
+
+    DIM sumi(0), sumj(0)
+    MAT redim sumi(ni), sumj(nj)
+
+    LET tiny = 1e-30
+
+    LET sum = 0
+    FOR i = 1 to ni
+        LET sumi(i) = 0
+        FOR j = 1 to nj
+            LET sumi(i) = sumi(i) + nn(i, j)
+            LET sum = sum + nn(i, j)
+        NEXT j
+    NEXT i
+    FOR j = 1 to nj
+        LET sumj(j) = 0
+        FOR i = 1 to ni
+            LET sumj(j) = sumj(j) + nn(i, j)
+        NEXT i
+    NEXT j
+
+    LET hx = 0
+    FOR i = 1 to ni
+        IF sumi(i) <> 0 then
+           LET p = sumi(i) / sum
+           LET hx = hx - p * log(p)
+        END IF
+    NEXT i
+    LET hy = 0
+    FOR j = 1 to nj
+        IF sumj(j) <> 0 then
+           LET p = sumj(j) / sum
+           LET hy = hy - p * log(p)
+        END IF
+    NEXT j
+    LET h = 0
+    FOR i = 1 to ni
+        FOR j = 1 to nj
+            IF nn(i, j) <> 0 then
+               LET p = nn(i, j) / sum
+               LET h = h - p * log(p)
+            END IF
+        NEXT j
+    NEXT i
+
+    LET hygx = h - hx
+    LET hxgy = h - hy
+    LET uygx = (hy - hygx) / (hy + tiny)
+    LET uxgy = (hx - hxgy) / (hx + tiny)
+    LET uxy = 2 * (hx + hy - h) / (hx + hy + tiny)
+
+END SUB

@@ -1,0 +1,23 @@
+EXTERNAL
+
+SUB splin2 (x1a(), x2a(), ya(,), y2a(,), m, n, x1, x2, y)
+
+    LIBRARY "spline", "splint"
+
+    DIM ytmp(0), y2tmp(0), yytmp(0)
+    MAT redim ytmp(n), y2tmp(n), yytmp(n)
+
+    FOR j = 1 to m
+        FOR k = 1 to n
+            LET ytmp(k) = ya(j, k)
+            LET y2tmp(k) = y2a(j, k)
+        NEXT k
+
+        CALL splint (x2a(), ytmp(), y2tmp(), n, x2, yytmp(j))
+
+    NEXT j
+
+    CALL spline (x1a(), yytmp(), m, 1e+30, 1e+30, y2tmp())
+    CALL splint (x1a(), yytmp(), y2tmp(), m, x1, y)
+
+END SUB

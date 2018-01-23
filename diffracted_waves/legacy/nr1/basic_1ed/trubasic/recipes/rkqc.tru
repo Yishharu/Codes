@@ -1,0 +1,65 @@
+EXTERNAL
+
+SUB rkqc (y(), dydx(), n, x, htry, eps, yscal(), hdid, hnext, dum)
+
+    LIBRARY "rk4"
+
+    ! The subroutine derivs is supplied by the user
+
+    DIM ytemp(0), ysav(0), dysav(0)
+    MAT redim ytemp(n), ysav(n), dysav(n)
+
+    LET fcor = 1 / 15
+    LET one = 1
+    LET safety = .9
+    LET pgrow = -.2
+    LET pshrnk = -.25
+    LET errcon = (4 / safety)^(1 / pgrow)
+
+    LET xsav = x
+    FOR i = 1 to n
+        LET ysav(i) = y(i)
+        LET dysav(i) = dydx(i)
+    NEXT i
+    LET h = htry
+    DO
+       LET hh = .5 * h
+
+       CALL rk4 (ysav(), dysav(), n, xsav, hh, ytemp(), dum)
+
+       LET x = xsav + hh
+
+       CALL derivs (x, ytemp(), dydx())
+       CALL rk4 (ytemp(), dydx(), n, x, hh, y(), dum)
+
+       LET x = xsav + h
+       IF x = xsav then
+          PRINT "Stepsize not significant in rkqc."
+          EXIT SUB
+       END IF
+
+       CALL rk4 (ysav(), dysav(), n, xsav, h, ytemp(), dum)
+
+       LET errmax = 0
+       FOR i = 1 to n
+           LET ytemp(i) = y(i) - ytemp(i)
+           LET errmax = max(abs(ytemp(i) / yscal(i)), errmax)
+       NEXT i
+       LET errmax = errmax / eps
+       IF errmax > one then
+          LET h = safety * h * (errmax^pshrnk)
+       ELSE
+          LET hdid = h
+          IF errmax > errcon then
+             LET hnext = safety * h * (errmax^pgrow)
+          ELSE
+             LET hnext = 4 * h
+          END IF
+          EXIT DO
+       END IF
+    LOOP
+    FOR i = 1 to n
+        LET y(i) = y(i) + ytemp(i) * fcor
+    NEXT i
+
+END SUB

@@ -1,0 +1,88 @@
+DECLARE SUB PRNTFT (DATQ!(), NN2!)
+DECLARE SUB FOUR1 (DATQ!(), NN!, ISIGN!)
+
+'PROGRAM D12R1
+'Driver for routine FOUR1
+CLS
+NN = 32
+NN2 = 2 * NN
+DIM DATQ(NN2), DCMP(NN2)
+PRINT "h(t)=real-valued even-function"
+PRINT "H(n)=H(N-n) and real?"
+PRINT
+FOR I = 1 TO 2 * NN - 1 STEP 2
+  DATQ(I) = 1! / (((I - NN - 1!) / NN) ^ 2 + 1!)
+  DATQ(I + 1) = 0!
+NEXT I
+ISIGN = 1
+CALL FOUR1(DATQ(), NN, ISIGN)
+CALL PRNTFT(DATQ(), NN2)
+PRINT "h(t)=imaginary-valued even-function"
+PRINT "H(n)=H(N-n) and imaginary?"
+PRINT
+FOR I = 1 TO 2 * NN - 1 STEP 2
+  DATQ(I + 1) = 1! / (((I - NN - 1!) / NN) ^ 2 + 1!)
+  DATQ(I) = 0!
+NEXT I
+ISIGN = 1
+CALL FOUR1(DATQ(), NN, ISIGN)
+CALL PRNTFT(DATQ(), NN2)
+PRINT "h(t)=real-valued odd-function"
+PRINT "H(n)=-H(N-n) and imaginary?"
+PRINT
+FOR I = 1 TO 2 * NN - 1 STEP 2
+  DATQ(I) = (I - NN - 1!) / NN / (((I - NN - 1!) / NN) ^ 2 + 1!)
+  DATQ(I + 1) = 0!
+NEXT I
+DATQ(1) = 0!
+ISIGN = 1
+CALL FOUR1(DATQ(), NN, ISIGN)
+CALL PRNTFT(DATQ(), NN2)
+PRINT "h(t)=imaginary-valued odd-function"
+PRINT "H(n)=-H(N-n) and real?"
+PRINT
+FOR I = 1 TO 2 * NN - 1 STEP 2
+  DATQ(I + 1) = (I - NN - 1!) / NN / (((I - NN - 1!) / NN) ^ 2 + 1!)
+  DATQ(I) = 0!
+NEXT I
+DATQ(2) = 0!
+ISIGN = 1
+CALL FOUR1(DATQ(), NN, ISIGN)
+CALL PRNTFT(DATQ(), NN2)
+'Transform, inverse-transform test
+FOR I = 1 TO 2 * NN - 1 STEP 2
+  DATQ(I) = 1! / ((.5 * (I - NN - 1) / NN) ^ 2 + 1!)
+  DCMP(I) = DATQ(I)
+  DATQ(I + 1) = (.25 * (I - NN - 1) / NN) * EXP(-(.5 * (I - NN - 1!) / NN) ^ 2)
+  DCMP(I + 1) = DATQ(I + 1)
+NEXT I
+ISIGN = 1
+CALL FOUR1(DATQ(), NN, ISIGN)
+ISIGN = -1
+CALL FOUR1(DATQ(), NN, ISIGN)
+PRINT "        Original Data:                   Double Fourier Transform:"
+PRINT
+PRINT "   k     Real h(k)      Imag h(k)     Real h(k)     Imag h(k)"
+PRINT
+FOR I = 1 TO NN STEP 2
+  J = (I + 1) / 2
+  PRINT USING "####"; J;
+  PRINT USING "#######.######"; DCMP(I); DCMP(I + 1); DATQ(I) / NN; DATQ(I + 1) / NN
+NEXT I
+END
+
+SUB PRNTFT (DATQ(), NN2)
+PRINT "   n     Real H(n)     Imag H(n)    Real H(N-n)    Imag H(N-n)"
+PRINT USING "####"; 0;
+PRINT USING "#######.######"; DATQ(1); DATQ(2); DATQ(1); DATQ(2)
+FOR N = 3 TO NN2 / 2 + 1 STEP 2
+  M = (N - 1) / 2
+  MM = NN2 + 2 - N
+  PRINT USING "####"; M;
+  PRINT USING "#######.######"; DATQ(N); DATQ(N + 1); DATQ(MM); DATQ(MM + 1)
+NEXT N
+PRINT
+PRINT " press RETURN to continue ..."
+LINE INPUT DUM$
+END SUB
+

@@ -1,0 +1,29 @@
+DECLARE SUB RATINT (XA!(), YA!(), N!, X!, Y!, DY!)
+
+'PROGRAM D3R2
+'Driver for routine RATINT
+CLS
+NPT = 6
+EPSSQ = 1!
+DIM X(NPT), Y(NPT)
+DEF FNF (Z) = Z * EXP(-Z) / ((Z - 1!) ^ 2 + EPSSQ)
+FOR I = 1 TO NPT
+  X(I) = I * 2! / NPT
+  Y(I) = FNF(X(I))
+NEXT I
+PRINT "Diagonal rational function interpolation"
+PRINT
+PRINT "    x      interp.      accuracy      actual"
+FOR I = 1 TO 10
+  XX = .2 * I
+  CALL RATINT(X(), Y(), NPT, XX, YY, DYY)
+  YEXP = FNF(XX)
+  PRINT USING "###.##"; XX;
+  PRINT USING "#####.######"; YY;
+  PRINT "     ";
+  PRINT USING "#.####^^^^"; DYY;
+  PRINT USING "#####.######"; YEXP
+NEXT I
+PRINT
+END
+

@@ -1,0 +1,72 @@
+EXTERNAL
+
+SUB dfpmin (p(), n, ftol, iter, fret)
+
+    LIBRARY "linmin"
+    DECLARE FUNCTION func2        ! Supplied by the user
+
+    DIM hessin(0,0), xi(0), g(0), dg(0), hdg(0)
+    MAT redim hessin(n, n), xi(n), g(n), dg(n), hdg(n)
+
+    LET itmax = 200
+    LET eps = 1e-10
+
+    LET fp = func2 (p(), n)
+    CALL dfunc (p(), g())         ! Supplied by the user
+
+    MAT hessin = idn
+    MAT xi = (-1)*g
+
+    FOR its = 1 to itmax
+        LET iter = its
+
+        CALL linmin (p(), xi(), n, fret)
+
+        IF 2 * abs(fret - fp) <= ftol * (abs(fret) + abs(fp) + eps) then
+           EXIT SUB
+        END IF
+
+        LET fp = fret
+        MAT dg = g
+
+        LET fret = func2 (p(), n)
+        CALL dfunc (p(), g())
+
+        MAT dg = g - dg
+        MAT hdg = hessin * dg
+!        FOR i = 1 to n
+!            LET hdg(i) = 0
+!            FOR j = 1 to n
+!                LET hdg(i) = hdg(i) + hessin(i, j) * dg(j)
+!            NEXT j
+!        NEXT i
+         LET fac = dot(dg, xi)
+         LET fae = dot(dg, hdg)
+!        LET fac = 0
+!        LET fae = 0
+!        FOR i = 1 to n
+!            LET fac = fac + dg(i) * xi(i)
+!            LET fae = fae + dg(i) * hdg(i)
+!        NEXT i
+        LET fac = 1 / fac
+        LET fad = 1 / fae
+        FOR i = 1 to n
+            LET dg(i) = fac * xi(i) - fad * hdg(i)
+        NEXT i
+        FOR i = 1 to n
+            FOR j = 1 to n
+                LET dum = fac * xi(i) * xi(j) - fad * hdg(i) * hdg(j) + fae * dg(i) * dg(j)
+                LET hessin(i, j) = hessin(i, j) + dum
+            NEXT j
+        NEXT i
+        MAT xi = hessin * g
+!        FOR i = 1 to n
+!            LET xi(i) = 0
+!            FOR j = 1 to n
+!                LET xi(i) = xi(i) - hessin(i, j) * g(j)
+!            NEXT j
+!        NEXT i
+    NEXT its
+    PRINT "Too many iterations in dfpmin"
+
+END SUB

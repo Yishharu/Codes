@@ -1,0 +1,14 @@
+DEFINITION MODULE SCRSHOM;
+
+   (* EXPORT QUALIFIED SCRSHO; *)
+
+   FROM NRMath IMPORT RealFunction;
+
+   PROCEDURE SCRSHO(fx: RealFunction); 
+   (*
+     For interactive  CRT terminal use. Produce a crude graph of the function 
+     fx over the interval x1 to x2. Query for another plot interval 
+     until the user signals satisfaction.
+   *)
+
+END SCRSHOM.

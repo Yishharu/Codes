@@ -1,0 +1,36 @@
+EXTERNAL
+
+SUB mrqcof (x(), y(), sig(), ndata, a(), ma, lista(), mfit, alpha(,), beta(,), nalp, chisq, dum)
+
+    DIM dyda(0)
+    MAT redim dyda(ma)
+
+    FOR j = 1 to mfit
+        FOR k = 1 to j
+            LET alpha(j, k) = 0
+        NEXT k
+        LET beta(j, 1) = 0
+    NEXT j
+    LET chisq = 0
+    FOR i = 1 to ndata
+
+        CALL funcs (x(i), a(), ymod, dyda(), ma)      ! Supplied by the user
+
+        LET sig2i = 1 / (sig(i) * sig(i))
+        LET dy = y(i) - ymod
+        FOR j = 1 to mfit
+            LET wt = dyda(lista(j)) * sig2i
+            FOR k = 1 to j
+                LET alpha(j, k) = alpha(j, k) + wt * dyda(lista(k))
+            NEXT k
+            LET beta(j, 1) = beta(j, 1) + dy * wt
+        NEXT j
+        LET chisq = chisq + dy * dy * sig2i
+    NEXT i
+    FOR j = 2 to mfit
+        FOR k = 1 to j - 1
+            LET alpha(k, j) = alpha(j, k)
+        NEXT k
+    NEXT j
+
+END SUB

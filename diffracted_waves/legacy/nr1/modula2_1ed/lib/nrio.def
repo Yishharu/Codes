@@ -1,0 +1,100 @@
+DEFINITION MODULE NRIO;
+
+(*
+   EXPORT QUALIFIED
+      File, Open, Close,
+      GetByte, GetLine, GetInt, GetLongInt, GetReal, GetWord,
+      ReadLn, WriteLn, WriteString, WriteInt, WriteLongInt,
+      WriteLongReal, WriteReal,
+      Error;
+*)
+   FROM NRSystem IMPORT LongInt, LongReal;
+   FROM SYSTEM IMPORT BYTE;
+
+   TYPE
+      File;
+
+   PROCEDURE Open(    fileName: ARRAY OF CHAR;
+                  VAR file:     File);
+
+   PROCEDURE Close(VAR file: File);
+
+
+   (*
+    *  File input
+    *)
+
+   PROCEDURE GetLine(    file: File;
+                      VAR line: ARRAY OF CHAR);
+
+   PROCEDURE GetByte(f: File; VAR b: BYTE);
+   (*
+     Gets a small integer number and converts it to byte.
+   *)
+
+   PROCEDURE GetWord(    file: File;
+                     VAR word: ARRAY OF CHAR);
+
+   PROCEDURE GetChars(    file: File;
+                          length: INTEGER;
+                      VAR word: ARRAY OF CHAR);
+
+   PROCEDURE GetEOL(file: File);
+
+   PROCEDURE GetInt(    file: File;
+                     VAR x:    INTEGER);
+
+   PROCEDURE GetLongInt(    file: File;
+                        VAR x:    LongInt);
+
+   PROCEDURE GetReal(    file: File;
+                      VAR x:    REAL);
+
+   PROCEDURE EOF(file: File): BOOLEAN;
+
+   (*
+    *   Keyboard input/ Screen output
+    *)
+
+   PROCEDURE ReadLn;
+
+   PROCEDURE ReadInt(    label: ARRAY OF CHAR;
+                     VAR x:     INTEGER);
+
+   PROCEDURE ReadIntegers(    label: ARRAY OF CHAR;
+                          VAR x,
+                              y,
+                              z:     INTEGER);
+
+   PROCEDURE ReadReal(    label: ARRAY OF CHAR;
+                      VAR x:     REAL);
+
+   PROCEDURE WriteLn;
+
+   PROCEDURE WriteInt(x: INTEGER;
+                      n: INTEGER);
+
+   PROCEDURE WriteLongInt(x: LongInt;
+                          n: INTEGER);
+
+   PROCEDURE WriteReal(x: REAL;
+                       n, k: INTEGER);
+
+   PROCEDURE WriteLongReal(x: LongReal;
+                           n, k: INTEGER);
+
+   PROCEDURE WriteString(string: ARRAY OF CHAR);
+
+   PROCEDURE WriteText(text:   ARRAY OF CHAR;
+                       length: INTEGER);
+
+   PROCEDURE WriteChar(ch: CHAR);
+
+   (* 
+    *   Error message
+    *)
+   
+   PROCEDURE Error(routineName, 
+                   message:     ARRAY OF CHAR);
+   
+END NRIO.

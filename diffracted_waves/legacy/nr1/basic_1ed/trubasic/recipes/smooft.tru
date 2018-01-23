@@ -1,0 +1,53 @@
+EXTERNAL
+
+SUB smooft (y(), n, pts)
+
+    LIBRARY "realft"
+
+    LET m = 2
+    LET nmin = n + int(2 * pts)
+    DO WHILE m < nmin
+       LET m = 2 * m
+    LOOP
+    IF m > ubound(y) then
+       PRINT "ubound(y) too small"
+       EXIT SUB
+    END IF
+
+    LET const = (pts / m)^2
+    LET y1 = y(1)
+    LET yn = y(n)
+    LET rn1 = 1 / (n - 1)
+    FOR j = 1 to n
+        LET y(j) = y(j) - rn1 * (y1 * (n - j) + yn * (j - 1))
+    NEXT j
+    FOR j = n + 1 to m
+        LET y(j) = 0
+    NEXT j
+    LET mo2 = int(m / 2)
+
+    CALL realft (y(), mo2, 1)
+
+    LET y(1) = y(1) / mo2
+    LET fac = 1
+    FOR j = 1 to mo2 - 1
+        LET k = 2 * j + 1
+        IF fac <> 0 then
+           LET fac = max((1 - const * j^2) / mo2, 0)
+           LET y(k) = fac * y(k)
+           LET y(k + 1) = fac * y(k + 1)
+        ELSE
+           LET y(k) = 0
+           LET y(k + 1) = 0
+        END IF
+    NEXT j
+    LET fac = max((1 - .25 * pts^2) / mo2, 0)
+    LET y(2) = fac * y(2)
+
+    CALL realft (y(), mo2, -1)
+
+    FOR j = 1 to n
+        LET y(j) = rn1 * (y1 * (n - j) + yn * (j - 1)) + y(j)
+    NEXT j
+
+END SUB

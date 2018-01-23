@@ -1,0 +1,53 @@
+PROGRAM d3r11(input,output,infile);
+(* driver for routine BCUINT *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   RealArray4 = ARRAY [1..4] OF real;
+   RealArray4by4 = ARRAY [1..4,1..4] OF real;
+   RealArray16by16 = ARRAY [1..16,1..16] OF real;
+VAR
+   infile: text;
+   ansy,ansy1,ansy2,ey,ey1,ey2: real;
+   x1,x1l,x1u,x1x2,x2,x2l,x2u,xxyy: real;
+   i: integer;
+   xx,y,y1,y12,y2,yy: RealArray4;
+   BcucofWt: RealArray16by16;
+   BcucofFlag: boolean;
+
+(*$I BCUCOF.PAS *)
+
+(*$I BCUINT.PAS *)
+
+BEGIN
+   BcucofFlag := true;
+   xx[1] := 0.0; xx[2] := 2.0; xx[3] := 2.0; xx[4] := 0.0;
+   yy[1] := 0.0; yy[2] := 0.0; yy[3] := 2.0; yy[4] := 2.0;
+   x1l := xx[1];
+   x1u := xx[2];
+   x2l := yy[1];
+   x2u := yy[4];
+   FOR i := 1 TO 4 DO BEGIN
+      xxyy := xx[i]*yy[i];
+      y[i] := sqr(xxyy);
+      y1[i] := 2.0*yy[i]*xxyy;
+      y2[i] := 2.0*xx[i]*xxyy;
+      y12[i] := 4.0*xxyy
+   END;
+   writeln;
+   writeln('x1':6,'x2':8,'y':7,'expect':11,'y1':6,
+      'expect':10,'y2':6,'expect':10);
+   writeln;
+   FOR i := 1 TO 10 DO BEGIN
+      x1 := 0.2*i;
+      x2 := x1;
+      bcuint(y,y1,y2,y12,x1l,x1u,x2l,x2u,x1,x2,ansy,ansy1,ansy2);
+      x1x2 := x1*x2;
+      ey := sqr(x1x2);
+      ey1 := 2.0*x2*x1x2;
+      ey2 := 2.0*x1*x1x2;
+      writeln(x1:8:4,x2:8:4,ansy:8:4,ey:8:4,
+         ansy1:8:4,ey1:8:4,ansy2:8:4,ey2:8:4)
+   END
+END.

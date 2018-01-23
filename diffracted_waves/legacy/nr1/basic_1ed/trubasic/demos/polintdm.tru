@@ -1,0 +1,55 @@
+PROGRAM D3r1
+
+! Driver for routine polint
+
+LIBRARY "polint"
+
+LET np = 10
+DIM xa(0), ya(0)
+MAT redim xa(np), ya(np)
+
+CLEAR
+PRINT "Generation of interpolation tables"
+PRINT " ... sin(x)    0<x<pi"
+PRINT " ... exp(x)    0<x<1 "
+PRINT "How many entries go in these tables? (note: n<10)"
+INPUT n
+FOR nfunc = 1 to 2
+    IF nfunc = 1 then
+       PRINT "Sine function from 0 to pi"
+       FOR i = 1 to n
+           LET xa(i) = i * pi / n
+           LET ya(i) = sin(xa(i))
+       NEXT i
+    ELSEIF nfunc = 2 then
+       PRINT "Exponential function from 0 to 1"
+       FOR i = 1 to n
+           LET xa(i) = i * 1 / n
+           LET ya(i) = exp(xa(i))
+       NEXT i
+    ELSE
+       EXIT FOR
+    END IF
+
+    PRINT "        x         f(x)    interpolated      error est."
+    FOR i = 1 to 10
+        IF nfunc = 1 then
+           LET x = (-.05 + i / 10) * pi
+           LET f = sin(x)
+        ELSEIF nfunc = 2 then
+           LET x = -.05 + i / 10
+           LET f = exp(x)
+        END IF
+
+        CALL polint (xa(), ya(), n, x, y, dy)
+
+        PRINT using "----#.######": x, f, y;
+        PRINT "     ";
+        PRINT using "#.####^^^^": dy
+    NEXT i
+    PRINT "***********************************"
+    PRINT "Press Enter to continue ..."
+    LINE INPUT dum$
+NEXT nfunc
+
+END

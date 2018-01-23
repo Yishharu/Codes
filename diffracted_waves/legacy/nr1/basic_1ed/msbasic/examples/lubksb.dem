@@ -1,0 +1,70 @@
+DECLARE SUB LUDCMP (A!(), N!, NP!, INDX!(), D!)
+DECLARE SUB LUBKSB (A!(), N!, NP!, INDX!(), B!())
+
+'PROGRAM D2R3
+'Driver for routine LUBKSB
+CLS
+NP = 20
+DIM A(NP, NP), B(NP, NP), INDX(NP)
+DIM C(NP, NP), X(NP)
+OPEN "MATRX1.DAT" FOR INPUT AS #1
+LINE INPUT #1, DUM$
+DO
+  LINE INPUT #1, DUM$
+  LINE INPUT #1, DUM$
+  N = VAL(MID$(DUM$, 1, 2))
+  M = VAL(MID$(DUM$, 3, 2))
+  LINE INPUT #1, DUM$
+  FOR K = 1 TO N
+    LINE INPUT #1, DUM$
+    FOR L = 1 TO N
+      A(K, L) = VAL(MID$(DUM$, 4 * L - 3, 4))
+    NEXT L
+  NEXT K
+  LINE INPUT #1, DUM$
+  FOR L = 1 TO M
+    LINE INPUT #1, DUM$
+    FOR K = 1 TO N
+      B(K, L) = VAL(MID$(DUM$, 4 * K - 3, 4))
+    NEXT K
+  NEXT L
+  'Save matrix A for later testing
+  FOR L = 1 TO N
+    FOR K = 1 TO N
+      C(K, L) = A(K, L)
+    NEXT K
+  NEXT L
+  'Do LU decomposition
+  CALL LUDCMP(C(), N, NP, INDX(), P)
+  'Solve equations for each right-hand vector
+  FOR K = 1 TO M
+    FOR L = 1 TO N
+      X(L) = B(L, K)
+    NEXT L
+    CALL LUBKSB(C(), N, NP, INDX(), X())
+    'Test results with original matrix
+    PRINT "Right-hand side vector:"
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; B(L, K);
+    NEXT L
+    PRINT
+    PRINT "Result of matrix applied to sol'n vector"
+    FOR L = 1 TO N
+      B(L, K) = 0!
+      FOR J = 1 TO N
+        B(L, K) = B(L, K) + A(L, J) * X(J)
+      NEXT J
+    NEXT L
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; B(L, K);
+    NEXT L
+    PRINT
+    PRINT "***********************************"
+  NEXT K
+  PRINT "Press RETURN for next problem:"
+  LINE INPUT DUM$
+  LINE INPUT #1, TXT$
+LOOP WHILE TXT$ <> "END"
+CLOSE #1
+END
+

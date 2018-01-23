@@ -1,0 +1,24 @@
+DEFINITION MODULE ConvlvM;
+
+  (* EXPORT QUALIFIED Convlv; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Convlv(DATA, RESPNS: Vector; 
+                    m, isign:  INTEGER; 
+                    ANS:    Vector); 
+   (*
+     Convolves or deconvolves a real data set DATA[0, n-1] (including any
+     user-supplied zero padding) with a response function RESPNS[0, n-1].
+     The response function must be stored in wrap around order in the first
+     m elements of RESPNS, where m is an odd integer <= n. 
+     Wrap around order means that the first half of the array RESPNS contains the
+     impulse response function at positive times, while the second half of the
+     array contains the impulse response function at negative times, counting
+     down from the highest element RESPNS[m].
+     On input isign is +1 for convolution, -1 for deconvolution.
+     The answer is returned in the first n components of ANS.  
+     However, ANS must be supplied in the calling program with dimensions 
+     [0, 2*n-1], for consistency with TWOFFT. n MUST be an integer power of two.
+   *)
+END ConvlvM.

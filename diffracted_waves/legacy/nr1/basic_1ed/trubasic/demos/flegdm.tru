@@ -1,0 +1,36 @@
+PROGRAM D14r7
+
+! Driver for routine fleg
+
+LIBRARY "fleg", "plgndr"
+DECLARE FUNCTION plgndr
+
+LET nval = 5
+LET dx = .2
+LET npoly = 5
+DIM afunc(0)
+MAT redim afunc(npoly)
+
+CLEAR
+PRINT "                      Legendre Polynomials"
+PRINT
+PRINT "      n=1      n=2       n=3       n=4       n=5"
+FOR i = 1 to nval
+    LET x = i * dx
+
+    CALL fleg (x, afunc(), npoly)
+
+    PRINT "x =";
+    PRINT using "###.##": x
+    FOR j = 1 to npoly
+        PRINT using "----#.####": afunc(j);
+    NEXT j
+    PRINT "  routine fleg"
+    FOR j = 1 to npoly
+        PRINT using "----#.####": plgndr(j - 1, 0, x);
+    NEXT j
+    PRINT "  routine plgndr"
+    PRINT
+NEXT i
+
+END

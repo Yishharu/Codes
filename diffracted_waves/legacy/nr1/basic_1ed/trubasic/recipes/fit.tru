@@ -1,0 +1,63 @@
+EXTERNAL
+
+SUB fit (x(), y(), ndata, sig(), mwt, a, b, siga, sigb, chi2, q)
+
+    LIBRARY "gammq"
+    DECLARE FUNCTION gammq
+
+    LET sx = 0
+    LET sy = 0
+    LET st2 = 0
+    LET b = 0
+    IF mwt <> 0 then
+       LET ss = 0
+       FOR i = 1 to ndata
+           LET wt = 1 / sig(i)^2
+           LET ss = ss + wt
+           LET sx = sx + x(i) * wt
+           LET sy = sy + y(i) * wt
+       NEXT i
+    ELSE
+       FOR i = 1 to ndata
+           LET sx = sx + x(i)
+           LET sy = sy + y(i)
+       NEXT i
+       LET ss = ndata
+    END IF
+
+    LET sxoss = sx / ss
+    IF mwt <> 0 then
+       FOR i = 1 to ndata
+           LET t = (x(i) - sxoss) / sig(i)
+           LET st2 = st2 + t * t
+           LET b = b + t * y(i) / sig(i)
+       NEXT i
+    ELSE
+       FOR i = 1 to ndata
+           LET t = x(i) - sxoss
+           LET st2 = st2 + t * t
+           LET b = b + t * y(i)
+       NEXT i
+    END IF
+
+    LET b = b / st2
+    LET a = (sy - sx * b) / ss
+    LET siga = sqr((1 + sx * sx / (ss * st2)) / ss)
+    LET sigb = sqr(1 / st2)
+    LET chi2 = 0
+    IF mwt = 0 then
+       FOR i = 1 to ndata
+           LET chi2 = chi2 + (y(i) - a - b * x(i))^2
+       NEXT i
+       LET q = 1
+       LET sigdat = sqr(chi2 / (ndata - 2))
+       LET siga = siga * sigdat
+       LET sigb = sigb * sigdat
+    ELSE
+       FOR i = 1 to ndata
+           LET chi2 = chi2 + ((y(i) - a - b * x(i)) / sig(i))^2
+       NEXT i
+       LET q = gammq(.5 * (ndata - 2), .5 * chi2)
+    END IF
+
+END SUB

@@ -1,0 +1,30 @@
+DECLARE SUB GSER (GAMSER!, A!, X!, GLN!)
+DECLARE FUNCTION GAMMLN! (X!)
+
+'PROGRAM D6R8
+'Driver for routine GSER
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "Incomplete Gamma Function"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT TEXT$
+PRINT "    A          X        Actual     GSER(A,X)  GAMMLN(A)      GLN"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  A = VAL(MID$(DUM$, 1, 6))
+  X = VAL(MID$(DUM$, 7, 16))
+  VALUE = VAL(MID$(DUM$, 23))
+  CALL GSER(GAMSER, A, X, GLN)
+  PRINT USING "####.##"; A;
+  PRINT USING "#####.######"; X;
+  PRINT USING "#####.######"; VALUE;
+  PRINT USING "#####.######"; GAMSER;
+  PRINT USING "#####.######"; GAMMLN(A);
+  PRINT USING "#####.######"; GLN
+NEXT I
+CLOSE #1
+END
+

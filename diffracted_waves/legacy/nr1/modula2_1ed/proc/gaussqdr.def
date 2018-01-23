@@ -1,0 +1,27 @@
+DEFINITION MODULE GaussQdr;
+
+  (* EXPORT QUALIFIED QGaus, GauLeg; *)
+
+   FROM NRMath   IMPORT RealFunction;
+   FROM NRSystem IMPORT LongReal;
+   FROM NRLVect  IMPORT LVector;
+
+   PROCEDURE QGaus(    func: RealFunction;
+                       a, b: REAL; 
+                   VAR ss:   REAL); 
+   (*
+     Returns the integral of the function func between
+     a and b, by ten-point Gauss-Legendre integration: the function
+     is evaluated exactly ten times at interior points in the range 
+     of integration.
+   *)
+
+   PROCEDURE GauLeg(x1, x2: LongReal; 
+                    X, W: LVector); 
+   (*
+     Given the lower and upper limits of integration x1 and x2,
+     this routine returns the abscissas and weights of the Gauss-Legendre
+     n-point quadrature formula in vectors X[0, n-1] and W[0, n-1].
+   *)
+
+END GaussQdr.

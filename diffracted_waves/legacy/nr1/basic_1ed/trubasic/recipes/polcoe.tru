@@ -1,0 +1,33 @@
+EXTERNAL
+
+SUB polcoe (x(), y(), n, cof())
+
+    DIM s(0)
+    MAT redim s(n)
+
+    FOR i = 1 to n
+        LET s(i) = 0
+        LET cof(i) = 0
+    NEXT i
+    LET s(n) = -x(1)
+    FOR i = 2 to n
+        FOR j = n + 1 - i to n - 1
+            LET s(j) = s(j) - x(i) * s(j + 1)
+        NEXT j
+        LET s(n) = s(n) - x(i)
+    NEXT i
+
+    FOR j = 1 to n
+        LET phi = n
+        FOR k = n - 1 to 1 step -1
+            LET phi = k * s(k + 1) + x(j) * phi
+        NEXT k
+        LET ff = y(j) / phi
+        LET b = 1
+        FOR k = n to 1 step -1
+            LET cof(k) = cof(k) + b * ff
+            LET b = s(k) + x(j) * b
+        NEXT k
+    NEXT j
+
+END SUB

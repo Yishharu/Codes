@@ -1,0 +1,34 @@
+EXTERNAL
+
+SUB qromb (dum, a, b, ss)
+
+    LIBRARY "trapzd", "polint"
+
+    LET eps = .000001
+    LET jmax = 20
+    LET jmaxp = jmax + 1
+    LET k = 5
+
+    DIM s(0), h(0), stemp(0), htemp(0)
+    MAT redim s(jmaxp), h(jmaxp)
+    MAT redim stemp(jmaxp), htemp(jmaxp)
+
+    LET h(1) = 1
+    FOR j = 1 to jmax
+
+        CALL trapzd (dum, a, b, s(j), j)
+
+        IF j >= k then
+           FOR l = 1 to k
+               LET htemp(l) = h(j-k+l)
+               LET stemp(l) = s(j-k+l)
+           NEXT l
+           CALL polint (htemp(), stemp(), k, 0, ss, dss)
+           IF abs(dss) < eps * abs(ss) then EXIT SUB
+        END IF
+        LET s(j + 1) = s(j)
+        LET h(j + 1) = .25 * h(j)
+    NEXT j
+    PRINT "Too many steps."
+
+END SUB

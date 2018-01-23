@@ -1,0 +1,51 @@
+PROGRAM D3r12
+
+! Driver for routine splie2
+
+LIBRARY "splie2"
+
+LET m = 10
+LET n = 10
+DIM x1(0), x2(0), y(0,0), y2(0,0)
+MAT redim x1(m), x2(n), y(m, n), y2(m, n)
+
+CLEAR
+FOR i = 1 to m
+    LET x1(i) = .2 * i
+NEXT i
+FOR i = 1 to n
+    LET x2(i) = .2 * i
+NEXT i
+FOR i = 1 to m
+    FOR j = 1 to n
+        LET x1x2 = x1(i) * x2(j)
+        LET y(i, j) = x1x2^2
+    NEXT j
+NEXT i
+
+CALL splie2 (x1(), x2(), y(,), m, n, y2(,))
+
+PRINT "Second derivatives from splie2"
+PRINT "Natural spline assumed"
+PRINT
+FOR i = 1 to 5
+    FOR j = 1 to 5
+        PRINT using "----#.######": y2(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+
+PRINT "Actual second derivatives"
+PRINT
+FOR i = 1 to 5
+    FOR j = 1 to 5
+        LET y2(i, j) = 2 * x1(i)^2
+    NEXT j
+    FOR j = 1 to 5
+        PRINT using "----#.######": y2(i, j);
+    NEXT j
+    PRINT
+NEXT i
+
+END

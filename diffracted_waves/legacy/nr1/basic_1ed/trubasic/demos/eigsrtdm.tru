@@ -1,0 +1,61 @@
+PROGRAM D11r2
+
+! Driver for routine eigsrt
+
+LIBRARY "eigsrt", "jacobi"
+
+LET np = 10
+DIM d(0), v(0,0), c(0,0)
+MAT redim d(np), v(np, np), c(np, np)
+
+CLEAR
+FOR j = 1 to np
+    FOR i = 1 to np
+        READ c(i, j)
+    NEXT i
+NEXT j
+DATA  1.0,  4.0,  3.0,  2.0, 1.0, 0.0, -1.0, -2.0, -3.0, -4.0
+DATA  4.0,  2.0,  4.0,  3.0, 2.0, 1.0,  0.0, -1.0, -2.0, -3.0
+DATA  3.0,  4.0,  3.0,  4.0, 3.0, 2.0,  1.0,  0.0, -1.0, -2.0
+DATA  2.0,  3.0,  4.0,  4.0, 4.0, 3.0,  2.0,  1.0,  0.0, -1.0
+DATA  1.0,  2.0,  3.0,  4.0, 5.0, 4.0,  3.0,  2.0,  1.0,  0.0
+DATA  0.0,  1.0,  2.0,  3.0, 4.0, 6.0,  4.0,  3.0,  2.0,  1.0
+DATA -1.0,  0.0,  1.0,  2.0, 3.0, 4.0,  7.0,  4.0,  3.0,  2.0
+DATA -2.0, -1.0,  0.0,  1.0, 2.0, 3.0,  4.0,  8.0,  4.0,  3.0
+DATA -3.0, -2.0, -1.0,  0.0, 1.0, 2.0,  3.0,  4.0,  9.0,  4.0
+DATA -4.0, -3.0, -2.0, -1.0, 0.0, 1.0,  2.0,  3.0,  4.0, 10.0
+
+CALL jacobi (c(,), np, np, d(), v(,), nrot)
+
+PRINT "Unsorted eigenvectors:"
+PRINT
+FOR i = 1 to np
+    PRINT
+    PRINT "Eigenvalue"; i; " =";
+    PRINT using "----#.######": d(i)
+    PRINT "Eigenvector:"
+    FOR j = 1 to np
+        PRINT using "----#.######": v(j, i);
+        IF mod(j, 5) = 0 or j = np then PRINT
+    NEXT j
+NEXT i
+PRINT
+PRINT "****** Sorting ******"
+PRINT
+
+CALL eigsrt (d(), v(,), np, np)
+
+PRINT "Sorted Eigenvectors:"
+PRINT
+FOR i = 1 to np
+    PRINT
+    PRINT "Eigenvalue"; i; " =";
+    PRINT using "----#.######": d(i)
+    PRINT "Eigenvector:"
+    FOR j = 1 to np
+        PRINT using "----#.######": v(j, i);
+        IF mod(j, 5) = 0 or j = np then PRINT
+    NEXT j
+NEXT i
+
+END

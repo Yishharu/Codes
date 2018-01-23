@@ -1,0 +1,193 @@
+DEFINITION MODULE NRIVect;
+
+(* EXPORT QUALIFIED IVector; *)
+
+   CONST
+      MaxIVectorLength = 2000;
+   TYPE
+      IVector;
+      PtrToIntegers = POINTER TO ARRAY [0..MaxIVectorLength-1] OF INTEGER;
+   VAR 
+      NilIVector: IVector;
+
+   PROCEDURE NewIVector(values: ARRAY OF INTEGER): IVector;
+
+      (* 
+       * This procedure creates a new vector from the numbers of "values".
+       * Possible structures of "values":
+       *   1. ARRAY OF INTEGER, where every element of the array is a real 
+       *      number.
+       *   2. ARRAY OF INTEGER, where the numbers are followed by NilReal.
+       *      The role of NilREAL is the same as the role of "0C" in
+       *      the Modula-2 strings.
+       *)
+
+   PROCEDURE EmptyIVector(length: INTEGER): IVector;
+
+      (* 
+       * It creates a new vector with length "length", if
+       * length > 0. Otherwise it returns NilIVector;
+       * The elements in vector are undefined.
+       *)
+
+   PROCEDURE CreateIVector(    n:        INTEGER;
+                           VAR vector:   IVector;
+                           VAR integers: PtrToIntegers);
+
+      (* 
+       * It creates a new vector with length n, if n > 0.  
+       * It returns the reference variable "vector" and a pointer to the elements
+       * of the vector in "integers". If n = 0: vector = NilIVector, integers = NIL.
+       * The elements in vector are undefined.
+       *)
+
+   PROCEDURE DisposeIVector(VAR vector: IVector (* in/out *));
+
+      (*
+       * The input "vector" is deallocated. 
+       * Output: "vector"=NilIVector;
+       * Use this procedure only for vectors created before!
+       *)
+
+   PROCEDURE LengthOfIVector(vector: IVector): INTEGER;
+
+      (* 
+       * It returns the number of elements of vector.
+       *)
+
+   PROCEDURE IVectorPtr(vector: IVector): PtrToIntegers;
+
+      (* 
+       * This procedure returns a pointer to an array of integers, 
+       * where the numbers from vector can be found. This array is 
+       * defined for the indices: [0..LengthOfIVector(vector)-1].
+       *)
+
+   PROCEDURE GetIVectorAttr(    vector: IVector;
+                           VAR length: INTEGER;
+                           VAR values: PtrToIntegers);
+
+      (* 
+       * length: The length of the vector;
+       * values: Pointer to an array of integers, where the numbers from 
+       *         vector can be found. This array is defined for the 
+       *         indices: [0..length-1].
+       *)
+
+   PROCEDURE GetIVectorValues(    vector: IVector;
+                             VAR length: INTEGER;
+                             VAR values: ARRAY OF INTEGER);
+
+      (* 
+       * length: The length of the vector;
+       * values: The numbers in vector. If there is enough place in
+       *         values, then the numbers are followed by NilREAL.
+       * If vector = NilIVector then length := 0, values[0] := NilREAL.
+       *)
+
+   PROCEDURE SetElement(vector: IVector;
+                        ix:     INTEGER;
+                        number: INTEGER);
+
+      (* 
+       * Sets the element with index ix to number. 
+       * 0 <= ix <= LengthOfIVector(vector)-1.
+       * If ix > LengthOfIVector(vector)-1 -> no change in vector.
+       *)
+
+   PROCEDURE GetElement(    vector: IVector;
+                            ix:     INTEGER;
+                        VAR number: INTEGER);
+
+      (* 
+       * number := the element with index ix in vector. 
+       * 0 <= ix <= LengthOfIVector(vector)-1.
+       * If ix > LengthOfIVector(vector)-1 -> number := NilREAL.
+       *)
+
+   PROCEDURE InsertElement(VAR vector:  IVector; (* in/out *)
+                               i:       INTEGER;
+                               valueIn: INTEGER);
+
+      (* 
+       * A new vector will be created from the values of vector
+       * and valueIn. The index of valueIn in the new vector is i.
+       * 0 <= i <= (length of input vector).
+       *)
+
+   PROCEDURE DeleteElement(VAR vector: IVector; (* in/out *)
+                               i:      INTEGER);
+
+      (* 
+       * The value with index i will be deleted from vector. 
+       * The values of vector will be rearranged.
+       * 0 <= i <= (length of input vector - 1).
+       *)
+
+   PROCEDURE Increase(vector: IVector; 
+                      value:   INTEGER);
+
+      (* 
+       * values[i] of vector := values[i] + value
+       * 0 <= i <= (length of vector - 1).
+       *)
+
+   PROCEDURE Decrease(vector: IVector; 
+                      value:   INTEGER);
+
+      (* 
+       * values[i] of vector := values[i] - value
+       * 0 <= i <= (length of vector - 1).
+       *)
+
+   PROCEDURE SetIVector(source, dest: IVector);
+
+      (* 
+       * If (source # NilIVector) AND (dest # NilIVector) AND
+       *    (LengthOfIVector(source) = (LengthOfIVector(dest)) THEN
+       *   values of dest := values of source
+       * else error.
+       *)
+
+   PROCEDURE DuplicateIVector(    source: IVector;
+                              VAR dest:   IVector);
+      (* 
+       * This procedure creates a new vector in dest, and copies
+       * the numbers from source to dest. 
+       *)
+
+   PROCEDURE CopyIVector(    source: IVector;
+                             n:      INTEGER;
+                         VAR dest:   IVector);
+      (* 
+       * This procedure creates a new vector in dest, and copies
+       * the n elements of source into dest, if 1 <= n <= length(source).
+       *    n = 0: dest = NilIVector.
+       *    n > length(source): dest is the duplicate of source. 
+       *)
+
+   PROCEDURE MinIVector(vector: IVector): INTEGER;
+
+      (* 
+       * It returns the minimal element of the vector.
+       *)
+
+   PROCEDURE MaxIVector(vector: IVector): INTEGER;
+
+      (* 
+       * It returns the maximal element of the vector.
+       *)
+
+   (*
+    * Remarks:
+    *    The following procedures allocate memory for a vector:
+    *       - NewIVector
+    *       - CreateIVector
+    *       - DuplicateIVector
+    *       - CopyIVector
+    *
+    *    The following procedures deallocate memory:
+    *       - DisposeIVector
+    *)
+
+END NRIVect.

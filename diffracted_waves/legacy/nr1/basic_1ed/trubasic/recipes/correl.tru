@@ -1,0 +1,22 @@
+EXTERNAL
+
+SUB correl (data1(), data2(), n, ans())
+
+    LIBRARY "twofft", "realft"
+
+    DIM fft(0)
+    MAT redim fft(2 * n)
+
+    CALL twofft (data1(), data2(), fft(), ans(), n)
+
+    LET no2 = int(n / 2)
+    FOR i = 1 to no2 + 1
+        LET dum = ans(2 * i - 1)
+        LET ans(2 * i - 1) = (fft(2 * i - 1) * dum + fft(2 * i) * ans(2 * i)) / no2
+        LET ans(2 * i) = (fft(2 * i) * dum - fft(2 * i - 1) * ans(2 * i)) / no2
+    NEXT i
+    LET ans(2) = ans(n + 1)
+
+    CALL realft(ans(), no2, -1)
+
+END SUB

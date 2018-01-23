@@ -1,0 +1,83 @@
+PROGRAM sfroid
+
+! Driver for routine solvde
+
+LIBRARY "plgndr", "solvde"
+DECLARE FUNCTION plgndr
+
+DECLARE PUBLIC x(), h, mm, n, c2, anorm     ! COMMON with difeq
+
+LET ne = 3
+LET m = 41
+LET nb = 1
+LET nci = ne
+LET ncj = ne - nb + 1
+LET nck = m + 1
+LET nsi = ne
+LET nsj = 2 * ne + 1
+LET nyj = ne
+LET nyk = m
+
+DIM       scalv(0),  indexv(0),  y(0,0),  c(0,0,0),          s(0,0)
+MAT redim scalv(ne), indexv(ne), y(ne, m), c(nci, ncj, nck), s(nsi, nsj)
+MAT redim x(m)                    ! COMMON with difeq
+
+CLEAR
+LET itmax = 100
+LET conv = .000005
+LET slowc = 1
+LET h = 1 / (m - 1)
+LET c2 = 0
+PRINT "Enter m,n"
+INPUT mm, n
+IF mod(n + mm, 2) = 1 then
+   LET indexv(1) = 1
+   LET indexv(2) = 2
+   LET indexv(3) = 3
+ELSE
+   LET indexv(1) = 2
+   LET indexv(2) = 1
+   LET indexv(3) = 3
+END IF
+
+LET anorm = 1
+IF mm <> 0 then
+   LET q1 = n
+   FOR i = 1 to mm
+       LET anorm = -.5 * anorm * (n + i) * (q1 / i)
+       LET q1 = q1 - 1
+   NEXT i
+END IF
+
+FOR k = 1 to m - 1
+    LET x(k) = (k - 1) * h
+    LET fac1 = 1 - x(k)^2
+    LET fac2 = fac1^(-mm / 2)
+    LET y(1, k) = plgndr(n, mm, x(k)) * fac2
+    LET dum = (n + 1 - mm) * plgndr(n + 1, mm, x(k))
+    LET deriv = -(dum - (n + 1) * x(k) * plgndr(n, mm, x(k))) / fac1
+    LET y(2, k) = mm * x(k) * y(1, k) / fac1 + deriv * fac2
+    LET y(3, k) = n * (n + 1) - mm * (mm + 1)
+NEXT k
+LET x(m) = 1
+LET y(1, m) = anorm
+LET y(3, m) = n * (n + 1) - mm * (mm + 1)
+LET y(2, m) = (y(3, m) - c2) * y(1, m) / (2 * (mm + 1))
+LET scalv(1) = abs(anorm)
+LET scalv(2) = max(y(2, m), 1)
+LET scalv(3) = max(y(3, m), 1)
+DO
+   PRINT "Enter c^2 or 999 to end"
+   INPUT c2
+   IF c2 = 999 then EXIT DO
+
+   CALL solvde (itmax, conv, slowc, scalv(), indexv(), ne, nb, m, y(,), nyj, nyk, c(,,), nci, ncj, nck, s(,))
+
+   PRINT " m = "; mm; "    n = "; n; "    c^2 = ";
+   PRINT using "#.######^^^^": c2;
+   PRINT "     lambda = ";
+   PRINT using "----#.######": y(3, 1) + mm * (mm + 1)
+   PRINT
+LOOP
+
+END

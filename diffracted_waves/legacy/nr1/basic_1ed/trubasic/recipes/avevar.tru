@@ -1,0 +1,17 @@
+EXTERNAL
+
+SUB avevar (datq(), n, ave, var)
+
+    LET ave = 0
+    LET var = 0
+    FOR j = 1 to n
+        LET ave = ave + datq(j)
+    NEXT j
+    LET ave = ave / n
+    FOR j = 1 to n
+        LET s = datq(j) - ave
+        LET var = var + s * s
+    NEXT j
+    LET var = var / (n - 1)
+
+END SUB

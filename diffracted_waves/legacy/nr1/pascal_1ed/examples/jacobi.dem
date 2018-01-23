@@ -1,0 +1,129 @@
+PROGRAM d11r1(input,output);
+(* driver for routine JACOBI *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   np = 10;
+   nmat = 3;
+TYPE
+   IntegerArray3 = ARRAY [1..3] OF integer;
+   RealArrayNPbyNP = ARRAY [1..np,1..np] OF real;
+   RealArrayNP = ARRAY [1..np] OF real;
+VAR
+   i,j,k,kk,l,ll,nrot: integer;
+   a,b,c,v: RealArrayNPbyNP;
+   d,r: RealArrayNP;
+   num: IntegerArray3;
+
+(*$I JACOBI.PAS *)
+
+BEGIN
+   num[1] := 3; num[2] := 5; num[3] := 10;
+   a[1,1] := 1.0; a[1,2] := 2.0; a[1,3] := 3.0;
+   a[2,1] := 2.0; a[2,2] := 2.0; a[2,3] := 3.0;
+   a[3,1] := 3.0; a[3,2] := 3.0; a[3,3] := 3.0;
+   b[1,1] := -2.0; b[1,2] := -1.0; b[1,3] := 0.0;
+   b[1,4] := 1.0; b[1,5] := 2.0;
+   b[2,1] := -1.0; b[2,2] := -1.0; b[2,3] := 0.0;
+   b[2,4] := 1.0; b[2,5] := 2.0;
+   b[3,1] := 0.0; b[3,2] := 0.0; b[3,3] := 0.0;
+   b[3,4] := 1.0; b[3,5] := 2.0;
+   b[4,1] := 1.0; b[4,2] := 1.0; b[4,3] := 1.0;
+   b[4,4] := 1.0; b[4,5] := 2.0;
+   b[5,1] := 2.0; b[5,2] := 2.0; b[5,3] := 2.0;
+   b[5,4] := 2.0; b[5,5] := 2.0;
+   c[1,1] := 5.0; c[1,2] := 4.0; c[1,3] := 3.0;
+   c[1,4] := 2.0; c[1,5] := 1.0; c[1,6] := 0.0;
+   c[1,7] := -1.0; c[1,8] := -2.0; c[1,9] := -3.0;
+   c[1,10] := -4.0;
+   c[2,1] := 4.0; c[2,2] := 5.0; c[2,3] := 4.0;
+   c[2,4] := 3.0; c[2,5] := 2.0; c[2,6] := 1.0;
+   c[2,7] := 0.0; c[2,8] := -1.0; c[2,9] := -2.0;
+   c[2,10] := -3.0;
+   c[3,1] := 3.0; c[3,2] := 4.0; c[3,3] := 5.0;
+   c[3,4] := 4.0; c[3,5] := 3.0; c[3,6] := 2.0;
+   c[3,7] := 1.0; c[3,8] := 0.0; c[3,9] := -1.0;
+   c[3,10] := -2.0;
+   c[4,1] := 2.0; c[4,2] := 3.0; c[4,3] := 4.0;
+   c[4,4] := 5.0; c[4,5] := 4.0; c[4,6] := 3.0;
+   c[4,7] := 2.0; c[4,8] := 1.0; c[4,9] := 0.0;
+   c[4,10] := -1.0;
+   c[5,1] := 1.0; c[5,2] := 2.0; c[5,3] := 3.0;
+   c[5,4] := 4.0; c[5,5] := 5.0; c[5,6] := 4.0;
+   c[5,7] := 3.0; c[5,8] := 2.0; c[5,9] := 1.0;
+   c[5,10] := 0.0;
+   c[6,1] := 0.0; c[6,2] := 1.0; c[6,3] := 2.0;
+   c[6,4] := 3.0; c[6,5] := 4.0; c[6,6] := 5.0;
+   c[6,7] := 4.0; c[6,8] := 3.0; c[6,9] := 2.0;
+   c[6,10] := 1.0;
+   c[7,1] := -1.0; c[7,2] := 0.0; c[7,3] := 1.0;
+   c[7,4] := 2.0; c[7,5] := 3.0; c[7,6] := 4.0;
+   c[7,7] := 5.0; c[7,8] := 4.0; c[7,9] := 3.0;
+   c[7,10] := 2.0;
+   c[8,1] := -2.0; c[8,2] := -1.0; c[8,3] := 0.0;
+   c[8,4] := 1.0; c[8,5] := 2.0; c[8,6] := 3.0;
+   c[8,7] := 4.0; c[8,8] := 5.0; c[8,9] := 4.0;
+   c[8,10] := 3.0;
+   c[9,1] := -3.0; c[9,2] := -2.0; c[9,3] := -1.0;
+   c[9,4] := 0.0; c[9,5] := 1.0; c[9,6] := 2.0;
+   c[9,7] := 3.0; c[9,8] := 4.0; c[9,9] := 5.0;
+   c[9,10] := 4.0;
+   c[10,1] := -4.0; c[10,2] := -3.0; c[10,3] := -2.0;
+   c[10,4] := -1.0; c[10,5] := 0.0; c[10,6] := 1.0;
+   c[10,7] := 2.0; c[10,8] := 3.0; c[10,9] := 4.0;
+   c[10,10] := 5.0;
+   FOR i := 1 TO nmat DO BEGIN
+      IF i = 1 THEN
+         jacobi(a,num[i],d,v,nrot)
+      ELSE IF i = 2 THEN
+         jacobi(b,num[i],d,v,nrot)
+      ELSE IF i = 3 THEN
+         jacobi(c,num[i],d,v,nrot);
+      writeln('matrix number',i:2);
+      writeln('number of jacobi rotations:',nrot:3);
+      writeln('eigenvalues:');
+      FOR j := 1 TO num[i] DO BEGIN
+         write(d[j]:12:6);
+         IF j MOD 5 = 0 THEN writeln
+      END;
+      writeln;
+      writeln('eigenvectors:');
+      FOR j := 1 TO num[i] DO BEGIN
+         writeln('number':9,j:3);
+         FOR k := 1 TO num[i] DO BEGIN
+            write(v[k,j]:12:6);         
+            IF k MOD 5 = 0 THEN writeln
+         END;
+         writeln
+      END;
+(* eigenvector test *)
+      writeln('eigenvector test');
+      FOR j := 1 TO num[i] DO BEGIN
+         FOR l := 1 TO num[i] DO BEGIN
+            r[l] := 0.0;
+            FOR k := 1 TO num[i] DO BEGIN
+               IF k > l THEN BEGIN
+                  kk := l;
+                  ll := k
+               END ELSE BEGIN
+                  kk := k;
+                  ll := l
+               END;
+               IF i = 1 THEN
+                  r[l] := r[l]+a[ll,kk]*v[k,j]
+               ELSE IF i = 2 THEN
+                  r[l] := r[l]+b[ll,kk]*v[k,j]
+               ELSE IF i = 3 THEN
+                  r[l] := r[l]+c[ll,kk]*v[k,j]
+            END
+         END;
+         writeln('vector number',j:3);
+         writeln('vector':11,'mtrx*vec.':14,'ratio':10);
+         FOR l := 1 TO num[i] DO
+            writeln(v[l,j]:12:6,r[l]:12:6,r[l]/v[l,j]:12:6)
+      END;
+      writeln('press return to continue...');
+      readln
+   END
+END.

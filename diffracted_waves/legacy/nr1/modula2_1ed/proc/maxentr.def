@@ -1,0 +1,20 @@
+DEFINITION MODULE MaxEntr;
+
+  (* EXPORT QUALIFIED EvlMEM, MEMCof; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE EvlMEM(fdt: REAL; COF: Vector; pm:  REAL): REAL; 
+   (*
+     Given COF[0, m-1], m, pm as returned by MEMCOF, this function
+     returns the power spectrum estimate P(f) as a function of FDT
+     = fDelta.
+   *)
+
+   PROCEDURE MEMCof(DATA: Vector; VAR pm: REAL; COF: Vector); 
+   (*
+     Given a real vector DATA[0, n-1], and given m, this routine returns 
+     a vector COF[0, m-1] with COF[J]=aj, and a scalar pm=a0, which are 
+     the coefficients for Maximum Entropy Method spectral estimation.
+   *)
+END MaxEntr.

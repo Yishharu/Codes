@@ -1,0 +1,23 @@
+EXTERNAL
+
+SUB svdvar (v(,), ma, np, w(), cvm(,), ncvm)
+
+    DIM wti(0)
+    MAT redim wti(ma)
+
+    FOR i = 1 to ma
+        LET wti(i) = 0
+        IF w(i) <> 0 then LET wti(i) = 1 / (w(i) * w(i))
+    NEXT i
+    FOR i = 1 to ma
+        FOR j = 1 to i
+            LET sum = 0
+            FOR k = 1 to ma
+                LET sum = sum + v(i, k) * v(j, k) * wti(k)
+            NEXT k
+            LET cvm(i, j) = sum
+            LET cvm(j, i) = sum
+        NEXT j
+    NEXT i
+
+END SUB

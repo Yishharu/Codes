@@ -1,0 +1,33 @@
+PROGRAM d4r6(input,output);
+(* Driver for routine QROMO *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   x1 = 0.0;
+   x2 = 1.5707963;
+   n = 5;
+TYPE
+   RealArrayNP = ARRAY [1..n] OF real;
+VAR
+   MidsqlIt: integer;
+   result: real;
+
+FUNCTION func(x: real): real;
+BEGIN
+   func := sqrt(x)/sin(x)
+END;
+
+(*$I MIDSQL.PAS *)
+
+(*$I POLINT.PAS *)
+
+(*$I QROMO.PAS *)
+
+BEGIN
+   writeln('Improper integral:');
+   writeln;
+   qromo(x1,x2,result);
+   writeln('Function: sqrt(x)/sin(x)       Interval: (0,pi/2)');
+   writeln('Using: MIDSQL                  Result:',result:8:4);
+END.

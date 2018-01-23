@@ -1,0 +1,36 @@
+EXTERNAL
+
+SUB spline (x(), y(), n, yp1, ypn, y2())
+
+    DIM u(0)
+    MAT redim u(n)
+
+    IF yp1 > .99e+30 then
+       LET y2(1) = 0
+       LET u(1) = 0
+    ELSE
+       LET y2(1) = -.5
+       LET u(1) = (3 / (x(2) - x(1))) * ((y(2) - y(1)) / (x(2) - x(1)) - yp1)
+    END IF
+    FOR i = 2 to n - 1
+        LET sig = (x(i) - x(i - 1)) / (x(i + 1) - x(i - 1))
+        LET p = sig * y2(i - 1) + 2
+        LET y2(i) = (sig - 1) / p
+        LET dum1 = (y(i + 1) - y(i)) / (x(i + 1) - x(i))
+        LET dum2 = (y(i) - y(i - 1)) / (x(i) - x(i - 1))
+        LET u(i) = (6 * (dum1 - dum2) / (x(i + 1) - x(i - 1)) - sig * u(i - 1)) / p
+    NEXT i
+
+    IF ypn > .99e+30 then
+       LET qn = 0
+       LET un = 0
+    ELSE
+       LET qn = .5
+       LET un = (3 / (x(n) - x(n - 1))) * (ypn - (y(n) - y(n - 1)) / (x(n) - x(n - 1)))
+    END IF
+    LET y2(n) = (un - qn * u(n - 1)) / (qn * y2(n - 1) + 1)
+    FOR k = n - 1 to 1 step -1
+        LET y2(k) = y2(k) * y2(k + 1) + u(k)
+    NEXT k
+
+END SUB

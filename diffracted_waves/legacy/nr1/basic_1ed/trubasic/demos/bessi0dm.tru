@@ -1,0 +1,27 @@
+PROGRAM D6r21
+
+! Driver for routine bessi0
+
+LIBRARY "bessi0"
+DECLARE FUNCTION bessi0
+
+CLEAR
+OPEN #1: name "fncval.dat", access input
+DO
+   LINE INPUT #1: text$
+LOOP while text$ <> "Modified Bessel Function I0"
+
+LINE INPUT #1: nval$
+LET nval = val(nval$[1:3])
+PRINT text$
+PRINT "   x       Actual         bessi0(x)"
+FOR i = 1 to nval
+    LINE INPUT #1: dum$
+    LET x = val(dum$[1:6])
+    LET value = val(dum$[7:1000])
+    PRINT using "##.##": x;
+    PRINT using "   #.#######^^^^": value, bessi0(x)
+NEXT i
+CLOSE #1
+
+END

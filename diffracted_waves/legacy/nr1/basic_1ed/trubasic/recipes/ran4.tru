@@ -1,0 +1,56 @@
+MODULE ran4
+
+    ! Ran4 is coded as a module in order to
+    ! provide the STATIC arrays inq(), jot(), keq(), and pow().
+
+    LIBRARY "des"
+
+    SHARE inq(64), jot(64), keq(64), pow(65)
+    SHARE iff, im, ia, ic, nacc, newkey
+
+    ! These constants are established during program startup
+    ! rather than upon each use of the routine.
+
+    LET iff = 0
+    LET im = 11979
+    LET ia = 430
+    LET ic = 2531
+    LET nacc = 24
+
+    FUNCTION ran4 (idum)
+
+        IF iff = 0 then
+           LET iff = 1
+           LET idum = mod(abs(idum), im)
+           LET pow(1) = .5
+           FOR j = 1 to 64
+               LET idum = mod(idum * ia + ic, im)
+               LET keq(j) = int(2 * idum / im)
+               LET inq(j) = mod(int(4 * idum / im), 2)
+               LET pow(j + 1) = .5 * pow(j)
+           NEXT j
+           LET newkey = 1   ! To force initialization of des
+        END IF
+
+        LET isav = inq(64)
+        IF isav <> 0 then
+           LET inq(4) = 1 - inq(4)
+           LET inq(3) = 1 - inq(3)
+           LET inq(1) = 1 - inq(1)
+        END IF
+        FOR j = 64 to 2 step -1
+            LET inq(j) = inq(j - 1)
+        NEXT j
+        LET inq(1) = isav
+
+        CALL des (inq(), keq(), newkey, 0, jot())
+
+        LET dum = 0
+        FOR j = 1 to nacc
+            IF jot(j) <> 0 then LET dum = dum + pow(j)
+        NEXT j
+        LET ran4 = dum
+
+    END FUNCTION
+
+END MODULE

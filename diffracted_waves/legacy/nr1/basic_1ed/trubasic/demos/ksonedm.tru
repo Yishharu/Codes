@@ -1,0 +1,39 @@
+PROGRAM D13r10
+
+! Driver for routine ksone
+
+LIBRARY "ksone", "gasdev"
+DECLARE FUNCTION gasdev
+
+LET npts = 1000
+DIM data(0)
+MAT redim data(npts)
+
+CLEAR
+LET eps = .1
+LET idum = -5
+PRINT "   Variance ratio      K-S statistic       Probability"
+PRINT
+FOR i = 1 to 11
+    LET var = 1 + (i - 1) * eps
+    LET factr = sqr(var)
+    FOR j = 1 to npts
+        LET data(j) = factr * abs(gasdev(idum))
+    NEXT j
+
+    CALL ksone (data(), npts, dum, d, prob)
+
+    PRINT using "------#.######": var;
+    PRINT using "-----------#.######": d;
+    PRINT "           ";
+    PRINT using ".####^^^^": prob
+NEXT i
+
+END
+
+FUNCTION func (x)
+    LIBRARY "erf"
+    DECLARE FUNCTION erf
+    LET y = x / sqr(2)
+    LET func = erf(y)
+END FUNCTION

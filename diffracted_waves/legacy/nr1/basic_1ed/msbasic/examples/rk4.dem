@@ -1,0 +1,45 @@
+DECLARE SUB RK4 (Y!(), DYDX!(), N!, X!, H!, YOUT!(), DUM!)
+DECLARE FUNCTION BESSJ! (A!, X!)
+DECLARE FUNCTION BESSJ0! (X!)
+DECLARE FUNCTION BESSJ1! (X!)
+
+'PROGRAM D15R1
+'Driver for routine RK4
+CLS
+N = 4
+DIM Y(N), DYDX(N), YOUT(N)
+X = 1!
+Y(1) = BESSJ0(X)
+Y(2) = BESSJ1(X)
+Y(3) = BESSJ(2, X)
+Y(4) = BESSJ(3, X)
+DYDX(1) = -Y(2)
+DYDX(2) = Y(1) - Y(2)
+DYDX(3) = Y(2) - 2! * Y(3)
+DYDX(4) = Y(3) - 3! * Y(4)
+PRINT "Bessel Function: J0          J1          J3          J4"
+PRINT
+FOR I = 1 TO 5
+  H = .2 * I
+  CALL RK4(Y(), DYDX(), N, X, H, YOUT(), DUM)
+  PRINT "For a step size of:";
+  PRINT USING "###.##"; H
+  PRINT "      RK4:";
+  FOR J = 1 TO 4
+    PRINT USING "#####.######"; YOUT(J);
+  NEXT J
+  PRINT
+  PRINT "   Actual:";
+  PRINT USING "#####.######"; BESSJ0(X + H); BESSJ1(X + H); BESSJ(2, X + H);
+  PRINT USING "#####.######"; BESSJ(3, X + H)
+  PRINT
+NEXT I
+END
+
+SUB DERIVS (X, Y(), DYDX())
+DYDX(1) = -Y(2)
+DYDX(2) = Y(1) - (1! / X) * Y(2)
+DYDX(3) = Y(2) - (2! / X) * Y(3)
+DYDX(4) = Y(3) - (3! / X) * Y(4)
+END SUB
+

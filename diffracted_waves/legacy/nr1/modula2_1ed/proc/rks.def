@@ -1,0 +1,36 @@
+DEFINITION MODULE RKs;
+
+   (* EXPORT QUALIFIED RK4, RKDumb; *)
+
+   FROM NRVect IMPORT Vector;
+   FROM NRMatr IMPORT Matrix;
+   FROM NRMath IMPORT DerivFunction;
+
+   PROCEDURE RK4(Y, DYDX: Vector;
+                 x, h: REAL; 
+                 derivs: DerivFunction; 
+                 YOUT: Vector); 
+   (*
+     Given values for n variables Y[0, n-1] and their derivatives DYDX[0, n-1]
+     known at x, use the fourth-order Runge-Kutta method to advance the 
+     solution over an interval h and return the incremented variables as 
+     YOUT[0, n-1], which need not be a distinct array from Y. The user supplies 
+     the routine derivs(x,y,DYDX) which returns 
+     derivatives DYDX at x.
+   *)
+
+   PROCEDURE RKDumb(VStart: Vector; 
+                    x1, x2: REAL; 
+                    nstep: INTEGER;
+                    derivs: DerivFunction;
+                    RKDumbX: Vector;
+                    RKDumbY: Matrix); 
+   (*
+     Starting from initial values VSTART[0, n-1] for n functions
+     known at x1, use fourth-order Runge-Kutta to advance nstep equal 
+     increments to x2. Initial values and results of each step are stored 
+     in the global variables RKDumbX[nstep+1], RKDumbY[N, (nstep+1)].
+     The user-supplied routine derivs(x,V,DVDX) evaluates derivatives.
+   *)
+
+END RKs.

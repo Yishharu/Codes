@@ -1,0 +1,42 @@
+PROGRAM d13r15(input,output);
+(* driver for routine PEARSN *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 10;
+TYPE
+   RealArrayNP = ARRAY [1..n] OF real;
+VAR
+   prob,r,z: real;
+   i: integer;
+   dose,spore: RealArrayNP;
+
+(*$I GAMMLN.PAS *)
+
+(*$I BETACF.PAS *)
+
+(*$I BETAI.PAS *)
+
+(*$I PEARSN.PAS *)
+
+BEGIN
+   dose[1] := 56.1; dose[2] := 64.1; dose[3] := 70.0;
+   dose[4] := 66.6; dose[5] := 82.0; dose[6] := 91.3;
+   dose[7] := 90.0; dose[8] := 99.7; dose[9] := 115.3;
+   dose[10] := 110.0;
+   spore[1] := 0.11; spore[2] := 0.40; spore[3] := 0.37;
+   spore[4] := 0.48; spore[5] := 0.75; spore[6] := 0.66;
+   spore[7] := 0.71; spore[8] := 1.20; spore[9] := 1.01;
+   spore[10] := 0.95;
+   writeln;
+   writeln('Effect of Gamma Rays on Man-in-the-Moon Marigolds');
+   writeln('Count Rate (cpm)':16,'Pollen Index':23);
+   FOR i := 1 TO 10 DO writeln(dose[i]:10:2,spore[i]:25:2);
+   pearsn(dose,spore,10,r,prob,z);
+   writeln;
+   writeln('PEARSN':30,'Expected':16);
+   writeln('Corr. Coeff.',' ':8,r:13,'  ',0.9069586:13);
+   writeln('Probability',' ':9,prob:13,'  ',0.2926505e-3:13);
+   writeln('Fisher''s z',' ':10,z:13,'  ',1.510110:13)
+END.

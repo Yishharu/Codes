@@ -1,0 +1,41 @@
+PROGRAM D12r6
+
+! Driver for routine convlv
+
+LIBRARY "convlv"
+
+LET n = 16
+LET n2 = 32
+LET m = 9
+DIM data(0), respns(0), resp(0), ans(0)
+MAT redim data(n), respns(m), resp(n), ans(n2)
+
+CLEAR
+FOR i = 1 to n
+    LET data(i) = 0
+    IF i >= (n / 2 - n / 8) and i <= (n / 2 + n / 8) then LET data(i) = 1
+NEXT i
+FOR i = 1 to m
+    LET respns(i) = 0
+    IF i > 2 and i < 7 then LET respns(i) = 1
+    LET resp(i) = respns(i)
+NEXT i
+LET isign = 1
+
+CALL convlv (data(), n, resp(), m, isign, ans())
+
+! Compare with a direct convolution
+
+PRINT "  i        Convlv        Expected"
+FOR i = 1 to n
+    LET cmp = 0
+    FOR j = 1 to m / 2
+        LET cmp = cmp + data(mod(i-j-1, n) + 1) * respns(j+1)
+        LET cmp = cmp + data(mod(i+j-1, n) + 1) * respns(m-j+1)
+    NEXT j
+    LET cmp = cmp + data(i) * respns(1)
+    PRINT using "###": i;
+    PRINT using "-------#.######": ans(i), cmp
+NEXT i
+
+END

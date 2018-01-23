@@ -1,0 +1,17 @@
+DEFINITION MODULE Simplex;
+
+  (* EXPORT QUALIFIED Simplx; *)
+
+   FROM NRMatr  IMPORT Matrix;
+   FROM NRIVect IMPORT IVector;
+
+    PROCEDURE Simplx(    A: Matrix; 
+                         m, n, m1, m2, m3: INTEGER; 
+                     VAR icase: INTEGER; 
+                         IZROV, IPOSV: IVector); 
+   (*
+     Simplex method for linear programming. Input parameters: A, m, n, m1,
+     m2, and m3. Output parameters: A, ICASE, IZROV, and IPOSV.
+   *)
+
+END Simplex.

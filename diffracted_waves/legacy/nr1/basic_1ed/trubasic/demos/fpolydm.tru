@@ -1,0 +1,29 @@
+PROGRAM D14r6
+
+! Driver for fpoly
+
+LIBRARY "fpoly"
+
+LET npoly = 5
+DIM afunc(0)
+MAT redim afunc(npoly)
+
+CLEAR
+LET nval = 15
+LET dx = .1
+PRINT "                           Powers of x"
+PRINT
+PRINT "       x       x^0       x^1       x^2       x^3       x^4"
+FOR i = 1 to nval
+    LET x = i * dx
+
+    CALL fpoly (x, afunc(), npoly)
+
+    PRINT using "----#.####": x;
+    FOR j = 1 to npoly
+        PRINT using "----#.####": afunc(j);
+    NEXT j
+    PRINT
+NEXT i
+
+END

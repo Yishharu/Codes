@@ -1,0 +1,16 @@
+DECLARE FUNCTION EQUIV% (J!, K!)
+
+SUB ECLAZZ (NF(), N, DUM)
+NF(1) = 1
+FOR JJ = 2 TO N
+  NF(JJ) = JJ
+  FOR KK = 1 TO JJ - 1
+    NF(KK) = NF(NF(KK))
+    IF EQUIV%(JJ, KK) THEN NF(NF(NF(KK))) = JJ
+  NEXT KK
+NEXT JJ
+FOR JJ = 1 TO N
+  NF(JJ) = NF(NF(JJ))
+NEXT JJ
+END SUB
+

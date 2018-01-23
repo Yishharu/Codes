@@ -1,0 +1,47 @@
+EXTERNAL
+
+SUB fixrts (d(), npoles)
+
+    LIBRARY "zroots"
+
+    DIM a(0,0), roots(0,0)        ! Complex numbers
+    MAT redim a(2, npoles + 1), roots(2, npoles + 1)  ! Complex numbers
+
+    LET a(1, npoles + 1) = 1
+    LET a(2, npoles + 1) = 0
+    FOR j = npoles to 1 step -1
+        LET a(1, j) = -d(npoles + 1 - j)
+        LET a(2, j) = 0
+    NEXT j
+    LET polish = -1
+
+    CALL zroots (a(,), npoles, roots(,), polish)
+
+    FOR j = 1 to npoles
+        LET den = roots(1, j)^2 + roots(2, j)^2
+        IF den > 1 then
+           LET roots(1, j) = roots(1, j) / den
+           LET roots(2, j) = roots(2, j) / den
+        END IF
+    NEXT j
+    LET a(1, 1) = -roots(1, 1)
+    LET a(2, 1) = -roots(2, 1)
+    LET a(1, 2) = 1
+    LET a(2, 2) = 0
+    FOR j = 2 to npoles
+        LET a(1, j + 1) = 1
+        LET a(2, j + 1) = 0
+        FOR i = j to 2 step -1
+            LET dum = a(1, i)
+            LET a(1, i) = a(1, i - 1) - (roots(1, j) * dum - roots(2, j) * a(2, i))
+            LET a(2, i) = a(2, i - 1) - (roots(2, j) * dum + roots(1, j) * a(2, i))
+        NEXT i
+        LET dum = a(1, 1)
+        LET a(1, 1) = -(roots(1, j) * dum - roots(2, j) * a(2, 1))
+        LET a(2, 1) = -(roots(2, j) * dum + roots(1, j) * a(2, 1))
+    NEXT j
+    FOR j = 1 to npoles
+        LET d(npoles + 1 - j) = -a(1, j)
+    NEXT j
+
+END SUB

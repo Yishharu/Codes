@@ -1,0 +1,29 @@
+PROGRAM D14r11
+
+! Driver for routine rofunc
+
+LIBRARY "rofunc", "gasdev"
+DECLARE FUNCTION rofunc, gasdev
+
+LET nmax = 1000
+DECLARE PUBLIC npt, x(), y(), arr(), aa, abdev
+MAT redim x(nmax), y(nmax), arr(nmax)
+
+CLEAR
+LET spread = .05
+LET idum = -11
+LET npt = 100
+FOR i = 1 to npt
+    LET x(i) = .1 * i
+    LET y(i) = -2 * x(i) + 1 + spread * gasdev(idum)
+NEXT i
+
+PRINT "        b         a     rofunc     abdev"
+PRINT
+FOR i = -5 to 5
+    LET b = -2 + .02 * i
+    LET rf = rofunc(b)
+    PRINT using "------#.##": b, aa, rf, abdev
+NEXT i
+
+END

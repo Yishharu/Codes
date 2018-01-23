@@ -1,0 +1,46 @@
+PROGRAM d15r7(input,output);
+(* driver for routine RZEXTR *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   RzextrImax = 11;
+   RzextrNmax = 10;
+   RzextrNcol = 7;
+   nvar = 4;
+   nuse = 5;
+TYPE
+   RealArrayNVAR = ARRAY [1..nvar] OF real;
+VAR
+   RzextrX: ARRAY [1..RzextrImax] OF real;
+   RzextrD: ARRAY [1..RzextrNmax,1..RzextrNcol] OF real;
+   dum,xest: real;
+   i,iest,j: integer;
+   dy,yest,yz: RealArrayNVAR;
+
+(*$I RZEXTR.PAS *)
+
+BEGIN
+(* feed values from a rational function *)
+(* fn(x) := (1-x+x**3)/(x+1)**n *)
+   FOR i := 1 TO 10 DO BEGIN
+      iest := i;
+      xest := 1.0/i;
+      dum := 1.0-xest+xest*xest*xest;
+      FOR j := 1 TO nvar DO BEGIN
+         dum := dum/(xest+1.0);
+         yest[j] := dum
+      END;
+      rzextr(iest,xest,yest,yz,dy,nvar,nuse);
+      writeln;
+      writeln('iest  :=  ',i:2,'   xest =',xest:8:4);
+      write('Extrap. function: ');
+      FOR j := 1 TO nvar DO write(yz[j]:12:6);
+      writeln;
+      write('Estimated error:  ');
+      FOR j := 1 TO nvar DO write(dy[j]:12:6);
+      writeln
+   END;
+   writeln;
+   writeln('Actual values:    ',1.0:12:6,1.0:12:6,1.0:12:6,1.0:12:6)
+END.

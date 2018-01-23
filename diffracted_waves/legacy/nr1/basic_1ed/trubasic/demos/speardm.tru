@@ -1,0 +1,79 @@
+PROGRAM D13r16
+
+! Driver for routine spear
+
+LIBRARY "spear"
+
+LET ndat = 20
+LET nmon = 12
+DIM data1(0), data2(0), rays(0,0)
+DIM wksp1(0), wksp2(0), ave(0), zlat(0)
+DIM city$(0), mon$(0)
+MAT redim data1(ndat), data2(ndat), rays(ndat, nmon)
+MAT redim wksp1(ndat), wksp2(ndat), ave(ndat), zlat(ndat)
+MAT redim city$(ndat), mon$(nmon)
+
+CLEAR
+OPEN #1: name "table2.dat", access input
+LINE INPUT #1: dum$
+LINE INPUT #1: title$
+LINE INPUT #1: dum$
+LET text$ = dum$[1:15]
+FOR i = 1 to 12
+    LET mon$(i) = dum$[4*i+12:4*i+15]
+NEXT i
+LINE INPUT #1: dum$
+FOR i = 1 to ndat
+    LINE INPUT #1: dum$
+    LET city$(i) = dum$[1:15]
+    FOR j = 1 to 12
+        LET rays(i, j) = val(dum$[4*j+12:4*j+15])
+    NEXT j
+    LET ave(i) = val(dum$[66:70])
+    LET zlat(i) = val(dum$[71:75])
+NEXT i
+CLOSE #1
+
+PRINT title$
+PRINT "               ";
+FOR i = 1 to 12
+    PRINT mon$(i);
+NEXT i
+PRINT
+FOR i = 1 to ndat
+    PRINT city$(i);
+    FOR j = 1 to 12
+        PRINT using "####": round(rays(i, j));
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+
+! Check temperature correlations between different months
+
+PRINT "Are sunny summer places also sunny winter places?"
+PRINT "Check correlation of sampled U.S. solar radiation ";
+PRINT "(July with other months)"
+PRINT
+PRINT "Month         d      St. Dev.      Probd       Spearman r    probrs"
+PRINT
+FOR i = 1 to ndat
+    LET data1(i) = rays(i, 1)
+NEXT i
+FOR j = 1 to 12
+    FOR i = 1 to ndat
+        LET data2(i) = rays(i, j)
+    NEXT i
+
+    CALL spear (data1(), data2(), ndat, wksp1(), wksp2(), d, zd, probd, rs, probrs)
+
+    PRINT mon$(j);
+    PRINT using "##########.##": d;
+    PRINT "   ";
+    PRINT using "##.######": zd;
+    PRINT using "#####.######": probd;
+    PRINT using "########.######": rs;
+    PRINT using "#####.######": probrs
+NEXT j
+
+END

@@ -1,0 +1,80 @@
+DEFINITION MODULE NRMath;
+
+(*
+   EXPORT QUALIFIED
+      RealFunction,
+      Sqrt,      SqrtSD,     SqrtDS,   SqrtDD,
+      Exp,       ExpSD,      ExpDS,    ExpDD,
+      Ln,        LnSD,       LnDS,     LnDD,
+      Sin,       SinSD,      SinDS,    SinDD,
+      Cos,       CosSD,      CosDS,    CosDD,
+      ArcTan,    ArcTanSD,   ArcTanDS, ArcTanDD,
+      DIVD,      MODD,
+      ShiftLeft, ShiftRight,
+      XOR,
+      Random;
+*)
+
+   FROM NRSystem IMPORT LongInt, LongReal;
+   FROM NRVect   IMPORT Vector;
+
+   TYPE
+      RealFunction   = PROCEDURE(REAL): REAL;
+      RealFunction2D = PROCEDURE(REAL, REAL): REAL;
+      RealFunction3D = PROCEDURE(REAL, REAL, REAL): REAL;
+      VectorFunction = PROCEDURE (Vector): REAL;
+      DerivFunction  = PROCEDURE (REAL, Vector, Vector);
+
+   PROCEDURE Round  (x: REAL):     INTEGER;
+   PROCEDURE RoundSD(x: REAL):     LongInt;
+
+   PROCEDURE Sqrt  (x: REAL):     REAL;
+   PROCEDURE SqrtSD(x: REAL):     LongReal;
+   PROCEDURE SqrtDS(x: LongReal): REAL;
+   PROCEDURE SqrtDD(x: LongReal): LongReal;
+
+   PROCEDURE Exp  (x: REAL):     REAL;
+   PROCEDURE ExpSD(x: REAL):     LongReal;
+   PROCEDURE ExpDS(x: LongReal): REAL;
+   PROCEDURE ExpDD(x: LongReal): LongReal;
+
+   PROCEDURE Ln  (x: REAL):     REAL;
+   PROCEDURE LnSD(x: REAL):     LongReal;
+   PROCEDURE LnDS(x: LongReal): REAL;
+   PROCEDURE LnDD(x: LongReal): LongReal;
+
+   PROCEDURE Sin  (x: REAL):     REAL;
+   PROCEDURE SinSD(x: REAL):     LongReal;
+   PROCEDURE SinDS(x: LongReal): REAL;
+   PROCEDURE SinDD(x: LongReal): LongReal;
+
+   PROCEDURE Cos  (x: REAL):     REAL;
+   PROCEDURE CosSD(x: REAL):     LongReal;
+   PROCEDURE CosDS(x: LongReal): REAL;
+   PROCEDURE CosDD(x: LongReal): LongReal;
+
+   PROCEDURE ArcTan  (x: REAL):     REAL;
+   PROCEDURE ArcTanSD(x: REAL):     LongReal;
+   PROCEDURE ArcTanDS(x: LongReal): REAL;
+   PROCEDURE ArcTanDD(x: LongReal): LongReal;
+
+   PROCEDURE DIVD(a, b: LongInt): LongInt;  (* Entier of a/b *)
+
+   PROCEDURE MODD(a, b: LongInt): LongInt;  (* Rem of a/b *)
+
+   PROCEDURE ShiftLeft(VAR bits: BITSET;
+                           no:   INTEGER); 
+
+     (* This procedure shifts the variable bits left by no
+      * and puts zero in the rightmost bits.
+      *)
+
+   PROCEDURE ShiftRight(VAR bits: BITSET;
+                            no:   INTEGER); 
+
+   PROCEDURE XOR(VAR bits1: BITSET;
+                     bits2: BITSET); 
+
+   PROCEDURE Random(): REAL;
+
+END NRMath.

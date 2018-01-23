@@ -1,0 +1,47 @@
+PROGRAM D5r9
+
+! Driver for routine pcshft
+
+LIBRARY "pcshft", "chebft", "chebpc"
+DECLARE FUNCTION func             ! Defined below
+
+LET nval = 40
+DIM c(0), d(0)
+MAT redim c(nval), d(nval)
+
+CLEAR
+LET pio2 = pi/2
+LET a = -pio2
+LET b = pio2
+
+CALL chebft (a, b, c(), nval, dum)
+
+DO
+   PRINT "How many terms in Chebyshev evaluation?"
+   PRINT "Enter n between 6 and "; str$(nval); ". Enter n=0 to end."
+   LINE INPUT mval$
+   LET mval = val(mval$)
+
+   IF mval <= 0 or mval > nval then EXIT DO
+
+   CALL chebpc(c(), d(), mval)
+   CALL pcshft(a, b, d(), mval)
+
+   ! Test shifted polynomial
+
+   PRINT "        x        Actual    Polynomial"
+   FOR i = -8 to 8
+       LET x = i * pio2 / 10
+       LET poly = d(mval)
+       FOR j = mval - 1 to 1 step -1
+           LET poly = poly * x + d(j)
+       NEXT j
+       PRINT using "----#.######": x, func(x), poly
+   NEXT i
+LOOP
+
+END
+
+FUNCTION func (x)
+    LET func = (x ^ 2) * (x ^ 2 - 2) * sin(x)
+END FUNCTION

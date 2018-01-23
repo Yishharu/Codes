@@ -1,0 +1,43 @@
+EXTERNAL
+
+FUNCTION rtflsp (dum, x1, x2, xacc)
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    LET maxit = 30
+    LET fl = func(x1)
+    LET fh = func(x2)
+    IF fl * fh > 0 then
+       PRINT "root must be bracketed for false position."
+       EXIT FUNCTION
+    END IF
+    IF fl < 0 then
+       LET xl = x1
+       LET xh = x2
+    ELSE
+       LET xl = x2
+       LET xh = x1
+       LET swap = fl
+       LET fl = fh
+       LET fh = swap
+    END IF
+    LET dx = xh - xl
+    FOR j = 1 to maxit
+        LET trtflsp = xl + dx * fl / (fl - fh)
+        LET f = func(trtflsp)
+        IF f < 0 then
+           LET del = xl - trtflsp
+           LET xl = trtflsp
+           LET fl = f
+        ELSE
+           LET del = xh - trtflsp
+           LET xh = trtflsp
+           LET fh = f
+        END IF
+        LET dx = xh - xl
+        LET rtflsp = trtflsp
+        IF abs(del) < xacc or f = 0 then EXIT FUNCTION
+    NEXT j
+    PRINT "rtflsp exceed maximum iterations"
+
+END FUNCTION

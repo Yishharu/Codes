@@ -1,0 +1,47 @@
+DEFINITION MODULE BSStepM;
+
+   (* EXPORT QUALIFIED RZExtr, PZExtr, BSStep; *)
+
+   FROM NRMath IMPORT DerivFunction;
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE RZExtr(iest: INTEGER; 
+                    xest: REAL; 
+                    YEST, YZ, DY: Vector; 
+                    nuse: INTEGER); 
+   (*
+     Use diagonal rational function extrapolation to evaluate 
+     n functions at x=0 by fitting a diagonal rational
+     function to a sequence of estimates with progressively smaller 
+     values x=xest, and corresponding function vectors YEST[0, n-1].
+     This call is number iest in the sequence of calls.
+     The extrapolation uses at most the last nuse estimates. 
+     Extrapolated function values are output as YZ[0, n-1], and their
+     estimated error is output as DY[0, n-1].
+   *)
+
+   PROCEDURE PZExtr(iest: INTEGER; 
+                    xest: REAL; 
+                    YEST, YZ, DY: Vector; 
+                    nuse: INTEGER); 
+
+   PROCEDURE BSStep(    Y, DYDX:     Vector; 
+                    VAR x:           REAL; 
+                        htry, eps:   REAL; 
+                        YSCAL:       Vector; 
+                        derivs:      DerivFunction;
+                    VAR hdid, hnext: REAL); 
+   (*
+     Bulirsch-Stoer step with monitoring of local
+     truncation error to ensure accuracy and to adjust the stepsize.
+     Input are the dependent variable vector Y[0, n-1] and its derivative
+     DYDX[0, n-1] at the starting value of the independent variable x.  
+     Also input are the stepsize to be attempted htry, the required 
+     accuracy eps, and the vector YSCAL[0, n-1] against which the error 
+     is scaled. On output, Y and x are replaced by their new values, hdid
+     is the stepsize which was actually accomplished, and hnext is
+     the estimated next stepsize.  derivs is the user-supplied routine
+     that computes the right-hand side derivatives.
+   *)
+
+END BSStepM.

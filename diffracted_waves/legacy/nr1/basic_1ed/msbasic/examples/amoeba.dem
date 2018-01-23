@@ -1,0 +1,47 @@
+DECLARE SUB AMOEBA (P!(), Y!(), MP!, NP!, NDIM!, FTOL!, DUM!, ITER!)
+DECLARE FUNCTION AMOEB! (X!(), NDIM!)
+DECLARE FUNCTION BESSJ0! (X!)
+
+'PROGRAM D10R5
+'Driver for routine AMOEBA
+CLS
+NP = 3
+MP = 4
+FTOL = .000001
+DIM P(MP, NP), X(NP), Y(MP)
+FOR J = 1 TO NP
+  FOR I = 1 TO MP
+    READ P(I, J)
+  NEXT I
+NEXT J
+DATA 0.0,1.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,1.0
+NDIM = NP
+FOR I = 1 TO MP
+  FOR J = 1 TO NP
+    X(J) = P(I, J)
+  NEXT J
+  Y(I) = AMOEB(X(), NP)
+NEXT I
+CALL AMOEBA(P(), Y(), MP, NP, NDIM, FTOL, DUM, ITER)
+PRINT "Iterations: "; ITER
+PRINT
+PRINT "Vertices of final 3-D simplex and"
+PRINT "function values at the vertices:"
+PRINT
+PRINT "  I      X(I)        Y(I)        Z(I)      FUNCTION"
+PRINT
+FOR I = 1 TO MP
+  PRINT USING "###"; I;
+  FOR J = 1 TO NP
+    PRINT USING "#####.######"; P(I, J);
+  NEXT J
+  PRINT USING "#####.######"; Y(I)
+NEXT I
+PRINT
+PRINT "True minimum is at (0.5,0.6,0.7)"
+END
+
+FUNCTION AMOEB (X(), NDIM)
+AMOEB = .6 - BESSJ0((X(1) - .5) ^ 2 + (X(2) - .6) ^ 2 + (X(3) - .7) ^ 2)
+END FUNCTION
+

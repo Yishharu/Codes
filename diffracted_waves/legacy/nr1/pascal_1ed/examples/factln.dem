@@ -1,0 +1,32 @@
+PROGRAM d6r4(input,output,dfile);
+(* driver for routine FACTLN *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   StrArray11 = string[11];
+   RealArray100 = ARRAY [1..100] OF real;
+VAR
+   i,n,nval: integer;
+   val: real;
+   txt: StrArray11;
+   dfile: text;
+   FactlnA: RealArray100;
+
+(*$I GAMMLN.PAS *)
+
+(*$I FACTLN.PAS *)
+
+BEGIN
+   FOR i := 1 TO 100 DO FactlnA[i] := -1.0;  (* initialize FACTLN *)
+   NROpen(dfile,'fncval.dat');
+   REPEAT readln(dfile,txt) UNTIL txt = 'N-factorial';
+   readln(dfile,nval);
+   writeln('log of n-factorial');
+   writeln('n':6,'actual':19,'factln(n)':21);
+   FOR i := 1 TO nval DO BEGIN
+      readln(dfile,n,val);
+      writeln(n:6,ln(val):20:7,factln(n):20:7)
+   END;
+   close(dfile)
+END.

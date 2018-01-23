@@ -1,0 +1,61 @@
+DEFINITION MODULE Tests2;
+
+(* EXPORT QUALIFIED ChSOne, ChSTwo, ProbKS, KSOne, KSTwo; *)
+
+   FROM NRVect IMPORT Vector;
+   FROM NRMath IMPORT RealFunction;
+
+   PROCEDURE ChSOne(    BINS, EBINS: Vector; 
+                        knstrn: INTEGER; 
+                    VAR df, chsq, prob: REAL); 
+   (*
+     Given the array BINS[nbins], containing the observed numbers of events, 
+     and an array EBINS[nbins] containing the expected numbers of events, and
+     given the number of constraints knstrn (normally zero), this routine 
+     returns (trivially) the number of degrees of freedom df, and (nontrivially)
+     the chi-square chsq and the significance prob. a small value of prob 
+     indicates a significant difference between the distributions BINS and
+     EBINS. Note that BINS and EBINS are both real arrays, although BINS will 
+     normally contain integer values.
+   *)
+
+   PROCEDURE ChSTwo(    BINS1, BINS2: Vector; 
+                        knstrn: INTEGER; 
+                    VAR df, chsq, prob: REAL); 
+   (*
+     Given the arrays BINS1[nbins] and BINS2[nbins], containing two sets of 
+     binned data, and given the number of additional constraints knstrn 
+     (normally 0 or -1), this routine returns the number of degrees of freedom 
+     df, the chi-square chsq and the significance prob. a small value of prob 
+     indicates a significant difference between the distributions BINS1 and
+     BINS2. Note that BINS1 and BINS2 are both real arrays, although they will
+     normally contain integer values.
+   *)
+
+   PROCEDURE ProbKS(alam: REAL): REAL; 
+
+   PROCEDURE KSOne(    DATA: Vector;
+                       func: RealFunction;
+                   VAR d, prob: REAL); 
+   (*
+     Given an array DATA[n], and given a user-supplied function of a single 
+     variable func which is a cumulative distribution function ranging from 0 
+     (for smallest values of its argument) to 1 (for largest values of its 
+     argument), this routine returns the K--s statistic d, and the significance
+     level prob.  Small values of prob show that the cumulative distribution
+     function of DATA is significantly different from func. The array DATA is
+     modified by being sorted into ascending order.
+   *)
+
+   PROCEDURE KSTwo(    DATA1, DATA2: Vector; 
+                   VAR d, prob: REAL); 
+   (*
+     Given an array DATA1[n1] and an array DATA2[n2], this routine returns the 
+     KS statistic d, and the significance level prob for the null hypothesis 
+     that the data sets are drawn from the same distribution. Small values of 
+     prob show that the cumulative distribution function of DATA1 is 
+     significantly different from that of DATA2. The arrays DATA1 and DATA2 are
+     modified by being sorted into ascending order.
+   *)
+
+END Tests2.

@@ -1,0 +1,82 @@
+PROGRAM d2r1 (input,output,dfile);
+(* driver program for subroutine GAUSSJ *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+CONST
+   np = 20;
+   mp = 20;
+TYPE
+   RealArrayNPbyNP = ARRAY [1..np,1..np] OF real;
+   RealArrayNPbyMP = ARRAY [1..np,1..mp] OF real;
+   IntegerArrayNP = ARRAY [1..np] of integer;
+VAR
+   j,k,l,m,n: integer;
+   a,ai,u: RealArrayNPbyNP;
+   b,x,t: RealArrayNPbyMP;
+   dfile: text;
+
+(*$I GAUSSJ.PAS *)
+
+BEGIN
+   NROpen(dfile,'matrx1.dat');
+   WHILE true DO BEGIN
+      readln(dfile);
+      readln(dfile);
+      readln(dfile,n,m);
+      readln(dfile);
+      FOR k := 1 TO n DO BEGIN
+         FOR l := 1 TO n-1 DO read(dfile,a[k,l]);
+         readln(dfile,a[k,n])
+      END;
+      readln(dfile);
+      FOR l := 1 TO m DO BEGIN
+         FOR k := 1 TO n-1 DO read(dfile,b[k,l]);
+         readln(dfile,b[n,l])
+      END;
+(* save matrices for later testing of results *)
+      FOR l := 1 TO n DO BEGIN
+         FOR k := 1 TO n DO ai[k,l] := a[k,l];
+         FOR k := 1 TO m DO x[l,k] := b[l,k]
+      END;
+(* invert matrix *)
+      gaussj(ai,n,x,m);
+      writeln;
+      writeln('Inverse of matrix a : ');
+      FOR k := 1 TO n DO BEGIN
+         FOR l := 1 TO n-1 DO write(ai[k,l]:12:6);
+         writeln(ai[k,n]:12:6)
+      END;
+(* test results -- check inverse *)
+      writeln('a times a-inverse (compare with unit matrix)');
+      FOR k := 1 TO n DO BEGIN
+         FOR l := 1 TO n DO BEGIN
+            u[k,l] := 0.0;
+            FOR j := 1 TO n DO
+               u[k,l] := u[k,l]+a[k,j]*ai[j,l]
+         END;
+         FOR l := 1 TO n-1 DO write(u[k,l]:12:6);
+         writeln(u[k,n]:12:6)
+      END;
+(* check vector solutions *)
+      writeln;
+      writeln('Check the following vectors for equality:');
+      writeln('original':20,'matrix*sol''n':15);
+      FOR l := 1 TO m DO BEGIN
+      writeln('vector ',l:2,':');
+         FOR k := 1 TO n DO BEGIN
+            t[k,l] := 0.0;
+            FOR j := 1 TO n DO
+               t[k,l] := t[k,l]+a[k,j]*x[j,l];
+         writeln(' ':8,b[k,l]:12:6,t[k,l]:12:6);
+         END
+      END;
+      writeln('***********************************');
+      IF eof(dfile) THEN GOTO 99;
+      writeln('press RETURN for next problem:');
+      readln
+   END;
+99:
+   close(dfile)
+END.

@@ -1,0 +1,29 @@
+DEFINITION MODULE Jacobis;
+
+   (* EXPORT QUALIFIED EigSrt, Jacobi; *)
+
+   FROM NRVect IMPORT Vector;
+   FROM NRMatr IMPORT Matrix;
+
+   PROCEDURE EigSrt(D: Vector; 
+                    V: Matrix); 
+   (*
+     Given the eigenvalues D[n] and eigenvectors V[n, n] as output
+     from Jacobi (section 11.1) or TQLI (section 11.3), this routine sorts the
+     eigenvalues into descending order, and rearranges the columns of V
+     correspondingly. The method is straight insertion.
+   *)
+
+   PROCEDURE Jacobi(    A:    Matrix; 
+                        D:    Vector; 
+                        V:    Matrix; 
+                    VAR nrot: INTEGER); 
+   (*
+     Computes all eigenvalues and eigenvectors of a real symmetric matrix 
+     A[n, n]. On output, elements of A above the diagonal are destroyed. 
+     D[n] returns the eigenvalues of A.  V[n, n] is a matrix whose columns 
+     contain, on output, the normalized eigenvectors of A.  nrot returns 
+     the number of Jacobi rotations that were required.
+   *)
+
+END Jacobis.

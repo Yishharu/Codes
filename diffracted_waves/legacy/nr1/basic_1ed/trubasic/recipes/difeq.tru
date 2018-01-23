@@ -1,0 +1,63 @@
+MODULE difeq
+
+    ! This routine is provided by the user program, which
+    ! sets the dimensions and values for the COMMON quantities.
+    ! This routine is accessed by the subroutine solvde
+
+    PUBLIC x(0), h, mm, n, c2, anorm
+
+    SUB difeq (k, k1, k2, jsf, is1, isf, indexv(), ne, s(,), nsi, nsj, y(,), nyj, nyk)
+
+        LET m = 41
+        IF k = k1 then
+           IF mod(n + mm, 2) = 1 then
+              LET s(3, 3 + indexv(1)) = 1
+              LET s(3, 3 + indexv(2)) = 0
+              LET s(3, 3 + indexv(3)) = 0
+              LET s(3, jsf) = y(1, 1)
+           ELSE
+              LET s(3, 3 + indexv(1)) = 0
+              LET s(3, 3 + indexv(2)) = 1
+              LET s(3, 3 + indexv(3)) = 0
+              LET s(3, jsf) = y(2, 1)
+           END IF
+        ELSEIF k > k2 then
+           LET s(1, 3 + indexv(1)) = -(y(3, m) - c2) / (2 * (mm + 1))
+           LET s(1, 3 + indexv(2)) = 1
+           LET s(1, 3 + indexv(3)) = -y(1, m) / (2 * (mm + 1))
+           LET s(1, jsf) = y(2, m) - (y(3, m) - c2) * y(1, m) / (2 * (mm + 1))
+           LET s(2, 3 + indexv(1)) = 1
+           LET s(2, 3 + indexv(2)) = 0
+           LET s(2, 3 + indexv(3)) = 0
+           LET s(2, jsf) = y(1, m) - anorm
+        ELSE
+           LET s(1, indexv(1)) = -1
+           LET s(1, indexv(2)) = -.5 * h
+           LET s(1, indexv(3)) = 0
+           LET s(1, 3 + indexv(1)) = 1
+           LET s(1, 3 + indexv(2)) = -.5 * h
+           LET s(1, 3 + indexv(3)) = 0
+           LET temp = h / (1 - (x(k) + x(k - 1))^2 * .25)
+           LET temp2 = .5 * (y(3, k) + y(3, k - 1)) - c2 * .25 * (x(k) + x(k - 1))^2
+           LET s(2, indexv(1)) = temp * temp2 * .5
+           LET s(2, indexv(2)) = -1 - .5 * temp * (mm + 1) * (x(k) + x(k - 1))
+           LET s(2, indexv(3)) = .25 * temp * (y(1, k) + y(1, k - 1))
+           LET s(2, 3 + indexv(1)) = s(2, indexv(1))
+           LET s(2, 3 + indexv(2)) = 2 + s(2, indexv(2))
+           LET s(2, 3 + indexv(3)) = s(2, indexv(3))
+           LET s(3, indexv(1)) = 0
+           LET s(3, indexv(2)) = 0
+           LET s(3, indexv(3)) = -1
+           LET s(3, 3 + indexv(1)) = 0
+           LET s(3, 3 + indexv(2)) = 0
+           LET s(3, 3 + indexv(3)) = 1
+           LET s(1, jsf) = y(1, k) - y(1, k - 1) - .5 * h * (y(2, k) + y(2, k - 1))
+           LET dum = (x(k) + x(k - 1)) * .5 * (mm + 1) * (y(2, k) + y(2, k - 1))
+           LET dum = dum - temp2 * .5 * (y(1, k) + y(1, k - 1))
+           LET s(2, jsf) = y(2, k) - y(2, k - 1) - temp * dum
+           LET s(3, jsf) = y(3, k) - y(3, k - 1)
+        END IF
+
+    END SUB
+
+END MODULE

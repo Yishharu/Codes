@@ -1,0 +1,85 @@
+PROGRAM D10r12
+
+! Driver for routine simplx
+
+! Incorporates examples discussed in text
+
+LIBRARY "simplx"
+
+LET n = 4
+LET m = 4
+LET np = 5
+LET mp = 6
+LET m1 = 2
+LET m2 = 1
+LET m3 = 1
+LET nm1m2 = n + m1 + m2
+DIM a(0,0), izrov(0), iposv(0), anum(0), txt$(0), alpha$(0)
+MAT redim a(mp, np), izrov(n), iposv(m), anum(np), txt$(nm1m2), alpha$(np)
+
+CLEAR
+MAT READ txt$
+DATA x1, x2, x3, x4, y1, y2, y3
+
+FOR j = 1 to np
+    FOR i = 1 to mp
+        READ a(i, j)
+    NEXT i
+NEXT j
+DATA  0.0, 740.0,  0.0,  0.5,  9.0, 0.0
+DATA  1.0,  -1.0,  0.0,  0.0, -1.0, 0.0
+DATA  1.0,   0.0, -2.0, -1.0, -1.0, 0.0
+DATA  3.0,  -2.0,  0.0,  1.0, -1.0, 0.0
+DATA -0.5,   0.0,  7.0, -2.0, -1.0, 0.0
+
+CALL simplx (a(,), m, n, mp, np, m1, m2, m3, icase, izrov(), iposv())
+
+IF icase = 1 then
+   PRINT "Unbounded objective function"
+ELSEIF icase = -1 then
+   PRINT "No solutions satisfy constraints given"
+ELSE
+   LET jj = 1
+   FOR i = 1 to n
+       IF izrov(i) <= nm1m2 then
+          LET alpha$(jj) = txt$(izrov(i))
+          LET jj = jj + 1
+       END IF
+   NEXT i
+   LET jmax = jj - 1
+   PRINT "           ";
+   FOR jj = 1 to jmax
+       PRINT "        ";
+       PRINT alpha$(jj);
+   NEXT jj
+   PRINT
+   FOR i = 1 to m + 1
+       IF i = 1 then
+          LET alpha$(1) = "  "
+          LET rite = -1
+       ELSEIF iposv(i - 1) <= nm1m2 then
+          LET alpha$(1) = txt$(iposv(i - 1))
+          LET rite = -1
+       ELSE
+          LET rite = 0
+       END IF
+       IF rite=-1 then
+          LET anum(1) = a(i, 1)
+          LET jj = 2
+          FOR j = 2 to n + 1
+              IF izrov(j - 1) <= nm1m2 then
+                 LET anum(jj) = a(i, j)
+                 LET jj = jj + 1
+              END IF
+          NEXT j
+          LET jmax = jj - 1
+          PRINT alpha$(1);
+          FOR jj = 1 to jmax
+              PRINT using "------#.##": anum(jj);
+          NEXT jj
+          PRINT
+       END IF
+   NEXT i
+END IF
+
+END

@@ -1,0 +1,32 @@
+DEFINITION MODULE Uniform;
+
+   (* EXPORT QUALIFIED Ran0, Ran1, Ran2, Ran3; *)
+
+   FROM NRSystem IMPORT LongInt;
+
+   PROCEDURE Ran0(VAR init: INTEGER): REAL; 
+   (*
+     Returns a uniform random deviate between 0.0 and 1.0 using the system 
+     procedure Random. Change Random to appropriate names for your system. 
+     Set init to any negative value to initialize or reinitialize the sequence.
+   *)
+
+   PROCEDURE Ran1(VAR init: INTEGER): REAL; 
+   (*
+     Returns a uniform random deviate between 0.0 and 1.0. Set init to any
+     negative value to initialize or reinitialize the sequence.
+   *)
+
+   PROCEDURE Ran2(VAR init: LongInt): REAL; 
+   (*
+     Returns a uniform random deviate between 0.0 and 1.0. Set init to any
+     negative value to initialize or reinitialize the sequence.
+   *)
+
+   PROCEDURE Ran3(VAR init: INTEGER): REAL; 
+   (*
+     Returns a uniform random deviate between 0.0 and 1.0. Set init to any
+     negative value to initialize or reinitialize the sequence.
+   *)
+
+END Uniform.

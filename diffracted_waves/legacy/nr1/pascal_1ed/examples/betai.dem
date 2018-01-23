@@ -1,0 +1,31 @@
+PROGRAM d6r13(input,output,dfile);
+(* driver for routines BETAI and BETACF *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   StrArray24 = string[24];
+VAR
+   a,b,val,x: real;
+   i,nval: integer;
+   txt: StrArray24;
+   dfile: text;
+
+(*$I GAMMLN.PAS *)
+
+(*$I BETACF.PAS *)
+
+(*$I BETAI.PAS *)
+
+BEGIN
+   NROpen(dfile,'fncval.dat');
+   REPEAT readln(dfile,txt) UNTIL txt = 'Incomplete Beta Function';
+   readln(dfile,nval);
+   writeln(txt);
+   writeln('a':5,'b':10,'x':12,'actual':14,'betai(x)':13);
+   FOR i := 1 TO nval DO BEGIN
+      readln(dfile,a,b,x,val);
+      writeln(a:6:2,b:12:6,x:12:6,val:12:6,betai(a,b,x):12:6)
+   END;
+   close(dfile)
+END.

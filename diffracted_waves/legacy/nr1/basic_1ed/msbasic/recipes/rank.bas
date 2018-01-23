@@ -1,0 +1,6 @@
+SUB RANK (N, INDX(), IRANK())
+FOR J = 1 TO N
+  IRANK(INDX(J)) = J
+NEXT J
+END SUB
+

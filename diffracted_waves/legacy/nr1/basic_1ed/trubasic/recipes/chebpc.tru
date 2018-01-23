@@ -1,0 +1,28 @@
+EXTERNAL
+
+SUB chebpc (c(), d(), n)
+
+    DIM dd(0)
+    MAT redim dd(n)
+
+    FOR j = 1 to n
+        LET d(j) = 0
+        LET dd(j) = 0
+    NEXT j
+    LET d(1) = c(n)
+    FOR j = n - 1 to 2 step -1
+        FOR k = n - j + 1 to 2 step -1
+            LET sv = d(k)
+            LET d(k) = 2 * d(k - 1) - dd(k)
+            LET dd(k) = sv
+        NEXT k
+        LET sv = d(1)
+        LET d(1) = -dd(1) + c(j)
+        LET dd(1) = sv
+    NEXT j
+    FOR j = n to 2 step -1
+        LET d(j) = d(j - 1) - dd(j)
+    NEXT j
+    LET d(1) = -dd(1) + .5 * c(1)
+
+END SUB

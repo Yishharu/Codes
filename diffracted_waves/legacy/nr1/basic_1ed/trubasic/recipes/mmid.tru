@@ -1,0 +1,35 @@
+EXTERNAL
+
+SUB mmid (y(), dydx(), nvar, xs, htot, nstep, yout(), dum)
+
+    ! Routine derivs supplied by the calling program
+
+    DIM ym(0), yn(0)
+    MAT redim ym(nvar), yn(nvar)
+
+    LET h = htot / nstep
+    FOR i = 1 to nvar
+        LET ym(i) = y(i)
+        LET yn(i) = y(i) + h * dydx(i)
+    NEXT i
+    LET x = xs + h
+
+    CALL derivs (x, yn(), yout())
+
+    LET h2 = 2 * h
+    FOR n = 2 to nstep
+        FOR i = 1 to nvar
+            LET swap = ym(i) + h2 * yout(i)
+            LET ym(i) = yn(i)
+            LET yn(i) = swap
+        NEXT i
+        LET x = x + h
+
+        CALL derivs (x, yn(), yout())
+
+    NEXT n
+    FOR i = 1 to nvar
+        LET yout(i) = .5 * (ym(i) + yn(i) + h * yout(i))
+    NEXT i
+
+END SUB

@@ -1,0 +1,77 @@
+PROGRAM d12r11(input,output);
+(* driver for routine FIXRTS *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npoles = 6;
+   npolp1 = 7;   (* npolp1 = npoles+1 *)
+TYPE
+   RealArrayNPOLES = ARRAY [1..npoles] OF real;
+   Complex = RECORD
+                r,i: real
+             END;
+   ComplexArrayMp1 = ARRAY [1..npolp1] OF Complex;
+VAR
+   i,j: integer;
+   dum: real;
+   polish: boolean;
+   d: RealArrayNPOLES;
+   sixth: Complex;
+   zcoef,zeros: ComplexArrayMp1;
+
+(*$I LAGUER.PAS *)
+
+(*$I ZROOTS.PAS *)
+
+(*$I FIXRTS.PAS *)
+
+BEGIN
+   d[1] := 6.0; d[2] := -15.0; d[3] := 20.0;
+   d[4] := -15.0; d[5] := 6.0; d[6] := 0.0;
+   polish := true;
+   (* finding roots of (z-1.0)^6 := 1.0 *)
+   (* first write roots *)
+   zcoef[npoles+1].r := 1.0;
+   zcoef[npoles+1].i := 0.0;
+   FOR i := npoles DOWNTO 1 DO BEGIN
+      zcoef[i].r := -d[npoles+1-i];
+      zcoef[i].i := 0.0
+   END;
+   zroots(zcoef,npoles,zeros,polish);
+   writeln('Roots of (z-1.0)^6 = 1.0');
+   writeln('Root':22,'(z-1.0)^6':27);
+   FOR i := 1 TO npoles DO BEGIN
+      sixth.r := 1.0;
+      sixth.i := 0.0;
+      FOR j := 1 TO 6 DO BEGIN
+         dum := sixth.r;
+         sixth.r := sixth.r*(zeros[i].r-1.0)-sixth.i*zeros[i].i;
+         sixth.i := dum*zeros[i].i+sixth.i*(zeros[i].r-1.0)
+      END;
+      writeln(i:6,zeros[i].r:12:6,zeros[i].i:12:6,sixth.r:12:6,sixth.i:12:6)
+   END;
+   (* now fix them to lie within unit circle *)
+   fixrts(d,npoles);
+   (* check results *)
+   zcoef[npoles+1].r := 1.0;
+   zcoef[npoles+1].i := 0.0;
+   FOR i := npoles DOWNTO 1 DO BEGIN
+      zcoef[i].r := -d[npoles+1-i];
+      zcoef[i].i := 0.0
+   END;
+   zroots(zcoef,npoles,zeros,polish);
+   writeln;
+   writeln('Roots reflected in unit circle');
+   writeln('Root':22,'(z-1.0)^6':27);
+   FOR i := 1 TO npoles DO BEGIN
+      sixth.r := 1.0;
+      sixth.i := 0.0;
+      FOR j := 1 TO 6 DO BEGIN
+         dum := sixth.r;
+         sixth.r := sixth.r*(zeros[i].r-1.0)-sixth.i*zeros[i].i;
+         sixth.i := dum*zeros[i].i+sixth.i*(zeros[i].r-1.0)
+      END;
+      writeln(i:6,zeros[i].r:12:6,zeros[i].i:12:6,sixth.r:12:6,sixth.i:12:6)
+   END
+END.

@@ -1,0 +1,31 @@
+PROGRAM d6r30(input,output,dfile);
+(* driver for routine SNCNDN *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   StrArray26 = string[26];
+VAR
+   cn,dn,em,emmc,sn,uu,val: real;
+   i,nval: integer;
+   txt: StrArray26;
+   dfile: text;
+
+(*$I SNCNDN.PAS *)
+
+BEGIN
+   NROpen(dfile,'fncval.dat');
+   REPEAT readln(dfile,txt) UNTIL txt = 'Jacobian Elliptic Function';
+   readln(dfile,nval);
+   writeln(txt);
+   writeln('mc':4,'u':8,'actual':16,'sn':13,
+      'sn^2+cn^2':15,'(mc)*(sn^2)+dn^2':18);
+   FOR i := 1 TO nval DO BEGIN
+      readln(dfile,em,uu,val);
+      emmc := 1.0-em;
+      sncndn(uu,emmc,sn,cn,dn);
+      writeln(emmc:5:2,uu:8:2,val:15:5,sn:15:5,
+         (sn*sn+cn*cn):12:5,(em*sn*sn+dn*dn):14:5)
+   END;
+   close(dfile)
+END.

@@ -1,0 +1,43 @@
+PROGRAM D15r8
+
+! Driver for routine rzextr
+! Feed values from a rational function
+! fn(x)=(1-x+x^3)/(x+1)^n
+
+LIBRARY "rzextr"
+
+LET nv = 4
+LET nuse = 5
+DIM yest(0), yz(0), dy(0)
+MAT redim yest(nv), yz(nv), dy(nv)
+
+CLEAR
+FOR i = 1 to 10
+    LET iest = i
+    LET xest = 1 / i
+    LET dum = 1 - xest + xest^3
+    FOR j = 1 to nv
+        LET dum = dum / (xest + 1)
+        LET yest(j) = dum
+    NEXT j
+
+    CALL rzextr (iest, xest, yest(), yz(), dy(), nv, nuse)
+
+    PRINT "iest ="; i; "  xest =";
+    PRINT using "###.####": xest
+    PRINT "Extrap. Function: ";
+    FOR j = 1 to nv
+        PRINT using "----#.######": yz(j);
+    NEXT j
+    PRINT
+    PRINT "Estimated Error:  ";
+    FOR j = 1 to nv
+        PRINT using "----#.######": dy(j);
+    NEXT j
+    PRINT
+    PRINT
+NEXT i
+PRINT "Actual Values:    ";
+PRINT using "#####.######": 1, 1, 1, 1
+
+END

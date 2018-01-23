@@ -1,0 +1,15 @@
+DEFINITION MODULE IncBeta;
+
+   (*  EXPORT QUALIFIED BetaI, BetaCF; *)
+
+   PROCEDURE BetaI(a, b, x: REAL): REAL; 
+   (*
+     Returns the incomplete beta function Ix(a, b).
+   *)
+
+   PROCEDURE BetaCF(a, b, x: REAL): REAL; 
+   (*
+     Continued fraction for incomplete beta function, used by BetaI.
+   *)
+
+END IncBeta.

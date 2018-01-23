@@ -1,0 +1,46 @@
+MODULE bessy0
+
+    SHARE p1, p2, p3, p4, p5, q1, q2, q3, q4, q5
+    SHARE r1, r2, r3, r4, r5, r6, s1, s2, s3, s4, s5, s6
+    SHARE pio4
+
+    READ p1, p2, p3, p4, p5
+    READ q1, q2, q3, q4, q5
+
+    DATA  1.0,             -0.1098628627e-2,  0.2734510407e-4
+    DATA -0.2073370639e-5,  0.2093887211e-6
+    DATA -0.1562499995e-1,  0.1430488765e-3, -0.6911147651e-5
+    DATA  0.7621095161e-6, -0.934945152e-7
+
+    READ r1, r2, r3, r4, r5, r6
+    READ s1, s2, s3, s4, s5, s6
+    DATA -2957821389.0, 7062834065.0, -512359803.6
+    DATA    10879881.29,    -86327.92757,    228.4622733
+    DATA 40076544269.0,  745249964.8,    7189466.438
+    DATA       47447.26470,    226.1030244,    1.0
+
+    LET pio4 = pi/4
+
+    FUNCTION bessy0 (x)
+
+        LIBRARY "bessj0"
+
+        DECLARE FUNCTION bessj0
+
+        IF x < 8 then
+           LET y = x^2
+           LET dum = r1 + y * (r2 + y * (r3 + y * (r4 + y * (r5 + y * r6))))
+           LET dum = dum / (s1 + y * (s2 + y * (s3 + y * (s4 + y * (s5 + y * s6)))))
+           LET bessy0 = dum + .636619772 * bessj0(x) * log(x)
+        ELSE
+           LET z = 8 / x
+           LET y = z^2
+           LET xx = x - pio4
+           LET dum = sin(xx) * (p1 + y * (p2 + y * (p3 + y * (p4 + y * p5))))
+           LET dum = dum + z * cos(xx) * (q1 + y * (q2 + y * (q3 + y * (q4 + y * q5))))
+           LET bessy0 = sqr(.636619772 / x) * dum
+        END IF
+
+    END FUNCTION
+
+END MODULE

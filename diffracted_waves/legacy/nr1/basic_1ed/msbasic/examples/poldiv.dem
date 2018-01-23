@@ -1,0 +1,42 @@
+DECLARE SUB POLDIV (U!(), N!, V!(), NV!, Q!(), R!())
+
+'PROGRAM D5R3
+'Driver for routine POLDIV
+'(X-1)^5/(X+1)^3
+CLS
+N = 6
+NV = 4
+DIM U(N), V(NV), Q(N), R(N)
+FOR I = 1 TO N
+  READ U(I)
+NEXT I
+DATA -1.0,5.0,-10.0,10.0,-5.0,1.0
+FOR I = 1 TO NV
+  READ V(I)
+NEXT I
+DATA 1.0,3.0,3.0,1.0
+CALL POLDIV(U(), N, V(), NV, Q(), R())
+PRINT "       X^0       X^1       X^2       X^3       X^4       X^5"
+PRINT
+PRINT "Quotient polynomial coefficients:"
+FOR I = 1 TO 6
+  PRINT USING "#######.##"; Q(I);
+NEXT I
+PRINT
+PRINT
+PRINT "Expected quotient coefficients:"
+PRINT USING "#######.##"; 31!; -8!; 1!; 0!; 0!; 0!
+PRINT
+PRINT
+PRINT
+PRINT "Remainder polynomial coefficients:"
+FOR I = 1 TO 4
+  PRINT USING "#######.##"; R(I);
+NEXT I
+PRINT
+PRINT
+PRINT "Expected remainder coefficients:"
+PRINT USING "#######.##"; -32!; -80!; -80!; 0!
+PRINT
+END
+

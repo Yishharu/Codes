@@ -1,0 +1,54 @@
+PROGRAM d13r10(input,output);
+(* driver for routine KSONE *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npts = 1000;
+   eps = 0.1;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayNP = ARRAY [1..npts] OF real;
+VAR
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   GasdevIset: integer;
+   GasdevGset: real;
+   i,idum,j: integer;
+   d,factr,prob,varnce: real;
+   data: RealArrayNP;
+
+(*$I SORT.PAS *)
+
+(*$I PROBKS.PAS *)
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+(*$I ERFCC.PAS *)
+
+FUNCTION func(x: real): real;
+VAR
+   y: real;
+BEGIN
+   y := x/sqrt(2.0);
+   func := 1.0 - erfcc(y)
+END;
+
+(*$I KSONE.PAS *)
+
+BEGIN
+   GasdevIset := 0;
+   idum := -5;
+   writeln('variance ratio':19,'k-s statistic':16,'probability':15);
+   writeln;
+   FOR i := 1 TO 11 DO BEGIN
+      varnce := 1.0+(i-1)*eps;
+      factr := sqrt(varnce);
+      FOR j := 1 TO npts DO
+         data[j] := factr*abs(gasdev(idum));
+      ksone(data,npts,d,prob);
+      writeln(varnce:16:6,d:16:6,prob:16:6)
+   END
+END.

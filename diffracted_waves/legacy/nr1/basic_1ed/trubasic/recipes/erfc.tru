@@ -1,0 +1,14 @@
+EXTERNAL
+
+FUNCTION erfc (x)
+
+    LIBRARY "gammp", "gammq"
+    DECLARE FUNCTION gammp, gammq
+
+    IF x < 0 then
+       LET erfc = 1 + gammp(.5, x ^ 2)
+    ELSE
+       LET erfc = gammq(.5, x ^ 2)
+    END IF
+
+END FUNCTION

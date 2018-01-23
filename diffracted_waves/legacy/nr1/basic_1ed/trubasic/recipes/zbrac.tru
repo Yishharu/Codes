@@ -1,0 +1,29 @@
+EXTERNAL
+
+SUB zbrac (dum, x1, x2, succes)
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    LET factor = 1.6
+    LET ntry = 50
+    IF x1 = x2 then
+       PRINT "You have to guess an initial range"
+       EXIT SUB
+    END IF
+
+    LET f1 = func(x1)
+    LET f2 = func(x2)
+    LET succes = -1
+    FOR j = 1 to ntry
+        IF f1 * f2 < 0 then EXIT SUB
+        IF abs(f1) < abs(f2) then
+           LET x1 = x1 + factor * (x1 - x2)
+           LET f1 = func(x1)
+        ELSE
+           LET x2 = x2 + factor * (x2 - x1)
+           LET f2 = func(x2)
+        END IF
+    NEXT j
+    LET succes = 0
+
+END SUB

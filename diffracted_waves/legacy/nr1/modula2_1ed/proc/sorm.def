@@ -1,0 +1,18 @@
+DEFINITION MODULE SORM;
+
+   (* EXPORT QUALIFIED SOR; *)
+
+   FROM NRLMatr  IMPORT LMatrix;
+   FROM NRSystem IMPORT LongReal;
+
+   PROCEDURE SOR(A, B, C, D, E, F, U: LMatrix; rjac: LongReal); 
+   (*
+     SOR solution of equation (17.5.25) with Chebyshev acceleration.
+     A, B, C, DD, E and F are input as the coefficients of the equation, 
+     each dimensioned to the grid size [jmax, jmax]. U is input as the 
+     initial guess to the solution, usually zero, and returns with the 
+     final value. rjac is input as the spectral radius of the Jacobi 
+     iteration, or an estimate of it.
+   *)
+
+END SORM.

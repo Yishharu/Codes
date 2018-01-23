@@ -1,0 +1,63 @@
+PROGRAM d14r11(input,output);
+(* driver for routine MEDFIT *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   ndata = 100;
+   spread = 0.1;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayNDATA = ARRAY [1..ndata] OF real;
+   RealArrayNP = RealArrayNDATA;
+VAR
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   GasdevIset: integer;
+   GasdevGset: real;
+   a,abdev,b,chi2,q,siga,sigb: real;
+   i,idum,mwt: integer;
+   sig,x,y: RealArrayNDATA;
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+(*$I GAMMLN.PAS *)
+
+(*$I GSER.PAS *)
+
+(*$I GCF.PAS *)
+
+(*$I GAMMQ.PAS *)
+
+(*$I SORT.PAS *)
+
+(*$I FIT.PAS *)
+
+(*$I MEDFIT.PAS *)
+
+BEGIN
+   GasdevIset := 0;
+   idum := -1984;
+   FOR i := 1 TO ndata DO BEGIN
+      x[i] := 0.1*i;
+      y[i] := -2.0*x[i]+1.0+spread*gasdev(idum);
+      sig[i] := spread
+   END;
+   mwt := 1;
+   writeln;
+   fit(x,y,ndata,sig,mwt,a,b,siga,sigb,chi2,q);
+   writeln('According to routine FIT the result is:');
+   writeln('a = ':7,a:8:4,'  uncertainty: ':13,siga:8:4);
+   writeln('b = ':7,b:8:4,'  uncertainty: ':13,sigb:8:4);
+   writeln('chi-squared: ':16,chi2:8:4,' for ',ndata:4,' points');
+   writeln('goodness-of-fit: ':20,q:8:4);
+   writeln;
+   writeln('According to routine MEDFIT the result is:');
+   medfit(x,y,ndata,a,b,abdev);
+   writeln('a = ':7,a:8:4);
+   writeln('b = ':7,b:8:4);
+   writeln(' ':3,'absolute deviation (per data point): ',abdev:8:4);
+   writeln(' ':3,'note: gaussian spread is',spread:8:4,')')
+END.

@@ -1,0 +1,44 @@
+MODULE pzextr
+
+    SHARE x(11), qcol(10,7)       ! STATIC
+
+    SUB pzextr (iest, xest, yest(), yz(), dy(), nv, nuse)
+
+        DIM d(0)
+        MAT redim d(nv)
+
+        LET x(iest) = xest
+        FOR j = 1 to nv
+            LET dy(j) = yest(j)
+            LET yz(j) = yest(j)
+        NEXT j
+        IF iest = 1 then
+           FOR j = 1 to nv
+               LET qcol(j, 1) = yest(j)
+           NEXT j
+        ELSE
+           LET m1 = min(iest, nuse)
+           FOR j = 1 to nv
+               LET d(j) = yest(j)
+           NEXT j
+           FOR k1 = 1 to m1 - 1
+               LET delta = 1 / (x(iest - k1) - xest)
+               LET f1 = xest * delta
+               LET f2 = x(iest - k1) * delta
+               FOR j = 1 to nv
+                   LET q = qcol(j, k1)
+                   LET qcol(j, k1) = dy(j)
+                   LET delta = d(j) - q
+                   LET dy(j) = f1 * delta
+                   LET d(j) = f2 * delta
+                   LET yz(j) = yz(j) + dy(j)
+               NEXT j
+           NEXT k1
+           FOR j = 1 to nv
+               LET qcol(j, m1) = dy(j)
+           NEXT j
+        END IF
+
+    END SUB
+
+END MODULE

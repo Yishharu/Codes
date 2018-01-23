@@ -1,0 +1,40 @@
+PROGRAM d4r8(input,output);
+(* driver for routine GAULEG *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npoint = 10;
+   x1 = 0.0;
+   x2 = 1.0;
+   x3 = 10.0;
+   nval = 10;
+TYPE
+   DoubleArrayNP = ARRAY [1..npoint] OF double;
+VAR
+   i,j: integer;
+   xx: double;
+   x,w: DoubleArrayNP;
+
+FUNCTION func(x: double): double;
+BEGIN
+   func := x*exp(-x)
+END;
+
+(*$I GAULEG.PAS *)
+
+BEGIN
+   gauleg(x1,x2,x,w,npoint);
+   writeln;
+   writeln('#':2,'x[i]':11,'w[i]':12);
+   FOR i := 1 TO npoint DO
+      writeln(i:2,x[i]:12:6,w[i]:12:6);
+(* demonstrate the use of gauleg for an integral *)
+   gauleg(x1,x3,x,w,npoint);
+   xx := 0.0;
+   FOR i := 1 TO npoint DO
+      xx := xx+w[i]*func(x[i]);
+   writeln;
+   writeln('Integral from GAULEG: ',xx:12:6);
+   writeln('Actual value: ',((1.0+x1)*exp(-x1)-(1.0+x3)*exp(-x3)):12:6)
+END.

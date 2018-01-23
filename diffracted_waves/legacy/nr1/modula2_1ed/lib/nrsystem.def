@@ -1,0 +1,42 @@
+DEFINITION MODULE NRSystem;
+
+(*
+   EXPORT QUALIFIED
+      NilREAL,   LongInt,   LongReal,
+      D,         S,         DI,       SI,
+      Float,     FloatSD,   FloatDS,  FloatDD,
+      Trunc,     TruncSD;
+*)
+
+   FROM SYSTEM IMPORT ADDRESS, BYTE;
+
+   TYPE
+      LongInt  = LONGINT;
+      LongReal = LONGREAL;
+
+   CONST
+      NilREAL     = MIN(REAL);
+      NilINTEGER  = MIN(INTEGER);
+      NilLongReal = MIN(LongReal);
+
+   PROCEDURE D(x: REAL):     LongReal;
+   PROCEDURE S(x: LongReal): REAL;
+   PROCEDURE DI(x: INTEGER): LongInt;
+   PROCEDURE SI(x: LongInt): INTEGER;
+
+   PROCEDURE Float  (x: INTEGER): REAL;
+   PROCEDURE FloatSD(x: INTEGER): LongReal;
+   PROCEDURE FloatDS(x: LONGINT): REAL;
+   PROCEDURE FloatDD(x: LONGINT): LongReal;
+
+   PROCEDURE Trunc  (x: REAL):     INTEGER;
+   PROCEDURE TruncSD(x: REAL):     LongInt;
+
+   PROCEDURE Allocate(VAR ptr: ADDRESS;
+                          size: INTEGER);
+
+   PROCEDURE Deallocate(VAR ptr: ADDRESS);
+
+   PROCEDURE Size(variable: ARRAY OF BYTE): LongInt;
+
+END NRSystem.

@@ -1,0 +1,40 @@
+EXTERNAL
+
+SUB twofft (data1(), data2(), fft1(), fft2(), n)
+
+    LIBRARY "four1"
+
+    LET c1r = .5
+    LET c1i = 0
+    LET c2r = 0
+    LET c2i = -.5
+    FOR j = 1 to n
+        LET fft1(2 * j - 1) = data1(j)
+        LET fft1(2 * j) = data2(j)
+    NEXT j
+
+    CALL four1 (fft1(), n, 1)
+
+    LET fft2(1) = fft1(2)
+    LET fft2(2) = 0
+    LET fft1(2) = 0
+    LET n2 = 2 * (n + 2)
+    FOR j = 2 to n / 2 + 1
+        LET j2 = 2 * j
+        LET conjr = fft1(n2 - j2 - 1)
+        LET conji = -fft1(n2 - j2)
+        LET h1r = c1r * (fft1(j2 - 1) + conjr) - c1i * (fft1(j2) + conji)
+        LET h1i = c1i * (fft1(j2 - 1) + conjr) + c1r * (fft1(j2) + conji)
+        LET h2r = c2r * (fft1(j2 - 1) - conjr) - c2i * (fft1(j2) - conji)
+        LET h2i = c2i * (fft1(j2 - 1) - conjr) + c2r * (fft1(j2) - conji)
+        LET fft1(j2 - 1) = h1r
+        LET fft1(j2) = h1i
+        LET fft1(n2 - j2 - 1) = h1r
+        LET fft1(n2 - j2) = -h1i
+        LET fft2(j2 - 1) = h2r
+        LET fft2(j2) = h2i
+        LET fft2(n2 - j2 - 1) = h2r
+        LET fft2(n2 - j2) = -h2i
+    NEXT j
+
+END SUB

@@ -1,0 +1,48 @@
+PROGRAM D13r18
+
+! Driver for routine kendl1
+! Look for correlations in ran0 ... ran4
+
+LIBRARY "ran0", "ran1", "ran2", "ran3", "ran4", "kendl1"
+DECLARE FUNCTION ran0, ran1, ran2, ran3, ran4
+
+LET ndat = 200
+DIM data1(0), data2(0), text$(5)
+MAT redim data1(ndat), data2(ndat)
+
+MAT READ text$
+DATA "ran0", "ran1", "ran2", "ran3", "ran4"
+
+CLEAR
+PRINT "Pair correlations of ran0 ... ran4"
+PRINT
+PRINT " Program      Kendall tau     Std. Devs.    Probability"
+PRINT
+FOR i = 1 to 5
+    LET idum = -1357
+    FOR j = 1 to ndat
+        IF i = 1 then
+           LET data1(j) = ran0(idum)
+           LET data2(j) = ran0(idum)
+        ELSEIF i = 2 then
+           LET data1(j) = ran1(idum)
+           LET data2(j) = ran1(idum)
+        ELSEIF i = 3 then
+           LET data1(j) = ran2(idum)
+           LET data2(j) = ran2(idum)
+        ELSEIF i = 4 then
+           LET data1(j) = ran3(idum)
+           LET data2(j) = ran3(idum)
+        ELSEIF i = 5 then
+           LET data1(j) = ran4(idum)
+           LET data2(j) = ran4(idum)
+        END IF
+    NEXT j
+
+    CALL kendl1 (data1(), data2(), ndat, tau, z, prob)
+
+    PRINT "  "; text$(i); "  ";
+    PRINT using "   ----#.######": tau, z, prob
+NEXT i
+
+END

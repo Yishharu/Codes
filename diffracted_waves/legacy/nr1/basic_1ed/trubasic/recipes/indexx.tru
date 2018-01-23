@@ -1,0 +1,41 @@
+EXTERNAL
+
+SUB indexx (n, arrin(), indx())
+
+    FOR j = 1 to n
+        LET indx(j) = j
+    NEXT j
+    IF n = 1 then EXIT SUB
+    LET l = int(n / 2 + 1)
+    LET ir = n
+    DO
+       IF l > 1 then
+          LET l = l - 1
+          LET indxt = indx(l)
+          LET q = arrin(indxt)
+       ELSE
+          LET indxt = indx(ir)
+          LET q = arrin(indxt)
+          LET indx(ir) = indx(1)
+          LET ir = ir - 1
+          IF ir = 1 then
+             LET indx(1) = indxt
+             EXIT SUB
+          END IF
+       END IF
+       LET i = l
+       LET j = l + l
+       DO while j <= ir
+          IF j < ir and arrin(indx(j)) < arrin(indx(j+1)) then LET j = j+1
+          IF q < arrin(indx(j)) then
+             LET indx(i) = indx(j)
+             LET i = j
+             LET j = j + j
+          ELSE
+             LET j = ir + 1
+          END IF
+       LOOP
+       LET indx(i) = indxt
+    LOOP
+
+END SUB

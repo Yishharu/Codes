@@ -1,0 +1,44 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE SUB CHEBFT (A!, B!, C!(), N!, DUM!)
+DECLARE SUB CHDER (A!, B!, C!(), CDER!(), N!)
+DECLARE FUNCTION FDER! (X!)
+DECLARE FUNCTION CHEBEV! (A!, B!, DUM!, MVAL!, X!)
+COMMON SHARED C()
+
+'PROGRAM D5R7
+'Driver for routine CHDER
+CLS
+NVAL = 40
+PIO2 = 1.5707963#
+DIM C(NVAL), CDER(NVAL)
+A = -PIO2
+B = PIO2
+CALL CHEBFT(A, B, C(), NVAL, DUM)
+'Test derivative
+DO
+  PRINT "How many terms in Chebyshev evaluation?"
+  PRINT "Enter n between 6 and"; STR$(NVAL); ". Enter n=0 to end."
+  LINE INPUT MVAL$
+  MVAL = VAL(MVAL$)
+  IF MVAL <= 0 OR MVAL > NVAL THEN EXIT DO
+  CALL CHDER(A, B, C(), CDER(), MVAL)
+  PRINT "        X        Actual   Cheby. Deriv."
+  FOR I = 1 TO NVAL
+    C(I) = CDER(I)
+  NEXT I
+  FOR I = -8 TO 8 STEP 1
+    X = I * PIO2 / 10!
+    PRINT USING "#####.######"; X; FDER(X); CHEBEV(A, B, DUM, MVAL, X)
+  NEXT I
+LOOP
+END
+
+FUNCTION FDER (X)
+'Derivative of FUNC
+FDER = 4! * X * ((X ^ 2) - 1!) * SIN(X) + (X ^ 2) * (X ^ 2 - 2!) * COS(X)
+END FUNCTION
+
+FUNCTION FUNC (X)
+FUNC = (X ^ 2) * (X ^ 2 - 2!) * SIN(X)
+END FUNCTION
+

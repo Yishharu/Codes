@@ -1,0 +1,42 @@
+PROGRAM D10r10
+
+! Driver for routine df1dim
+
+LIBRARY "scrsho"
+
+DECLARE PUBLIC ncom, pcom(), xicom()   ! Labelled COMMON /F1DIM/
+
+LET ndim = 3
+DIM p(0), xi(0)
+MAT redim p(ndim), xi(ndim)
+
+MAT READ p
+DATA 0.0, 0.0, 0.0
+
+CLEAR
+LET ncom = ndim
+PRINT "Enter vector direction along which to"
+PRINT "plot the function. minimum is in the"
+PRINT "direction 1.0, 1.0, 1.0 - enter x, y, z:";
+INPUT xi(1), xi(2), xi(3)
+
+FOR j = 1 to ndim
+    LET pcom(j) = p(j)
+    LET xicom(j) = xi(j)
+NEXT j
+
+CALL scrsho (dum)                 ! Accesses func
+
+END
+
+SUB dfunc (x(), df())
+    FOR i = 1 to 3
+        LET df(i) = (x(i) - 1)^2
+    NEXT i
+END SUB
+
+FUNCTION func (x)
+    LIBRARY "df1dim"
+    DECLARE FUNCTION df1dim       ! Accesses dfunc
+    LET func = df1dim(x)
+END FUNCTION

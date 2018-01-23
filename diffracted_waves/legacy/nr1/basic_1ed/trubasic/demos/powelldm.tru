@@ -1,0 +1,52 @@
+PROGRAM D10r6
+
+! Driver for routine powell
+
+LIBRARY "powell"
+
+LET ndim = 3
+DIM p(0), xi(0,0)
+MAT redim p(ndim), xi(ndim, ndim)
+
+CLEAR
+LET ftol = .000001
+LET np = ndim
+FOR j = 1 to ndim
+    FOR i = 1 to ndim
+        READ xi(i, j)
+    NEXT i
+NEXT j
+DATA 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+
+MAT READ p
+DATA 1.5, 1.5, 2.5
+
+CALL powell (p(), xi(,), ndim, np, ftol, iter, fret)
+
+PRINT "Iterations:"; iter
+PRINT
+PRINT "Minimum found at:"
+FOR i = 1 to ndim
+    PRINT using "----#.######": p(i);
+NEXT i
+PRINT
+PRINT
+PRINT "Minimum function value =";
+PRINT using "----#.######": fret
+PRINT
+PRINT "True minimum of function is at:"
+PRINT using "----#.######": 1, 2, 3
+
+END
+
+FUNCTION func (x)
+    LIBRARY "f1dim"
+    DECLARE FUNCTION f1dim
+    LET func = f1dim(x)
+END FUNCTION
+
+FUNCTION func2 (x(), n)
+    LIBRARY "bessj0"
+    DECLARE FUNCTION bessj0
+    LET func2 = .5 - bessj0((x(1) - 1) ^ 2 + (x(2) - 2) ^ 2 + (x(3) - 3) ^ 2)
+END FUNCTION

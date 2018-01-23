@@ -1,0 +1,33 @@
+PROGRAM d3r3 (input,output);
+(* driver for routine SPLINE *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 20;
+   pi = 3.1415926;
+TYPE
+   RealArrayNP = ARRAY [1..n] OF real;
+VAR
+   i: integer;
+   yp1,ypn: real;
+   x,y,y2: RealArrayNP;
+
+(*$I SPLINE.PAS *)
+
+BEGIN
+   writeln('second-derivatives for sin(x) from 0 to pi');
+(* generate array for interpolation *)
+   FOR i := 1 TO 20 DO BEGIN
+      x[i] := i*pi/n;
+      y[i] := sin(x[i])
+   END;
+(* calculate 2nd derivative with spline *)
+   yp1 := cos(x[1]);
+   ypn := cos(x[n]);
+   spline(x,y,n,yp1,ypn,y2);
+(* test result *)
+   writeln('spline':23,'actual':16);
+   writeln('number':11,'2nd deriv':14,'2nd deriv':16);
+   FOR i := 1 TO n DO writeln(i:8,y2[i]:16:6,-sin(x[i]):16:6)
+END.

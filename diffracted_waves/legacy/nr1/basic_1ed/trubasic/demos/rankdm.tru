@@ -1,0 +1,55 @@
+PROGRAM D8r7
+
+! Driver for routine rank
+
+LIBRARY "indexx", "rank"
+
+DIM a(100), b(10), indx(100), irank(100)
+
+CLEAR
+OPEN #1: name "tarray.dat", access input
+FOR i = 1 to 10
+    LINE INPUT #1: dum$
+    FOR j = 1 to 10
+        LET a(10 * (i - 1) + j) = val(dum$[6*j-5:6*j])
+    NEXT j
+NEXT i
+CLOSE #1
+
+CALL indexx (100, a(), indx())
+CALL rank (100, indx(), irank())
+
+PRINT "Original array is:"
+FOR i = 1 to 10
+    FOR j = 1 to 10
+        PRINT using "###.##": a(10 * (i - 1) + j);
+    NEXT j
+    PRINT
+NEXT i
+
+PRINT "Table of ranks is:"
+FOR i = 1 to 10
+    FOR j = 1 to 10
+        PRINT using "######": irank(10 * (i - 1) + j);
+    NEXT j
+    PRINT
+NEXT i
+
+PRINT "press Enter to continue..."
+LINE INPUT dum$
+
+PRINT "Array sorted according to rank table:"
+FOR i = 1 to 10
+    FOR j = 1 to 10
+        LET k = 10 * (i - 1) + j
+        FOR l = 1 to 100
+            IF irank(l) = k then LET b(j) = a(l)
+        NEXT l
+    NEXT j
+    FOR j = 1 to 10
+        PRINT using "###.##": b(j);
+    NEXT j
+    PRINT
+NEXT i
+
+END

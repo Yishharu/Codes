@@ -1,0 +1,44 @@
+DECLARE SUB CHEBFT (A!, B!, C!(), N!, DUM!)
+DECLARE FUNCTION FUNC! (X!)
+
+'PROGRAM D5R4
+'Driver for routine CHEBFT
+CLS
+NVAL = 40
+PIO2 = 1.5707963#
+EPS = .000001
+DIM C(NVAL)
+A = -PIO2
+B = PIO2
+CALL CHEBFT(A, B, C(), NVAL, DUM)
+'Test result
+DO
+  PRINT "How many terms in Chebyshev evaluation?"
+  PRINT "Enter n between 6 and"; STR$(NVAL); ". Enter n=0 to end."
+  LINE INPUT MVAL$
+  MVAL = VAL(MVAL$)
+  IF MVAL <= 0 OR MVAL > NVAL THEN EXIT DO
+  PRINT "        X        Actual   Chebyshev fit"
+  FOR I = -8 TO 8 STEP 1
+    X = I * PIO2 / 10!
+    Y = (X - .5 * (B + A)) / (.5 * (B - A))
+    'Evaluate Chebyshev polynomial without using routine CHEBEV
+    T0 = 1!
+    T1 = Y
+    F = C(2) * T1 + C(1) * .5
+    FOR J = 3 TO MVAL
+      DUM = T1
+      T1 = 2! * Y * T1 - T0
+      T0 = DUM
+      TERM = C(J) * T1
+      F = F + TERM
+    NEXT J
+    PRINT USING "#####.######"; X; FUNC(X); F
+  NEXT I
+LOOP
+END
+
+FUNCTION FUNC (X)
+FUNC = (X ^ 2) * (X ^ 2 - 2!) * SIN(X)
+END FUNCTION
+

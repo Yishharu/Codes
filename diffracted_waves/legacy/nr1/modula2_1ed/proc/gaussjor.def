@@ -1,0 +1,16 @@
+DEFINITION MODULE GaussJor;
+
+   (* EXPORT QUALIFIED GaussJ; *)
+
+   FROM NRMatr IMPORT Matrix;
+
+   PROCEDURE GaussJ(VAR A: Matrix; n: INTEGER; VAR B: Matrix; m: INTEGER); 
+   (*
+     Linear equation solution by Gauss-Jordan elimination,
+     equation (2.1.1) above.  The input matrix a[n, n] has n
+     by n elements. b[n, m] is an input matrix of size
+     n by m containing the m right-hand side vectors. On output, 
+     a is replaced by its matrix inverse, and b is replaced by the 
+     corresponding set of solution vectors.
+   *)
+END GaussJor.

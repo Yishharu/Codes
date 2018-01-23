@@ -1,0 +1,56 @@
+PROGRAM D5r4
+
+! Driver for routine chebft
+
+LIBRARY "chebft"
+DECLARE FUNCTION func             ! Definition below
+
+LET nval = 40
+DIM c(0)
+MAT redim c(nval)
+
+CLEAR
+LET pio2 = pi/2
+LET eps = .000001
+LET a = -pio2
+LET b = pio2
+
+CALL chebft(a, b, c(), nval, dum)
+
+! Test result
+
+DO
+   PRINT "How many terms in Chebyshev evaluation?"
+   PRINT "Enter n between 6 and "; str$(nval); ". Enter n=0 to end."
+   LINE INPUT mval$
+   LET mval = val(mval$)
+
+   IF mval <= 0 or mval > nval then EXIT DO
+
+   PRINT "        x        Actual   Chebyshev fit"
+   FOR i = -8 to 8 step 1
+       LET x = i * pio2 / 10
+       LET y = (x - .5 * (b + a)) / (.5 * (b - a))
+
+       ! Evaluate Chebyshev polynomial without using routine chebev
+
+       LET t0 = 1
+       LET t1 = y
+       LET f = c(2) * t1 + c(1) * .5
+       FOR j = 3 to mval
+           LET dum = t1
+           LET t1 = 2 * y * t1 - t0
+           LET t0 = dum
+           LET term = c(j) * t1
+           LET f = f + term
+       NEXT j
+
+       PRINT using "----#.######": x, func(x), f
+   NEXT i
+LOOP
+
+END
+
+FUNCTION func (x)
+    LET func = (x ^ 2) * (x ^ 2 - 2) * sin(x)
+END FUNCTION

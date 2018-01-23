@@ -1,0 +1,80 @@
+DECLARE SUB DES (INPUQ&(), KEQ&(), NEWKEY!, ISW!, JOTPUT&())
+
+'PROGRAM D7R13
+'Driver for routine DES
+CLS
+DIM IN&(64), KEQ&(64), IOUT&(64), ICMP&(64)
+DIM HIN$(17), HKEY$(17), HOUT$(17), HCMP$(17)
+OPEN "DESTST.DAT" FOR INPUT AS #1
+LINE INPUT #1, TEXT$
+PRINT TEXT$
+PRINT
+DO
+  LINE INPUT #1, TEXT$
+  PRINT TEXT$
+  PRINT
+  IF EOF(1) THEN EXIT DO
+  LINE INPUT #1, TEXT$
+  NCIPHR = VAL(TEXT$)
+  LINE INPUT #1, TEXT2$
+  IF TEXT2$ = "encode" THEN IDIREC = 0
+  IF TEXT2$ = "decode" THEN IDIREC = 1
+  DO
+    PRINT "       Key           Plaintext      Expected Cipher   Actual Cipher"
+    IF NCIPHR < 16 THEN MM = NCIPHR ELSE MM = 16
+    NCIPHR = NCIPHR - 16
+    FOR M = 1 TO MM
+      LINE INPUT #1, DUM$
+      FOR K = 1 TO 17
+        HKEY$(K) = MID$(DUM$, K, 1)
+        HIN$(K) = MID$(DUM$, K + 17, 1)
+        HCMP$(K) = MID$(DUM$, K + 34, 1)
+      NEXT K
+      FOR I = 1 TO 16
+        J = I + 1
+        IDUM& = VAL("&H" + HIN$(J))
+        JDUM& = VAL("&H" + HKEY$(J))
+        FOR K = 1 TO 4
+          L = 4 * I + 1 - K
+          IN&(L) = IDUM& MOD 2
+          IDUM& = INT(IDUM& / 2)
+          KEQ&(L) = JDUM& MOD 2
+          JDUM& = INT(JDUM& / 2)
+        NEXT K
+      NEXT I
+      NEWKEY = 1
+      CALL DES(IN&(), KEQ&(), NEWKEY, IDIREC, IOUT&())
+      HOUT$(1) = " "
+      FOR I = 1 TO 16
+        JDUM& = 0
+        FOR J = 1 TO 4
+          JDUM& = JDUM& + (2 ^ (4 - J)) * IOUT&(4 * (I - 1) + J)
+        NEXT J
+        HOUT$(I + 1) = HEX$(JDUM&)
+      NEXT I
+      VERDCT$ = "  o.k."
+      FOR I = 1 TO 17
+        IF HCMP$(I) <> HOUT$(I) THEN VERDCT$ = "  wrong"
+      NEXT I
+      FOR K = 1 TO 17
+        PRINT HKEY$(K);
+      NEXT K
+      FOR K = 1 TO 17
+        PRINT HIN$(K);
+      NEXT K
+      FOR K = 1 TO 17
+        PRINT HCMP$(K);
+      NEXT K
+      FOR K = 1 TO 17
+        PRINT HOUT$(K);
+      NEXT K
+      PRINT VERDCT$
+    NEXT M
+    PRINT
+    PRINT "press RETURN to continue..."
+    LINE INPUT DUM$
+  LOOP WHILE NCIPHR > 0
+LOOP
+CLOSE #1
+END
+

@@ -1,0 +1,45 @@
+PROGRAM d1r4(input,output,dfile);
+(* driver for routine CALDAT *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   CharArray10 = PACKED ARRAY [1..10] OF char;
+VAR
+   i,id,idd,im,imm,iy,iyy,n: integer;
+   j: longint;
+   name: ARRAY [1..12] OF CharArray10;
+   dfile: text;
+
+(*$I JULDAY.PAS *)
+
+(*$I CALDAT.PAS *)
+
+BEGIN
+(* check whether caldat properly undoes the operation of julday *)
+   name[1] := 'january   ';
+   name[2] := 'february  ';
+   name[3] := 'march     ';
+   name[4] := 'april     ';
+   name[5] := 'may       ';
+   name[6] := 'june      ';
+   name[7] := 'july      ';
+   name[8] := 'august    ';
+   name[9] := 'september ';
+   name[10] := 'october   ';
+   name[11] := 'november  ';
+   name[12] := 'december  ';
+   NROpen(dfile,'dates1.dat');
+   readln(dfile);
+   readln(dfile,n);
+   writeln;
+   writeln('original date:','reconstructed date:':43);
+   writeln('month':5,'day':8,'year':6,'julian day':15,
+      'month':9,'day':8,'year':6);
+   FOR i := 1 TO n DO BEGIN
+      readln(dfile,im,id,iy);
+      j := julday(im,id,iy);
+      caldat(j,imm,idd,iyy);
+      writeln(name[im],id:3,iy:6,j:13,name[imm]:16,idd:3,iyy:6)
+   END
+END.

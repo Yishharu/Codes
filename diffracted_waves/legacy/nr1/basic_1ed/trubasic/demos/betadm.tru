@@ -1,0 +1,32 @@
+PROGRAM D6r5
+
+! Driver for routine beta
+
+LIBRARY "beta"
+DECLARE FUNCTION beta
+
+CLEAR
+OPEN #1: name "fncval.dat", access input
+DO
+   LINE INPUT #1: text$
+LOOP while text$ <> "Beta Function"
+
+LINE INPUT #1: nval$
+LET nval = val(nval$[1:3])
+PRINT text$
+PRINT "   w     z             Actual              beta(w,z)"
+FOR i = 1 to nval
+    LINE INPUT #1: dum$
+    LET w = val(dum$[1:6])
+    LET z = val(dum$[7:12])
+    LET value = val(dum$[13:1000])
+    PRINT using "##.##": w;
+    PRINT using "###.##": z;
+    PRINT "         ";
+    PRINT using "#.######^^^^": value;
+    PRINT "         ";
+    PRINT using "#.######^^^^": beta(w, z)
+NEXT i
+CLOSE #1
+
+END

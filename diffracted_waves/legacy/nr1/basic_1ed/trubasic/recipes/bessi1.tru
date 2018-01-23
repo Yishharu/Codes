@@ -1,0 +1,31 @@
+MODULE bessi1
+
+    SHARE p1, p2, p3, p4, p5, p6, p7
+    SHARE q1, q2, q3, q4, q5, q6, q7, q8, q9
+
+    READ p1, p2, p3, p4, p5, p6, p7
+    DATA 0.5,          0.87890594,  0.51498869, 0.15084934
+    DATA 0.2658733e-1, 0.301532e-2, 0.32411e-3
+
+    READ q1, q2, q3, q4, q5, q6, q7, q8, q9
+    DATA  0.39894228,  -0.3988024e-1, -0.362018e-2
+    DATA  0.163801e-2, -0.1031555e-1,  0.2282967e-1
+    DATA -0.2895312e-1, 0.1787654e-1, -0.420059e-2
+
+    FUNCTION bessi1 (x)
+
+        IF abs(x) < 3.75 then
+           LET y = (x / 3.75)^2
+           LET dum = p2 + y * (p3 + y * (p4 + y * (p5 + y * (p6 + y * p7))))
+           LET bessi1 = x * (p1 + y * dum)
+        ELSE
+           LET ax = abs(x)
+           LET y = 3.75 / ax
+           LET dum = q4 + y * (q5 + y * (q6 + y * (q7 + y * (q8 + y * q9))))
+           LET dum = (exp(ax) / sqr(ax)) * (q1 + y * (q2 + y * (q3 + y * dum)))
+           IF x < 0 then LET bessi1 = -dum else LET bessi1 = dum
+        END IF
+
+    END FUNCTION
+
+END MODULE

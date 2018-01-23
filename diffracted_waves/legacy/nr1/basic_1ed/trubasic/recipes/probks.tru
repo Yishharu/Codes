@@ -1,0 +1,25 @@
+EXTERNAL
+
+FUNCTION probks (alam)
+
+    LET eps1 = .001
+    LET eps2 = 1e-08
+
+    LET a2 = -2 * alam^2
+    LET fac = 2
+    LET dum = 0
+    LET termbf = 0
+    FOR j = 1 to 100
+        LET term = fac * exp(a2 * j * j)
+        LET dum = dum + term
+        IF abs(term) <= eps1 * termbf or abs(term) <= eps2 * dum then
+           LET probks = dum
+           EXIT FUNCTION
+        END IF
+
+        LET fac = -fac
+        LET termbf = abs(term)
+    NEXT j
+    LET probks = 1
+
+END FUNCTION

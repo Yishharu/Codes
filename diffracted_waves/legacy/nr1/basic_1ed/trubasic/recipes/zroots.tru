@@ -1,0 +1,57 @@
+EXTERNAL
+
+SUB zroots (a(,), m, roots(,), polish)
+
+    LIBRARY "laguer"
+
+    DIM ad(2, 101), x(2), b(2), c(2), dum(2)
+
+    LET eps = .000001
+    LET maxm = 101
+
+    FOR j = 1 to m + 1
+        LET ad(1, j) = a(1, j)
+        LET ad(2, j) = a(2, j)
+    NEXT j
+    FOR j = m to 1 step -1
+        LET x(1) = 0
+        LET x(2) = 0
+
+        CALL laguer (ad(,), j, x(), eps, 0)
+
+        IF abs(x(2)) <= 2 * eps ^ 2 * abs(x(1)) then LET x(2) = 0
+        LET roots(1, j) = x(1)
+        LET roots(2, j) = x(2)
+        LET b(1) = ad(1, j + 1)
+        LET b(2) = ad(2, j + 1)
+        FOR jj = j to 1 step -1
+            LET c(1) = ad(1, jj)
+            LET c(2) = ad(2, jj)
+            LET ad(1, jj) = b(1)
+            LET ad(2, jj) = b(2)
+            LET dummy = b(1)
+            LET b(1) = x(1) * dummy - x(2) * b(2) + c(1)
+            LET b(2) = x(2) * dummy + x(1) * b(2) + c(2)
+        NEXT jj
+    NEXT j
+    IF polish=-1 then
+       FOR j = 1 to m
+           LET dum(1) = roots(1, j)
+           LET dum(2) = roots(2, j)
+
+           CALL laguer (a(,), m, dum(), eps, -1)
+
+       NEXT j
+    END IF
+    FOR j = 2 to m
+        LET x(1) = roots(1, j)
+        LET x(2) = roots(2, j)
+        FOR i = j - 1 to 1 step -1
+            IF roots(1, i) <= x(1) then EXIT FOR
+            LET roots(1, i + 1) = roots(1, i)
+            LET roots(2, i + 1) = roots(2, i)
+        NEXT i
+        LET roots(1, i + 1) = x(1)
+        LET roots(2, i + 1) = x(2)
+    NEXT j
+END SUB

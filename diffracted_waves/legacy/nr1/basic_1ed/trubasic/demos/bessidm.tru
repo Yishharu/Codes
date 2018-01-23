@@ -1,0 +1,32 @@
+PROGRAM D6r26
+
+! Driver for routine bessi
+
+LIBRARY "bessi"
+DECLARE FUNCTION bessi
+
+CLEAR
+OPEN #1: name "fncval.dat", access input
+DO
+   LINE INPUT #1: text$
+   LET text$ = text$[1:27]
+LOOP while text$ <> "Modified Bessel Function In"
+
+LINE INPUT #1: nval$
+LET nval = val(nval$[1:3])
+PRINT text$
+PRINT "   n      x       Actual        bessi(n,x)"
+
+FOR i = 1 to nval
+    LINE INPUT #1: dum$
+    LET n = val(dum$[1:6])
+    LET x = val(dum$[7:12])
+    LET value = val(dum$[13:1000])
+    PRINT using "####": n;
+    PRINT "   ";
+    PRINT using "##.##": x;
+    PRINT using "   #.#######^^^^": value, bessi(n, x)
+NEXT i
+CLOSE #1
+
+END

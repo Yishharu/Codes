@@ -1,0 +1,56 @@
+EXTERNAL
+
+SUB hunt (xx(), n, x, jlo)
+
+    ! ascnd = sgn(xx(n) - xx(1)); = 1 if ascending, -1 is descending
+
+    LET ascnd = sgn(xx(n) - xx(1))
+
+    IF jlo <= 0 or jlo > n then
+       LET jlo = 0
+       LET jhi = n + 1
+    ELSE
+       LET inc = 1
+       IF sgn(x - xx(jlo))*ascnd >= 0 then
+          DO
+             LET jhi = jlo + inc
+             IF jhi > n then
+                LET jhi = n + 1
+                EXIT DO
+             END IF
+             IF sgn(x - xx(jhi))*ascnd >= 0 then
+                LET jlo = jhi
+                LET inc = inc + inc
+             ELSE
+                EXIT DO
+             END IF
+          LOOP
+       ELSE
+          LET jhi = jlo
+          DO
+             LET jlo = jhi - inc
+             IF jlo < 1 then
+                LET jlo = 0
+                EXIT DO
+             END IF
+             IF sgn(x - xx(jlo))*ascnd < 0 then
+                LET jhi = jlo
+                LET inc = inc + inc
+             ELSE
+                EXIT DO
+             END IF
+          LOOP
+       END IF
+    END IF
+
+    DO
+       IF jhi - jlo = 1 then EXIT DO
+       LET jm = int((jhi+jlo) / 2)
+       IF sgn(x - xx(jm))*ascnd > 0 then
+          LET jlo = jm
+       ELSE
+          LET jhi = jm
+       END IF
+    LOOP
+
+END SUB

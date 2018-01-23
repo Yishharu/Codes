@@ -1,0 +1,42 @@
+PROGRAM D7r8
+
+! Driver for routine poidev
+
+DIM dist(21)
+
+LIBRARY "poidev"
+DECLARE FUNCTION poidev
+
+CLEAR
+LET n = 20
+LET npts = 10000
+LET iscal = 200
+LET llen = 50
+LET idum = -13
+
+DO
+   MAT dist = zer
+   DO
+      PRINT "Mean of Poisson distrib. (x=0 to 20); neg. to end"
+      INPUT xm
+   LOOP while xm > 20
+   IF xm < 0 then EXIT DO
+
+   FOR i = 1 to npts
+       LET j = int(poidev(xm, idum)) + 1
+       IF j >= 1 and j <= 21 then LET dist(j) = dist(j) + 1
+   NEXT i
+
+   PRINT "Poisson-distributed deviate; mean"; xm; "of"; npts; "points"
+   PRINT "    x       p(x)     graph:"
+   FOR j = 1 to 20
+       LET dist(j) = dist(j) / npts
+       LET klim = int(iscal * dist(j))
+       IF klim > llen then LET klim = llen
+       PRINT using "####.##": j;
+       PRINT using "#####.####": dist(j);
+       PRINT "    "; repeat$("*", klim)
+   NEXT j
+LOOP
+
+END

@@ -1,0 +1,47 @@
+PROGRAM D8r11
+
+! Driver for routine eclazz
+
+LIBRARY "eclazz"
+
+LET n = 15
+DIM nf(0), nflag(0), nsav(0)
+MAT redim nf(n), nflag(n), nsav(n)
+
+CLEAR
+
+CALL eclazz (nf(), n, dum)
+
+FOR i = 1 to n
+    LET nflag(i) = 1
+NEXT i
+PRINT "Numbers from 1-15 divided according to"
+PRINT "their value modulo 4:"
+PRINT
+LET lclas = 0
+FOR i = 1 to n
+    LET nclass = nf(i)
+    IF nflag(nclass) <> 0 then
+       LET nflag(nclass) = 0
+       LET lclas = lclas + 1
+       LET k = 0
+       FOR j = i to n
+           IF nf(j) = nf(i) then
+              LET k = k + 1
+              LET nsav(k) = j
+           END IF
+       NEXT j
+       PRINT "Class"; lclas; ":  ";
+       FOR j = 1 to k
+           PRINT using "###": nsav(j);
+       NEXT j
+       PRINT
+    END IF
+NEXT i
+
+END
+
+FUNCTION equiv (i, j)
+    LET equiv = 0
+    IF mod(i, 4) = mod(j, 4) then LET equiv = -1
+END FUNCTION

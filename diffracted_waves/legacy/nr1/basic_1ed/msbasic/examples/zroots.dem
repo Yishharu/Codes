@@ -1,0 +1,49 @@
+DECLARE SUB ZROOTS (A!(), M!, ROOTS!(), POLISH%)
+
+'PROGRAM D9R11
+'Driver for routine ZROOTS
+CLS
+M = 4
+M1 = M + 1
+DIM A(2, M1), X(2), ROOTS(2, M)
+FOR J = 1 TO M1
+  FOR I = 1 TO 2
+    READ A(I, J)
+  NEXT I
+NEXT J
+DATA 0.0,2.0,0.0,0.0,-1.0,-2.0,0.0,0.0,1.0,0.0
+PRINT "Roots of the polynomial x^4-(1+2i)*x^2+2i"
+PRINT
+POLISH% = 0
+CALL ZROOTS(A(), M, ROOTS(), POLISH%)
+PRINT "Unpolished roots:"
+PRINT "        Root #         Real        Imag."
+FOR I = 1 TO M
+  PRINT USING "###########"; I;
+  PRINT USING "##########.######"; ROOTS(1, I);
+  PRINT USING "#####.######"; ROOTS(2, I)
+NEXT I
+PRINT
+PRINT "Corrupted roots:"
+FOR I = 1 TO M
+  ROOTS(1, I) = ROOTS(1, I) * (1! + .01 * I)
+  ROOTS(2, I) = ROOTS(2, I) * (1! + .01 * I)
+NEXT I
+PRINT "        Root #         Real        Imag."
+FOR I = 1 TO M
+  PRINT USING "###########"; I;
+  PRINT USING "##########.######"; ROOTS(1, I);
+  PRINT USING "#####.######"; ROOTS(2, I)
+NEXT I
+PRINT
+POLISH% = -1
+CALL ZROOTS(A(), M, ROOTS(), POLISH%)
+PRINT "Polished roots:"
+PRINT "        Root #         Real        Imag."
+FOR I = 1 TO M
+  PRINT USING "###########"; I;
+  PRINT USING "##########.######"; ROOTS(1, I);
+  PRINT USING "#####.######"; ROOTS(2, I)
+NEXT I
+END
+

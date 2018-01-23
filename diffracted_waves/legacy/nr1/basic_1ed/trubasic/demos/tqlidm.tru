@@ -1,0 +1,64 @@
+PROGRAM D11r4
+
+! Driver for routine tqli
+
+LIBRARY "tqli", "tred2"
+
+LET np = 10
+DIM a(0,0), c(0,0), d(0), e(0), f(0)
+MAT redim a(np, np), c(np, np), d(np), e(np), f(np)
+
+CLEAR
+LET tiny = .000001
+FOR j = 1 to np
+    FOR i = 1 to np
+        READ c(i, j)
+    NEXT i
+NEXT j
+DATA  1.0,  4.0,  3.0,  2.0, 1.0, 0.0, -1.0, -2.0, -3.0, -4.0
+DATA  4.0,  2.0,  4.0,  3.0, 2.0, 1.0,  0.0, -1.0, -2.0, -3.0
+DATA  3.0,  4.0,  3.0,  4.0, 3.0, 2.0,  1.0,  0.0, -1.0, -2.0
+DATA  2.0,  3.0,  4.0,  4.0, 4.0, 3.0,  2.0,  1.0,  0.0, -1.0
+DATA  1.0,  2.0,  3.0,  4.0, 5.0, 4.0,  3.0,  2.0,  1.0,  0.0
+DATA  0.0,  1.0,  2.0,  3.0, 4.0, 6.0,  4.0,  3.0,  2.0,  1.0
+DATA -1.0,  0.0,  1.0,  2.0, 3.0, 4.0,  7.0,  4.0,  3.0,  2.0
+DATA -2.0, -1.0,  0.0,  1.0, 2.0, 3.0,  4.0,  8.0,  4.0,  3.0
+DATA -3.0, -2.0, -1.0,  0.0, 1.0, 2.0,  3.0,  4.0,  9.0,  4.0
+DATA -4.0, -3.0, -2.0, -1.0, 0.0, 1.0,  2.0,  3.0,  4.0, 10.0
+
+MAT a = c
+
+CALL tred2 (a(,), np, np, d(), e())
+CALL tqli (d(), e(), np, np, a(,))
+
+PRINT "Eigenvectors for a real symmetric matrix"
+FOR i = 1 to np
+    FOR j = 1 to np
+        LET f(j) = 0
+        FOR k = 1 to np
+            LET f(j) = f(j) + c(j, k) * a(k, i)
+        NEXT k
+    NEXT j
+    PRINT
+
+    PRINT "Eigenvalue"; i; " =";
+    PRINT using "----#.######": d(i)
+    PRINT
+    PRINT "     Vector    Mtrx*Vect.      Ratio"
+    FOR j = 1 to np
+        IF abs(a(j, i)) < tiny then
+           PRINT using "----#.######": a(j, i), f(j);
+           PRINT "       div. by 0"
+        ELSE
+           PRINT using "----#.######": a(j, i), f(j);
+           PRINT "     ";
+           PRINT using "-.######^^^^": f(j) / a(j, i)
+        END IF
+    NEXT j
+    PRINT
+
+    PRINT "press Enter to continue ...";
+    LINE INPUT dum$
+NEXT i
+
+END

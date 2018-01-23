@@ -1,0 +1,73 @@
+PROGRAM d14r4(input,output);
+(* driver for routine SVDFIT *)
+(* polynomial fit *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npt = 100;
+   spread = 0.02;
+   npol = 5;
+   mp = npt;
+   np = npol;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayNDATA = ARRAY [1..npt] OF real;
+   RealArrayMA = ARRAY [1..npol] OF real;
+   RealArrayNPbyNP = ARRAY [1..np,1..np] OF real;
+   RealArrayMPbyNP = ARRAY [1..mp,1..np] OF real;
+   RealArrayNP = RealArrayMA;
+   RealArrayMP = RealArrayNDATA;
+   RealArrayMAbyMA = RealArrayNPbyNP;
+VAR
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   GasdevIset: integer;
+   GasdevGset: real;
+   chisq: real;
+   i,idum: integer;
+   x,y,sig: RealArrayNDATA;
+   a: RealArrayMA;
+   cvm: RealArrayMAbyMA;
+   u: RealArrayMPbyNP;
+   v: RealArrayNPbyNP;
+   w: RealArrayNP;
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+(*$I SVDCMP.PAS *)
+
+(*$I SVBKSB.PAS *)
+
+(*$I SVDVAR.PAS *)
+
+PROCEDURE func(x: real; VAR p: RealArrayMA; ma: integer);
+(* This is essentially FPOLY renamed. *)
+VAR
+   j: integer;
+BEGIN
+   p[1] := 1.0;
+   FOR j := 2 TO ma DO p[j] := p[j-1]*x
+END;
+
+(*$I SVDFIT.PAS *)
+
+BEGIN
+   GasdevIset := 0;
+   idum := -911;
+   FOR i := 1 TO npt DO BEGIN
+      x[i] := 0.02*i;
+      y[i] := 1.0+x[i]*(2.0+x[i]*(3.0+x[i]*(4.0+x[i]*5.0)));
+      y[i] := y[i]*(1.0+spread*gasdev(idum));
+      sig[i] := y[i]*spread
+   END;
+   svdfit(x,y,sig,npt,a,npol,u,v,w,chisq);
+   svdvar(v,npol,w,cvm);
+   writeln;
+   writeln('Polynomial fit:');
+   FOR i := 1 TO npol DO
+      writeln(a[i]:12:6,'  +-',sqrt(cvm[i,i]):10:6);
+   writeln('Chi-squared',chisq:12:6)
+END.

@@ -1,0 +1,55 @@
+DECLARE SUB ASUB (XIN!(), XOUT!())
+DECLARE SUB SPARSE (B!(), N!, ASUB!, ATSUB!, X!(), RSQ!)
+
+'PROGRAM D2R10
+'Driver for SPARSE
+CLS
+N = 20
+DIM B(N), X(N), BCMP(N)
+M = N
+FOR I = 1 TO N
+  X(I) = 0!
+  B(I) = 1!
+NEXT I
+B(1) = 3!
+B(N) = -1!
+CALL SPARSE(B(), N, DUM, DUM, X(), RSQ)
+PRINT "Sum-squared residual:",
+PRINT USING "#.######^^^^"; RSQ
+PRINT
+PRINT "Solution vector:"
+FOR I = 1 TO N
+  PRINT USING "#####.######"; X(I);
+  IF I MOD 5 = 0 THEN PRINT
+NEXT I
+PRINT
+PRINT
+CALL ASUB(X(), BCMP())
+PRINT "press RETURN to continue..."
+LINE INPUT DUM$
+PRINT "Test of solution vector:"
+PRINT "      a*x", "      b"
+FOR I = 1 TO N
+  PRINT USING "#####.######"; BCMP(I); B(I)
+NEXT I
+PRINT
+END
+
+SUB ASUB (XIN(), XOUT())
+SHARED N
+XOUT(1) = XIN(1) + 2! * XIN(2)
+XOUT(N) = -2! * XIN(N - 1) + XIN(N)
+FOR I = 2 TO N - 1
+  XOUT(I) = -2! * XIN(I - 1) + XIN(I) + 2! * XIN(I + 1)
+NEXT I
+END SUB
+
+SUB ATSUB (XIN(), XOUT())
+SHARED N
+XOUT(1) = XIN(1) - 2! * XIN(2)
+XOUT(N) = 2! * XIN(N - 1) + XIN(N)
+FOR I = 2 TO N - 1
+  XOUT(I) = 2! * XIN(I - 1) + XIN(I) - 2! * XIN(I + 1)
+NEXT I
+END SUB
+

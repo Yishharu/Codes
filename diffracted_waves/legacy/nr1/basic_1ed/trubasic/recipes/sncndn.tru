@@ -1,0 +1,69 @@
+EXTERNAL
+
+SUB sncndn (uu, emmc, sn, cn, dn)
+
+    LIBRARY "funlib"
+    DECLARE DEF cosh, tanh
+
+    DIM em(13), en(13)
+
+    LET ca = .0003
+    LET emc = emmc
+
+    LET u = uu
+    IF emc <> 0 then
+       IF emc < 0 then LET bo = -1 else LET bo = 0
+       IF bo=-1 then
+          LET d = 1 - emc
+          LET emc = -emc / d
+          LET d = sqr(d)
+          LET u = d * u
+       END IF
+       LET a = 1
+       LET dn = 1
+       FOR i = 1 to 13
+           LET l = i
+           LET em(i) = a
+           LET emc = sqr(emc)
+           LET en(i) = emc
+           LET c = .5 * (a + emc)
+           IF abs(a - emc) <= ca * a then EXIT FOR
+           LET emc = a * emc
+           LET a = c
+       NEXT i
+       LET u = c * u
+       LET sn = sin(u)
+       LET cn = cos(u)
+
+       IF sn <> 0 then
+          LET a = cn / sn
+          LET c = a * c
+          FOR ii = l to 1 step -1
+              LET b = em(ii)
+              LET a = c * a
+              LET c = dn * c
+              LET dn = (en(ii) + a) / (b + a)
+              LET a = c / b
+          NEXT ii
+          LET a = 1 / sqr(c ^ 2 + 1)
+          IF sn < 0 then
+             LET sn = -a
+          ELSE
+             LET sn = a
+          END IF
+          LET cn = c * sn
+       END IF
+
+       IF bo=-1 then
+          LET a = dn
+          LET dn = cn
+          LET cn = a
+          LET sn = sn / d
+       END IF
+    ELSE
+       LET cn = 1 / cosh(u)
+       LET dn = cn
+       LET sn = tanh(u)
+    END IF
+
+END SUB

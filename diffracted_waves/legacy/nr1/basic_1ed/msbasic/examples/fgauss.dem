@@ -1,0 +1,42 @@
+DECLARE SUB FGAUSS (X!, A!(), Y!, DYDA!(), NA!)
+
+'PROGRAM D14R9
+'Driver for routine FGAUSS
+CLS
+NPT = 3
+NLIN = 2
+NA = 3 * NLIN
+DIM A(NA), DYDA(NA), DF(NA)
+FOR I = 1 TO NA
+  READ A(I)
+NEXT I
+DATA 3.0,0.2,0.5,1.0,0.7,0.3
+PRINT "     X       Y    DYDA1   DYDA2   DYDA3   DYDA4   DYDA5   DYDA6"
+FOR I = 1 TO NPT
+  X = .3 * I
+  CALL FGAUSS(X, A(), Y, DYDA(), NA)
+  E1 = EXP(-((X - A(2)) / A(3)) ^ 2)
+  E2 = EXP(-((X - A(5)) / A(6)) ^ 2)
+  F = A(1) * E1 + A(4) * E2
+  DF(1) = E1
+  DF(4) = E2
+  DF(2) = A(1) * E1 * 2! * (X - A(2)) / A(3) ^ 2
+  DF(5) = A(4) * E2 * 2! * (X - A(5)) / A(6) ^ 2
+  DF(3) = A(1) * E1 * 2! * (X - A(2)) ^ 2 / A(3) ^ 3
+  DF(6) = A(4) * E2 * 2! * (X - A(5)) ^ 2 / A(6) ^ 3
+  PRINT "from FGAUSS"
+  PRINT USING "###.####"; X; Y;
+  FOR J = 1 TO 6
+    PRINT USING "###.####"; DYDA(J);
+  NEXT J
+  PRINT
+  PRINT "independent calc."
+  PRINT USING "###.####"; X; F;
+  FOR J = 1 TO 6
+    PRINT USING "###.####"; DF(J);
+  NEXT J
+  PRINT
+  PRINT
+NEXT I
+END
+

@@ -1,0 +1,19 @@
+EXTERNAL
+
+SUB poldiv (u(), n, v(), nv, q(), r())
+
+    FOR j = 1 to n
+        LET r(j) = u(j)
+        LET q(j) = 0
+    NEXT j
+    FOR k = n - nv to 0 step -1
+        LET q(k + 1) = r(nv + k) / v(nv)
+        FOR j = nv + k - 1 to k + 1 step -1
+            LET r(j) = r(j) - q(k + 1) * v(j - k)
+        NEXT j
+    NEXT k
+    FOR j = nv to n
+        LET r(j) = 0
+    NEXT j
+
+END SUB

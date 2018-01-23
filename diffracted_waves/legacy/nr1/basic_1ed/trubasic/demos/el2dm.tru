@@ -1,0 +1,39 @@
+PROGRAM D6r28
+
+! Driver for routine el2
+
+LIBRARY "ran3", "qsimp", "el2"
+DECLARE FUNCTION ran3, el2
+
+DECLARE PUBLIC a, b, akc          ! To set parameter values in func
+
+CLEAR
+PRINT "General Elliptic Integral of Second Kind"
+PRINT "      x        kc         a         b        el2    integral"
+LET idum = -55
+LET ago = 0
+FOR i = 1 to 20
+    LET akc = 5 * ran3(idum)
+    LET a = 10 * ran3(idum)
+    LET b = 10 * ran3(idum)
+    LET x = 10 * ran3(idum)
+    LET astop = atn(x)
+
+    CALL qsimp (dum, ago, astop, s)
+
+    PRINT using "--#.######": x, akc, a, b, el2(x, akc, a, b), s
+NEXT i
+
+END
+
+MODULE functions
+
+    PUBLIC akc, a, b
+
+    FUNCTION func (phi)
+        LET tn = tan(phi)
+        LET tsq = tn * tn
+        LET func = (a + b * tsq) / sqr((1 + tsq) * (1 + akc * akc * tsq))
+    END FUNCTION
+
+END MODULE

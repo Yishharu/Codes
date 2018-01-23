@@ -1,0 +1,41 @@
+PROGRAM D7r9
+
+! Driver for routine bnldev
+
+LIBRARY "bnldev"
+DECLARE FUNCTION bnldev
+
+CLEAR
+LET n = 20
+LET npts = 1000
+LET iscal = 200
+LET nn = 100
+
+DIM dist(21)
+
+LET idum = -133
+LET llen = 50
+DO
+   MAT dist = zer
+   PRINT "Mean of binomial distribution (0 to 20); -1 to end:"
+   INPUT xm
+   IF xm < 0 then EXIT DO
+
+   LET pp = xm / nn
+   FOR i = 1 to npts
+       LET j = int(bnldev(pp, nn, idum))
+       IF j >= 0 and j <= 20 then LET dist(j + 1) = dist(j + 1) + 1
+   NEXT i
+
+   PRINT "   x    p(x)    graph:"
+   FOR j = 1 to 20
+       LET dist(j) = dist(j) / npts
+       LET klim = int(iscal * dist(j))
+       IF klim > llen then LET klim = llen
+       PRINT using "###.#": j - 1;
+       PRINT using "###.####": dist(j);
+       PRINT "   "; repeat$("*", max(1,klim))
+   NEXT j
+LOOP
+
+END

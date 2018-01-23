@@ -1,0 +1,18 @@
+DEFINITION MODULE AnnealM;
+
+   (* EXPORT QUALIFIED Anneal; *)
+
+   FROM NRVect  IMPORT Vector;
+   FROM NRIVect IMPORT IVector;
+
+   PROCEDURE Anneal(X, Y:  Vector; IORDER: IVector); 
+   (*
+     This algorithm finds the shortest round-trip path to NCITY
+     cities whose coordinates are in the arrays X[NCITY],Y[NCITY].  The
+     array IORDER[NCITY] specifies the order in which the cities are visited.
+     On input, the elements of IORDER may be set to any permutation
+     of the numbers 1 to NCITY.  This routine will return the best 
+     alternative path it can find.
+   *)
+
+END AnnealM.

@@ -1,0 +1,26 @@
+PROGRAM D13r12
+
+! Driver for routine probks
+
+LIBRARY "probks"
+DECLARE FUNCTION probks
+
+CLEAR
+PRINT "Probability func. for Kolmogorov-Smirnov statistic"
+PRINT
+PRINT " Lambda:     Value:      Graph:"
+LET npts = 20
+LET eps = .1
+LET scale = 40
+FOR i = 1 to npts
+    LET alam = i * eps
+
+    LET value = probks(alam)
+
+    PRINT using "##.######": alam;
+    PRINT using "#####.######": value;
+    PRINT "    ";
+    PRINT repeat$("*", round(scale * value))
+NEXT i
+
+END

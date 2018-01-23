@@ -1,0 +1,28 @@
+PROGRAM d10r1(input,output);
+(* driver for routine MNBRAK *)
+
+(*$I MODFILE.PAS *)
+
+VAR
+   ax,bx,cx,fa,fb,fc: real;
+   i: integer;
+
+(*$I BESSJ0.PAS *)
+
+FUNCTION func(x: real): real;
+BEGIN
+   func := bessj0(x)
+END;
+
+(*$I MNBRAK.PAS *)
+
+BEGIN
+   FOR i := 1 TO 10 DO BEGIN
+      ax := i*0.5;
+      bx := (i+1.0)*0.5;
+      mnbrak(ax,bx,cx,fa,fb,fc);
+      writeln('a':14,'b':12,'c':12);
+      writeln('x':3,'  ',ax:12:6,bx:12:6,cx:12:6);
+      writeln('f':3,'  ',fa:12:6,fb:12:6,fc:12:6)
+   END
+END.

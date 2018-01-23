@@ -1,0 +1,23 @@
+DECLARE SUB FPOLY (X!, P!(), NP!)
+
+'PROGRAM D14R6
+'Driver for FPOLY
+CLS
+NVAL = 15
+DX = .1
+NPOLY = 5
+DIM AFUNC(NPOLY)
+PRINT "                           Powers of X"
+PRINT
+PRINT "       X       X^0       X^1       X^2       X^3       X^4"
+FOR I = 1 TO NVAL
+  X = I * DX
+  CALL FPOLY(X, AFUNC(), NPOLY)
+  PRINT USING "#####.####"; X;
+  FOR J = 1 TO NPOLY
+    PRINT USING "#####.####"; AFUNC(J);
+  NEXT J
+  PRINT
+NEXT I
+END
+

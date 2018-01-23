@@ -1,0 +1,16 @@
+DECLARE SUB SPLINE (X!(), Y!(), N!, YP1!, YPN!, Y2!())
+
+SUB SPLIE2 (X1A(), X2A(), YA(), M, N, Y2A())
+DIM YTMP(N), Y2TMP(N)
+FOR J = 1 TO M
+  FOR K = 1 TO N
+    YTMP(K) = YA(J, K)
+  NEXT K
+  CALL SPLINE(X2A(), YTMP(), N, 1E+30, 1E+30, Y2TMP())
+  FOR K = 1 TO N
+    Y2A(J, K) = Y2TMP(K)
+  NEXT K
+NEXT J
+ERASE Y2TMP, YTMP
+END SUB
+

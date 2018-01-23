@@ -1,0 +1,22 @@
+DEFINITION MODULE MNewtM;
+
+   (* EXPORT QUALIFIED MNewt; *)
+
+   FROM NRVect IMPORT Vector;
+   FROM NRMatr IMPORT Matrix;
+
+   TYPE
+      Coefficients = PROCEDURE(Vector, Matrix, Vector);
+
+   PROCEDURE MNewt(usrfun:     Coefficients;
+                   ntrial:     INTEGER; 
+                   X:          Vector; 
+                   tolx, tolf: REAL); 
+   (*
+     Given an initial guess X[0, n-1] for a root in n dimensions, take 
+     ntrial Newton-Raphson steps to improve the root. Stop if the root 
+     converges in either summed absolute variable increments tolx or 
+     summed absolute function values tolf.
+   *)
+
+END MNewtM.

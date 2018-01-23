@@ -1,0 +1,30 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE FUNCTION FINT! (X!)
+DECLARE SUB MIDPNT (DUM!, A!, B!, S!, N!)
+
+'PROGRAM D4R5
+'Driver for routine MIDPNT
+CLS
+NMAX = 10
+A = 0!
+B = 1!
+PRINT "Integral of FUNC computed with MIDPNT"
+PRINT "Actual value of integral is  ";
+PRINT USING "#####.######"; FINT(B) - FINT(A)
+PRINT "     n            Approx. Integral"
+FOR I = 1 TO NMAX
+  CALL MIDPNT(DUM, A, B, S, I)
+  PRINT USING "######"; I;
+  PRINT USING "#################.######"; S
+NEXT I
+END
+
+FUNCTION FINT (X)
+'Integral of FUNC
+FINT = 2! * SQR(X)
+END FUNCTION
+
+FUNCTION FUNC (X)
+FUNC = 1! / SQR(X)
+END FUNCTION
+

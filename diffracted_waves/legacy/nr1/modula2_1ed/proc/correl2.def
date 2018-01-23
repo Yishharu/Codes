@@ -1,0 +1,44 @@
+DEFINITION MODULE Correl2;
+
+   (* EXPORT QUALIFIED Kendl1, Kendl2, Spear; *)
+
+   FROM NRVect IMPORT Vector;
+   FROM NRMatr IMPORT Matrix;
+
+   PROCEDURE Kendl1(    DATA1, DATA2: Vector; 
+                    VAR tau, z, prob: REAL); 
+   (*
+     Given data arrays DATA1[0, n-1] and DATA2[0, n-1],
+     this program returns Kendall's "tau" as tau, its number
+     of standard deviations from zero as z, and its two-sided significance
+     level as prob. Small values of prob indicate a significant
+     correlation (tau positive) or anticorrelation (tau negative).
+   *)
+
+   PROCEDURE Kendl2(    TAB: Matrix; 
+                    VAR tau, z, prob: REAL); 
+   (*
+     Given a two-dimensional table TAB[I, J], such that TAB[K,L]
+     contains the number of events falling in bin K of one
+     variable and bin L of another, this program returns Kendall's "tau" as 
+     tau, its number of standard deviations from zero as z, and its two-sided 
+     significance level as prob.  Small values of prob indicate a significant
+     correlation (tau positive) or anticorrelation (tau negative)
+     between the two variables.  Although TAB is a real array, it
+     will normally contain integral values.
+   *)
+
+   PROCEDURE Spear(    DATA1, DATA2: Vector; 
+                   VAR d, zd, probd, rs, probrs: REAL); 
+   (*
+     Given two data arrays, DATA1[0, n-1] and DATA2[0, n-1],
+     this routine returns their sum-squared difference of ranks as d,
+     the number of standard deviations by which d deviates from its 
+     null-hypothesis expected value as zd, the two-sided significance 
+     level of this deviation as PROBD, Spearman's rank correlation rs as rs, 
+     and the two-sided significance level of its deviation from zero as probs.
+     The external routine Sort2 (section 8.2) is used. A small value of either 
+     probd or probrs indicates a significant correlation (rs positive) or 
+     anticorrelation (rs negative).
+   *)
+END Correl2.

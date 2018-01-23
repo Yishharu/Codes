@@ -1,0 +1,17 @@
+DEFINITION MODULE Transf;
+
+   (* EXPORT QUALIFIED ExpDev, GasDev; *)
+
+   PROCEDURE ExpDev(VAR idum: INTEGER): REAL; 
+   (*
+     Returns an  exponentially distributed, positive, random deviate
+     of unit mean, using Ran3 as the source of uniform deviates.
+   *)
+
+   PROCEDURE GasDev(VAR idum: INTEGER): REAL; 
+   (*
+     Returns a normally distributed deviate with zero mean and unit variance,
+     using Ran3 as the source of uniform deviates.
+   *)
+
+END Transf.

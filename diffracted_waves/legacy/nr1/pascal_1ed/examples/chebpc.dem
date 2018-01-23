@@ -1,0 +1,50 @@
+PROGRAM d5r8(input,output);
+(* driver for routine CHEBPC *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+CONST
+   nval = 40;
+   pio2 = 1.5707963;
+TYPE
+   RealArrayNP = ARRAY [1..nval] OF real;
+VAR
+   a,b,poly,x,y: real;
+   i,j,mval: integer;
+   c,d: RealArrayNP;
+
+FUNCTION func(x: real): real;
+BEGIN
+   func := sqr(x)*(sqr(x)-2.0)*sin(x)
+END;
+
+(*$I CHEBFT.PAS *)
+
+(*$I CHEBPC.PAS *)
+
+BEGIN
+   a := -pio2;
+   b := pio2;
+   chebft(a,b,c,nval);
+   WHILE true DO BEGIN
+      writeln;
+      writeln('How many terms in Chebyshev evaluation?');
+      write('Enter n between 6 and ',nval:2,'. (n := 0 to end).  ');
+      readln(mval);
+      IF (mval <= 0) OR (mval > nval) THEN GOTO 99;
+      chebpc(c,d,mval);
+(* test polynomial *)
+      writeln;
+      writeln('x':9,'actual':14,'polynomial':14);
+      FOR i := -8 TO 8 DO BEGIN
+         x := i*pio2/10.0;
+         y := (x-(0.5*(b+a)))/(0.5*(b-a));
+         poly := d[mval];
+         FOR j := mval-1 DOWNTO 1 DO
+            poly := poly*y+d[j];
+         writeln(x:12:6,func(x):12:6,poly:12:6)
+      END
+   END;
+99:
+END.

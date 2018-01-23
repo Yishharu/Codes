@@ -1,0 +1,94 @@
+PROGRAM D14r8b
+
+! Driver for routine mrqcof
+
+LIBRARY "mrqcof", "gasdev"
+DECLARE FUNCTION gasdev
+
+LET npt = 100
+LET ma = 6
+DIM x(0), y(0), sig(0), a(0), lista(0)
+DIM covar(0,0), alpha(0,0), beta(0,0), gues(0)
+MAT redim x(npt), y(npt), sig(npt), a(ma), lista(ma)
+MAT redim covar(ma, ma), alpha(ma, ma), beta(ma, 1), gues(ma)
+
+CLEAR
+LET spread = .1
+MAT READ a
+DATA 5.0, 2.0, 3.0, 2.0, 5.0, 3.0
+
+MAT READ gues
+DATA 4.9, 2.1, 2.9, 2.1, 4.9, 3.1
+
+LET idum = -911
+
+! First try sum of two Gaussians
+
+FOR i = 1 to 100
+    LET x(i) = .1 * i
+    LET y(i) = 0
+    FOR j = 1 to 4 step 3
+        LET y(i) = y(i) + a(j) * exp(-((x(i) - a(j + 1)) / a(j + 2)) ^ 2)
+    NEXT j
+    LET y(i) = y(i) * (1 + spread * gasdev(idum))
+    LET sig(i) = spread * y(i)
+NEXT i
+
+LET mfit = ma
+FOR i = 1 to mfit
+    LET lista(i) = i
+NEXT i
+MAT a = gues
+
+CALL mrqcof (x(), y(), sig(), npt, a(), ma, lista(), mfit, alpha(,), beta(,), ma, chisq, fgauss)
+
+PRINT "Matrix alpha"
+FOR i = 1 to ma
+    FOR j = 1 to ma
+        PRINT using "------#.####": alpha(i, j);
+    NEXT j
+    PRINT
+NEXT i
+
+PRINT "Vector beta"
+FOR i = 1 to ma
+    PRINT using "------#.####": beta(i, 1);
+NEXT i
+PRINT
+PRINT "Chi-squared:";
+PRINT using "#######.####": chisq
+PRINT
+
+! Next fix one line and improve the other
+
+FOR i = 1 to 3
+    LET lista(i) = i + 3
+NEXT i
+LET mfit = 3
+MAT a = gues
+
+CALL mrqcof (x(), y(), sig(), npt, a(), ma, lista(), mfit, alpha(,), beta(,), ma, chisq, fgauss)
+
+PRINT "Matrix alpha"
+FOR i = 1 to mfit
+    FOR j = 1 to mfit
+        PRINT using "------#.####": alpha(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+
+PRINT "Vector beta"
+FOR i = 1 to mfit
+    PRINT using "------#.####": beta(i, 1);
+NEXT i
+PRINT
+PRINT "Chi-squared:";
+PRINT using "#######.####": chisq
+
+END
+
+SUB funcs (x, a(), y, dyda(), na)
+    LIBRARY "fgauss"
+    CALL fgauss (x, a(), y, dyda(), na)
+END SUB

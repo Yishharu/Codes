@@ -1,0 +1,40 @@
+PROGRAM D7r5
+
+! Driver for routine expdev
+
+LIBRARY "expdev"
+DECLARE FUNCTION expdev
+
+DIM trig(21), x(21)
+
+CLEAR
+LET npts = 10000
+LET ee = 2.718281828
+FOR i = 1 to 21
+    LET trig(i) = (i - 1) / 20
+    LET x(i) = 0
+NEXT i
+
+LET idum = -1
+FOR i = 1 to npts
+    LET y = expdev(idum)
+    FOR j = 2 to 21
+        IF y < trig(j) and y > trig(j - 1) then LET x(j) = x(j) + 1
+    NEXT j
+NEXT i
+
+LET total = 0
+FOR i = 2 to 21
+    LET total = total + x(i)
+NEXT i
+PRINT "Exponential distribution with"; npts; "points:"
+PRINT "   interval      observed    expected"
+FOR i = 2 to 21
+    LET x(i) = x(i) / total
+    LET expect = exp(-(trig(i - 1) + trig(i)) / 2)
+    LET expect = expect * .05 * ee / (ee - 1)
+    PRINT using "###.##": trig(i - 1), trig(i);
+    PRINT using "#######.####": x(i), expect
+NEXT i
+
+END

@@ -1,0 +1,44 @@
+DECLARE SUB QROOT (P!(), N!, B!, C!, EPS!)
+
+'PROGRAM D9R12
+'Driver for routine QROOT
+CLS
+N = 7
+EPS = .000001
+NTRY = 10
+TINY = .00001
+DIM P(N), B(NTRY), C(NTRY)
+FOR I = 1 TO N
+  READ P(I)
+NEXT I
+DATA 10.0,-18.0,25.0,-24.0,16.0,-6.0,1.0
+PRINT "P(x)=x^6-6x^5+16x^4-24x^3+25x^2-18x+10"
+PRINT "Quadratic factors x^2+Bx+C"
+PRINT
+PRINT "Factor       B           C"
+PRINT
+NROOT = 0
+FOR I = 1 TO NTRY
+  C(I) = .5 * I
+  B(I) = -.5 * I
+  CALL QROOT(P(), N, B(I), C(I), EPS)
+  IF NROOT = 0 THEN
+    PRINT USING "###"; NROOT;
+    PRINT USING "#######.######"; B(I);
+    PRINT USING "#####.######"; C(I)
+    NROOT = 1
+  ELSE
+    NFLAG = 0
+    FOR J = 1 TO NROOT
+      IF ABS(B(I) - B(J)) < TINY AND ABS(C(I) - C(J)) < TINY THEN NFLAG = 1
+    NEXT J
+    IF NFLAG = 0 THEN
+      PRINT USING "###"; NROOT;
+      PRINT USING "#######.######"; B(I);
+      PRINT USING "#####.######"; C(I)
+      NROOT = NROOT + 1
+    END IF
+  END IF
+NEXT I
+END
+

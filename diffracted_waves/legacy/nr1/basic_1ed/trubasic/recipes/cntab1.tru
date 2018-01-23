@@ -1,0 +1,44 @@
+EXTERNAL
+
+SUB cntab1 (nn(,), ni, nj, chisq, df, prob, cramrv, ccc)
+
+    LIBRARY "gammq"
+    DECLARE FUNCTION gammq
+
+    DIM sumi(0), sumj(0)
+    MAT redim sumi(ni), sumj(nj)
+
+    LET tiny = 1e-30
+    LET sum = 0
+    LET nni = ni
+    LET nnj = nj
+    FOR i = 1 to ni
+        LET sumi(i) = 0
+        FOR j = 1 to nj
+            LET sumi(i) = sumi(i) + nn(i, j)
+            LET sum = sum + nn(i, j)
+        NEXT j
+        IF sumi(i) = 0 then LET nni = nni - 1
+    NEXT i
+    FOR j = 1 to nj
+        LET sumj(j) = 0
+        FOR i = 1 to ni
+            LET sumj(j) = sumj(j) + nn(i, j)
+        NEXT i
+        IF sumj(j) = 0 then LET nnj = nnj - 1
+    NEXT j
+    LET df = nni * nnj - nni - nnj + 1
+
+    LET chisq = 0
+    FOR i = 1 to ni
+        FOR j = 1 to nj
+            LET expctd = sumj(j) * sumi(i) / sum
+            LET chisq = chisq + (nn(i, j) - expctd)^2 / (expctd + tiny)
+        NEXT j
+    NEXT i
+    LET prob = gammq(.5 * df, .5 * chisq)
+    LET ndum = min(nnj - 1, nni - 1)
+    LET cramrv = sqr(chisq / (sum * ndum))
+    LET ccc = sqr(chisq / (chisq + sum))
+
+END SUB

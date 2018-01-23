@@ -1,0 +1,48 @@
+DECLARE FUNCTION FUNC2! (X!(), N!)
+DECLARE FUNCTION FUNC! (X!)
+DECLARE FUNCTION F1DIM! (X!)
+DECLARE SUB POWELL (P!(), XI!(), N!, NP!, FTOL!, ITER!, FRET!)
+DECLARE FUNCTION BESSJ0! (X!)
+COMMON NCOM, PCOM(), XICOM()
+
+'PROGRAM D10R6
+'Driver for routine POWELL
+CLS
+NDIM = 3
+FTOL = .000001
+DIM P(NDIM), XI(NDIM, NDIM), PCOM(50), XICOM(50)
+NP = NDIM
+FOR J = 1 TO NDIM
+  FOR I = 1 TO NDIM
+    READ XI(I, J)
+  NEXT I
+NEXT J
+DATA 1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0
+FOR I = 1 TO NDIM
+  READ P(I)
+NEXT I
+DATA 1.5,1.5,2.5
+CALL POWELL(P(), XI(), NDIM, NP, FTOL, ITER, FRET)
+PRINT "Iterations:"; ITER
+PRINT
+PRINT "Minimum found at:"
+FOR I = 1 TO NDIM
+  PRINT USING "#####.######"; P(I);
+NEXT I
+PRINT
+PRINT
+PRINT "Minimum function value =";
+PRINT USING "#####.######"; FRET
+PRINT
+PRINT "True minimum of function is at:"
+PRINT USING "#####.######"; 1!; 2!; 3!
+END
+
+FUNCTION FUNC (X)
+FUNC = F1DIM(X)
+END FUNCTION
+
+FUNCTION FUNC2 (X(), N)
+FUNC2 = .5 - BESSJ0((X(1) - 1!) ^ 2 + (X(2) - 2!) ^ 2 + (X(3) - 3!) ^ 2)
+END FUNCTION
+

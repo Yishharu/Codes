@@ -1,0 +1,73 @@
+DECLARE SUB KENDL2 (TAQ!(), I!, J!, IP!, JP!, TAU!, Z!, PROB!)
+DECLARE FUNCTION IRBIT1! (X!)
+DECLARE FUNCTION IRBIT2! (X!)
+
+'PROGRAM D13R19
+'Driver for routine KENDL2
+'Look for "ones-after-zeros" in IRBIT1 and IRBIT2 sequences
+CLS
+NDAT = 1000
+IP = 8
+JP = 8
+DIM TAQ(IP, JP), TEXT$(8)
+FOR I = 1 TO 8
+  READ TEXT$(I)
+NEXT I
+DATA "000","001","010","011","100","101","110","111"
+PRINT "Are ones followed by zeros and vice-versa?"
+PRINT
+I = IP
+J = JP
+FOR IFUNC = 1 TO 2
+  ISEED = 2468
+  PRINT "Test of IRBIT";
+  PRINT USING "#"; IFUNC
+  PRINT
+  FOR K = 1 TO I
+    FOR L = 1 TO J
+      TAQ(K, L) = 0!
+    NEXT L
+  NEXT K
+  FOR M = 1 TO NDAT
+    K = 1
+    FOR N = 0 TO 2
+      IF IFUNC = 1 THEN
+        K = K + IRBIT1(ISEED) * 2 ^ N
+      ELSE
+        K = K + IRBIT2(ISEED) * 2 ^ N
+      END IF
+    NEXT N
+    L = 1
+    FOR N = 0 TO 2
+      IF IFUNC = 1 THEN
+        L = L + IRBIT1(ISEED) * 2 ^ N
+      ELSE
+        L = L + IRBIT2(ISEED) * 2 ^ N
+      END IF
+    NEXT N
+    TAQ(K, L) = TAQ(K, L) + 1!
+  NEXT M
+  CALL KENDL2(TAQ(), I, J, IP, JP, TAU, Z, PROB)
+  PRINT "   ";
+  FOR N = 1 TO 8
+    PRINT "   "; TEXT$(N);
+  NEXT N
+  PRINT
+  PRINT
+  FOR N = 1 TO 8
+    PRINT TEXT$(N);
+    FOR M = 1 TO 8
+      PRINT USING "######"; CINT(TAQ(N, M));
+    NEXT M
+    PRINT
+  NEXT N
+  PRINT
+  PRINT "      Kendall Tau     Std. Dev.     Probability"
+  PRINT USING "########.######"; TAU; Z; PROB
+  PRINT
+  PRINT "Press RETURN to continue ..."
+  LINE INPUT DUM$
+  PRINT
+NEXT IFUNC
+END
+

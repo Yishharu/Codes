@@ -1,0 +1,27 @@
+EXTERNAL
+
+SUB bksub (ne, nb, jf, k1, k2, c(,,), nci, ncj, nck)
+
+    LET nbf = ne - nb
+    LET im = 1
+    FOR k = k2 to k1 step -1
+        IF k = k1 then LET im = nbf + 1
+        LET kp = k + 1
+        FOR j = 1 to nbf
+            LET xx = c(j, jf, kp)
+            FOR i = im to ne
+                LET c(i, jf, k) = c(i, jf, k) - c(i, j, k) * xx
+            NEXT i
+        NEXT j
+    NEXT k
+    FOR k = k1 to k2
+        LET kp = k + 1
+        FOR i = 1 to nb
+            LET c(i, 1, k) = c(i + nbf, jf, k)
+        NEXT i
+        FOR i = 1 to nbf
+            LET c(i + nb, 1, k) = c(i, jf, kp)
+        NEXT i
+    NEXT k
+
+END SUB

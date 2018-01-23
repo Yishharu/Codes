@@ -1,0 +1,90 @@
+MODULE qcksrt
+
+    SHARE m, nstack, fm, fa, fc, fmi, istack(0)
+
+    LET m = 7
+    LET nstack = 50
+    LET fm = 7875
+    LET fa = 211
+    LET fc = 1663
+    LET fmi = 1 / fm
+
+    MAT redim istack(nstack)
+
+    SUB qcksrt (n, arr())
+
+        LET jstack = 0
+        LET l = 1
+        LET ir = n
+        LET fx = 0
+        DO
+           IF ir - l < m then
+              FOR j = l + 1 to ir
+                  LET a = arr(j)
+                  FOR i = j - 1 to 1 step -1
+                      IF arr(i) <= a then EXIT FOR
+                      LET arr(i + 1) = arr(i)
+                  NEXT i
+                  LET arr(i + 1) = a
+              NEXT j
+
+              IF jstack = 0 then EXIT SUB   ! Normal exit
+
+              LET ir = istack(jstack)
+              LET l = istack(jstack - 1)
+              LET jstack = jstack - 2
+           ELSE
+              LET i = l
+              LET j = ir
+              LET fx = mod(fx * fa + fc, fm)
+              LET iq = l + (ir - l + 1) * int(fx * fmi)
+              LET a = arr(iq)
+              LET arr(iq) = arr(l)
+              DO
+                 DO
+                    IF j > 0 then
+                       IF a < arr(j) then LET j = j - 1 else EXIT DO
+                    END IF
+                 LOOP
+                 IF j <= i then
+                    LET arr(i) = a
+                    EXIT DO
+                 END IF
+
+                 LET arr(i) = arr(j)
+                 LET i = i + 1
+                 DO
+                    IF i <= n then
+                       IF a > arr(i) then LET i = i + 1 else EXIT DO
+                    END IF
+                 LOOP
+                 IF j <= i then
+                    LET arr(j) = a
+                    LET i = j
+                    EXIT DO
+                 END IF
+                 LET arr(j) = arr(i)
+                 LET j = j - 1
+              LOOP
+
+              LET jstack = jstack + 2
+              IF jstack > nstack then
+                 PRINT "nstack must be made larger"
+                 EXIT SUB         ! Error exit
+              END IF
+
+              IF ir - i >= i - l then
+                 LET istack(jstack) = ir
+                 LET istack(jstack - 1) = i + 1
+                 LET ir = i - 1
+              ELSE
+                 LET istack(jstack) = i - 1
+                 LET istack(jstack - 1) = l
+                 LET l = i + 1
+              END IF
+           END IF
+        LOOP
+
+    END SUB
+
+END MODULE

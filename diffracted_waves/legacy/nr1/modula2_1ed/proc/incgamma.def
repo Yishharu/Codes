@@ -1,0 +1,47 @@
+DEFINITION MODULE IncGamma;
+
+   (*  EXPORT QUALIFIED GammP, GammQ, GSer, GCF, ErF, ErFC, ErFCC; *)
+
+   PROCEDURE GammP(a, x: REAL): REAL; 
+   (*
+     Returns the incomplete gamma function P(a,x)
+   *)
+
+   PROCEDURE GammQ(a, x: REAL): REAL; 
+   (*
+     Returns the incomplete gamma function Q(a,x) = 1-P(a,x).
+   *)
+
+   PROCEDURE GSer(    a,      x:   REAL; 
+                  VAR gamSer, gLn: REAL); 
+   (*
+     Returns the incomplete gamma function P(a,x) evaluated
+     by its series representation as gamSer.  Also returns ln("Gamma")(a)
+     as gLn.
+   *)
+
+   PROCEDURE GCF(    a,      x:   REAL; 
+                 VAR gammCF, gLn: REAL); 
+   (*
+     Returns the incomplete gamma function Q(a,x) evaluated by its continued 
+     fraction representation as gammCF.  Also returns ln "Gamma" (a)
+     as gLn.
+   *)
+
+   PROCEDURE ErF(x: REAL): REAL; 
+   (*
+     Returns the error function oxerf(x).
+   *)
+
+   PROCEDURE ErFC(x: REAL): REAL; 
+   (*
+     Returns the complementary error function oxerfc(x).
+   *)
+
+   PROCEDURE ErFCC(x: REAL): REAL; 
+   (*
+     Returns the complementary error function oxerfc(x)
+     with fractional error everywhere less than 1.2x10^-7.
+   *)
+
+END IncGamma.

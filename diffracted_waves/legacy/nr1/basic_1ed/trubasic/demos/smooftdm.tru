@@ -1,0 +1,41 @@
+PROGRAM D13r20
+
+! Driver for routine smooft
+
+LIBRARY "smooft", "gasdev"
+DECLARE FUNCTION gasdev
+
+LET mmax = 1024
+DIM y(0)
+MAT redim y(mmax)
+
+CLEAR
+LET n = 100
+LET hash = .05
+LET scale = 100
+LET pts = 10
+LET idum = -7
+FOR i = 1 to n
+    LET y(i) = 3 * i / n * exp(-3 * i / n)
+    LET y(i) = y(i) + hash * gasdev(idum)
+NEXT i
+
+FOR k = 1 to 3
+    LET nstp = int(n / 20)
+    PRINT " Data:       Graph:"
+    FOR i = 1 to n step nstp
+        LET ibar = scale * y(i)
+        PRINT using "##.######": y(i);
+        PRINT "    "; repeat$("*", ibar)
+    NEXT i
+    PRINT
+    PRINT "Press Enter to smooth ...";
+    LINE INPUT dum$
+    PRINT
+    PRINT
+
+    CALL smooft (y(), n, pts)
+
+NEXT k
+
+END

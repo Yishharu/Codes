@@ -1,0 +1,35 @@
+DECLARE SUB TOEPLZ (R!(), X!(), Y!(), N!)
+
+'PROGRAM D2R7
+'Driver for routine TOEPLZ
+CLS
+N = 5
+N2 = 2 * N
+DIM X(N), Y(N), R(N2)
+FOR I = 1 TO N
+  Y(I) = .1 * I
+NEXT I
+FOR I = 1 TO 2 * N - 1
+  R(I) = .1 * I
+NEXT I
+CALL TOEPLZ(R(), X(), Y(), N)
+PRINT "Solution vector:"
+FOR I = 1 TO N
+  PRINT "    X(";
+  PRINT USING "#"; I;
+  PRINT ") =  ";
+  PRINT USING "#.######^^^^"; X(I)
+NEXT I
+PRINT
+PRINT "Test of solution:"
+PRINT "    mtrx*soln    original"
+FOR I = 1 TO N
+  SUM = 0!
+  FOR J = 1 TO N
+    SUM = SUM + R(N + I - J) * X(J)
+  NEXT J
+  PRINT USING "#######.####"; SUM; Y(I)
+NEXT I
+PRINT
+END
+

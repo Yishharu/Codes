@@ -1,0 +1,25 @@
+DEFINITION MODULE ADIM;
+
+  (* EXPORT QUALIFIED ADI; *)
+
+   FROM NRLMatr  IMPORT LMatrix;
+   FROM NRSystem IMPORT LongReal;
+
+   PROCEDURE ADI(A, B, C, DD, E, F, G, U: LMatrix; 
+                 k: INTEGER;
+                 alpha, beta, eps: LongReal); 
+   (*
+     ADI solution of equations (17.6.12) and (17.6.13), with the
+     operators as defined in equation (17.6.22).
+     On input, A, B, C, DD, E and F contain the coefficients of the equation.
+     G contains the right-hand side, while U is input as the initial
+     guess, usually zero. All these arrays are dimensioned to the grid size,
+     [jMax, jMax]. The routine carries out 2 to the power k iterations
+     with different values of r, and then repeats. alpha and
+     beta are user-supplied bounds for the eigenvalues of Lx
+     and Ly, while eps is the desired reduction in the norm
+     of the residual. Note that the routine as given requires a double
+     precision version of Tridag from section 2.6.
+   *)
+
+END ADIM.

@@ -1,0 +1,36 @@
+PROGRAM D3r9
+
+! Driver for routine polin2
+
+LIBRARY "polin2"
+
+LET n = 5
+DIM x1a(0), x2a(0), ya(0,0)
+MAT redim x1a(n), x2a(n), ya(n, n)
+
+CLEAR
+FOR i = 1 to n
+    LET x1a(i) = i * pi / n
+    FOR j = 1 to n
+        LET x2a(j) = 1 * j / n
+        LET ya(i, j) = sin(x1a(i)) * exp(x2a(j))
+    NEXT j
+NEXT i
+
+! Test 2-dimensional interpolation
+
+PRINT "       x1          x2         f(x)    interpolated    error est."
+FOR i = 1 to 4
+    LET x1 = (-.1 + i / 5) * pi
+    FOR j = 1 to 4
+        LET x2 = -.1 + j / 5
+        LET f = sin(x1) * exp(x2)
+
+        CALL polin2 (x1a(), x2a(), ya(,), n, n, x1, x2, y, dy)
+
+        PRINT using "----#.######": x1, x2, f, y, dy
+    NEXT j
+    PRINT "***********************************"
+NEXT i
+
+END

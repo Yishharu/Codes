@@ -1,0 +1,58 @@
+PROGRAM d9r10(input,output);
+(* driver for routine LAGUER *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   m = 4;
+   mp1 = 5;        (* mp1=m+1 *)
+   ntry = 21;
+   eps = 1.0e-6;
+TYPE
+   Complex = RECORD
+                r,i: real
+             END;
+   ComplexArrayMp1 = ARRAY [1..mp1] OF Complex;
+   ComplexArrayNTRY = ARRAY [1..ntry] OF Complex;
+VAR
+   i,iflag,j,n: integer;
+   polish: boolean;
+   x: Complex;
+   a: ComplexArrayMp1;
+   y: ComplexArrayNTRY;
+
+(*$I LAGUER.PAS *)
+
+BEGIN
+   a[1].r := 0.0; a[1].i := 2.0;
+   a[2].r := 0.0; a[2].i := 0.0;
+   a[3].r := -1.0; a[3].i := -2.0;
+   a[4].r := 0.0; a[4].i := 0.0;
+   a[5].r := 1.0; a[5].i := 0.0;
+   writeln;
+   writeln('Roots of polynomial x^4-(1+2i)*x^2+2i');
+   writeln('real':15,'complex':13);
+   n := 0;
+   polish := false;
+   FOR i := 1 TO ntry DO BEGIN
+      x.r := (i-11.0)/10.0;
+      x.i := (i-11.0)/10.0;
+      laguer(a,m,x,eps,polish);
+      IF n = 0 THEN BEGIN
+         n := 1;
+         y[1] := x;
+         writeln(n:5,x.r:12:6,x.i:12:6)
+      END ELSE BEGIN
+         iflag := 0;
+         FOR j := 1 TO n DO
+            IF sqrt(sqr(x.r-y[j].r)+sqr(x.i-y[j].i))
+               <= eps*sqrt(sqr(x.r)+sqr(x.i)) THEN
+               iflag := 1;
+         IF iflag = 0 THEN BEGIN
+            n := n+1;
+            y[n] := x;
+            writeln(n:5,x.r:12:6,x.i:12:6)
+         END
+      END
+   END
+END.

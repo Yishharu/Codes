@@ -1,0 +1,136 @@
+PROGRAM d7r13 (input,output,dfile);
+(* driver for routine DES, Turbo Pascal version *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+TYPE
+   ByteArray32 = ARRAY [1..32] OF byte;
+   ByteArray48 = ARRAY [1..48] OF byte;
+   ByteArray56 = ARRAY [1..56] OF byte;
+   ByteArray64 = ARRAY [1..64] OF byte;
+   Immense = RECORD
+      l,r: longint
+   END;
+   Great = RECORD
+      l,c,r: word
+   END;
+VAR
+   DesBit: ARRAY [1..32] OF longint;
+   DesIp,DesIpm: ByteArray64;
+   DesKns: ARRAY [1..16] OF Great;
+   DesFlg: boolean;
+   CyfunIet: ByteArray48;
+   CyfunIpp: ByteArray32;
+   CyfunIs: Array[1..16,1..4,1..8] OF integer;
+   CyfunIbin: Array[0..15] OF longint;
+   CyfunFlg: boolean;
+   KsIcd: Immense;
+   KsIpc1: ByteArray56;
+   KsIpc2: ByteArray48;
+   KsFlg: boolean;
+   idirec,i,j,m,mm,nciphr: integer;
+   newkey: boolean;
+   iin,iout,key: Immense;
+   hin,hkey,hout,hcmp: string[17];
+   verdct: string[8];
+   txt: string[60];
+   txt2: string[6];
+   dfile,infile: text;
+
+(*$I DES.PAS *)
+
+FUNCTION hex2longint(ch: char): longint;
+(* Coverts character representing hexadecimal number to its
+long integer value in a machine-independent way. *)
+BEGIN
+   IF (ch >= '0') AND (ch <= '9') THEN
+      hex2longint := ord(ch)-ord('0')
+   ELSE
+      hex2longint := ord(ch)-ord('A')+10
+END;
+
+FUNCTION longint2hex(i: longint): char;
+(* Inverse of hex2int *)
+BEGIN
+   IF i <= 9 THEN
+      longint2hex := chr(i+ord('0'))
+   ELSE
+      longint2hex := chr(i-10+ord('A'))
+END;
+
+PROCEDURE reverse(VAR input: Immense);
+(* Reverse bits of type Immense *)
+VAR
+   temp: Immense;
+   i: integer;
+BEGIN
+   temp.r := 0;
+   temp.l := 0;
+   FOR i := 1 TO 32 DO BEGIN
+      temp.r := (temp.r SHL 1) OR (input.l AND $1);
+      temp.l := (temp.l SHL 1) OR (input.r AND $1);
+      input.r := input.r SHR 1;
+      input.l := input.l SHR 1
+   END;
+   input.r := temp.r;
+   input.l := temp.l
+END;
+
+BEGIN
+   DesFlg := true;
+   CyfunFlg := true;
+   KsFlg := true;
+   NROpen(dfile,'destst.dat');
+   readln(dfile,txt);
+   writeln(txt);
+   WHILE true DO BEGIN
+      readln(dfile,txt);
+      IF eof(dfile) THEN GOTO 99;
+      writeln(txt);
+      readln(dfile,nciphr);
+      readln(dfile,txt2);
+      IF txt2 = 'encode' THEN idirec := 0;
+      IF txt2 = 'decode' THEN idirec := 1;
+      REPEAT
+         writeln('key':10,'plaintext':20,
+            'expected cipher':21,'actual cipher':15);
+         mm := 16;
+         IF nciphr < 16 THEN mm := nciphr;
+         nciphr := nciphr-16;
+         FOR m := 1 TO mm DO BEGIN
+            readln(dfile,hkey,hin,hcmp);
+            iin.l := 0;
+            iin.r := 0;
+            key.l := 0;
+            key.r := 0;
+            FOR i := 2 TO 9 DO BEGIN
+               j := i+8;
+               iin.l := (iin.l SHL 4) OR hex2longint(hin[i]);
+               key.l := (key.l SHL 4) OR hex2longint(hkey[i]);
+               iin.r := (iin.r SHL 4) OR hex2longint(hin[j]);
+               key.r := (key.r SHL 4) OR hex2longint(hkey[j])
+            END;
+            newkey := true;
+            reverse(iin);
+            reverse(key);
+            des(iin,key,newkey,idirec,iout);
+            reverse(iout);
+            hout := '                 ';
+            FOR i := 9 DOWNTO 2 DO BEGIN
+               j := i+8;
+               hout[i] := longint2hex(iout.l AND $F);
+               hout[j] := longint2hex(iout.r AND $F);
+               iout.l := iout.l SHR 4;
+               iout.r := iout.r SHR 4
+            END;
+            verdct := 'wrong   ';
+            IF hcmp = hout THEN verdct := 'o.k.    ';
+            writeln(hkey,hin,hcmp,hout,verdct:10)
+         END;
+         writeln('press RETURN to continue ...');
+         readln
+      UNTIL nciphr <= 0
+   END;
+99:
+END.

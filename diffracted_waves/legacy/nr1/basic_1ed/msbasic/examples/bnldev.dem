@@ -1,0 +1,47 @@
+DECLARE FUNCTION BNLDEV! (PP!, N!, IDUM&)
+
+'PROGRAM D7R9
+'Driver for routine BNLDEV
+CLS
+N = 20
+NPTS = 1000
+ISCAL = 200
+NN = 100
+DIM DIST(21), TEXT$(50)
+IDUM& = -133
+LLEN = 50
+DO
+  FOR J = 1 TO 21
+    DIST(J) = 0!
+  NEXT J
+  PRINT "Mean of binomial distribution (0 to 20) (neg to end)"
+  INPUT XM
+  IF XM < 0 THEN EXIT DO
+  PP = XM / NN
+  FOR I = 1 TO NPTS
+    J = INT(BNLDEV(PP, NN, IDUM&))
+    IF J >= 0 AND J <= 20 THEN DIST(J + 1) = DIST(J + 1) + 1
+  NEXT I
+  PRINT "   x    p(x)    graph:"
+  FOR J = 1 TO 20
+    DIST(J) = DIST(J) / NPTS
+    FOR K = 1 TO 50
+      TEXT$(K) = " "
+    NEXT K
+    TEXT$(1) = "*"
+    KLIM = INT(ISCAL * DIST(J))
+    IF KLIM > LLEN THEN KLIM = LLEN
+    FOR K = 1 TO KLIM
+      TEXT$(K) = "*"
+    NEXT K
+    PRINT USING "###.#"; CSNG(J - 1);
+    PRINT USING "###.####"; DIST(J);
+    PRINT "   ";
+    FOR K = 1 TO 50
+      PRINT TEXT$(K);
+    NEXT K
+    PRINT
+  NEXT J
+LOOP
+END
+

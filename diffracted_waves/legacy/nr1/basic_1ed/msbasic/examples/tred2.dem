@@ -1,0 +1,58 @@
+DECLARE SUB TRED2 (A!(), N!, NP!, D!(), E!())
+
+'PROGRAM D11R3
+'Driver for routine TRED2
+CLS
+NP = 10
+DIM A(NP, NP), C(NP, NP), D(NP), E(NP), F(NP, NP)
+FOR J = 1 TO NP
+  FOR I = 1 TO NP
+    READ C(I, J)
+  NEXT I
+NEXT J
+DATA 5.0,4.0,3.0,2.0,1.0,0.0,-1.0,-2.0,-3.0,-4.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0
+DATA -1.0,-2.0,-3.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0,-1.0,-2.0,2.0,3.0,4.0,5.0
+DATA 4.0,3.0,2.0,1.0,0.0,-1.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0,0.0,1.0
+DATA 2.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,2.0
+DATA -2.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,-3.0,-2.0,-1.0,0.0,1.0,2.0,3.0
+DATA 4.0,5.0,4.0,-4.0,-3.0,-2.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0
+FOR I = 1 TO NP
+  FOR J = 1 TO NP
+    A(I, J) = C(I, J)
+  NEXT J
+NEXT I
+PRINT
+CALL TRED2(A(), NP, NP, D(), E())
+PRINT "Diagonal elements"
+FOR I = 1 TO NP
+  PRINT USING "#####.######"; D(I);
+  IF (I MOD 5) = 0 OR I = NP THEN PRINT
+NEXT I
+PRINT
+PRINT "Off-diagonal elements"
+FOR I = 2 TO NP
+  PRINT USING "#####.######"; E(I);
+  IF (I MOD 5) = 1 OR I = NP THEN PRINT
+NEXT I
+'Check transformation matrix
+FOR J = 1 TO NP
+  FOR K = 1 TO NP
+    F(J, K) = 0!
+    FOR L = 1 TO NP
+      FOR M = 1 TO NP
+        F(J, K) = F(J, K) + A(L, J) * C(L, M) * A(M, K)
+      NEXT M
+    NEXT L
+  NEXT K
+NEXT J
+PRINT
+'How does it look?
+PRINT "Tridiagonal matrix"
+FOR I = 1 TO NP
+  FOR J = 1 TO NP
+    PRINT USING "####.##"; F(I, J);
+  NEXT J
+  PRINT
+NEXT I
+END
+

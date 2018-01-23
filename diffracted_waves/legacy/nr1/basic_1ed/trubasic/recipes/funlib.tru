@@ -1,0 +1,175 @@
+! FUNLIB
+
+! Copyright (c) 1987 and 1992 by True BASIC, Inc.
+! All rights reserved.
+
+! Bit-manipulation and conversion routines for Numerical Recipes
+! Hyperbolic cosh and tanh functions.
+!
+! All these routines work properly only for integers.
+!
+! Conversion functions from numbers to strings:
+!
+! CONVERT$ (n,b) converts the integer n to any base b from 2 to 16
+! HEX$ (n)       converts n to base 16
+!
+! Conversion function from string to number:
+!
+! CONVERT (s$)   converts the string s$ to a number, where s$ contains
+!                one of the standard radix marks to indicate the base
+!                (Unix, Pascal, MS-BASIC, 8086 or 68000 assembler formats
+!                -- preferred format is a trailing letter H for hex, Q
+!                for octal, or B for binary)
+!
+! The conversion functions aren't quite inverses of each other.  To
+! convert to hexadecimal, you would use HEX$.  To convert a hex string
+! back to a number, if it didn't already have a radix mark (which it
+! wouldn't, if it was created by HEX$), you'd have to add "H", then
+! use CONVERT -- e.g.  LET n = CONVERT(h$ & "H").
+
+EXTERNAL
+
+DEF convert$ (number, base)
+
+    LET number = round(number)
+    IF number < 0 then
+       LET number = -number
+       LET sign$ = "-"
+    END IF
+    DO
+       CALL divide (number, base, number, digit)
+       LET digit = digit + 1
+       LET c$ = "0123456789ABCDEF"[digit:digit] & c$
+    LOOP while number <> 0
+    LET convert$ = sign$ & c$
+
+END DEF
+
+DEF hex$ (n)
+
+    DECLARE FUNCTION convert$
+
+    LET hex$ = convert$ (n,16)
+
+END DEF
+
+! Convert returns the value of the string as a number.  The string
+! representation may be in binary, octal, decimal, or hexadecimal.
+! Hexadecimal is represented by a leading "&H" or "0X", or by a
+! leading or trailing "H", "X", or "$".  Octal is represented by a
+! leading "0" or "&", or by a leading or trailing "O" or "Q".  Binary
+! is represented by a leading or trailing "B".  Any of these may be
+! in upper or lower case.  If none of these is present, the string is
+! assumed to be decimal.  If there is a sign ("+" or "-"), it must
+! come first.
+!
+! If an illegal digit for the base is encountered, this routine
+! causes an exception (4001, illegal VAL argument).
+
+DEF convert (s$)
+
+    LET s$ = ucase$(s$)
+    LET base = 10
+    LET sign = 1
+
+    LET c$ = s$[1:1]
+    IF pos("-+",c$) > 0 then
+       IF c$ = "-" then LET sign = -1
+       LET s$[1:1] = ""
+       LET c$ = s$[1:1]
+    END IF
+
+    IF pos("0&",c$) > 0 then
+       LET s$[1:1] = ""
+       LET base = 8
+       LET c$ = s$[1:1]
+    END IF
+
+    LET i = 1
+    LET d = pos("$HXOQ",c$)
+    IF d = 0 then
+       LET i = len(s$)
+       LET d = pos("$HXOQB",s$[i:i])
+    END IF
+    IF d > 0 then
+       LET base = 2*val("888441"[d:d])
+       LET s$[i:i] = ""
+    END IF
+
+    LET digits$ = "0123456789ABCDEF"[1:base]
+
+    FOR i = 1 to len(s$)
+        LET d = pos(digits$,s$[i:i]) - 1
+        IF d < 0 then CAUSE ERROR 4001
+        LET value = value*base + d
+    NEXT i
+
+    LET convert = sign * value
+
+END DEF
+
+! Logical functions:
+!
+! AND  (a,b)       returns the bitwise logical and of a & b
+! OR   (a,b)       returns the bitwise logical or
+! XOR  (a,b)       returns the bitwise logical exclusive or
+! NOTT (a)         returns the bitwise logical negation
+
+DEF and (a, b)
+
+    LET m = 1
+    LET b = int(b)
+    DO
+       CALL divide (a, 2, a, aa)
+       CALL divide (b, 2, b, bb)
+       LET r = r + m*aa*bb        ! multiply is like AND
+       LET m = 2*m                ! m = current bit position
+       IF b = -1 then
+          LET r = r + m*a         ! if negative, treat as two's complement
+          EXIT DO
+       END IF
+    LOOP while b <> 0             ! loop until all bits of B are used
+    LET and = r
+
+END DEF
+
+DEF or(a, b)
+
+    DECLARE DEF and
+
+    LET or = a + b - and(a, b)
+
+END DEF
+
+DEF xor(a, b)
+
+    DECLARE DEF and
+
+    LET xor = a + b - 2*and(a, b)
+
+END DEF
+
+DEF nott(a)
+
+    LET nott = -a-1
+
+END DEF
+
+! Following are definitions of the cosh and tanh functions,
+! which are needed unless True BASIC version 3.0 (or later)
+! is being used.
+
+DEF cosh(x)
+
+    LET ex = exp(x)
+    LET cosh = (ex + 1/ex)/2
+
+END DEF
+
+DEF tanh(x)
+
+    LET ex = exp(x)
+    LET rex = 1/ex
+    LET tanh = (ex - rex)/(ex + rex)
+
+END DEF

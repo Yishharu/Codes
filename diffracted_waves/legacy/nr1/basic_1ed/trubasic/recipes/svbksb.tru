@@ -1,0 +1,27 @@
+EXTERNAL
+
+SUB svbksb (u(,), w(), v(,), m, n, mp, np, b(), x())
+
+    DIM tmp(0)
+    MAT redim tmp(n)
+
+    FOR j = 1 to n
+        LET s = 0
+        IF w(j) <> 0 then
+           FOR i = 1 to m
+               LET s = s + u(i, j) * b(i)
+           NEXT i
+           LET s = s / w(j)
+        END IF
+        LET tmp(j) = s
+    NEXT j
+
+    FOR j = 1 to n
+        LET s = 0
+        FOR jj = 1 to n
+            LET s = s + v(j, jj) * tmp(jj)
+        NEXT jj
+        LET x(j) = s
+    NEXT j
+
+END SUB

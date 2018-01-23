@@ -1,0 +1,27 @@
+DEFINITION MODULE ChebPol;
+
+   (* EXPORT QUALIFIED ChebPC, PCShft; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE ChebPC(C, D: Vector); 
+   (*
+     Chebyshev polynomial coefficients.  Given a coefficient array 
+     C[0, n-1], this routine generates a coefficient array D[0, n-1] 
+     such that (sum(k=0)to(n-1)) Dky^(k) = (sum(k=0)to(n-1)) CkTk(y).  
+     The method is Clenshaw's recurrence (5.6.11), but
+     now applied algebraically rather than arithmetically.
+   *)
+
+   PROCEDURE PCShft(a, b: REAL; 
+                    D:    Vector); 
+   (*
+     Polynomial coefficient shift.  Given a coefficient array D[0, n-1],
+     this routine generates a coefficient array g such
+     that (sum(k=0)to(n-1)) Dky^k = (sum(k=0)to(n-1)) gkx^k,
+     where x and y are related by (5.6.10), i.e. the interval -1 < y < 1
+     is mapped to the interval a < x < b. The array g is returned
+     in D.
+   *)
+
+END ChebPol.

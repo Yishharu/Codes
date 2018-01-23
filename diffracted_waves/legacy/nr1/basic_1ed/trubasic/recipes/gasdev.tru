@@ -1,0 +1,29 @@
+MODULE gasdev
+
+    SHARE iset, gset
+
+    LET iset = 0
+
+    FUNCTION gasdev (idum)
+
+        LIBRARY "ran1"
+        DECLARE FUNCTION ran1
+
+        IF iset = 0 then
+           DO
+              LET v1 = 2 * ran1(idum) - 1
+              LET v2 = 2 * ran1(idum) - 1
+              LET r = v1^2 + v2^2
+           LOOP while r >= 1 or r = 0
+           LET fac = sqr(-2 * log(r) / r)
+           LET gset = v1 * fac
+           LET gasdev = v2 * fac
+           LET iset = 1
+        ELSE
+           LET gasdev = gset
+           LET iset = 0
+        END IF
+
+    END FUNCTION
+
+END MODULE

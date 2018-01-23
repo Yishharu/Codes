@@ -1,0 +1,46 @@
+EXTERNAL
+
+SUB polint (xa(), ya(), n, x, y, dy)
+
+    DIM c(0), d(0)
+    MAT redim c(n), d(n)
+
+    LET ns = 1
+    LET dif = abs(x - xa(1))
+    FOR i = 1 to n
+        LET dift = abs(x - xa(i))
+        IF dift < dif then
+           LET ns = i
+           LET dif = dift
+        END IF
+        LET c(i) = ya(i)
+        LET d(i) = ya(i)
+    NEXT i
+
+    LET y = ya(ns)
+    LET ns = ns - 1
+    FOR m = 1 to n - 1
+        FOR i = 1 to n - m
+            LET ho = xa(i) - x
+            LET hp = xa(i + m) - x
+            LET w = c(i + 1) - d(i)
+            LET den = ho - hp
+            IF den = 0 then
+               PRINT "abnormal exit"
+               EXIT SUB
+            END IF
+
+            LET den = w / den
+            LET d(i) = hp * den
+            LET c(i) = ho * den
+        NEXT i
+        IF 2 * ns < n - m then
+           LET dy = c(ns + 1)
+        ELSE
+           LET dy = d(ns)
+           LET ns = ns - 1
+        END IF
+        LET y = y + dy
+    NEXT m
+
+END SUB

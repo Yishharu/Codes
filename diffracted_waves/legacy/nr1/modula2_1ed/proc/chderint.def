@@ -1,0 +1,28 @@
+DEFINITION MODULE ChDerInt;
+
+   (* EXPORT QUALIFIED ChInt, ChDer; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE ChInt(a, b:    REAL; 
+                   C, CINT: Vector); 
+   (*
+     Given a,b,C, as output from routine ChebFt
+     section 5.6, the desired degree of approximation
+     (i.e., elements C[0, n-1] are to be used),
+     this routine returns the array CINT[0, n-1], the Chebyshev
+     coefficients of the integral of the function whose coefficients are C.
+     The constant of integration is set so that the integral vanishes at a.
+   *)
+
+   PROCEDURE ChDer(a, b:    REAL; 
+                   C, CDER: Vector); 
+   (*
+     Given a,b,C, as output from routine ChebFt
+     section 5.6, and given n, the desired degree of approximation
+     (i.e., elements C[0, n-1] are to be used),
+     this routine returns the array CDER[0, n-1], the Chebyshev
+     coefficients of the derivative of the function whose coefficients are C.
+   *)
+
+END ChDerInt.

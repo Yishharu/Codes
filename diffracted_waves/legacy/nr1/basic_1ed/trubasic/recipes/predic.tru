@@ -1,0 +1,24 @@
+EXTERNAL
+
+SUB predic (datq(), ndata, d(), npoles, future(), nfut)
+
+    DIM req(0)
+    MAT redim req(npoles)
+
+    FOR j = 1 to npoles
+        LET req(j) = datq(ndata + 1 - j)
+    NEXT j
+    FOR j = 1 to nfut
+        LET discrp = 0
+        LET sum = discrp
+        FOR k = 1 to npoles
+            LET sum = sum + d(k) * req(k)
+        NEXT k
+        FOR k = npoles to 2 step -1
+            LET req(k) = req(k - 1)
+        NEXT k
+        LET req(1) = sum
+        LET future(j) = sum
+    NEXT j
+
+END SUB

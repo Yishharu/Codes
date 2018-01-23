@@ -1,0 +1,30 @@
+PROGRAM D13R5
+
+! Driver for routine avevar
+
+LIBRARY "gasdev", "avevar"
+DECLARE FUNCTION gasdev
+
+CLEAR
+LET npts = 1000
+LET eps = .1
+
+DIM data(0)
+MAT redim data(npts)
+
+! Generate Gaussian distributed data
+
+LET idum = -5
+PRINT "        Shift     Average     Variance"
+FOR i = 1 to 11
+    LET shift = (i - 1) * eps
+    FOR j = 1 to npts
+        LET data(j) = shift + i * gasdev(idum)
+    NEXT j
+
+    CALL avevar (data(), npts, ave, var)
+
+    PRINT using "--------#.##": shift, ave, var
+NEXT i
+
+END

@@ -1,0 +1,23 @@
+DECLARE FUNCTION FACTLN! (N!)
+
+'PROGRAM D6R4
+'Driver for routine FACTLN
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "N-factorial"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT "Log of N-factorial"
+PRINT "    N           Actual          FACTLN(N)"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  N = VAL(MID$(DUM$, 1, 6))
+  VALUE = VAL(MID$(DUM$, 8))
+  PRINT USING "#####"; N;
+  PRINT USING "###########.######"; LOG(VALUE); FACTLN(N)
+NEXT I
+CLOSE #1
+END
+

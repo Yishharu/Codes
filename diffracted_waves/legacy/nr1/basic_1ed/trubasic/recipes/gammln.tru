@@ -1,0 +1,28 @@
+MODULE gammln
+
+    SHARE cof(6), stp, half, one, fpf
+
+    FOR j = 1 to 6
+        READ cof(j)
+    NEXT j
+    DATA 76.18009173, -86.50532033,    24.01409822
+    DATA -1.231739516,   .120858003e-2, -.536382e-5
+
+    READ stp,          half, one, fpf
+    DATA 2.50662827465, 0.5, 1.0, 5.5
+
+    FUNCTION gammln (xx)
+
+        LET x = xx - one
+        LET tmp = x + fpf
+        LET tmp = (x + half) * log(tmp) - tmp
+        LET ser = one
+        FOR j = 1 to 6
+            LET x = x + one
+            LET ser = ser + cof(j) / x
+        NEXT j
+        LET gammln = tmp + log(stp * ser)
+
+    END FUNCTION
+
+END MODULE

@@ -1,0 +1,52 @@
+PROGRAM d15r2(input,output);
+(* driver for routine RKDUMB *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nvar = 4;
+   nstep = 150;
+TYPE
+   RealArrayNVAR = ARRAY [1..nvar] OF real;
+   RealArray200 = ARRAY [1..200] OF real;
+   RealArrayNVARby200 = ARRAY [1..nvar,1..200] OF real;
+VAR
+   i,j: integer;
+   x1,x2: real;
+   vstart: RealArrayNVAR;
+   RkdumbX: RealArray200;
+   RkdumbY: RealArrayNVARby200;
+
+(*$I BESSJ0.PAS *)
+
+(*$I BESSJ1.PAS *)
+
+(*$I BESSJ.PAS *)
+
+PROCEDURE derivs(x: real; VAR y,dydx: RealArrayNVAR);
+BEGIN
+   dydx[1] := -y[2];
+   dydx[2] := y[1]-(1.0/x)*y[2];
+   dydx[3] := y[2]-(2.0/x)*y[3];
+   dydx[4] := y[3]-(3.0/x)*y[4]
+END;
+
+(*$I RK4.PAS *)
+
+(*$I RKDUMB.PAS *)
+
+BEGIN
+   x1 := 1.0;
+   vstart[1] := bessj0(x1);
+   vstart[2] := bessj1(x1);
+   vstart[3] := bessj(2,x1);
+   vstart[4] := bessj(3,x1);
+   x2 := 20.0;
+   rkdumb(vstart,nvar,x1,x2,nstep);
+   writeln('x':8,'integrated':17,'bessj3':10);
+   FOR i := 1 TO nstep DIV 10 DO BEGIN
+      j := 10*i;
+      writeln(RkdumbX[j]:10:4,'  ',RkdumbY[4,j]:12:6,
+         bessj(3,RkdumbX[j]):12:6)
+   END
+END.

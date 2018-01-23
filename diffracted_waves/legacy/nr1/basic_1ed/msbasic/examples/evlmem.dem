@@ -1,0 +1,25 @@
+DECLARE SUB MEMCOF (DATQ!(), N!, M!, PM!, COF!(), WK1!(), WK2!(), WKM!())
+DECLARE FUNCTION EVLMEM! (FDT!, COF!(), M!, PM!)
+
+'PROGRAM D12R10
+'Driver for routine EVLMEM
+CLS
+N = 1000
+M = 10
+NFDT = 16
+DIM DATQ(N), COF(M), WK1(N), WK2(N), WKM(M)
+OPEN "SPCTRL.DAT" FOR INPUT AS #1
+FOR I = 1 TO N
+  DATQ(I) = VAL(INPUT$(12, #1))
+  IF I MOD 4 = 0 THEN DUM$ = INPUT$(2, #1)
+NEXT I
+CLOSE #1
+CALL MEMCOF(DATQ(), N, M, PM, COF(), WK1(), WK2(), WKM())
+PRINT "Power spectrum estimate of data in SPCTRL.DAT"
+PRINT "    f*delta       power"
+FOR I = 0 TO NFDT
+  FDT = .5 * I / NFDT
+  PRINT USING "#####.######"; FDT; EVLMEM(FDT, COF(), M, PM)
+NEXT I
+END
+

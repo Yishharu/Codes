@@ -1,0 +1,81 @@
+MODULE mrqmin
+
+    SHARE beta (20,1), atry (20), ochisq    ! STATIC
+
+    SUB mrqmin (x(), y(), sig(), ndata, a(), ma, lista(), mfit, covar(,), alpha(,), nca, chisq, dum, alamda)
+
+        LIBRARY "mrqcof", "gaussj", "covsrt"
+
+        DIM da(0,0)
+        MAT redim da(ma, 1)
+
+        IF alamda < 0 then
+           LET kk = mfit + 1
+           FOR j = 1 to ma
+               LET ihit = 0
+               FOR k = 1 to mfit
+                   IF lista(k) = j then LET ihit = ihit + 1
+               NEXT k
+               IF ihit = 0 then
+                  LET lista(kk) = j
+                  LET kk = kk + 1
+               ELSEIF ihit > 1 then
+                  PRINT "Improper permutation in lista"
+                  EXIT SUB
+               END IF
+           NEXT j
+           IF kk <> ma + 1 then
+              PRINT "Improper permutation in lista"
+              EXIT SUB
+           END IF
+           LET alamda = .001
+
+           CALL mrqcof (x(), y(), sig(), ndata, a(), ma, lista(), mfit, alpha(,), beta(,), nca, chisq, dum)
+
+        END IF
+
+        LET ochisq = chisq
+        FOR j = 1 to ma
+            LET atry(j) = a(j)
+        NEXT j
+
+        FOR j = 1 to mfit
+            FOR k = 1 to mfit
+                LET covar(j, k) = alpha(j, k)
+            NEXT k
+            LET covar(j, j) = alpha(j, j) * (1 + alamda)
+            LET da(j, 1) = beta(j, 1)
+        NEXT j
+
+        CALL gaussj (covar(,), mfit, nca, da(,), 1, 1)
+
+        IF alamda = 0 then
+
+           CALL covsrt (covar(,), nca, ma, lista(), mfit)
+
+           EXIT SUB
+        END IF
+        FOR j = 1 to mfit
+            LET atry(lista(j)) = a(lista(j)) + da(j, 1)
+        NEXT j
+
+        CALL mrqcof(x(), y(), sig(), ndata, atry(), ma, lista(), mfit, covar(,), da(,), nca, chisq, dum)
+
+        IF chisq < ochisq then
+           LET alamda = .1 * alamda
+           LET ochisq = chisq
+           FOR j = 1 to mfit
+               FOR k = 1 to mfit
+                   LET alpha(j, k) = covar(j, k)
+               NEXT k
+               LET beta(j, 1) = da(j, 1)
+               LET a(lista(j)) = atry(lista(j))
+           NEXT j
+        ELSE
+           LET alamda = 10 * alamda
+           LET chisq = ochisq
+        END IF
+
+    END SUB
+
+END MODULE

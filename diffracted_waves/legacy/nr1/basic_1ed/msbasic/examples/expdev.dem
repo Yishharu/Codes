@@ -1,0 +1,36 @@
+DECLARE FUNCTION EXPDEV! (IDUM&)
+
+'PROGRAM D7R5
+'Driver for routine EXPDEV
+CLS
+NPTS = 10000
+EE = 2.718281828#
+DIM TRIG(21), X(21)
+FOR I = 1 TO 21
+  TRIG(I) = (I - 1) / 20!
+  X(I) = 0!
+NEXT I
+IDUM& = -1
+FOR I = 1 TO NPTS
+  Y = EXPDEV(IDUM&)
+  FOR J = 2 TO 21
+    IF Y < TRIG(J) AND Y > TRIG(J - 1) THEN
+      X(J) = X(J) + 1!
+    END IF
+  NEXT J
+NEXT I
+TOTAL = 0!
+FOR I = 2 TO 21
+  TOTAL = TOTAL + X(I)
+NEXT I
+PRINT "Exponential distribution with"; NPTS; "points:"
+PRINT "   interval      observed    expected"
+FOR I = 2 TO 21
+  X(I) = X(I) / TOTAL
+  EXPECT = EXP(-(TRIG(I - 1) + TRIG(I)) / 2!)
+  EXPECT = EXPECT * .05 * EE / (EE - 1)
+  PRINT USING "###.##"; TRIG(I - 1); TRIG(I);
+  PRINT USING "#######.####"; X(I); EXPECT
+NEXT I
+END
+

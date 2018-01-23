@@ -1,0 +1,42 @@
+EXTERNAL
+
+SUB sor (a(,), b(,), c(,), d(,), e(,), f(,), u(,), jmax, rjac)
+
+    LET maxits = 1000
+    LET eps = .00001
+    LET zero = 0
+    LET half = .5
+    LET qtr = .25
+    LET one = 1
+
+    LET anormf = zero
+    FOR j = 2 to jmax - 1
+        FOR l = 2 to jmax - 1
+            LET anormf = anormf + abs(f(j, l))
+        NEXT l
+    NEXT j
+
+    LET omega = one
+    FOR n = 1 to maxits
+        LET anorm = zero
+        FOR j = 2 to jmax - 1
+            FOR l = 2 to jmax - 1
+                IF mod(j + l, 2) = mod(n, 2) then
+                   LET resid = a(j, l) * u(j + 1, l) + b(j, l) * u(j - 1, l)
+                   LET resid = resid + c(j, l) * u(j, l + 1) + d(j, l) * u(j, l - 1)
+                   LET resid = resid + e(j, l) * u(j, l) - f(j, l)
+                   LET anorm = anorm + abs(resid)
+                   LET u(j, l) = u(j, l) - omega * resid / e(j, l)
+                END IF
+            NEXT l
+        NEXT j
+        IF n = 1 then
+           LET omega = one / (one - half * rjac^2)
+        ELSE
+           LET omega = one / (one - qtr * rjac^2 * omega)
+        END IF
+        IF n > 1 and anorm < eps * anormf then EXIT SUB
+    NEXT n
+    PRINT "maxits exceeded"
+
+END SUB

@@ -1,0 +1,54 @@
+DEFINITION MODULE DataEnc;
+
+   (* EXPORT QUALIFIED DES, Ran4; *)
+
+   FROM NRSystem IMPORT LongInt;
+   
+   TYPE Immense = RECORD (* Stores 64 bit blocks. *)
+                     l, r: LongInt 
+                  END;
+
+   PROCEDURE DES(    inp, key: Immense; 
+                 VAR newkey:   BOOLEAN; 
+                     isw:      INTEGER; 
+                 VAR out:      Immense); 
+   (*
+     Data Encryption Standard, Modula-2 version. Encrypts 64 bits, 
+     stored as two long integers, in record inp into out using key.  
+     Set newkey=true when the key is new.  Set isw=0 for encryption, 
+     =1 for decryption.
+   *)
+
+   PROCEDURE Ran4(VAR idum: INTEGER): REAL; 
+   (*
+     Returns a uniform random deviate between 0.0 and 1.0 using DES.
+     Set idum negative to initialize.  There are m possible initializations.  
+     This routine is extremely slow and should be used for demonstration 
+     purposes only.
+   *)
+
+   PROCEDURE Or(x: LongInt; y: LongInt): LongInt;
+   (*
+     Returns x OR y, where x and y represent 64 bits. This is an
+     implementation dependent routine.
+   *)
+   
+   PROCEDURE And(x: LongInt; y: LongInt): LongInt;
+   (*
+     Returns x AND y, where x and y represent 64 bits. This is an
+     implementation dependent routine.
+   *)
+
+   PROCEDURE SHL(x: LongInt; step: INTEGER): LongInt;
+   (*
+     Returns x shifted left by step. x represents 64 bits. This is an
+     implementation dependent routine.
+   *)
+
+   PROCEDURE SHR(x: LongInt; step: INTEGER): LongInt;
+   (*
+     Returns x shifted right by step. x represents 64 bits. This is an
+     implementation dependent routine.
+   *)
+
+END DataEnc.

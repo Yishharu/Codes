@@ -1,0 +1,39 @@
+PROGRAM d4r1(input,output);
+(* driver for routine trapzd *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nmax = 14;
+   pio2 = 1.5707963;
+VAR
+   TrapzdIt: integer;
+   i: integer;
+   a,b,s: real;
+
+FUNCTION func(x: real): real;
+(* Test function *)
+BEGIN
+   func := sqr(x)*(sqr(x)-2.0)*sin(x)
+END;
+
+FUNCTION fint(x: real): real;
+(* Integral of test function *)
+BEGIN
+   fint := 4.0*x*(sqr(x)-7.0)*sin(x)-
+      (sqr(sqr(x))-14.0*sqr(x)+28.0)*cos(x);
+END;
+
+(*$I TRAPZD.PAS *)
+
+BEGIN
+   a := 0.0;
+   b := pio2;
+   writeln('integral of func with 2^(n-1) points');
+   writeln('actual value of integral is',fint(b)-fint(a):12:6);
+   writeln('n':6,'approx. integral':24);
+   FOR i := 1 TO nmax DO BEGIN
+      trapzd(a,b,s,i);
+      writeln(i:6,s:20:6)
+   END
+END.

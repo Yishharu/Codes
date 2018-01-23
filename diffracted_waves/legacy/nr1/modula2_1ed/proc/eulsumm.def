@@ -1,0 +1,22 @@
+DEFINITION MODULE EulSumM;
+
+   (* EXPORT QUALIFIED EulSum; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE EulSum(VAR sum:   REAL; 
+                        term:  REAL; 
+                        jterm: INTEGER;
+                        WKSP:  Vector); 
+   (*
+     Incorporates into sum the jterm-th term, with value term,
+     of an alternating series. sum is input as the previous partial
+     sum, and is output as the new partial sum. The first call to this
+     routine, with the first term in the series, should be with jterm=1.
+     On the second call, term should be set to the second term
+     of the series, with sign pposite to that of the first call, 
+     and jterm should be 2.  And so on. Length of the WKSP vector must be 
+     larger than any value of jterm to be used.
+   *)
+
+END EulSumM.

@@ -1,0 +1,36 @@
+PROGRAM D9r2
+
+! Driver for routine zbrac
+
+LIBRARY "zbrac", "bessj0"
+DECLARE FUNCTION bessj0
+
+CLEAR
+PRINT "  Bracketing values:        Function values:"
+PRINT
+PRINT "    x1        x2            bessj0(x1)  bessj0(x2)"
+PRINT
+FOR i = 1 to 10
+    LET x1 = i
+    LET x2 = x1 + 1
+
+    CALL zbrac (dum, x1, x2, succes)
+
+    IF succes=-1 then
+       PRINT using "####.##": x1;
+       PRINT "   ";
+       PRINT using "####.##": x2;
+       PRINT "            ";
+       PRINT using "#.######": bessj0(x1);
+       PRINT "    ";
+       PRINT using "#.######": bessj0(x2)
+    END IF
+NEXT i
+
+END
+
+FUNCTION func (x)
+    LIBRARY "bessj0"
+    DECLARE FUNCTION bessj0
+    LET func = bessj0(x)
+END FUNCTION

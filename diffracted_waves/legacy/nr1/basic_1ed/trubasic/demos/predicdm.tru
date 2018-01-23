@@ -1,0 +1,34 @@
+PROGRAM D12r12
+
+! Driver for routine predic
+
+LIBRARY "predic", "memcof", "fixrts"
+
+LET npts = 500
+LET npoles = 10
+LET nfut = 20
+DIM datq(0), d(0), wk1(0), wk2(0), wkm(0), future(0)
+MAT redim datq(npts), d(npoles), wk1(npts), wk2(npts)
+MAT redim wkm(npoles), future(nfut)
+
+DEF fnf (n)
+    LET dum = exp(-n / npts)
+    LET fnf = dum * sin(pi * n / 25) + dum * dum * sin(2.2 * pi * n / 50)
+END DEF
+
+CLEAR
+FOR i = 1 to npts
+    LET datq(i) = fnf(i)
+NEXT i
+
+CALL memcof (datq(), npts, npoles, dum, d(), wk1(), wk2(), wkm())
+CALL fixrts (d(), npoles)
+CALL predic (datq(), npts, d(), npoles, future(), nfut)
+
+PRINT "     i     Actual      Predic"
+FOR i = 1 to nfut
+    PRINT using "######": i;
+    PRINT using "----#.######": fnf(i + npts), future(i)
+NEXT i
+
+END

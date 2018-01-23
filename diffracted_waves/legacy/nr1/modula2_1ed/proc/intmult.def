@@ -1,0 +1,21 @@
+DEFINITION MODULE IntMult;
+
+   (* EXPORT QUALIFIED Quad3D; *)
+
+   FROM NRMath IMPORT RealFunction,  RealFunction2D,   RealFunction3D;
+
+   PROCEDURE Quad3D(    x1, x2: REAL; 
+                        func:   RealFunction3D;
+                        y1, y2: RealFunction;
+                        z1, z2: RealFunction2D;
+                    VAR ss:     REAL); 
+   (*
+     Returns the integral of the function func over a three-dimensional 
+     region specified by the limits x1, x2, and by the user-supplied functions 
+     y1, y2, z1, and z2, as defined in (4.6.2). Integration is performed by 
+     recursively calling a customized version of QGaus, here called QGaus3. 
+     The parameter n in the routine labels the level of recursion. n=1 for the 
+     x integration, n=2 for the y integration, while n=3 for the z integration.
+   *)
+
+END IntMult.

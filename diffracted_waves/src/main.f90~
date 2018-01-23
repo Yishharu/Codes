@@ -1,0 +1,10 @@
+PROGRAM main
+
+USE bessj0
+USE nrtype; USE nrutil, ONLY : poly
+IMPLICIT NONE
+REAL :: x,y
+READ(*,*) x
+!y = bessj0_v(x)
+WRITE(*,*) bessj0_s(x)
+END PROGRAM main

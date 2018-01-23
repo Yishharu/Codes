@@ -1,0 +1,46 @@
+PROGRAM d3r9 (input,output);
+(* driver for routine POLIN2 *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 5;
+   pi = 3.1415926;
+TYPE
+   RealArrayMP = ARRAY [1..n] OF real;
+   RealArrayNP = RealArrayMP;
+   RealArrayMPbyNP = ARRAY [1..n,1..n] OF real;
+VAR
+   i,j: integer;
+   dy,f,x1,x2,y: real;
+   x1a,x2a: RealArrayMP;
+   ya: RealArrayMPbyNP;
+
+(*$I POLINT.PAS *)
+
+(*$I POLIN2.PAS *)
+
+BEGIN
+   FOR i := 1 TO n DO BEGIN
+      x1a[i] := i*pi/n;
+      FOR j := 1 TO n DO BEGIN
+         x2a[j] := 1.0*j/n;
+         ya[i,j] := sin(x1a[i])*exp(x2a[j])
+      END
+   END;
+(* test 2-dimensional interpolation *)
+   writeln;
+   writeln('Two dimensional interpolation of sin(x1)exp(x2)');
+   writeln;
+   writeln('x1':9,'x2':12,'f(x)':13,'interpolated':16,'error':11);
+   FOR i := 1 TO 4 DO BEGIN
+      x1 := (-0.1+i/5.0)*pi;
+      FOR j := 1 TO 4 DO BEGIN
+         x2 := -0.1+j/5.0;
+         f := sin(x1)*exp(x2);
+         polin2(x1a,x2a,ya,n,n,x1,x2,y,dy);
+         writeln(x1:12:6,x2:12:6,f:12:6,y:12:6,dy:15:6)
+      END;
+      writeln('***********************************');
+   END
+END.

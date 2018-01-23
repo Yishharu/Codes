@@ -1,0 +1,91 @@
+PROGRAM D14r8a
+
+! Driver for routine mrqmin
+
+LIBRARY "mrqmin", "gasdev"
+DECLARE FUNCTION gasdev
+
+LET npt = 100
+LET ma = 6
+DIM x(0), y(0), sig(0)
+MAT redim x(npt), y(npt), sig(npt)
+DIM a(0), lista(0), covar(0,0), alpha(0,0), gues(0)
+MAT redim a(ma), lista(ma), covar(ma, ma), alpha(ma, ma), gues(ma)
+
+CLEAR
+LET spread = .001
+MAT READ a
+DATA 5.0, 2.0, 3.0, 2.0, 5.0, 3.0
+
+MAT READ gues
+DATA 4.5, 2.2, 2.8, 2.5, 4.9, 2.8
+
+LET idum = -911
+
+! First try a sum of two gaussians
+
+FOR i = 1 to 100
+    LET x(i) = .1 * i
+    LET y(i) = 0
+    FOR j = 1 to 4 step 3
+        LET y(i) = y(i) + a(j) * exp(-((x(i) - a(j + 1)) / a(j + 2)) ^ 2)
+    NEXT j
+    LET y(i) = y(i) * (1 + spread * gasdev(idum))
+    LET sig(i) = spread * y(i)
+NEXT i
+
+LET mfit = ma
+FOR i = 1 to mfit
+    LET lista(i) = i
+NEXT i
+LET alamda = -1
+MAT a = gues
+
+CALL mrqmin (x(), y(), sig(), npt, a(), ma, lista(), mfit, covar(,), alpha(,), ma, chisq, dum, alamda)
+
+LET k = 1
+LET itst = 0
+DO
+   PRINT
+   PRINT "Iteration #"; k; "  Chi-squared:";
+   PRINT using "#####.####": chisq;
+   PRINT "   alamda:   ";
+   PRINT using ".##^^^^": alamda
+   PRINT "   a(1)    a(2)    a(3)    a(4)    a(5)    a(6)"
+   FOR i = 1 to 6
+       PRINT using "###.####": a(i);
+   NEXT i
+   PRINT
+
+   LET k = k + 1
+   LET ochisq = chisq
+
+   CALL mrqmin (x(), y(), sig(), npt, a(), ma, lista(), mfit, covar(,), alpha(,), ma, chisq, dum, alamda)
+
+   IF chisq > ochisq then
+      LET itst = 0
+   ELSEIF abs(ochisq - chisq) < .1 then
+      LET itst = itst + 1
+   END IF
+LOOP while itst < 2
+
+LET alamda = 0
+
+CALL mrqmin (x(), y(), sig(), npt, a(), ma, lista(), mfit, covar(,), alpha(,), ma, chisq, dum, alamda)
+
+PRINT
+PRINT "Uncertainties:"
+FOR i = 1 to 6
+    PRINT using "###.####": sqr(covar(i, i));
+NEXT i
+PRINT
+PRINT
+PRINT "Expected results:"
+PRINT using "####.###": 5, 2, 3, 2, 5, 3
+
+END
+
+SUB funcs (x, a(), y, dyda(), na)
+    LIBRARY "fgauss"
+    CALL fgauss (x, a(), y, dyda(), na)
+END SUB

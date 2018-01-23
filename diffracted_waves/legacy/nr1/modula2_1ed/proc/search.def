@@ -1,0 +1,28 @@
+DEFINITION MODULE Search;
+
+  (* EXPORT QUALIFIED Hunt, Locate; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Hunt(    XX:  Vector; 
+                      x:   REAL; 
+                  VAR jlo: INTEGER); 
+   (*
+     Given an array XX[0, n-1], and given a value x, returns a value jlo such 
+     that x is between XX[jlo] and XX[jlo+1]. XX must be monotonic, either 
+     increasing or decreasing. jlo=-1 or jlo=n is returned to indicate that x 
+     is out of range. jlo on input is taken as the initial guess for jlo on 
+     output.
+   *)
+
+   PROCEDURE Locate(    XX: Vector; 
+                        x:  REAL; 
+                    VAR j:  INTEGER); 
+   (*
+     Given an array XX[0, n-1], and given a value x, returns a value j such 
+     that x is between XX[j] and XX[j+1]. XX must be monotonic, either 
+     increasing or decreasing. j=-1 or j=n is returned to indicate that x is 
+     out of range.
+   *)
+
+END Search.

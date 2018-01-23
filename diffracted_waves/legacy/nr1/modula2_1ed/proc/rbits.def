@@ -1,0 +1,17 @@
+DEFINITION MODULE RBits;
+
+   (* EXPORT QUALIFIED IRBit1, IRBit2; *)
+
+   PROCEDURE IRBit1(VAR seed: BITSET): BITSET; 
+   (*
+     Returns as an integer a random bit, based on the 14 low-significance 
+     bits in seed (which is modified for the next call).
+   *)
+
+   PROCEDURE IRBit2(VAR seed: BITSET): BITSET; 
+   (*
+     Returns as an integer a random bit, based on the 14 low-significance 
+     bits in seed (which is modified for the next call).
+   *)
+
+END RBits.

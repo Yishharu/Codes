@@ -1,0 +1,92 @@
+PROGRAM D16r1
+
+! Driver for routine shoot
+
+! Solves for eigenvalues of spheroidal harmonics. both
+! prolate and oblate case are handled simultaneously, leading
+! to six first-order equations. Unknown to shoot, these are
+! actually two independent sets of three coupled equations,
+! one set with c^2 positive and the other with c^2 negative.
+
+LIBRARY "shoot"
+
+DIM v(2), delv(2), f(2), dv(2)
+
+DECLARE PUBLIC c2, m, n, factr, dx     ! COMMON subroutines below
+
+CLEAR
+LET nvar = 6
+LET n2 = 2
+LET delta = .001
+LET eps = .000001
+LET dx = .0001
+DO
+   PRINT "Input m, n, c-squared (999 to end)"
+   INPUT m, n, c2
+   IF c2 = 999 then EXIT DO
+   IF n >= m and m >= 0 and n >= 0 then EXIT DO
+   PRINT "Improper arguments."
+LOOP
+
+IF c2 <> 999 then
+   LET factr = 1
+   IF m <> 0 then
+      LET q1 = n
+      FOR i = 1 to m
+          LET factr = -.5 * factr * (n + i) * (q1 / i)
+          LET q1 = q1 - 1
+      NEXT i
+   END IF
+   LET v(1) = n * (n + 1) - m * (m + 1) + c2 / 2
+   LET v(2) = n * (n + 1) - m * (m + 1) - c2 / 2
+   LET delv(1) = delta * v(1)
+   LET delv(2) = delv(1)
+   LET h1 = .1
+   LET hmin = 0
+   LET x1 = -1 + dx
+   LET x2 = 0
+   PRINT "          Prolate                 Oblate"
+   PRINT "    mu(m,n)    Error est.   mu(m,n)    Error est."
+   DO
+   
+      CALL shoot (nvar, v(), delv(), n2, x1, x2, eps, h1, hmin, f(), dv())
+   
+      PRINT using "----#.######": v(1), dv(1), v(2), dv(2)
+   LOOP while abs(dv(1)) > abs(eps * v(1)) or abs(dv(2)) > abs(eps * v(2))
+END IF
+
+END
+
+MODULE subs
+
+    PUBLIC c2, m, n, factr, dx    ! COMMON, values set in main program
+
+    SUB derivs (x, y(), dydx())   ! Used by the subroutine odeint
+        LET dydx(1) = y(2)
+        LET dydx(3) = 0
+        LET dydx(2) = (2 * x * (m + 1) * y(2) - (y(3) - c2 * x * x) * y(1)) / (1 - x * x)
+        LET dydx(4) = y(5)
+        LET dydx(6) = 0
+        LET dydx(5) = (2 * x * (m + 1) * y(5) - (y(6) + c2 * x * x) * y(4)) / (1 - x * x)
+    END SUB
+
+    SUB load (x1, v(), y())       ! Used by the subroutine shoot
+        LET y(3) = v(1)
+        LET y(2) = -(y(3) - c2) * factr / 2 / (m + 1)
+        LET y(1) = factr + y(2) * dx
+        LET y(6) = v(2)
+        LET y(5) = -(y(6) + c2) * factr / 2 / (m + 1)
+        LET y(4) = factr + y(5) * dx
+    END SUB
+
+    SUB score (x2, y(), f())      ! Used by the subroutine shoot
+        IF mod(n - m, 2) = 0 then
+           LET f(1) = y(2)
+           LET f(2) = y(5)
+        ELSE
+           LET f(1) = y(1)
+           LET f(2) = y(4)
+        END IF
+    END SUB
+
+END MODULE

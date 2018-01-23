@@ -1,0 +1,48 @@
+DEFINITION MODULE NonLin;
+
+   (* EXPORT QUALIFIED FGauss, MrqMin; *)
+
+   FROM NRVect  IMPORT Vector;
+   FROM NRIVect IMPORT IVector;
+   FROM NRMatr  IMPORT Matrix;
+
+   TYPE MrqFunc = PROCEDURE (REAL, Vector, VAR REAL, Vector);
+
+   PROCEDURE FGauss(x: REAL; A: Vector; VAR y: REAL; DYDA: Vector); 
+   (*
+     y(x;a) is the sum of MA/3 Gaussians (14.4.16). The amplitude, 
+     center, and width of the Gaussians are stored in consecutive locations of 
+     A: A[I]=Bk, A[I+1]=Ek, A[I+2]=Gk, k=1,...,MA/3. The dimensions of the 
+     arrays are A[0, ma-1], DYDA[0, ma-1]
+   *)
+
+   PROCEDURE MrqMin(    X, Y, SIG: Vector;  nData: INTEGER;
+                        A:         Vector;  ma:    INTEGER;
+                        LISTA:     IVector; mfit:  INTEGER;
+                        COVAR, ALPHA: Matrix; 
+                        func: MrqFunc;
+                        MrqMinBeta: Vector;
+                    VAR chisq, alamda: REAL); 
+   (*
+     Levenberg-Marquardt method, attempting to reduce the value chi^2 of a 
+     fit between a set of points X[0, ndata-1], Y[0, ndata-1] with 
+     individual standard deviations SIG[0, ndata-1], and a nonlinear function 
+     dependen on coefficients A[0, ma-1]. The array LISTA[0, ma-1] numbers the 
+     parameters A such that the first mfit elements correspond to values actually 
+     being adjusted; the remaining ma-mfit parameters are held fixed at their 
+     input value. The program returns current best-fit values for the ma fit 
+     parameters A, and chi^2= chisq. During most interations the [mfit, mfit] 
+     elements of the array COVAR[ma, ma] and the array ALPHA[ma, ma]
+     are used as working space. The program must be supplied with a routine 
+     FUNCS(x, A, yfit, DYDA, ma) that evaluates the fitting function yfit, 
+     and its derivatives DYDA[0, ma-1] with respect to the fitting parameters A 
+     at x. On the first call provide an initial guess for the parameters A, 
+     and set alamda<0.0 for initialization (which then sets alamda=.001). 
+     If a step succeeds chisq becomes smaller and alamda decreases by a factor 
+     of 10. If a step fails alamda grows by a factor of 10. You must call this 
+     routine repeatedly until convergence is achieved.  Then, make one final 
+     call with alamda=0.0, so that COVAR returns the covariance matrix, and 
+     ALPHA the curvature matrix.
+   *)
+
+END NonLin.

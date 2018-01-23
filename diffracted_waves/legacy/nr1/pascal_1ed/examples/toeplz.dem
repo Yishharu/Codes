@@ -1,0 +1,35 @@
+PROGRAM d2r7(input,output);
+(* driver for routine TOEPLZ *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 5;
+   twonm1 = 9;    (* twonm1=2*n-1 *)
+TYPE
+   RealArrayNP = ARRAY [1..n] OF double;
+   RealArray2Nm1 = ARRAY [1..twonm1] OF double;
+VAR
+   i,j: integer;
+   sum: double;
+   r: RealArray2Nm1;
+   x,y: RealArrayNP;
+
+(*$I TOEPLZ.PAS *)
+
+BEGIN
+   FOR i := 1 TO n DO y[i] := 0.1*i*i;
+   FOR i := 1 TO twonm1 DO r[i] := 0.1*i*i;
+   toeplz(r,x,y,n);
+   writeln('Solution vector:');
+   FOR i := 1 TO n DO writeln('x[':7,i:1,'] :=',x[i]:13);
+   writeln;
+   writeln('Test of solution:');
+   writeln('mtrx*soln':13,'original':12);
+   FOR i := 1 TO n DO BEGIN
+      sum := 0.0;
+      FOR j := 1 TO n DO
+         sum := sum+r[n+i-j]*x[j];
+      writeln(sum:12:4,y[i]:12:4)
+   END
+END.

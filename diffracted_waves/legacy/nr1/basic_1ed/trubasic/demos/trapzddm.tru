@@ -1,0 +1,36 @@
+PROGRAM D4r1
+
+! Driver for routine trapzd
+
+LIBRARY "trapzd"
+
+DECLARE FUNCTION fint             ! Defined below
+
+CLEAR
+LET nmax = 14
+LET pio2 = pi/2
+
+LET a = 0
+LET b = pio2
+PRINT "Integral of func with 2^(n-1) points"
+PRINT "Actual value of integral is  ";
+PRINT using "#.######": fint(b) - fint(a)
+PRINT "     n        approx. integral"
+FOR i = 1 to nmax
+
+    CALL trapzd (dum, a, b, s, i)
+
+    PRINT using "######": i;
+    PRINT using "------------#.######": s
+NEXT i
+
+END
+
+FUNCTION fint (x)
+    ! Integral of func
+    LET fint = 4 * x * (x ^ 2 - 7) * sin(x) - (x ^ 4 - 14 * x ^ 2 + 28) * cos(x)
+END FUNCTION
+
+FUNCTION func (x)
+    LET func = x ^ 2 * (x ^ 2 - 2) * sin(x)
+END FUNCTION

@@ -1,0 +1,24 @@
+DEFINITION MODULE Elliptic;
+
+   (*  EXPORT QUALIFIED El2, CEl, SnCnDn; *)
+
+   PROCEDURE El2(x, qqc, aa, bb: REAL): REAL; 
+   (*
+     Returns the general elliptic integral of the second kind,
+     el2(x,kc,a,b) with x=x>= 0, qqc=kc, aa=a, and bb=b.
+   *)
+
+   PROCEDURE CEl(qqc, pp, aa, bb: REAL): REAL; 
+   (*
+     Returns the general complete elliptic integral cel(kc,p,a,b)
+     with qqc=kc, pp=p, aa=a, and bb=b.
+   *)
+
+   PROCEDURE SnCnDn(    uu, emmc: REAL; 
+                    VAR sn, cn, dn: REAL); 
+   (*
+     Returns the Jacobian elliptic functions sn(u,kc), cn(u,kc)
+     and dn(u,kc). Here uu=u, while emmc=kc^2.
+   *)
+
+END Elliptic.

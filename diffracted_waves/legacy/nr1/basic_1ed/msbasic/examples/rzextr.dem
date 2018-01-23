@@ -1,0 +1,37 @@
+DECLARE SUB RZEXTR (IEST!, XEST!, YEST!(), YZ!(), DY!(), NV!, NUSE!)
+COMMON X(), D()
+
+'PROGRAM D15R8
+'Driver for routine RZEXTR
+'Feed values from a rational function
+'Fn(x)=(1-x+x^3)/(x+1)^n
+CLS
+NV = 4
+NUSE = 5
+DIM YEST(NV), YZ(NV), DY(NV), X(11), D(10, 7)
+FOR I = 1 TO 10
+  IEST = I
+  XEST = 1! / CSNG(I)
+  DUM = 1! - XEST + XEST ^ 3
+  FOR J = 1 TO NV
+    DUM = DUM / (XEST + 1!)
+    YEST(J) = DUM
+  NEXT J
+  CALL RZEXTR(IEST, XEST, YEST(), YZ(), DY(), NV, NUSE)
+  PRINT "IEST ="; I; "  XEST =";
+  PRINT USING "###.####"; XEST
+  PRINT "Extrap. Function: ";
+  FOR J = 1 TO NV
+    PRINT USING "#####.######"; YZ(J);
+  NEXT J
+  PRINT
+  PRINT "Estimated Error:  ";
+  FOR J = 1 TO NV
+    PRINT USING "#####.######"; DY(J);
+  NEXT J
+  PRINT
+  PRINT
+NEXT I
+PRINT "Actual Values:    ";
+PRINT USING "#####.######"; 1!; 1!; 1!; 1!
+

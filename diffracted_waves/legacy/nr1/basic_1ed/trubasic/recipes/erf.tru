@@ -1,0 +1,15 @@
+EXTERNAL
+
+FUNCTION erf (x)
+
+    LIBRARY "gammp"
+
+    DECLARE FUNCTION gammp
+
+    IF x < 0 then
+       LET erf = -gammp(.5, x ^ 2)
+    ELSE
+       LET erf = gammp(.5, x ^ 2)
+    END IF
+
+END FUNCTION

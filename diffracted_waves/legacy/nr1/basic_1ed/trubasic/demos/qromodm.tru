@@ -1,0 +1,92 @@
+PROGRAM D4r6
+
+! Driver for qromo
+
+LIBRARY "qromo"
+
+DECLARE PUBLIC choose$
+
+CLEAR
+LET x1 = 0
+LET x2 = pi/2
+LET x3 = pi
+LET ainf = 1e+20
+PRINT "Improper integrals:"
+PRINT
+
+LET choose$ = "funcl"
+CALL qromo (dum, x1, x2, result, "midsql")
+
+PRINT "Function: sqr(x)/sin(x)        interval: (0,pi/2)"
+PRINT "Using: midsql                  result:";
+PRINT using "###.####": result
+PRINT
+
+LET choose$ = "funcu"
+CALL qromo (dum, x2, x3, result, "midsqu")
+
+PRINT "Function: sqr(pi-x)/sin(x)     interval: (pi/2,pi)"
+PRINT "Using: midsqu                  result:";
+PRINT using "###.####": result
+PRINT
+
+LET choose$ = "funcinf"
+CALL qromo(dum, x2, ainf, result, "midinf")
+
+PRINT "Function: sin(x)/x^2           interval: (pi/2,infty)"
+PRINT "Using: midinf                  result:";
+PRINT using "###.####": result
+PRINT
+
+LET choose$ = "funcinf"
+CALL qromo(dum, -ainf, -x2, result, "midinf")
+
+PRINT "Function: sin(x)/x^2           interval: (-infty,-pi/2)"
+PRINT "Using: midinf                  result:";
+PRINT using "###.####": result
+PRINT
+
+LET choose$ = "funcend"
+CALL qromo(dum, x1, x2, res1, "midsql")
+CALL qromo(dum, x2, ainf, res2, "midinf")
+
+PRINT "Function: exp(-x)/sqr(x)       interval: (0.0,infty)"
+PRINT "Using: midsql,midinf           result:";
+PRINT using "###.####": res1 + res2
+
+END
+
+MODULE functions
+
+    PUBLIC choose$                ! Used by recipe qromo
+
+    DECLARE FUNCTION func, funcl, funcu, funcinf, funcend
+
+    FUNCTION func (x)
+        IF choose$ = "funcl" then LET func = funcl(x)
+        IF choose$ = "funcu" then LET func = funcu(x)
+        IF choose$ = "funcinf" then LET func = funcinf(x)
+        IF choose$ = "funcend" then LET func = funcend(x)
+    END FUNCTION
+
+    FUNCTION funcl (x)
+        LET funcl = sqr(x) / sin(x)
+    END FUNCTION
+
+    FUNCTION funcu (x)
+        LET funcu = sqr(pi - x) / sin(x)
+    END FUNCTION
+
+    FUNCTION funcinf (x)
+        LET funcinf = sin(x) / x ^ 2
+    END FUNCTION
+
+    FUNCTION funcend (x)
+        IF x > 80 then
+           LET funcend = 0
+        ELSE
+           LET funcend = exp(-x) / sqr(x)
+        END IF
+    END FUNCTION
+
+END MODULE

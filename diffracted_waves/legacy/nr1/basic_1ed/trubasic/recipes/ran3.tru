@@ -1,0 +1,59 @@
+MODULE ran3
+
+    ! Ran3 is coded as a module in order to
+    ! provide the "static" array ma(), which allows the routine
+    ! to add an additional level of randomness; i.e., to NOT
+    ! just give the next number in the rnd sequence.
+
+    SHARE iff, ma(55)
+    SHARE mbig, mseed, mz, fac, inext, inextp
+
+    ! These constants are established during program startup
+    ! rather than upon each use of the routine.
+
+    LET iff = 0
+    LET mbig = 1000000000
+    LET mseed = 161803398
+    LET mz = 0                    ! Note: the value of mz is never changed.
+    LET fac = 1 / mbig
+
+    FUNCTION ran3 (idum)
+
+        ! This initialization cannot be moved to the module header
+        ! inasmuch as it depends on the value of idum.
+
+        IF iff = 0 then
+           LET iff = 1
+           LET mj = mseed - abs(idum)
+           LET mj = mod(mj, mbig)
+           LET ma(55) = mj
+           LET mk = 1
+           FOR i = 1 to 54
+               LET ii = mod(21 * i, 55)
+               LET ma(ii) = mk
+               LET mk = mj - mk
+               LET mk = mod(mk, mbig)
+               LET mj = ma(ii)
+           NEXT i
+           FOR k = 1 to 4
+               FOR i = 1 to 55
+                   LET ma(i) = ma(i) - ma(1 + mod(i + 30, 55))
+                   LET ma(i) = mod(ma(i), mbig)
+               NEXT i
+           NEXT k
+           LET inext = 0
+           LET inextp = 31
+        END IF
+
+        LET inext = inext + 1
+        IF inext = 56 then LET inext = 1
+        LET inextp = inextp + 1
+        IF inextp = 56 then LET inextp = 1
+        LET mj = ma(inext) - ma(inextp)
+        LET mj = mod(mj, mbig)
+        LET ma(inext) = mj
+        LET ran3 = mj * fac
+
+    END FUNCTION
+
+END MODULE

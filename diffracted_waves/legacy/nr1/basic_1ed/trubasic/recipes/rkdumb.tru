@@ -1,0 +1,40 @@
+MODULE rkdumb
+
+    PUBLIC xx(0), y(0,0)          ! COMMON, for keeping values
+
+    SUB rkdumb (vstart(), nvar, x1, x2, nstep, dum)
+
+        LIBRARY "rk4"
+
+        ! The subroutine derivs is supplied by the user
+
+        DIM v(0), dv(0)
+        MAT redim v(nvar), dv(nvar)
+
+        FOR i = 1 to nvar
+            LET v(i) = vstart(i)
+            LET y(i, 1) = v(i)
+        NEXT i
+        LET xx(1) = x1
+        LET x = x1
+        LET h = (x2 - x1) / nstep
+        FOR k = 1 to nstep
+
+            CALL derivs (x, v(), dv())
+            CALL rk4 (v(), dv(), nvar, x, h, v(), dum)
+
+            IF x + h = x then
+               PRINT "Stepsize not significant in rkdumb."
+               EXIT SUB
+            END IF
+
+            LET x = x + h
+            LET xx(k + 1) = x
+            FOR i = 1 to nvar
+                LET y(i, k + 1) = v(i)
+            NEXT i
+        NEXT k
+
+    END SUB
+
+END MODULE

@@ -1,0 +1,90 @@
+PROGRAM D7r13
+
+! Driver for routine des
+
+LIBRARY "des", "funlib"
+
+DECLARE FUNCTION convert, hex$
+
+DIM in(64), keq(64), iout(64), icmp(64)
+DIM hin$(17), hkey$(17), hout$(17), hcmp$(17)
+
+OPEN #1: name "destst.dat", access input
+
+CLEAR
+LINE INPUT #1: text$
+PRINT text$
+PRINT
+DO
+   LINE INPUT #1: text$
+   PRINT text$
+   PRINT
+
+   IF end #1 then EXIT DO
+
+   LINE INPUT #1: text$
+   LET nciphr = val(text$[1:3])
+   LINE INPUT #1: text2$
+   IF text2$ = "encode" then LET idirec = 0
+   IF text2$ = "decode" then LET idirec = 1
+   DO
+      PRINT "       Key           Plaintext      Expected cipher   Actual cipher"
+      IF nciphr < 16 then LET mm = nciphr else LET mm = 16
+      LET nciphr = nciphr - 16
+      FOR m = 1 to mm
+          LINE INPUT #1: dum$
+          FOR k = 1 to 17
+              LET hkey$(k) = dum$[k:k]
+              LET hin$(k)  = dum$[k+17:k+17]
+              LET hcmp$(k) = dum$[k+34:k+34]
+          NEXT k
+          FOR i = 1 to 16
+              LET j = i + 1
+              LET idum = convert("H" & hin$(j))
+              LET jdum = convert("H" & hkey$(j))
+              FOR k = 1 to 4
+                  LET l = 4 * i + 1 - k
+                  LET in(l) = mod(idum, 2)
+                  LET idum = int(idum/2)
+                  LET keq(l) = mod(jdum, 2)
+                  LET jdum = int(jdum/2)
+              NEXT k
+          NEXT i
+          LET newkey = 1
+
+          CALL des (in(), keq(), newkey, idirec, iout())
+
+          LET hout$(1) = " "
+          FOR i = 1 to 16
+              LET jdum = 0
+              FOR j = 1 to 4
+                  LET jdum = jdum + (2^(4 - j)) * iout(4 * (i - 1) + j)
+              NEXT j
+              LET hout$(i + 1) = hex$(jdum)
+          NEXT i
+          LET verdct$ = "  o.k."
+          FOR i = 1 to 17
+              IF hcmp$(i) <> hout$(i) then LET verdct$ = "  wrong"
+          NEXT i
+          FOR k = 1 to 17
+              PRINT hkey$(k);
+          NEXT k
+          FOR k = 1 to 17
+              PRINT hin$(k);
+          NEXT k
+          FOR k = 1 to 17
+              PRINT hcmp$(k);
+          NEXT k
+          FOR k = 1 to 17
+              PRINT hout$(k);
+          NEXT k
+          PRINT verdct$
+      NEXT m
+      PRINT
+      PRINT "press Enter to continue..."
+      LINE INPUT dum$
+   LOOP while nciphr > 0
+LOOP
+CLOSE #1
+
+END

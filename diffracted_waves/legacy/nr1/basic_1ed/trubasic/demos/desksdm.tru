@@ -1,0 +1,62 @@
+PROGRAM D7r14
+
+! Driver for routines ks and cyfun in file desks
+
+LIBRARY "desks"
+
+DIM keq(64), kn(48), ir(32), iout(32)
+
+! First, test routine ks
+
+CLEAR
+LET text$ = ""
+FOR i = 1 to 64
+    LET keq(i) = mod(i, 2)
+    IF keq(i) = 0 then LET text$[i:i] = "-" else LET text$[i:i] = "*"
+NEXT i
+PRINT "Legend:"
+PRINT "          -=0   *=1"
+PRINT "Master key:"
+PRINT "          "; text$
+PRINT "Sub-master keys:"
+FOR i = 1 to 16
+
+    CALL ks (keq(), i, kn())
+
+    LET text$ = ""
+    FOR k = 1 to 48
+        IF kn(k) = 0 then LET text$[k:k] = "-" else LET text$[k:k] = "*"
+    NEXT k
+    PRINT using "######": i;
+    PRINT "    "; text$
+NEXT i
+PRINT "press Enter to continue..."
+LINE INPUT dum$
+
+! Now test routine cyfun
+
+LET text$ = ""
+FOR i = 1 to 32
+    LET ir(i) = i - 3 * int(i / 3)
+    LET ir(i) = ir(i) - 2 * int(ir(i) / 2)
+    IF ir(i) = 0 then LET text$[i:i] = "-" else LET text$[i:i] = "*"
+NEXT i
+PRINT "Legend:"
+PRINT "          -=0   *=1 "
+PRINT "Input to cipher function:"
+PRINT "          "; text$
+PRINT "Ciphered output:"
+FOR i = 1 to 16
+
+    CALL ks (keq(), i, kn())
+    CALL cyfun (ir(), kn(), iout())
+
+    LET text$ = ""
+    FOR k = 1 to 32
+        IF iout(k) = 0 then LET text$[k:k] = "-" else LET text$[k:k] = "*"
+    NEXT k
+    PRINT using "######": i;
+    PRINT "    "; text$
+NEXT i
+
+END

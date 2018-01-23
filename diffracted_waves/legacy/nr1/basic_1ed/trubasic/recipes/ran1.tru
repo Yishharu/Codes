@@ -1,0 +1,59 @@
+MODULE ran1
+
+    ! Ran1 is coded as a module in order to
+    ! provide the "static" array r(), which allows the routine
+    ! to add an additional level of randomness; i.e., to NOT
+    ! just give the next number in the rnd sequence.
+
+    SHARE m1, ia1, ic1, rm1, m2, ia2, ic2, rm2, m3, ia3, ic3
+    SHARE r(97), iff, ix1, ix2, ix3
+
+    ! The following "constants" are established
+    ! during module initialization, which occurs at program
+    ! startup, rather than each time the routine is called.
+
+    LET iff = 0                   ! To guarantee "first-time-through" initialization
+    LET m1 = 259200
+    LET ia1 = 7141
+    LET ic1 = 54773
+    LET rm1 = 1 / m1
+    LET m2 = 134456
+    LET ia2 = 8121
+    LET ic2 = 28411
+    LET rm2 = 1 / m2
+    LET m3 = 243000
+    LET ia3 = 4561
+    LET ic3 = 51349
+
+    FUNCTION ran1 (idum)
+
+        ! This portion of the startup initialization cannot take place
+        ! in module initialization since the actual value of idum
+        ! is used to seed this machine-independent random number
+        ! generator.  Idum is ignored after the first use.
+
+        IF iff = 0 then
+           LET iff = 1
+           LET idum = abs(idum)
+           LET ix1 = mod(ic1 + idum, m1)
+           LET ix1 = mod(ia1 * ix1 + ic1, m1)
+           LET ix2 = mod(ix1, m2)
+           LET ix1 = mod(ia1 * ix1 + ic1, m1)
+           LET ix3 = mod(ix1, m3)
+           FOR j = 1 to 97
+               LET ix1 = mod(ia1 * ix1 + ic1, m1)
+               LET ix2 = mod(ia2 * ix2 + ic2, m2)
+               LET r(j) = (ix1 + ix2 * rm2) * rm1
+           NEXT j
+        END IF
+
+        LET ix1 = mod(ia1 * ix1 + ic1, m1)
+        LET ix2 = mod(ia2 * ix2 + ic2, m2)
+        LET ix3 = mod(ia3 * ix3 + ic3, m3)
+        LET j = 1 + int((97 * ix3) / m3)
+        LET ran1 = r(j)
+        LET r(j) = (ix1 + ix2 * rm2) * rm1
+
+    END FUNCTION
+
+END MODULE

@@ -1,0 +1,21 @@
+DEFINITION MODULE Intro;
+
+   (* EXPORT QUALIFIED FlMoon; *)
+
+   FROM NRSystem IMPORT LongInt;
+
+   PROCEDURE FlMoon(    n, nph:  INTEGER; 
+                    VAR jd:   LongInt; 
+                    VAR frac: REAL); 
+   (*
+     Our programs begin with an introductory comment summarizing their purpose 
+     and explaining their calling sequence. This routine calculates the phases 
+     of the moon. Given an integer n and a code nph for the phase desired
+     (nph=0 for new moon, 1 for first quarter, 2 for full, 3 for last quarter),
+     the routine returns the Julian Day Number jd, and the fractional part of a
+     day frac to be added to it, of the n^th such phase since January, 1900.  
+     Greenwich Mean Time is assumed. Note that this routine will not run on 
+     systems with 2-byte integers. The type LongInt (4-byte integer) is discussed 
+     further in section1.2.
+   *)
+END Intro.

@@ -1,0 +1,18 @@
+PROGRAM D9r1
+
+! Driver for routine scrsho
+
+LIBRARY "scrsho"
+
+CLEAR
+PRINT "Graph of the Bessel function j0:"
+
+CALL scrsho (dum)
+
+END
+
+FUNCTION func (x)
+    LIBRARY "bessj0"
+    DECLARE FUNCTION bessj0
+    LET func = bessj0(x)
+END FUNCTION

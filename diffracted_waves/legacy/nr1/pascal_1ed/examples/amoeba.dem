@@ -1,0 +1,59 @@
+PROGRAM d10r5(input,output);
+(* driver for routine AMOEBA *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   np = 3;
+   mp = 4;
+   ftol = 1.0e-6;
+TYPE
+   RealArrayMPbyNP = ARRAY [1..mp,1..np] OF real;
+   RealArrayMP = ARRAY [1..mp] OF real;
+   RealArrayNP = ARRAY [1..np] OF real;
+VAR
+   i,nfunc,j,ndim: integer;
+   x: RealArrayNP;
+   y: RealArrayMP;
+   p: RealArrayMPbyNP;
+
+(*$I BESSJ0.PAS *)
+
+FUNCTION func(VAR x: RealArrayNP): real;
+(* calling function must define type
+TYPE
+   RealArrayNP = ARRAY [1..np] OF real;
+where np is the physical dimension of the argument x. *)
+BEGIN
+   func := 0.6-bessj0(sqr(x[1]-0.5)+sqr(x[2]-0.6)+sqr(x[3]-0.7))
+END;
+
+(*$I AMOEBA.PAS *)
+
+BEGIN
+   p[1,1] := 0.0; p[1,2] := 0.0; p[1,3] := 0.0;
+   p[2,1] := 1.0; p[2,2] := 0.0; p[2,3] := 0.0;
+   p[3,1] := 0.0; p[3,2] := 1.0; p[3,3] := 0.0;
+   p[4,1] := 0.0; p[4,2] := 0.0; p[4,3] := 1.0;
+   ndim := np;
+   FOR i := 1 TO mp DO BEGIN
+      FOR j := 1 TO np DO x[j] := p[i,j];
+      y[i] := func(x)
+   END;
+   amoeba(p,y,ndim,ftol,nfunc);
+   writeln;
+   writeln('Function evaluations: ',nfunc:3);
+   writeln('Vertices of final 3-d simplex and');
+   writeln('function values at the vertices:');
+   writeln;
+   writeln('i':3,
+      'x[i]':10,'y[i]':12,'z[i]':12,'function':14);
+   writeln;
+   FOR i := 1 TO mp DO BEGIN
+      write(i:3);
+      FOR j := 1 TO np DO write(p[i,j]:12:6);
+      writeln(y[i]:12:6)
+   END;
+   writeln;
+   writeln('True minimum is at (0.5,0.6,0.7)')
+END.

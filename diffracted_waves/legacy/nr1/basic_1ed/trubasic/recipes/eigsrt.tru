@@ -1,0 +1,25 @@
+EXTERNAL
+
+SUB eigsrt (d(), v(,), n, np)
+
+    FOR i = 1 to n - 1
+        LET k = i
+        LET p = d(i)
+        FOR j = i + 1 to n
+            IF d(j) >= p then
+               LET k = j
+               LET p = d(j)
+            END IF
+        NEXT j
+        IF k <> i then
+           LET d(k) = d(i)
+           LET d(i) = p
+           FOR j = 1 to n
+               LET p = v(j, i)
+               LET v(j, i) = v(j, k)
+               LET v(j, k) = p
+           NEXT j
+        END IF
+    NEXT i
+
+END SUB

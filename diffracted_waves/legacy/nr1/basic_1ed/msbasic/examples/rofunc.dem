@@ -1,0 +1,25 @@
+DECLARE FUNCTION GASDEV! (IDUM&)
+DECLARE FUNCTION ROFUNC! (B!)
+COMMON NPT, X(), Y(), ARR(), AA, ABDEV
+
+'PROGRAM D14R11
+'Driver for routine ROFUNC
+CLS
+NMAX = 1000
+DIM X(NMAX), Y(NMAX), ARR(NMAX)
+SPREAD = .05
+IDUM& = -11
+NPT = 100
+FOR I = 1 TO NPT
+  X(I) = .1 * I
+  Y(I) = -2! * X(I) + 1! + SPREAD * GASDEV(IDUM&)
+NEXT I
+PRINT "        B         A     ROFUNC     ABDEV"
+PRINT
+FOR I = -5 TO 5
+  B = -2! + .02 * I
+  RF = ROFUNC(B)
+  PRINT USING "#######.##"; B; AA; ROFUNC(B); ABDEV
+NEXT I
+END
+

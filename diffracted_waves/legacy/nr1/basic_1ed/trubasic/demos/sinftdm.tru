@@ -1,0 +1,52 @@
+PROGRAM D12r4
+
+! Driver for routine sinft
+
+LIBRARY "sinft"
+
+LET np = 16
+DIM data(0), size(0)
+MAT redim data(np), size(np)
+
+CLEAR
+DO
+   PRINT "Period of sinusoid in channels (2-"; np; "; or 0 to stop)";
+   INPUT per
+   IF per <= 0 then EXIT DO
+   FOR i = 1 to np
+       LET data(i) = sin(2 * pi * (i - 1) / per)
+   NEXT i
+
+   CALL sinft (data(), np)
+
+   CALL plotft (data(), np)
+
+   PRINT "Press Enter to continue ..."
+   LINE INPUT dum$
+
+   CALL sinft (data(), np)
+
+   CALL plotft (data(), np)
+
+LOOP
+
+END
+
+SUB plotft (data(), np)
+
+    LET eps = .001
+    LET width = 30
+    LET big = -1e+10
+    LET small = 1e+10
+    FOR i = 1 to np
+        IF data(i) < small then LET small = data(i)
+        IF data(i) > big then LET big = data(i)
+    NEXT i
+    LET scal = width / (big - small)
+    FOR i = 1 to np
+        LET nlim = int(scal * (data(i) - small) + eps)
+        PRINT using "####": i;
+        PRINT " "; repeat$("*", nlim+1)
+    NEXT i
+
+END SUB

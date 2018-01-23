@@ -1,0 +1,79 @@
+PROGRAM d13r19(input,output);
+(* driver for routine KENDL2 *)
+(* look for 'ones-after-zeros' in irbit1 and irbit2 sequences *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   ndat = 1000;
+   ip = 8;
+   jp = 8;
+TYPE
+   RealArrayIPbyJP = ARRAY [1..ip,1..jp] OF real;
+   CharArray3 = PACKED ARRAY [1..3] OF char;
+VAR
+   ifunc,iseed,i,j,k,l,m,n,twoton: integer;
+   prob,tau,z: real;
+   tab: RealArrayIPbyJP;
+   txt: ARRAY [1..8] OF CharArray3;
+
+(*$I IRBIT1.PAS *)
+
+(*$I IRBIT2.PAS *)
+
+(*$I ERFCC.PAS *)
+
+(*$I KENDL2.PAS *)
+
+BEGIN
+   txt[1] := '000'; txt[2] := '001';
+   txt[3] := '010'; txt[4] := '011';
+   txt[5] := '100'; txt[6] := '101';
+   txt[7] := '110'; txt[8] := '111';
+   i := ip;
+   j := jp;
+   writeln('Are ones followed by zeros and vice-versa?');
+   FOR ifunc := 1 TO 2 DO BEGIN
+      iseed := 2468;
+      IF ifunc = 1 THEN
+         writeln('test of irbit1:')
+      ELSE
+         writeln('test of irbit2:');
+      FOR k := 1 TO i DO
+         FOR l := 1 TO j DO tab[k,l] := 0.0;
+      FOR m := 1 TO ndat DO BEGIN
+         k := 1;
+         twoton := 1;
+         FOR n := 0 TO 2 DO BEGIN
+            IF ifunc = 1 THEN
+               k := k+irbit1(iseed)*twoton
+            ELSE
+               k := k+irbit2(iseed)*twoton;
+            twoton := 2*twoton
+         END;
+         l := 1;
+         twoton := 1;
+         FOR n := 0 TO 2 DO BEGIN
+            IF ifunc = 1 THEN
+               l := l+irbit1(iseed)*twoton
+            ELSE
+               l := l+irbit2(iseed)*twoton;
+            twoton := 2*twoton
+         END;
+         tab[k,l] := tab[k,l]+1.0
+      END;
+      kendl2(tab,i,j,tau,z,prob);
+      write(' ':4);
+      FOR n := 1 TO 8 DO write(txt[n]:6);
+      writeln;
+      FOR n := 1 TO 8 DO BEGIN
+         write(txt[n]:3);
+         FOR m := 1 TO 8 DO write(round(tab[n,m]):6);
+         writeln
+      END;
+      writeln;
+      writeln('kendall tau':17,'std. dev.':14,'probability':16);
+      writeln(tau:15:6,z:15:6,prob:15:6);
+      writeln
+   END
+END.

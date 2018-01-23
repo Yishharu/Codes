@@ -1,0 +1,55 @@
+PROGRAM D13r6b
+
+! Driver for routine tptest
+
+! Compare two correlated distributions vs. two
+! uncorrelated distributions
+
+LIBRARY "tptest", "gasdev"
+DECLARE FUNCTION gasdev
+
+LET npts = 500
+DIM data1(0), data2(0), data3(0)
+MAT redim data1(npts), data2(npts), data3(npts)
+
+CLEAR
+LET eps = .01
+LET nshft = 10
+LET anoise = .3
+LET idum = -5
+PRINT "              Correlated:                  Uncorrelated:"
+PRINT "  Shift       t      Probability           t      Probability"
+LET offset = (nshft / 2) * eps
+FOR j = 1 to npts
+    LET gauss = gasdev(idum)
+    LET data1(j) = gauss
+    LET data2(j) = gauss + anoise * gasdev(idum)
+    LET data3(j) = gasdev(idum) + anoise * gasdev(idum)
+NEXT j
+
+CALL avevar (data1(), npts, ave1, var1)
+CALL avevar (data2(), npts, ave2, var2)
+CALL avevar (data3(), npts, ave3, var3)
+
+FOR j = 1 to npts
+    LET data1(j) = data1(j) - ave1 + offset
+    LET data2(j) = data2(j) - ave2
+    LET data3(j) = data3(j) - ave3
+NEXT j
+FOR i = 1 to nshft + 1
+    LET shift = i * eps
+    FOR j = 1 to npts
+        LET data2(j) = data2(j) + eps
+        LET data3(j) = data3(j) + eps
+    NEXT j
+
+    CALL tptest (data1(), data2(), npts, t1, prob1)
+    CALL tptest (data1(), data3(), npts, t2, prob2)
+
+    PRINT using "--#.##": shift;
+    PRINT using "------#.####": t1, prob1;
+    PRINT "     ";
+    PRINT using "------#.####": t2, prob2
+NEXT i
+
+END

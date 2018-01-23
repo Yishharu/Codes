@@ -1,0 +1,61 @@
+PROGRAM D11r6
+
+! Driver for elmhes
+
+LIBRARY "elmhes", "balanc"
+
+LET np = 5
+DIM a(0,0), r(0), c(0)
+MAT redim a(np, np), r(np), c(np)
+
+CLEAR
+FOR j = 1 to np
+    FOR i = 1 to np
+        READ a(i, j)
+    NEXT i
+NEXT j
+DATA 1.0, 2.0, 3.0, 4.0, 5.0
+DATA 2.0, 3.0, 4.0, 5.0, 6.0
+DATA 300.0, 400.0, 5.0, 600.0, 700.0
+DATA 4.0, 5.0, 6.0, 7.0, 8.0
+DATA 5.0, 6.0, 7.0, 8.0, 9.0
+
+PRINT "***** Original Matrix *****"
+PRINT
+FOR i = 1 to np
+    FOR j = 1 to np
+        PRINT using "   ######.##": a(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+
+CALL balanc (a(,), np, np)
+
+PRINT "***** Balance Matrix *****"
+FOR i = 1 to np
+    FOR j = 1 to np
+        PRINT using "   ######.##": a(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+
+CALL elmhes (a(,), np, np)
+
+PRINT "***** Reduce to Hessenberg Form *****"
+PRINT
+FOR j = 1 to np - 2
+    FOR i = j + 2 to np
+        LET a(i, j) = 0
+    NEXT i
+NEXT j
+FOR i = 1 to np
+    FOR j = 1 to np
+        PRINT "  ";
+        PRINT using "#.####^^^^": a(i, j);
+    NEXT j
+    PRINT
+NEXT i
+
+END

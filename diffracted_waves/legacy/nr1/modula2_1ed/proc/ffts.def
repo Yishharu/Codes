@@ -1,0 +1,45 @@
+DEFINITION MODULE FFTs;
+
+   (* EXPORT QUALIFIED CosFT, RealFT, SinFT, TwoFFT; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE CosFT(Y: Vector; isign: INTEGER); 
+   (*
+     Calculates the cosine transform of a set y[0, n-1] of real-valued
+     data points. The transformed data replace the original data in array
+     y. n must be a power of 2. Set isign to +1 for a transform,
+     and to -1 for an inverse transform. For an inverse transform, the output
+     array should be multiplied by 2/n.
+   *)
+
+   PROCEDURE RealFT(DATA:  Vector; n:  INTEGER; isign: INTEGER); 
+   (*
+     Calculates the Fourier Transform of a set of 2n real-valued data
+     points. Replaces this data (which is stored in array DATA[0, 2n-1]) by the
+     positive frequency half of its complex Fourier Transform. The real-valued 
+     first and last components of the complex transform are returned as elements 
+     DATA[0] and DATA[1] respectively. n must be a power of 2. This routine
+     also calculates the inverse transform of a complex data array if it is the
+     transform of real data. (Result in this case must be multiplied by 1/n.)
+   *)
+
+   PROCEDURE SinFT(Y: Vector); 
+   (*
+     Calculates the sine transform of a set of n real-valued data
+     points stored in array y[0, n-1]. The number n must be a power of 2. 
+     On exit y is replaced by its transform. This program, without changes, also
+     calculates the inverse sine transform, but in this case the output array
+     should be multiplied by 2/n.
+   *)
+
+   PROCEDURE TwoFFT(DATA1, DATA2, FFT1, FFT2: Vector; n: INTEGER); 
+   (*
+     Given two real input arrays DATA1[0, n-1] and DATA2[0, n-1],
+     this routine calls Four1 and returns two complex output arrays, 
+     FFT1 and FFT2, each of complex length n (i.e.real dimensions [0, 2n-1]), 
+     which contain the discrete Fourier transforms of the respective DATAs. 
+     n MUST be an integer power of 2.
+   *)
+
+END FFTs.

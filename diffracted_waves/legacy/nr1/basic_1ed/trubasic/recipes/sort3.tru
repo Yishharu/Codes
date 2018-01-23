@@ -1,0 +1,28 @@
+EXTERNAL
+
+SUB sort3 (n, ra(), rb(), rc(), wksp(), iwksp())
+
+    LIBRARY "indexx"
+
+    CALL indexx (n, ra(), iwksp())
+
+    FOR j = 1 to n
+        LET wksp(j) = ra(j)
+    NEXT j
+    FOR j = 1 to n
+        LET ra(j) = wksp(iwksp(j))
+    NEXT j
+    FOR j = 1 to n
+        LET wksp(j) = rb(j)
+    NEXT j
+    FOR j = 1 to n
+        LET rb(j) = wksp(iwksp(j))
+    NEXT j
+    FOR j = 1 to n
+        LET wksp(j) = rc(j)
+    NEXT j
+    FOR j = 1 to n
+        LET rc(j) = wksp(iwksp(j))
+    NEXT j
+
+END SUB

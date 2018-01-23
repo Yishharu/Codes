@@ -1,0 +1,58 @@
+DECLARE SUB BALANC (A!(), N!, NP!)
+
+'PROGRAM D11R5
+'Driver for routine BALANC
+CLS
+NP = 5
+DIM A(NP, NP), R(NP), C(NP)
+FOR J = 1 TO NP
+  FOR I = 1 TO NP
+    READ A(I, J)
+  NEXT I
+NEXT J
+DATA 1.0,1.0,1.0,1.0,1.0,100.0,1.0,100.0,1.0,100.0,1.0,1.0,1.0,1.0,1.0,100.0
+DATA 1.0,100.0,1.0,100.0,1.0,1.0,1.0,1.0,1.0
+'Print norms
+FOR I = 1 TO NP
+  R(I) = 0!
+  C(I) = 0!
+  FOR J = 1 TO NP
+    R(I) = R(I) + ABS(A(I, J))
+    C(I) = C(I) + ABS(A(J, I))
+  NEXT J
+NEXT I
+PRINT "Rows:"
+FOR I = 1 TO NP
+  PRINT USING "########.######"; R(I);
+NEXT I
+PRINT
+PRINT "Columns:"
+FOR I = 1 TO NP
+  PRINT USING "########.######"; C(I);
+NEXT I
+PRINT
+PRINT
+PRINT "***** Balancing Matrix *****"
+PRINT
+CALL BALANC(A(), NP, NP)
+'Print norms
+FOR I = 1 TO NP
+  R(I) = 0!
+  C(I) = 0!
+  FOR J = 1 TO NP
+    R(I) = R(I) + ABS(A(I, J))
+    C(I) = C(I) + ABS(A(J, I))
+  NEXT J
+NEXT I
+PRINT "Rows:"
+FOR I = 1 TO NP
+  PRINT USING "########.######"; R(I);
+NEXT I
+PRINT
+PRINT "Columns:"
+FOR I = 1 TO NP
+  PRINT USING "########.######"; C(I);
+NEXT I
+PRINT
+END
+

@@ -1,0 +1,32 @@
+DECLARE FUNCTION GAMMLN! (X!)
+DECLARE SUB GCF (G!, A!, X!, L!)
+
+'PROGRAM D6R9
+'Driver for routine GCF
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "Incomplete Gamma Function"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT TEXT$
+PRINT "   A          X        Actual     GCF(A,X)   GAMMLN(A)      GLN"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  A = VAL(MID$(DUM$, 1, 6))
+  X = VAL(MID$(DUM$, 7, 16))
+  VALUE = VAL(MID$(DUM$, 23))
+  IF X >= A + 1! THEN
+    CALL GCF(GAMMCF, A, X, GLN)
+    PRINT USING "###.##"; A;
+    PRINT USING "#####.######"; X;
+    PRINT USING "#####.######"; 1! - VALUE;
+    PRINT USING "#####.######"; GAMMCF;
+    PRINT USING "#####.######"; GAMMLN(A);
+    PRINT USING "#####.######"; GLN
+  END IF
+NEXT I
+CLOSE #1
+END
+

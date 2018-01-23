@@ -1,0 +1,16 @@
+EXTERNAL
+
+SUB ttest (data1(), n1, data2(), n2, t, prob)
+
+    LIBRARY "avevar", "betai"
+    DECLARE FUNCTION betai
+
+    CALL avevar (data1(), n1, ave1, var1)
+    CALL avevar (data2(), n2, ave2, var2)
+
+    LET df = n1 + n2 - 2
+    LET var = ((n1 - 1) * var1 + (n2 - 1) * var2) / df
+    LET t = (ave1 - ave2) / sqr(var * (1 / n1 + 1 / n2))
+    LET prob = betai(.5 * df, .5, df / (df + t^2))
+
+END SUB

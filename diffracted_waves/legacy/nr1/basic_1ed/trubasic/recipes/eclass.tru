@@ -1,0 +1,27 @@
+EXTERNAL
+
+SUB eclass (nf(), n, lista(), listb(), m)
+
+    FOR k = 1 to n
+        LET nf(k) = k
+    NEXT k
+
+    FOR l = 1 to m
+        LET j = lista(l)
+        DO while nf(j) <> j
+           LET j = nf(j)
+        LOOP
+        LET k = listb(l)
+        DO while nf(k) <> k
+           LET k = nf(k)
+        LOOP
+        IF j <> k then LET nf(j) = k
+    NEXT l
+
+    FOR j = 1 to n
+        DO while nf(j) <> nf(nf(j))
+           LET nf(j) = nf(nf(j))
+        LOOP
+    NEXT j
+
+END SUB

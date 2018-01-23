@@ -1,0 +1,43 @@
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D7R6
+'Driver for routine GASDEV
+CLS
+N = 20
+NP1 = N + 1
+NOVER2 = N / 2
+NPTS = 10000
+ISCAL = 400
+LLEN = 50
+DIM DIST(NP1), TEXT$(50)
+IDUM& = -13
+FOR J = 1 TO NP1
+  DIST(J) = 0!
+NEXT J
+FOR I = 1 TO NPTS
+  J = CINT(.25 * N * GASDEV(IDUM&)) + NOVER2 + 1
+  IF J >= 1 AND J <= NP1 THEN DIST(J) = DIST(J) + 1
+NEXT I
+PRINT "Normally distributed deviate of"; NPTS; "points"
+PRINT "    x       p(x)     graph:"
+FOR J = 1 TO NP1
+  DIST(J) = DIST(J) / NPTS
+  FOR K = 1 TO 50
+    TEXT$(K) = " "
+  NEXT K
+  KLIM = INT(ISCAL * DIST(J))
+  IF KLIM > LLEN THEN KLIM = LLEN
+  FOR K = 1 TO KLIM
+    TEXT$(K) = "*"
+  NEXT K
+  X = CSNG(J) / (.25 * N)
+  PRINT USING "####.##"; X;
+  PRINT USING "#####.####"; DIST(J);
+  PRINT "    ";
+  FOR K = 1 TO 50
+    PRINT TEXT$(K);
+  NEXT K
+  PRINT
+NEXT J
+END
+

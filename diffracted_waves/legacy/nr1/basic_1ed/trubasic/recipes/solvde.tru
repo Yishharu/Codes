@@ -1,0 +1,90 @@
+EXTERNAL
+
+SUB solvde (itmax, conv, slowc, scalv(), indexv(), ne, nb, m, y(,), nyj, nyk, c(,,), nci, ncj, nck, s(,))
+
+    LIBRARY "pinvs", "red", "bksub"
+    LIBRARY "difeq"               ! Supplied by the user
+
+    DIM ermax(0), kmax(0)
+    MAT redim ermax(ne), kmax(ne)
+
+    LET k1 = 1
+    LET k2 = m
+    LET nvars = ne * m
+    LET j1 = 1
+    LET j2 = nb
+    LET j3 = nb + 1
+    LET j4 = ne
+    LET j5 = j4 + j1
+    LET j6 = j4 + j2
+    LET j7 = j4 + j3
+    LET j8 = j4 + j4
+    LET j9 = j8 + j1
+    LET ic1 = 1
+    LET ic2 = ne - nb
+    LET ic3 = ic2 + 1
+    LET ic4 = ne
+    LET jc1 = 1
+    LET jcf = ic3
+    FOR it = 1 to itmax
+        LET k = k1
+
+        CALL difeq (k, k1, k2, j9, ic3, ic4, indexv(), ne, s(,), nsi, nsj, y(,), nyj, nyk)
+        CALL pinvs (ic3, ic4, j5, j9, jc1, k1, c(,,), nci, ncj, nck, s(,), nsi, nsj)
+
+        FOR k = k1 + 1 to k2
+            LET kp = k - 1
+
+            CALL difeq (k, k1, k2, j9, ic1, ic4, indexv(), ne, s(,), nsi, nsj, y(,), nyj, nyk)
+            CALL red (ic1, ic4, j1, j2, j3, j4, j9, ic3, jc1, jcf, kp, c(,,), nci, ncj, nck, s(,))
+            CALL pinvs (ic1, ic4, j3, j9, jc1, k, c(,,), nci, ncj, nck, s(,), nsi, nsj)
+
+        NEXT k
+        LET k = k2 + 1
+
+        CALL difeq (k, k1, k2, j9, ic1, ic2, indexv(), ne, s(,), nsi, nsj, y(,), nyj, nyk)
+        CALL red (ic1, ic2, j5, j6, j7, j8, j9, ic3, jc1, jcf, k2, c(,,), nci, ncj, nck, s(,))
+        CALL pinvs (ic1, ic2, j7, j9, jcf, k2 + 1, c(,,), nci, ncj, nck, s(,), nsi, nsj)
+        CALL bksub (ne, nb, jcf, k1, k2, c(,,), nci, ncj, nck)
+
+        LET err = 0
+        FOR j = 1 to ne
+            LET jv = indexv(j)
+            LET errj = 0
+            LET km = 0
+            LET vmax = 0
+            FOR k = k1 to k2
+                LET vz = abs(c(j, 1, k))
+                IF vz > vmax then
+                   LET vmax = vz
+                   LET km = k
+                END IF
+                LET errj = errj + vz
+            NEXT k
+            IF scalv(jv) <> 0 then
+               LET err = err + errj / scalv(jv)
+               LET ermax(j) = c(j, 1, km) / scalv(jv)
+            END IF
+            LET kmax(j) = km
+        NEXT j
+        LET err = err / nvars
+        LET fac = slowc / max(err, slowc)
+        FOR jv = 1 to ne
+            LET j = indexv(jv)
+            FOR k = k1 to k2
+                LET y(j, k) = y(j, k) - fac * c(jv, 1, k)
+            NEXT k
+        NEXT jv
+
+        PRINT using "####": it;
+        PRINT using "----#.######": err, fac
+        FOR j = 1 to ne
+            PRINT using "#########": kmax(j);
+            PRINT using "----#.######": ermax(j)
+            PRINT
+        NEXT j
+        IF err < conv then EXIT SUB    ! Normal exit
+    NEXT it
+    PRINT "Itmax exceeded"
+
+END SUB

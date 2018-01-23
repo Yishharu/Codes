@@ -1,0 +1,47 @@
+DEFINITION MODULE Tests1;
+
+   (* EXPORT QUALIFIED AveVar, FTest, TPTest, TTest, TUTest; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE AveVar(    DATA: Vector; 
+                    VAR ave, svar: REAL); 
+   (*
+     Given array DATA[n], returns its mean as ave and its variance as var.
+   *)
+
+   PROCEDURE FTest(    DATA1, DATA2: Vector; 
+                   VAR f, prob: REAL); 
+   (*
+     Given the arrays DATA1[n1] and DATA2[n2], this routine returns
+     the value of f, and its significance as prob. Small values of prob 
+     indicate that the two arrays have significantly different variances.
+   *)
+
+   PROCEDURE TPTest(    DATA1, DATA2: Vector; 
+                    VAR t, prob: REAL); 
+   (*
+     Given the paired arrays DATA1[n] and DATA2[n], this routine returns
+     Student's t for paired data as t, and its significance as prob,
+     small values of prob indicating a significant difference of means.
+   *)
+
+   PROCEDURE TTest(    DATA1, DATA2: Vector; 
+                   VAR t, prob: REAL); 
+   (*
+     Given the arrays DATA1[n1] and DATA2[n2], this routine returns
+     Student's t as t, and its significance as prob, small values of prob 
+     indicating that the arrays have significantly different means. The data
+     arrays are assumed to be drawn from populations with the same true 
+     variance.
+   *)
+
+   PROCEDURE TUTest(    DATA1, DATA2: Vector; 
+                    VAR t, prob: REAL);
+   (*
+     Given the arrays DATA1[n1] and DATA2[n2], this routine returns
+     Student's t as t, and its significance as prob, small values of prob 
+     indicating that the arrays have significantly different means. The data
+     arrays are allowed to be drawn from populations with unequal variances.
+   *)
+END Tests1.

@@ -1,0 +1,35 @@
+PROGRAM d9r3(input,output);
+(* driver for routine ZBRAK *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 100;
+   nbmax = 20;
+   x1 = 1.0;
+   x2 = 50.0;
+TYPE
+   RealArrayNBMAX = ARRAY [1..nbmax] OF real;
+VAR
+   i,nb: integer;
+   xb1,xb2: RealArrayNBMAX;
+
+(*$I BESSJ0.PAS *)
+
+FUNCTION fx(x: real): real;
+BEGIN
+   fx := bessj0(x)
+END;
+
+(*$I ZBRAK.PAS *)
+
+BEGIN
+   nb := nbmax;
+   zbrak(x1,x2,n,xb1,xb2,nb);
+   writeln;
+   writeln('brackets for roots of bessj0:');
+   writeln('lower':22,'upper':10,'f(lower)':16,'f(upper)':10);
+   FOR i := 1 TO nb DO
+      writeln('  root ',i:2,' ':4,xb1[i]:10:4,xb2[i]:10:4,
+         ' ':4,fx(xb1[i]):10:4,fx(xb2[i]):10:4)
+END.

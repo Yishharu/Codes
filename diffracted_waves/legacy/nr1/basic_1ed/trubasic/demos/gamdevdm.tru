@@ -1,0 +1,42 @@
+PROGRAM D7r7
+
+! Driver for routine gamdev
+
+LIBRARY "gamdev"
+DECLARE FUNCTION gamdev
+
+DIM dist(21)
+
+CLEAR
+LET n = 20
+LET npts = 10000
+LET iscal = 200
+LET llen = 50
+LET idum = -13
+
+DO
+   MAT dist = zer
+   DO
+      PRINT "Order of gamma distribution (n=1..20); -1 to end."
+      INPUT ia
+   LOOP while ia > 20
+   IF ia <= 0 then EXIT DO
+
+   FOR i = 1 to npts
+       LET j = int(gamdev(ia, idum)) + 1
+       IF j >= 1 and j <= 21 then LET dist(j) = dist(j) + 1
+   NEXT i
+
+   PRINT "Gamma-distribution deviate; order"; ia; "of"; npts; "points"
+   PRINT "    x       p(x)     graph:"
+   FOR j = 1 to 20
+       LET dist(j) = dist(j) / npts
+       LET klim = int(iscal * dist(j))
+       IF klim > llen then LET klim = llen
+       PRINT using "####.##": j;
+       PRINT using "#####.####": dist(j);
+       PRINT "    "; repeat$("*", klim)
+   NEXT j
+LOOP
+
+END

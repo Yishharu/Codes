@@ -1,0 +1,18 @@
+DEFINITION MODULE MedFitM;
+
+   (* EXPORT QUALIFIED MedFit; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE MedFit(X, Y: Vector; VAR a, b, abdev: REAL);
+   (*
+     Fits y=a+bx by the criterion of least absolute deviations.
+     The arrays X[0, ndata-1] and Y[0, ndata-1] are the input
+     experimental points. The fitted parameters a and b are
+     output, along with abdev which is the mean absolute deviation
+     (in y) of the experimental points from the fitted line.
+     This routine uses the routine rofunc, with communication
+     via global variables.
+   *)
+
+END MedFitM.

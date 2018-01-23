@@ -1,0 +1,30 @@
+DECLARE SUB FLEG (X!, PL!(), NL!)
+DECLARE FUNCTION PLGNDR! (L!, M!, X!)
+
+'PROGRAM D14R7
+'Driver for routine FLEG
+CLS
+NVAL = 5
+DX = .2
+NPOLY = 5
+DIM AFUNC(NPOLY)
+PRINT "                      Legendre Polynomials"
+PRINT
+PRINT "      N=1      N=2       N=3       N=4       N=5"
+FOR I = 1 TO NVAL
+  X = I * DX
+  CALL FLEG(X, AFUNC(), NPOLY)
+  PRINT "X =";
+  PRINT USING "###.##"; X
+  FOR J = 1 TO NPOLY
+    PRINT USING "#####.####"; AFUNC(J);
+  NEXT J
+  PRINT "  routine FLEG"
+  FOR J = 1 TO NPOLY
+    PRINT USING "#####.####"; PLGNDR(J - 1, 0, X);
+  NEXT J
+  PRINT "  routine PLGNDR"
+  PRINT
+NEXT I
+END
+

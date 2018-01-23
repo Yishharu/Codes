@@ -1,0 +1,118 @@
+PROGRAM D2r2
+
+! Driver for routine ludcmp
+
+LIBRARY "ludcmp"
+
+LET np = 20
+DIM a(0,0), xl(0,0), xu(0,0), indx(0), jndx(0), x(0,0)
+MAT redim a(np, np), xl(np, np), xu(np, np), indx(np), jndx(np), x(np, np)
+
+CLEAR
+OPEN #1: name "matrx1.dat", access input
+LINE INPUT #1: dum$
+DO
+   LINE INPUT #1: dum$
+   LINE INPUT #1: dum$
+   LET n = val(dum$[1:1])
+   LET m = val(dum$[3:3])
+   LINE INPUT #1: dum$
+   FOR k = 1 to n
+       LINE INPUT #1: dum$
+       FOR l = 1 to n
+           LET a(k, l) = val(dum$[4*l-3 : 4*l])
+       NEXT l
+   NEXT k
+   LINE INPUT #1: dum$
+   FOR l = 1 to m
+       LINE INPUT #1: dum$
+       FOR k = 1 to n
+           LET x(k, l) = val(dum$[4*k-3 : 4*k])
+       NEXT k
+   NEXT l
+
+   ! Print out a-matrix for comparison with product of lower
+   ! and upper decomposition matrices.
+
+   PRINT "Original matrix:"
+   FOR k = 1 to n
+       FOR l = 1 to n
+           PRINT using "----#.######": a(k, l);
+       NEXT l
+       PRINT
+   NEXT k
+
+   ! Perform the decomposition
+
+   CALL ludcmp (a(,), n, np, indx(), d)
+
+   ! Compose separately the lower and upper matrices
+
+   FOR k = 1 to n
+       FOR l = 1 to n
+           IF l > k then
+              LET xu(k, l) = a(k, l)
+              LET xl(k, l) = 0
+           ELSEIF l < k then
+              LET xu(k, l) = 0
+              LET xl(k, l) = a(k, l)
+           ELSE
+              LET xu(k, l) = a(k, l)
+              LET xl(k, l) = 1
+           END IF
+       NEXT l
+   NEXT k
+
+   ! Compute product of lower and upper matrices for
+   ! comparison with original matrix.
+
+   FOR k = 1 to n
+       LET jndx(k) = k
+       FOR l = 1 to n
+           LET x(k, l) = 0
+           FOR j = 1 to n
+               LET x(k, l) = x(k, l) + xl(k, j) * xu(j, l)
+           NEXT j
+       NEXT l
+   NEXT k
+
+   PRINT "Product of lower and upper matrices (unscrambled):"
+   FOR k = 1 to n
+       LET dum = jndx(indx(k))
+       LET jndx(indx(k)) = jndx(k)
+       LET jndx(k) = dum
+   NEXT k
+   FOR k = 1 to n
+       FOR j = 1 to n
+           IF jndx(j) = k then
+              FOR l = 1 to n
+                  PRINT using "----#.######": x(j, l);
+              NEXT l
+              PRINT
+           END IF
+       NEXT j
+   NEXT k
+
+   PRINT "Lower matrix of the decomposition:"
+   FOR k = 1 to n
+       FOR l = 1 to n
+           PRINT using "----#.######": xl(k, l);
+       NEXT l
+       PRINT
+   NEXT k
+
+   PRINT "Upper matrix of the decomposition:"
+   FOR k = 1 to n
+       FOR l = 1 to n
+           PRINT using "----#.######": xu(k, l);
+       NEXT l
+       PRINT
+   NEXT k
+   PRINT "***********************************"
+   PRINT "press Enter for next problem ..."
+   LINE INPUT dum$
+   LINE INPUT #1: txt$
+LOOP while txt$ <> "END"
+CLOSE #1
+
+END

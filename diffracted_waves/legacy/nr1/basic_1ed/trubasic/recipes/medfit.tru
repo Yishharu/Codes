@@ -1,0 +1,62 @@
+EXTERNAL
+
+SUB medfit (xd(), yd(), ndata, a, b, abdevd)
+
+    LIBRARY "rofunc"
+    DECLARE FUNCTION rofunc
+
+    DECLARE PUBLIC npt, x(), y(), arr(), aa, abdev  ! COMMON in rofunc
+
+    LET sx = 0
+    LET sy = 0
+    LET sxy = 0
+    LET sxx = 0
+    FOR j = 1 to ndata
+        LET x(j) = xd(j)
+        LET y(j) = yd(j)
+        LET sx = sx + xd(j)
+        LET sy = sy + yd(j)
+        LET sxy = sxy + xd(j) * yd(j)
+        LET sxx = sxx + xd(j)^2
+    NEXT j
+
+    LET npt = ndata
+    LET del = ndata * sxx - sx^2
+    LET aa = (sxx * sy - sx * sxy) / del
+    LET bb = (ndata * sxy - sx * sy) / del
+    LET chisq = 0
+    FOR j = 1 to ndata
+        LET chisq = chisq + (yd(j) - (aa + bb * xd(j)))^2
+    NEXT j
+    LET sigb = sqr(chisq / del)
+
+    LET b1 = bb
+    LET f1 = rofunc(b1)
+    LET b2 = bb + 3 * sigb * sgn(f1)
+    LET f2 = rofunc(b2)
+    DO while f1 * f2 > 0
+       LET bb = 2 * b2 - b1
+       LET b1 = b2
+       LET f1 = f2
+       LET b2 = bb
+       LET f2 = rofunc(b2)
+    LOOP
+
+    LET sigb = .01 * sigb
+    DO while abs(b2 - b1) > sigb
+       LET bb = .5 * (b1 + b2)
+       IF bb = b1 or bb = b2 then EXIT DO
+       LET f = rofunc(bb)
+       IF f * f1 >= 0 then
+          LET f1 = f
+          LET b1 = bb
+       ELSE
+          LET f2 = f
+          LET b2 = bb
+       END IF
+    LOOP
+    LET a = aa
+    LET b = bb
+    LET abdevd = abdev / ndata
+
+END SUB

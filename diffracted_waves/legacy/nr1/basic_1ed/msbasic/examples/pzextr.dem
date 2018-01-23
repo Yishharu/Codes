@@ -1,0 +1,35 @@
+DECLARE SUB PZEXTR (IEST!, XEST!, YEST!(), YZ!(), DY!(), NV!, NUSE!)
+COMMON X(), QCOL()
+
+'PROGRAM D15R9
+'Driver for routine PZEXTR
+'Feed values from a rational function
+'Fn(x)=(1-x+x^3)/(x+1)^n
+CLS
+NV = 4
+NUSE = 5
+DIM YEST(NV), YZ(NV), DY(NV), X(11), QCOL(10, 7)
+FOR I = 1 TO 10
+  IEST = I
+  XEST = 1! / CSNG(I)
+  DUM = 1! - XEST + XEST * XEST * XEST
+  FOR J = 1 TO NV
+    DUM = DUM / (XEST + 1!)
+    YEST(J) = DUM
+  NEXT J
+  CALL PZEXTR(IEST, XEST, YEST(), YZ(), DY(), NV, NUSE)
+  PRINT "I = "; I
+  PRINT "Extrap. function:";
+  FOR J = 1 TO NV
+    PRINT USING "#####.######"; YZ(J);
+  NEXT J
+  PRINT "Estimated error: ";
+  FOR J = 1 TO NV
+    PRINT USING "#####.######"; DY(J);
+  NEXT J
+  PRINT
+  PRINT
+NEXT I
+PRINT "Actual values:   ";
+PRINT USING "#####.######"; 1!; 1!; 1!; 1!
+

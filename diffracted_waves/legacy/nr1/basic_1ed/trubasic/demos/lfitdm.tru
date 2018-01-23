@@ -1,0 +1,121 @@
+PROGRAM D14r2
+
+! Driver for routine lfit
+
+LIBRARY "lfit", "gasdev"
+DECLARE FUNCTION gasdev
+
+LET npt = 100
+LET nterm = 3
+DIM x(0), y(0), sig(0), a(0), covar(0,0), lista(0)
+MAT redim x(npt), y(npt), sig(npt), a(nterm)
+MAT redim covar(nterm, nterm), lista(nterm)
+
+CLEAR
+LET spread = .1
+LET idum = -911
+FOR i = 1 to npt
+    LET x(i) = .1 * i
+    LET y(i) = nterm
+    FOR j = nterm - 1 to 1 step -1
+        LET y(i) = j + y(i) * x(i)
+    NEXT j
+    LET y(i) = y(i) + spread * gasdev(idum)
+    LET sig(i) = spread
+NEXT i
+LET mfit = nterm
+FOR i = 1 to mfit
+    LET lista(i) = i
+NEXT i
+
+CALL lfit (x(), y(), sig(), npt, a(), nterm, lista(), mfit, covar(,), nterm, chisq, dum)
+
+PRINT "  Parameter         Uncertainty"
+FOR i = 1 to nterm
+    PRINT using "   a(#) = ": i;
+    PRINT using "#.######": a(i);
+    PRINT using "####.######": sqr(covar(i, i))
+NEXT i
+PRINT
+PRINT using "  Chi squared = #.######^^^^": chisq
+PRINT
+PRINT "  Full covariance matrix"
+FOR i = 1 to nterm
+    FOR j = 1 to nterm
+        PRINT using "    #.##^^^^": covar(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+PRINT "press Enter to continue..."
+LINE INPUT dum$
+PRINT
+
+! Now test the lista feature
+
+FOR i = 1 to nterm
+    LET lista(i) = nterm + 1 - i
+NEXT i
+
+CALL lfit (x(), y(), sig(), npt, a(), nterm, lista(), mfit, covar(,), nterm, chisq, dum)
+
+PRINT "  Parameter        Uncertainty"
+FOR i = 1 to nterm
+    PRINT using "   a(#) = ": i;
+    PRINT using "#.######": a(i);
+    PRINT using "####.######": sqr(covar(i, i))
+NEXT i
+PRINT
+PRINT using "  Chi squared = #.######^^^^": chisq
+PRINT
+PRINT "  Full covariance matrix"
+FOR i = 1 to nterm
+    FOR j = 1 to nterm
+        PRINT using "    #.##^^^^": covar(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+PRINT "press Enter to continue..."
+LINE INPUT dum$
+PRINT
+
+! Now check results of restricting fit parameters
+
+LET ii = 1
+FOR i = 1 to nterm
+    IF mod(i, 2) = 1 then
+       LET lista(ii) = i
+       LET ii = ii + 1
+    END IF
+NEXT i
+LET mfit = ii - 1
+
+CALL lfit (x(), y(), sig(), npt, a(), nterm, lista(), mfit, covar(,), nterm, chisq, dum)
+
+PRINT "  Parameter        Uncertainty"
+FOR i = 1 to nterm
+    PRINT using "   a(#) = ": i;
+    PRINT using "#.######": a(i);
+    PRINT using "####.######": sqr(covar(i, i))
+NEXT i
+PRINT
+PRINT using "  Chi squared = #.######^^^^": chisq
+PRINT
+PRINT "  Full covariance matrix"
+FOR i = 1 to nterm
+    FOR j = 1 to nterm
+        PRINT using "    #.##^^^^": covar(i, j);
+    NEXT j
+    PRINT
+NEXT i
+
+END
+
+SUB funcs (x, afunc(), ma)
+    LIBRARY "lfit", "gasdev"
+    LET afunc(1) = 1
+    FOR i = 2 to ma
+        LET afunc(i) = x * afunc(i - 1)
+    NEXT i
+END SUB

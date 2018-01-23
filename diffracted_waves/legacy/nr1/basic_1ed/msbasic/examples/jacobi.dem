@@ -1,0 +1,115 @@
+DECLARE SUB JACOBI (A!(), N!, NP!, D!(), V!(), NROT!)
+
+'PROGRAM D11R1
+'Driver for routine JACOBI
+CLS
+NP = 10
+NMAT = 3
+DIM D(NP), V(NP, NP), R(NP)
+DIM A(3, 3), B(5, 5), C(10, 10), E(NP, NP), NUM(3)
+FOR I = 1 TO 3
+  READ NUM(I)
+NEXT I
+DATA 3,5,10
+FOR J = 1 TO 3
+  FOR I = 1 TO 3
+    READ A(I, J)
+  NEXT I
+NEXT J
+DATA 1.0,2.0,3.0,2.0,2.0,3.0,3.0,3.0,3.0
+FOR J = 1 TO 5
+  FOR I = 1 TO 5
+    READ B(I, J)
+  NEXT I
+NEXT J
+DATA -2.0,-1.0,0.0,1.0,2.0,-1.0,-1.0,0.0,1.0,2.0,0.0,0.0,0.0,1.0,2.0,1.0,1.0
+DATA 1.0,1.0,2.0,2.0,2.0,2.0,2.0,2.0
+FOR J = 1 TO 10
+  FOR I = 1 TO 10
+    READ C(I, J)
+  NEXT I
+NEXT J
+DATA 5.0,4.0,3.0,2.0,1.0,0.0,-1.0,-2.0,-3.0,-4.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0
+DATA -1.0,-2.0,-3.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0,-1.0,-2.0,2.0,3.0,4.0,5.0
+DATA 4.0,3.0,2.0,1.0,0.0,-1.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0,0.0,1.0
+DATA 2.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,2.0
+DATA -2.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,-3.0,-2.0,-1.0,0.0,1.0,2.0,3.0
+DATA 4.0,5.0,4.0,-4.0,-3.0,-2.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0
+FOR I = 1 TO NMAT
+  IF I = 1 THEN
+    FOR II = 1 TO 3
+      FOR JJ = 1 TO 3
+        E(II, JJ) = A(II, JJ)
+      NEXT JJ
+    NEXT II
+    CALL JACOBI(E(), 3, NP, D(), V(), NROT)
+  ELSEIF I = 2 THEN
+    FOR II = 1 TO 5
+      FOR JJ = 1 TO 5
+        E(II, JJ) = B(II, JJ)
+      NEXT JJ
+    NEXT II
+    CALL JACOBI(E(), 5, NP, D(), V(), NROT)
+  ELSEIF I = 3 THEN
+    FOR II = 1 TO 10
+      FOR JJ = 1 TO 10
+        E(II, JJ) = C(II, JJ)
+      NEXT JJ
+    NEXT II
+    CALL JACOBI(E(), 10, NP, D(), V(), NROT)
+  END IF
+  PRINT "Matrix Number", I
+  PRINT "Number of JACOBI rotations:", NROT
+  PRINT
+  PRINT "Eigenvalues:"
+  FOR J = 1 TO NUM(I)
+    PRINT USING "#####.######"; D(J)
+  NEXT J
+  PRINT
+  PRINT "Eigenvectors:"
+  FOR J = 1 TO NUM(I)
+    PRINT "Number"; J
+    FOR K = 1 TO NUM(I)
+      PRINT USING "#####.######"; V(K, J);
+      IF (K MOD 5) = 0 OR K = NUM(I) THEN PRINT
+    NEXT K
+  NEXT J
+  PRINT
+  'Eigenvector test
+  PRINT "Eigenvector Test"
+  PRINT
+  FOR J = 1 TO NUM(I)
+    FOR L = 1 TO NUM(I)
+      R(L) = 0!
+      FOR K = 1 TO NUM(I)
+        IF K > L THEN
+          KK = L
+          LL = K
+        ELSE
+          KK = K
+          LL = L
+        END IF
+        IF I = 1 THEN
+          R(L) = R(L) + A(LL, KK) * V(K, J)
+        ELSEIF I = 2 THEN
+          R(L) = R(L) + B(LL, KK) * V(K, J)
+        ELSEIF I = 3 THEN
+          R(L) = R(L) + C(LL, KK) * V(K, J)
+        END IF
+      NEXT K
+    NEXT L
+    PRINT "Vector Number", J
+    PRINT
+    PRINT "     Vector     Mtrx*Vec.    Ratio"
+    FOR L = 1 TO NUM(I)
+      RATIO = R(L) / V(L, J)
+      PRINT USING "#####.######"; V(L, J); R(L); RATIO
+    NEXT L
+    PRINT
+  NEXT J
+  PRINT "press RETURN to continue..."
+  LINE INPUT DUM$
+  PRINT
+NEXT I
+END
+

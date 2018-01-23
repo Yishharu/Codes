@@ -1,0 +1,48 @@
+MODULE rzextr
+
+    SHARE x(11), d(10,7)          ! STATIC
+
+    SUB rzextr (iest, xest, yest(), yz(), dy(), nv, nuse)
+
+        DIM fx(0)
+        MAT redim fx(nuse)
+
+        LET x(iest) = xest
+        IF iest = 1 then
+           FOR j = 1 to nv
+               LET yz(j) = yest(j)
+               LET d(j, 1) = yest(j)
+               LET dy(j) = yest(j)
+           NEXT j
+        ELSE
+           LET m1 = min(nuse, iest)
+           FOR k = 1 to m1 - 1
+               LET fx(k + 1) = x(iest - k) / xest
+           NEXT k
+           FOR j = 1 to nv
+               LET yy = yest(j)
+               LET v = d(j, 1)
+               LET c = yy
+               LET d(j, 1) = yy
+               FOR k = 2 to m1
+                   LET b1 = fx(k) * v
+                   LET b = b1 - c
+                   IF b <> 0 then
+                      LET b = (c - v) / b
+                      LET ddy = c * b
+                      LET c = b1 * b
+                   ELSE
+                      LET ddy = v
+                   END IF
+                   IF k <> m1 then LET v = d(j, k)
+                   LET d(j, k) = ddy
+                   LET yy = yy + ddy
+               NEXT k
+               LET dy(j) = ddy
+               LET yz(j) = yy
+           NEXT j
+        END IF
+
+    END SUB
+
+END MODULE

@@ -1,0 +1,46 @@
+PROGRAM D12r9
+
+! Driver for routine memcof
+
+LIBRARY "memcof"
+DECLARE FUNCTION input$           ! Defined below
+
+LET n = 1000
+LET m = 10
+DIM datq(0), cof(0), wk1(0), wk2(0), wkm(0)
+MAT redim datq(n), cof(m), wk1(n), wk2(n), wkm(m)
+
+CLEAR
+OPEN #1: name "spctrl.dat", org byte, access input
+FOR i = 1 to n
+    LET datq(i) = val(input$(12, 1))
+    IF mod(i, 4) = 0 then LET dum$ = input$(2, 1)
+NEXT i
+CLOSE #1
+
+CALL memcof (datq(), n, m, pm, cof(), wk1(), wk2(), wkm())
+
+PRINT "Coeff. for spectral estim. of spctrl.dat"
+PRINT
+FOR i = 1 to m
+    PRINT "a[";
+    PRINT using "##": i;
+    PRINT "] =";
+    PRINT using "----#.######": cof(i)
+NEXT i
+PRINT
+PRINT "a0 =";
+PRINT using "----#.######": pm
+
+FUNCTION input$(n, f)
+
+    ! ANSI/ISO Basic does not have an input$ function.
+    ! Here, must be an internal function since file numbers
+    ! are local in ANSI/ISO Basic.
+
+    READ #f, bytes n: s$
+    LET input$ = s$
+
+END FUNCTION
+
+END

@@ -1,0 +1,30 @@
+PROGRAM D6r25
+
+! Driver for routine bessk
+
+LIBRARY "bessk"
+DECLARE FUNCTION bessk
+
+CLEAR
+OPEN #1: name "fncval.dat", access input
+DO
+   LINE INPUT #1: text$
+   LET text$ = text$[1:27]
+LOOP while text$ <> "Modified Bessel Function Kn"
+
+LINE INPUT #1: nval$
+LET nval = val(nval$[1:3])
+PRINT text$
+PRINT "   n      x       Actual         bessk(n,x)"
+FOR i = 1 to nval
+    LINE INPUT #1: dum$
+    LET n = val(dum$[1:6])
+    LET x = val(dum$[7:12])
+    LET value = val(dum$[13:1000])
+    PRINT using "####": n;
+    PRINT using "#####.##": x;
+    PRINT using "   #.#######^^^^": value, bessk(n, x)
+NEXT i
+CLOSE #1
+
+END

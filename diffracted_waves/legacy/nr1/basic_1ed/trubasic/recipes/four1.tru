@@ -1,0 +1,49 @@
+EXTERNAL
+
+SUB four1 (datq(), nn, isign)
+
+    LET twopi = 2*pi
+    LET n = 2 * nn
+    LET j = 1
+    FOR i = 1 to n step 2
+        IF j > i then
+           LET tempr = datq(j)
+           LET tempi = datq(j + 1)
+           LET datq(j) = datq(i)
+           LET datq(j + 1) = datq(i + 1)
+           LET datq(i) = tempr
+           LET datq(i + 1) = tempi
+        END IF
+        LET m = int(n / 2)
+        DO while m >= 2 and j > m
+           LET j = j - m
+           LET m = int(m / 2)
+        LOOP
+        LET j = j + m
+    NEXT i
+    LET mmax = 2
+    DO while n > mmax
+       LET istep = 2 * mmax
+       LET theta = twopi / (isign * mmax)
+       LET wpr = -2 * sin(.5 * theta)^2
+       LET wpi = sin(theta)
+       LET wr = 1
+       LET wi = 0
+       FOR m = 1 to mmax step 2
+           FOR i = m to n step istep
+               LET j = i + mmax
+               LET tempr = wr * datq(j) - wi * datq(j + 1)
+               LET tempi = wr * datq(j + 1) + wi * datq(j)
+               LET datq(j) = datq(i) - tempr
+               LET datq(j + 1) = datq(i + 1) - tempi
+               LET datq(i) = datq(i) + tempr
+               LET datq(i + 1) = datq(i + 1) + tempi
+           NEXT i
+           LET wtemp = wr
+           LET wr = wr * wpr - wi * wpi + wr
+           LET wi = wi * wpr + wtemp * wpi + wi
+       NEXT m
+       LET mmax = istep
+    LOOP
+
+END SUB

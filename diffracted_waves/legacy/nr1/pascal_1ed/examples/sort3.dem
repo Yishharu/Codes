@@ -1,0 +1,65 @@
+PROGRAM d8r6(input,output,dfile);
+(* driver for routine SORT3 *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nlen = 64;
+TYPE
+   CharArray40 = PACKED ARRAY [1..40] OF char;
+   CharArray24 = PACKED ARRAY [1..24] OF char;
+   CharArrayNLEN = PACKED ARRAY [1..nlen] OF char;
+   RealArrayNP = ARRAY [1..nlen] OF real;
+   IntegerArrayNP = ARRAY [1..nlen] OF integer;
+VAR
+   i,j: integer;
+   a,b,c: RealArrayNP;
+   amsg1: CharArray40;
+   amsg2: CharArray24;
+   n1,n2: integer;
+   amsg,bmsg,cmsg: CharArrayNLEN;
+   dfile: text;
+
+(*$I INDEXX.PAS *)
+
+(*$I SORT3.PAS *)
+
+BEGIN
+   amsg1 := 'i''d rather have a bottle in front of me ';
+   n1 := 40;
+   amsg2 := 'than a frontal lobotomy.';
+   n2 := 24;
+   FOR i := 1 TO n1 DO amsg[i] := amsg1[i];
+   FOR i := 1 TO n2 DO amsg[n1+i] := amsg2[i];
+   writeln;
+   writeln('original message:');
+   writeln(amsg);
+(* read array of random numbers *)
+   NRopen(dfile,'tarray.dat');
+   readln(dfile);
+   FOR i := 1 TO nlen DO read(dfile,a[i]);
+   close(dfile);
+(* create array b and array c *)
+   FOR i := 1 TO nlen DO BEGIN
+      b[i] := i;
+      c[i] := nlen+1-i
+   END;
+(* sort array a while mixing ib and ic *)
+   sort3(nlen,a,b,c);
+(* scramble message according to array b *)
+   FOR i := 1 TO nlen DO BEGIN
+      j := round(b[i]);
+      bmsg[i] := amsg[j]
+   END;
+   writeln;
+   writeln('scrambled message:');
+   writeln(bmsg);
+(* unscramble according to array c *)
+   FOR i := 1 TO nlen DO BEGIN
+      j := round(c[i]);
+      cmsg[j] := bmsg[i]
+   END;
+   writeln;
+   writeln('mirrored message:');
+   writeln(cmsg)
+END.

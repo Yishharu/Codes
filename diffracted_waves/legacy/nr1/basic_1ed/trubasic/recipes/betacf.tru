@@ -1,0 +1,35 @@
+EXTERNAL
+
+FUNCTION betacf (a, b, x)
+
+    LET itmax = 100
+    LET eps = .0000003
+    LET am = 1
+    LET bm = 1
+    LET az = 1
+    LET qab = a + b
+    LET qap = a + 1
+    LET qam = a - 1
+    LET bz = 1 - qab * x / qap
+    FOR m = 1 to itmax
+        LET em = m
+        LET tem = em + em
+        LET d = em * (b - m) * x / ((qam + tem) * (a + tem))
+        LET ap = az + d * am
+        LET bp = bz + d * bm
+        LET d = -(a + em) * (qab + em) * x / ((a + tem) * (qap + tem))
+        LET app = ap + d * az
+        LET bpp = bp + d * bz
+        LET aold = az
+        LET am = ap / bpp
+        LET bm = bp / bpp
+        LET az = app / bpp
+        LET bz = 1
+        IF abs(az - aold) < eps * abs(az) then
+           LET betacf = az
+           EXIT FUNCTION
+        END IF
+    NEXT m
+    PRINT "a or b too big, or itmax too small"
+
+END FUNCTION

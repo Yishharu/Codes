@@ -1,0 +1,77 @@
+PROGRAM D2r4
+
+! Driver for routine tridag
+
+LIBRARY "tridag"
+
+LET np = 20
+DIM diag(0), superd(0), subd(0), rhs(0), u(0)
+MAT redim diag(np), superd(np), subd(np), rhs(np), u(np)
+
+CLEAR
+OPEN #1: name "matrx2.dat", access input
+DO
+   LINE INPUT #1: txt$
+   IF txt$ = "END" then EXIT DO
+   LINE INPUT #1: dum$
+   LINE INPUT #1: dum$
+   LET n = val(dum$)
+   LINE INPUT #1: dum$
+   LINE INPUT #1: dum$
+   FOR k = 1 to n
+       LET diag(k) = val(dum$[4*k-3:4*k])
+   NEXT k
+   LINE INPUT #1: dum$
+   LINE INPUT #1: dum$
+   FOR k = 1 to n - 1
+       LET superd(k) = val(dum$[4*k-3:4*k])
+   NEXT k
+   LINE INPUT #1: dum$
+   LINE INPUT #1: dum$
+   FOR k = 2 to n
+       LET subd(k) = val(dum$[4*k-7:4*k-4])
+   NEXT k
+   LINE INPUT #1: dum$
+   LINE INPUT #1: dum$
+   FOR k = 1 to n
+       LET rhs(k) = val(dum$[4*k-3:4*k])
+   NEXT k
+
+   ! Carry out solution
+
+   CALL tridag (subd(), diag(), superd(), rhs(), u(), n)
+
+   PRINT "The solution vector is:"
+   FOR k = 1 to n
+       PRINT using "----#.######": u(k);
+   NEXT k
+   PRINT
+
+   ! Test solution
+
+   PRINT "(matrix)*(sol'n vector) should be:"
+   FOR k = 1 to n
+       PRINT using "----#.######": rhs(k);
+   NEXT k
+   PRINT
+   PRINT "Actual result is:"
+   FOR k = 1 to n
+       IF k = 1 then
+          LET rhs(k) = diag(1) * u(1) + superd(1) * u(2)
+       ELSEIF k = n then
+          LET rhs(k) = subd(n) * u(n - 1) + diag(n) * u(n)
+       ELSE
+          LET rhs(k) = subd(k) * u(k - 1) + diag(k) * u(k) + superd(k) * u(k + 1)
+       END IF
+   NEXT k
+   FOR k = 1 to n
+       PRINT using "----#.######": rhs(k);
+   NEXT k
+   PRINT
+   PRINT "*************************************"
+   PRINT "Press Enter for next problem ...";
+   LINE INPUT dum$
+LOOP
+CLOSE #1
+
+END

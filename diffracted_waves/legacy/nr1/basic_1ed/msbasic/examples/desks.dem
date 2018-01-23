@@ -1,0 +1,69 @@
+DECLARE SUB KS (KEQ&(), N!, KN&())
+DECLARE SUB CYFUN (IR&(), K&(), IOUT&())
+
+'PROGRAM D7R14
+'Driver for routines KS and CYFUN in file DESKS.FOR
+CLS
+DIM KEQ&(64), KN&(48), IR&(32), IOUT&(32), TEXT$(64)
+'First test routine KS
+FOR I = 1 TO 64
+  KEQ&(I) = I - 2 * INT(I / 2)
+  IF KEQ&(I) = 0 THEN TEXT$(I) = "-"
+  IF KEQ&(I) = 1 THEN TEXT$(I) = "*"
+NEXT I
+PRINT "Legend:"
+PRINT "          -=0   *=1"
+PRINT "Master key:"
+PRINT "          ";
+FOR I = 1 TO 56
+  PRINT TEXT$(I);
+NEXT I
+PRINT
+PRINT "Sub-master keys:"
+FOR I = 1 TO 16
+  CALL KS(KEQ&(), I, KN&())
+  FOR K = 1 TO 48
+    IF KN&(K) = 0 THEN TEXT$(K) = "-"
+    IF KN&(K) = 1 THEN TEXT$(K) = "*"
+  NEXT K
+  PRINT USING "######"; I;
+  PRINT "    ";
+  FOR J = 1 TO 48
+    PRINT TEXT$(J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT "press RETURN to continue..."
+LINE INPUT DUM$
+'Now test routine CYFUN
+FOR I = 1 TO 32
+  IR&(I) = I - 3 * INT(I / 3)
+  IR&(I) = IR&(I) - 2 * INT(IR&(I) / 2)
+  IF IR&(I) = 0 THEN TEXT$(I) = "-"
+  IF IR&(I) = 1 THEN TEXT$(I) = "*"
+NEXT I
+PRINT "Legend:"
+PRINT "          -=0   *=1 "
+PRINT "Input to cipher function:"
+PRINT "          ";
+FOR I = 1 TO 32
+  PRINT TEXT$(I);
+NEXT I
+PRINT
+PRINT "Ciphered output:"
+FOR I = 1 TO 16
+  CALL KS(KEQ&(), I, KN&())
+  CALL CYFUN(IR&(), KN&(), IOUT&())
+  FOR K = 1 TO 32
+    IF IOUT&(K) = 0 THEN TEXT$(K) = "-"
+    IF IOUT&(K) = 1 THEN TEXT$(K) = "*"
+  NEXT K
+  PRINT USING "######"; I;
+  PRINT "    ";
+  FOR J = 1 TO 32
+    PRINT TEXT$(J);
+  NEXT J
+  PRINT
+NEXT I
+END
+

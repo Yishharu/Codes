@@ -1,0 +1,58 @@
+PROGRAM D9r10
+
+! Driver for routine laguer
+
+LIBRARY "laguer"
+DECLARE FUNCTION cabs             ! With laguer
+
+LET m = 4
+LET mp1 = m + 1
+LET ntry = 21
+DIM a(0,0), y(0,0), x(2)
+MAT redim a(2, mp1), y(2, ntry)
+
+CLEAR
+LET eps = .000001
+FOR j = 1 to mp1
+    FOR i = 1 to 2
+        READ a(i, j)
+    NEXT i
+NEXT j
+DATA 0.0, 2.0, 0.0, 0.0, -1.0, -2.0, 0.0, 0.0, 1.0, 0.0
+
+PRINT "Roots of polynomial x^4 - (1+2i)*x^2 + 2i"
+PRINT
+PRINT "              Real         Complex"
+PRINT
+LET n = 0
+LET polish = 0
+FOR i = 1 to ntry
+    LET x(1) = (i - 11) / 10
+    LET x(2) = (i - 11) / 10
+
+    CALL laguer (a(,), m, x(), eps, polish)
+
+    IF n = 0 then
+       LET n = 1
+       LET y(1, 1) = x(1)
+       LET y(2, 1) = x(2)
+       PRINT using "----#": n;
+       PRINT using "-------#.######": x(1), x(2)
+    ELSE
+       LET iflag = 0
+       FOR j = 1 to n
+           IF cabs(x(1) - y(1, j), x(2) - y(2, j)) <= eps * cabs(x(1), x(2)) then
+              LET iflag = 1
+           END IF
+       NEXT j
+       IF iflag = 0 then
+          LET n = n + 1
+          LET y(1, n) = x(1)
+          LET y(2, n) = x(2)
+          PRINT using "----#": n;
+          PRINT using "-------#.######": x(1), x(2)
+       END IF
+    END IF
+NEXT i
+
+END

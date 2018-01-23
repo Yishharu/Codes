@@ -1,0 +1,27 @@
+DEFINITION MODULE Newton;
+
+   (* EXPORT QUALIFIED RtNewt, RtSafe; *)
+
+   TYPE
+      DerivFunction   = PROCEDURE(REAL, VAR REAL, VAR REAL);
+
+   PROCEDURE RtNewt(funcd: DerivFunction; x1, x2, xacc: REAL): REAL; 
+   (*
+     Using the Newton-Raphson method, find the root of a function
+     known to lie in the interval (x1, x2). The root RtNewt will be 
+     refined until its accuracy is known within (+-)xacc. funcd is a
+     user-supplied routine that provides both the function value and
+     the first derivative of the function at the point x.
+   *)
+
+   PROCEDURE RtSafe(funcd: DerivFunction; x1, x2, xacc: REAL): REAL; 
+   (*
+     Using a combination of Newton-Raphson and bisection, find the root 
+     of a function bracketed between x1 and x2. The root, returned
+     as the function value RtSafe, will be refined until its accuracy 
+     is known within (+-)xacc. funcd is a user-supplied routine that 
+     provides both the function value and the first derivative of the 
+     function.
+   *)
+
+END Newton.

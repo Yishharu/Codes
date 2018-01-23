@@ -1,0 +1,35 @@
+EXTERNAL
+
+SUB covsrt (covar(,), ncvm, ma, lista(), mfit)
+
+    FOR j = 1 to ma - 1
+        FOR i = j + 1 to ma
+            LET covar(i, j) = 0
+        NEXT i
+    NEXT j
+    FOR i = 1 to mfit - 1
+        FOR j = i + 1 to mfit
+            IF lista(j) > lista(i) then
+               LET covar(lista(j), lista(i)) = covar(i, j)
+            ELSE
+               LET covar(lista(i), lista(j)) = covar(i, j)
+            END IF
+        NEXT j
+    NEXT i
+
+    LET swap = covar(1, 1)
+    FOR j = 1 to ma
+        LET covar(1, j) = covar(j, j)
+        LET covar(j, j) = 0
+    NEXT j
+    LET covar(lista(1), lista(1)) = swap
+    FOR j = 2 to mfit
+        LET covar(lista(j), lista(j)) = covar(1, j)
+    NEXT j
+    FOR j = 2 to ma
+        FOR i = 1 to j - 1
+            LET covar(i, j) = covar(j, i)
+        NEXT i
+    NEXT j
+
+END SUB

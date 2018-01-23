@@ -1,0 +1,121 @@
+PROGRAM d16r1(input,output);
+(* driver for routine SHOOT *)
+(* Solves for eigenvalues of spheroidal harmonics. Both
+prolate and oblate case are handled simultaneously, leading
+to six first-order equations. Unknown to shoot, it is
+actually two independent sets of three coupled equations,
+one set with c^2 positive and the other with c^2 negative.  *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nvar = 6;
+   n2 = 2;
+   delta = 1.0e-3;
+   eps = 1.0e-6;
+   dx = 1.0e-4;
+TYPE
+   RealArrayN2 = ARRAY [1..n2] OF real;
+   RealArrayNVAR = ARRAY [1..nvar] OF real;
+   RealArrayN2byN2 = ARRAY [1..n2,1..n2] OF real;
+   RealArrayNP = RealArrayN2;
+   IntegerArrayNP = ARRAY [1..n2] OF integer;
+   RealArrayNPbyNP = RealArrayN2byN2;
+   RealArray200 = ARRAY [1..200] OF real;
+   RealArrayNby200 = ARRAY [1..nvar,1..200] OF real;
+VAR
+   ShootC2,ShootFactr,h1,hmin,q1,x1,x2: real;
+   i,ShootM,ShootN: integer;
+   delv,v: RealArrayN2;
+   dv,f: RealArrayNP;
+   OdeintKmax,OdeintKount: integer;
+   OdeintDxsav: real;
+   OdeintXp: RealArray200;
+   OdeintYp: RealArrayNby200;
+
+PROCEDURE load(x1: real; VAR v: RealArrayN2; VAR y: RealArrayNVAR);
+(* Programs using routine LOAD must declare the global variables
+VAR
+   ShootC2,ShootFactr: real;
+   ShootM: integer;
+in the main routine. *)
+BEGIN
+   y[3] := v[1];
+   y[2] := -(y[3]-ShootC2)*ShootFactr/2.0/(ShootM+1.0);
+   y[1] := ShootFactr+y[2]*dx;
+   y[6] := v[2];
+   y[5] := -(y[6]+ShootC2)*ShootFactr/2.0/(ShootM+1.0);
+   y[4] := ShootFactr+y[5]*dx
+END;
+
+PROCEDURE score(x2: real; VAR y: RealArrayNVAR; VAR f: RealArrayN2);
+(* Programs using routine SCORE must declare the global variables
+VAR
+   ShootM,ShootN: integer;
+in the main routine. *)
+BEGIN
+   IF odd(ShootN-ShootM) THEN BEGIN
+      f[1] := y[1];
+      f[2] := y[4]
+   END ELSE BEGIN
+      f[1] := y[2];
+      f[2] := y[5]
+   END
+END;
+
+PROCEDURE derivs(x: real; VAR y,dydx: RealArrayNVAR);
+(* Programs using routine DERIVS must declare the global variables
+VAR
+   ShootC2: real;
+   ShootM: integer;
+in the main routine. *)
+BEGIN
+   dydx[1] := y[2];
+   dydx[3] := 0.0;
+   dydx[2] := (2.0*x*(ShootM+1.0)*y[2]-(y[3]-ShootC2*x*x)*y[1])/(1.0-x*x);
+   dydx[4] := y[5];
+   dydx[6] := 0.0;
+   dydx[5] := (2.0*x*(ShootM+1.0)*y[5]-(y[6]+ShootC2*x*x)*y[4])/(1.0-x*x)
+END;
+
+(*$I LUBKSB.PAS *)
+
+(*$I LUDCMP.PAS *)
+
+(*$I RK4.PAS *)
+
+(*$I RKQC.PAS *)
+
+(*$I ODEINT.PAS *)
+
+(*$I SHOOT.PAS *)
+
+BEGIN
+   REPEAT
+      write('Input M,N,C-Squared:  ');
+      readln(ShootM,ShootN,ShootC2);
+   UNTIL (ShootN >= ShootM) AND (ShootM >= 0);
+   ShootFactr := 1.0;
+   IF ShootM <> 0 THEN BEGIN
+      q1 := ShootN;
+      FOR i := 1 TO ShootM DO BEGIN
+         ShootFactr := -0.5*ShootFactr*(ShootN+i)*(q1/i);
+         q1 := q1-1.0
+      END
+   END;
+   v[1] := ShootN*(ShootN+1)-ShootM*(ShootM+1)+ShootC2/2.0;
+   v[2] := ShootN*(ShootN+1)-ShootM*(ShootM+1)-ShootC2/2.0;
+   delv[1] := delta*v[1];
+   delv[2] := delv[1];
+   h1 := 0.1;
+   hmin := 0.0;
+   x1 := -1.0+dx;
+   x2 := 0.0;
+   writeln;
+   writeln('Prolate':17,'Oblate':23);
+   writeln('Mu(m,n)':11,'Error Est.':14,'Mu(m,n)':10,'Error Est.':14);
+   REPEAT
+      shoot(nvar,v,delv,n2,x1,x2,eps,h1,hmin,f,dv);
+      writeln(v[1]:12:6,dv[1]:12:6,v[2]:12:6,dv[2]:12:6);
+   UNTIL (abs(dv[1]) <= abs(eps*v[1])) AND (abs(dv[2]) <= abs(eps*v[2]))
+END.

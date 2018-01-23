@@ -1,0 +1,109 @@
+EXTERNAL
+
+SUB amoeba (p(,), y(), mp, np, ndim, ftol, dum, iter)
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    LET alpha = 1
+    LET beta = .5
+    LET gamma = 2
+    LET itmax = 500
+
+    DIM pr(0), prr(0), pbar(0)
+    MAT redim pr(ndim), prr(ndim), pbar(ndim)
+
+    LET mpts = ndim + 1
+    LET iter = 0
+    DO
+       LET ilo = 1
+       IF y(1) > y(2) then
+          LET ihi = 1
+          LET inhi = 2
+       ELSE
+          LET ihi = 2
+          LET inhi = 1
+       END IF
+       FOR i = 1 to mpts
+           IF y(i) < y(ilo) then LET ilo = i
+           IF y(i) > y(ihi) then
+              LET inhi = ihi
+              LET ihi = i
+           ELSEIF y(i) > y(inhi) then
+              IF i <> ihi then LET inhi = i
+           END IF
+       NEXT i
+       LET rtol = 2 * abs(y(ihi) - y(ilo)) / (abs(y(ihi)) + abs(y(ilo)))
+
+       IF rtol < ftol then EXIT SUB
+       IF iter = itmax then
+          PRINT "amoeba exceeding maximum iterations."
+          EXIT SUB
+       END IF
+
+       LET iter = iter + 1
+       MAT pbar = zer
+       FOR i = 1 to mpts
+           IF i <> ihi then
+              FOR j = 1 to ndim
+                  LET pbar(j) = pbar(j) + p(i, j)
+              NEXT j
+           END IF
+       NEXT i
+       FOR j = 1 to ndim
+           LET pbar(j) = pbar(j) / ndim
+           LET pr(j) = (1 + alpha) * pbar(j) - alpha * p(ihi, j)
+       NEXT j
+
+       LET ypr = func(pr(), ndim)
+       IF ypr <= y(ilo) then
+          FOR j = 1 to ndim
+              LET prr(j) = gamma * pr(j) + (1 - gamma) * pbar(j)
+          NEXT j
+          LET yprr = func(prr(), ndim)
+          IF yprr < y(ilo) then
+             FOR j = 1 to ndim
+                 LET p(ihi, j) = prr(j)
+             NEXT j
+             LET y(ihi) = yprr
+          ELSE
+             FOR j = 1 to ndim
+                 LET p(ihi, j) = pr(j)
+             NEXT j
+             LET y(ihi) = ypr
+          END IF
+       ELSEIF ypr >= y(inhi) then
+          IF ypr < y(ihi) then
+             FOR j = 1 to ndim
+                 LET p(ihi, j) = pr(j)
+             NEXT j
+             LET y(ihi) = ypr
+          END IF
+          FOR j = 1 to ndim
+              LET prr(j) = beta * p(ihi, j) + (1 - beta) * pbar(j)
+          NEXT j
+          LET yprr = func(prr(), ndim)
+          IF yprr < y(ihi) then
+             FOR j = 1 to ndim
+                 LET p(ihi, j) = prr(j)
+             NEXT j
+             LET y(ihi) = yprr
+          ELSE
+             FOR i = 1 to mpts
+                 IF i <> ilo then
+                    FOR j = 1 to ndim
+                        LET pr(j) = .5 * (p(i, j) + p(ilo, j))
+                        LET p(i, j) = pr(j)
+                    NEXT j
+                    LET y(i) = func(pr(), ndim)
+                 END IF
+             NEXT i
+          END IF
+       ELSE
+          FOR j = 1 to ndim
+              LET p(ihi, j) = pr(j)
+          NEXT j
+          LET y(ihi) = ypr
+       END IF
+    LOOP
+
+END SUB

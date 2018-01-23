@@ -1,0 +1,249 @@
+EXTERNAL
+
+SUB svdcmp (a(,), m, n, mp, np, w(), v(,))
+
+    DIM rv1(0)
+    MAT redim rv1(n)
+
+    IF m < n then
+       PRINT "You must augment a with extra zero rows."
+       EXIT SUB
+    END IF
+
+    LET g = 0
+    LET scale = 0
+    LET anorm = 0
+    FOR i = 1 to n
+        LET l = i + 1
+        LET rv1(i) = scale * g
+        LET g = 0
+        LET s = 0
+        LET scale = 0
+        IF i <= m then
+           FOR k = i to m
+               LET scale = scale + abs(a(k, i))
+           NEXT k
+           IF scale <> 0 then
+              FOR k = i to m
+                  LET a(k, i) = a(k, i) / scale
+                  LET s = s + a(k, i) * a(k, i)
+              NEXT k
+              LET f = a(i, i)
+              LET g = -abs(sqr(s)) * sgn(f)
+              LET h = f * g - s
+              LET a(i, i) = f - g
+              IF i <> n then
+                 FOR j = l to n
+                     LET s = 0
+                     FOR k = i to m
+                         LET s = s + a(k, i) * a(k, j)
+                     NEXT k
+                     LET f = s / h
+                     FOR k = i to m
+                         LET a(k, j) = a(k, j) + f * a(k, i)
+                     NEXT k
+                 NEXT j
+              END IF
+              FOR k = i to m
+                  LET a(k, i) = scale * a(k, i)
+              NEXT k
+           END IF
+        END IF
+        LET w(i) = scale * g
+
+        LET g = 0
+        LET s = 0
+        LET scale = 0
+        IF i <= m and i <> n then
+           FOR k = l to n
+               LET scale = scale + abs(a(i, k))
+           NEXT k
+           IF scale <> 0 then
+              FOR k = l to n
+                  LET a(i, k) = a(i, k) / scale
+                  LET s = s + a(i, k) * a(i, k)
+              NEXT k
+              LET f = a(i, l)
+              LET g = -abs(sqr(s)) * sgn(f)
+              LET h = f * g - s
+              LET a(i, l) = f - g
+              FOR k = l to n
+                  LET rv1(k) = a(i, k) / h
+              NEXT k
+              IF i <> m then
+                 FOR j = l to m
+                     LET s = 0
+                     FOR k = l to n
+                         LET s = s + a(j, k) * a(i, k)
+                     NEXT k
+                     FOR k = l to n
+                         LET a(j, k) = a(j, k) + s * rv1(k)
+                     NEXT k
+                 NEXT j
+              END IF
+              FOR k = l to n
+                  LET a(i, k) = scale * a(i, k)
+              NEXT k
+           END IF
+        END IF
+        LET anorm = max(anorm, abs(w(i)) + abs(rv1(i)))
+    NEXT i
+
+    FOR i = n to 1 step -1
+        IF i < n then
+           IF g <> 0 then
+              FOR j = l to n
+                  LET v(j, i) = (a(i, j) / a(i, l)) / g
+              NEXT j
+              FOR j = l to n
+                  LET s = 0
+                  FOR k = l to n
+                      LET s = s + a(i, k) * v(k, j)
+                  NEXT k
+                  FOR k = l to n
+                      LET v(k, j) = v(k, j) + s * v(k, i)
+                  NEXT k
+              NEXT j
+           END IF
+           FOR j = l to n
+               LET v(i, j) = 0
+               LET v(j, i) = 0
+           NEXT j
+        END IF
+        LET v(i, i) = 1
+        LET g = rv1(i)
+        LET l = i
+    NEXT i
+
+    FOR i = n to 1 step -1
+        LET l = i + 1
+        LET g = w(i)
+        IF i < n then
+           FOR j = l to n
+               LET a(i, j) = 0
+           NEXT j
+        END IF
+        IF g <> 0 then
+           LET g = 1 / g
+           IF i <> n then
+              FOR j = l to n
+                  LET s = 0
+                  FOR k = l to m
+                      LET s = s + a(k, i) * a(k, j)
+                  NEXT k
+                  LET f = (s / a(i, i)) * g
+                  FOR k = i to m
+                      LET a(k, j) = a(k, j) + f * a(k, i)
+                  NEXT k
+              NEXT j
+           END IF
+           FOR j = i to m
+               LET a(j, i) = a(j, i) * g
+           NEXT j
+        ELSE
+           FOR j = i to m
+               LET a(j, i) = 0
+           NEXT j
+        END IF
+        LET a(i, i) = a(i, i) + 1
+    NEXT i
+
+    FOR k = n to 1 step -1
+        FOR its = 1 to 30
+            FOR l = k to 1 step -1
+                LET nm = l - 1
+                IF abs(rv1(l)) + anorm = anorm then EXIT FOR
+                IF abs(w(nm)) + anorm = anorm then EXIT FOR
+            NEXT l
+            IF abs(rv1(l)) + anorm <> anorm then
+               LET c = 0
+               LET s = 1
+               FOR i = l to k
+                   LET f = s * rv1(i)
+                   LET rv1(i) = c * rv1(i)
+                   IF abs(f) + anorm <> anorm then
+                      LET g = w(i)
+                      LET h = sqr(f * f + g * g)
+                      LET w(i) = h
+                      LET h = 1 / h
+                      LET c = g * h
+                      LET s = -f * h
+                      FOR j = 1 to m
+                          LET y = a(j, nm)
+                          LET z = a(j, i)
+                          LET a(j, nm) = y * c + z * s
+                          LET a(j, i) = -y * s + z * c
+                      NEXT j
+                   END IF
+               NEXT i
+            END IF
+
+            LET z = w(k)
+            IF l = k then
+               IF z < 0 then
+                  LET w(k) = -z
+                  FOR j = 1 to n
+                      LET v(j, k) = -v(j, k)
+                  NEXT j
+               END IF
+               EXIT FOR
+            END IF
+            IF its = 30 then
+               PRINT "No convergence in 30 iterations"
+               EXIT SUB
+            END IF
+
+            LET x = w(l)
+            LET nm = k - 1
+            LET y = w(nm)
+            LET g = rv1(nm)
+            LET h = rv1(k)
+            LET f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2 * h * y)
+            LET g = sqr(f * f + 1)
+            LET f = ((x - z) * (x + z) + h * ((y / (f + abs(g) * sgn(f))) - h)) / x
+
+            LET c = 1
+            LET s = 1
+            FOR j = l to nm
+                LET i = j + 1
+                LET g = rv1(i)
+                LET y = w(i)
+                LET h = s * g
+                LET g = c * g
+                LET z = sqr(f * f + h * h)
+                LET rv1(j) = z
+                LET c = f / z
+                LET s = h / z
+                LET f = x * c + g * s
+                LET g = -x * s + g * c
+                LET h = y * s
+                LET y = y * c
+                FOR jj = 1 to n
+                    LET x = v(jj, j)
+                    LET z = v(jj, i)
+                    LET v(jj, j) = x * c + z * s
+                    LET v(jj, i) = -x * s + z * c
+                NEXT jj
+                LET z = sqr(f * f + h * h)
+                LET w(j) = z
+                IF z <> 0 then
+                   LET z = 1 / z
+                   LET c = f * z
+                   LET s = h * z
+                END IF
+                LET f = c * g + s * y
+                LET x = -s * g + c * y
+                FOR jj = 1 to m
+                    LET y = a(jj, j)
+                    LET z = a(jj, i)
+                    LET a(jj, j) = y * c + z * s
+                    LET a(jj, i) = -y * s + z * c
+                NEXT jj
+            NEXT j
+            LET rv1(l) = 0
+            LET rv1(k) = f
+            LET w(k) = x
+        NEXT its
+    NEXT k
+
+END SUB

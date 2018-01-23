@@ -1,0 +1,36 @@
+DEFINITION MODULE ShootM;
+
+   (* EXPORT QUALIFIED Shoot; *)
+
+   FROM NRVect IMPORT Vector;
+   FROM NRMatr IMPORT Matrix;
+   FROM NRMath IMPORT DerivFunction;
+
+   PROCEDURE Shoot(n: INTEGER; 
+                   V, DELV: Vector; 
+                   x1, x2, eps, h1, hmin: REAL; 
+                   load, score, derivs: DerivFunction;
+                   ShootM,ShootN: INTEGER;
+                   ShootC2,ShootFactr: REAL;
+                   OdeintDxsav: REAL;
+                   OdeintKmax: INTEGER;
+                   ODEIntXp: Vector;
+                   ODEIntYp: Matrix;
+                   VAR OdeintKount: INTEGER;
+                   F, DV: Vector); 
+   (*
+     Improve the trial solution of a two point boundary value problem
+     for n coupled ODEs shooting from x1 to x2. Initial values for the n 
+     ODEs at x1 are generated from the coefficients V[0, n2-1], using the 
+     user-supplied routine load. The routine integrates the ODEs to x2
+     using the Runge-Kutta method with tolerance eps, initial step size 
+     h1, and minimum step size hmin. At x2 it calls the user-supplied routine 
+     score to evaluate the functions F[0, n2-1] that ought to be zero to 
+     satisfy the boundary conditions at x2. Multi-dimensional Newton-Raphson 
+     is then used to develop a linear matrix equation for the increments 
+     DV[0, n2-1] to the adjustable parameters V. These increments are solved 
+     for and added before return. The user-supplied routine derivs(x, y, DYDX) 
+     supplies derivative information to the ODE integrator (see Chapter 15).
+   *)
+
+END ShootM.

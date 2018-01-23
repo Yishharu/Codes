@@ -1,0 +1,45 @@
+PROGRAM D14r10
+
+! Driver for routine medfit
+
+LIBRARY "medfit", "gasdev", "fit"
+DECLARE FUNCTION gasdev
+
+DECLARE PUBLIC npt, x(), y(), arr(), aa, abdev   ! COMMON in rofunc
+LET npt = 100
+MAT redim x(npt), y(npt), arr(npt)
+DIM xd(0), yd(0), sig(0)
+MAT redim xd(npt), yd(npt), sig(npt)
+
+CLEAR
+LET spread = .1
+LET idum = -1984
+FOR i = 1 to npt
+    LET xd(i) = .1 * i
+    LET yd(i) = -2 * xd(i) + 1 + spread * gasdev(idum)
+    LET sig(i) = spread
+NEXT i
+
+LET mwt = 1
+CALL fit (xd(), yd(), npt, sig(), mwt, a, b, siga, sigb, chi2, q)
+
+PRINT "According to routine fit the result is:"
+PRINT using "   A = --#.####": a;
+PRINT using "   Uncertainty: ###.####": siga
+PRINT using "   B = --#.####": b;
+PRINT using "   Uncertainty: ###.####": sigb
+PRINT using "   Chi squared: ###.####": chi2;
+PRINT " for"; npt; "points"
+PRINT "   goodness-of-fit: ";
+PRINT using "###.####": q
+PRINT
+
+CALL medfit (xd(), yd(), npt, a, b, abdevd)
+
+PRINT "According to routine medfit the result is:"
+PRINT using "   A = --#.####": a
+PRINT using "   B = --#.####": b
+PRINT using "   Absolute deviation (per data point): ###.####": abdevd
+PRINT using "   (note: Gaussian spread is###.####)": spread
+
+END

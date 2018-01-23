@@ -1,0 +1,49 @@
+PROGRAM D15r1
+
+! Driver for routine rk4
+
+LIBRARY "rk4", "bessj0", "bessj1", "bessj"
+DECLARE FUNCTION bessj0, bessj1, bessj
+
+LET n = 4
+DIM y(0), dydx(0), yout(0)
+MAT redim y(n), dydx(n), yout(n)
+
+CLEAR
+LET x = 1
+LET y(1) = bessj0(x)
+LET y(2) = bessj1(x)
+LET y(3) = bessj(2, x)
+LET y(4) = bessj(3, x)
+LET dydx(1) = -y(2)
+LET dydx(2) = y(1) - y(2)
+LET dydx(3) = y(2) - 2 * y(3)
+LET dydx(4) = y(3) - 3 * y(4)
+PRINT "Bessel function: j0          j1          j3          j4"
+PRINT
+FOR i = 1 to 5
+    LET h = .2 * i
+
+    CALL rk4 (y(), dydx(), n, x, h, yout(), dum)
+
+    PRINT "For a step size of:";
+    PRINT using "###.##": h
+    PRINT "      RK4:";
+    FOR j = 1 to 4
+        PRINT using "----#.######": yout(j);
+    NEXT j
+    PRINT
+    PRINT "   Actual:";
+    PRINT using "----#.######": bessj0(x + h), bessj1(x + h), bessj(2, x + h);
+    PRINT using "----#.######": bessj(3, x + h)
+    PRINT
+NEXT i
+
+END
+
+SUB derivs (x, y(), dydx())
+    LET dydx(1) = -y(2)
+    LET dydx(2) = y(1) - (1 / x) * y(2)
+    LET dydx(3) = y(2) - (2 / x) * y(3)
+    LET dydx(4) = y(3) - (3 / x) * y(4)
+END SUB

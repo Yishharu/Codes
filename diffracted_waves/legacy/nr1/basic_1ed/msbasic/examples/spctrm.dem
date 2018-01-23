@@ -1,0 +1,26 @@
+DECLARE SUB SPCTRM (P!(), M!, K!, OVRLAP%, W1!(), W2!())
+
+'PROGRAM D12R8
+'Driver for routine SPCTRM
+CLS
+M = 16
+M4 = 4 * M
+DIM P(M), Q(M), W1(M4), W2(M)
+OPEN "SPCTRL.DAT" FOR INPUT AS #1
+K = 8
+OVRLAP% = -1
+CALL SPCTRM(P(), M, K, OVRLAP%, W1(), W2())
+CLOSE #1
+OPEN "SPCTRL.DAT" FOR INPUT AS #1
+K = 16
+OVRLAP% = 0
+CALL SPCTRM(Q(), M, K, OVRLAP%, W1(), W2())
+CLOSE #1
+PRINT "Spectrum of data in file SPCTRL.DAT"
+PRINT "            Overlapped     Non-Overlapped"
+FOR J = 1 TO M
+  PRINT USING "####"; J;
+  PRINT USING "##########.######"; P(J); Q(J)
+NEXT J
+END
+

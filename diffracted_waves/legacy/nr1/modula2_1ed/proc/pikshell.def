@@ -1,0 +1,27 @@
+DEFINITION MODULE PikShell;
+
+   (* EXPORT QUALIFIED PikSr2, PikSrt, Shell; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE PikSr2(ARR, BRR: Vector); 
+   (*
+     Sorts an array ARR[0, n-1] into ascending numerical order, by straight 
+     insertion, while making the corresponding rearrangement of the array 
+     BRR[0, n-1].
+   *)
+
+   PROCEDURE PikSrt(ARR: Vector); 
+   (*
+     Sorts an array ARR[0, n-1] into ascending numerical order, by straight 
+     insertion. ARR is replaced on output by its sorted rearrangement.
+   *)
+
+   PROCEDURE Shell(ARR: Vector); 
+   (*
+     Sorts an array ARR[0, n-1] into ascending numerical order, by the Shell 
+     algorithm (diminishing increment sort). ARR is replaced on output by its 
+     sorted rearrangement.
+   *)
+
+END PikShell.

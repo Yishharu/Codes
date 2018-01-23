@@ -1,0 +1,19 @@
+EXTERNAL
+
+SUB qtrap (dum, a, b, s)
+
+    LIBRARY "trapzd"
+
+    LET eps = .000001
+    LET jmax = 20
+    LET olds = -1e+30
+    FOR j = 1 to jmax
+
+        CALL trapzd (dum, a, b, s, j)
+
+        IF abs(s - olds) < eps * abs(olds) then EXIT SUB
+        LET olds = s
+    NEXT j
+    PRINT "Too many steps."
+
+END SUB

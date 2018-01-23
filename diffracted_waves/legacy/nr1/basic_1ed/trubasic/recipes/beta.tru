@@ -1,0 +1,11 @@
+EXTERNAL
+
+FUNCTION beta (z, w)
+
+    LIBRARY "gammln"
+
+    DECLARE FUNCTION gammln
+
+    LET beta = exp(gammln(z) + gammln(w) - gammln(z + w))
+
+END FUNCTION

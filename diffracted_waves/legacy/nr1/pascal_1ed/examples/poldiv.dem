@@ -1,0 +1,39 @@
+PROGRAM d5r3(input,output);
+(* driver for routine POLDIV *)
+(* (x-1)**5/(x+1)**3 *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 6;
+   nv = 4;
+TYPE
+   RealArrayNP = ARRAY [1..n] OF real;
+   RealArrayNV = ARRAY [1..nv] OF real;
+VAR
+   i: integer;
+   u,q,r: RealArrayNP;
+   v: RealArrayNV;
+
+(*$I POLDIV.PAS *)
+
+BEGIN
+   u[1] := -1.0; u[2] := 5.0; u[3] := -10.0;
+   u[4] := 10.0; u[5] := -5.0; u[6] := 1.0;
+   v[1] := 1.0; v[2] := 3.0; v[3] := 3.0; v[4] := 1.0;
+   poldiv(u,n,v,nv,q,r);
+   writeln;
+   writeln('x^0':10,'x^1':10,'x^2':10,'x^3':10,'x^4':10,'x^5':10);
+   writeln;
+   writeln('quotient polynomial coefficients:');
+   FOR i := 1 TO 6 DO write(q[i]:10:2);
+   writeln;
+   writeln('expected quotient coefficients:');
+   writeln(31.0:10:2,-8.0:10:2,1.0:10:2,0.0:10:2,0.0:10:2,0.0:10:2);
+   writeln;
+   writeln('remainder polynomial coefficients:');
+   FOR i := 1 TO 4 DO write(r[i]:10:2);
+   writeln;
+   writeln('expected remainder coefficients:');
+   writeln(-32.0:10:2,-80.0:10:2,-80.0:10:2,0.0:10:2)
+END.

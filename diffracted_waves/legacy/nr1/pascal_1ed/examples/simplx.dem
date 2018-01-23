@@ -1,0 +1,74 @@
+PROGRAM d10r12(input,output);
+(* driver for routine SIMPLX *)
+(* incorporates examples discussed in text *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 4;
+   m = 4;
+   np = 5;      (* np >= n+1 *)
+   mp = 6;      (* mp >= m+2 *)
+   m1 = 2;      (* m1+m2+m3=m *)
+   m2 = 1;
+   m3 = 1;
+   nm1m2 = 7;   (* nm1m2=n+m1+m2 *)
+TYPE
+   CharArray2 = PACKED ARRAY [1..2] OF char;
+   RealArrayMPbyNP = ARRAY [1..mp,1..np] OF real;
+   IntegerArrayN = ARRAY [1..n] OF integer;
+   IntegerArrayM = ARRAY [1..m] OF integer;
+   IntegerArrayNP = ARRAY [1..np] OF integer;
+VAR
+   i,icase,j: integer;
+   rite: boolean;
+   izrov: IntegerArrayN;
+   iposv: IntegerArrayM;
+   a: RealArrayMPbyNP;
+   txt: ARRAY [1..nm1m2] OF CharArray2;
+
+(*$I SIMPLX.PAS *)
+
+BEGIN
+   txt[1] := 'x1'; txt[2] := 'x2'; txt[3] := 'x3';
+   txt[4] := 'x4'; txt[5] := 'y1'; txt[6] := 'y2';
+   txt[7] := 'y3';
+   a[1,1] := 0.0; a[1,2] := 1.0; a[1,3] := 1.0;
+   a[1,4] := 3.0; a[1,5] := -0.5;
+   a[2,1] := 740.0; a[2,2] := -1.0; a[2,3] := 0.0;
+   a[2,4] := -2.0; a[2,5] := 0.0;
+   a[3,1] := 0.0; a[3,2] := 0.0; a[3,3] := -2.0;
+   a[3,4] := 0.0; a[3,5] := 7.0;
+   a[4,1] := 0.5; a[4,2] := 0.0; a[4,3] := -1.0;
+   a[4,4] := 1.0; a[4,5] := -2.0;
+   a[5,1] := 9.0; a[5,2] := -1.0; a[5,3] := -1.0;
+   a[5,4] := -1.0; a[5,5] := -1.0;
+   simplx(a,m,n,m1,m2,m3,icase,izrov,iposv);
+   writeln;
+   IF icase = 1 THEN
+      writeln('unbounded objective function')
+   ELSE IF icase = -1 THEN
+      writeln('no solutions satisfy constraints given')
+   ELSE BEGIN
+      write(' ':11);
+      FOR i := 1 TO n DO
+         IF izrov[i] <= nm1m2 THEN write(txt[izrov[i]]:10);
+      writeln;
+      FOR i := 1 TO m+1 DO BEGIN
+         IF i = 1 THEN BEGIN
+            write('  ');
+            rite := true
+         END ELSE IF iposv[i-1] <= nm1m2 THEN BEGIN
+            write(txt[iposv[i-1]]);
+            rite := true
+         END ELSE
+            rite := false;
+         IF rite THEN BEGIN
+            write(a[i,1]:10:2);
+            FOR j := 2 TO n+1 DO
+               IF izrov[j-1] <= nm1m2 THEN write(a[i,j]:10:2);
+            writeln
+         END
+      END
+   END
+END.

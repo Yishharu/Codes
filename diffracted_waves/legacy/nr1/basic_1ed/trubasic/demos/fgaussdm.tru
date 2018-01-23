@@ -1,0 +1,47 @@
+PROGRAM D14r9
+
+! Driver for routine fgauss
+
+LIBRARY "fgauss"
+
+LET npt = 3
+LET nlin = 2
+LET na = 3 * nlin
+DIM a(0), dyda(0), df(0)
+MAT redim a(na), dyda(na), df(na)
+
+CLEAR
+MAT READ a
+DATA 3.0, 0.2, 0.5, 1.0, 0.7, 0.3
+
+PRINT "     x       y    dyda1   dyda2   dyda3   dyda4   dyda5   dyda6"
+FOR i = 1 to npt
+    LET x = .3 * i
+
+    CALL fgauss (x, a(), y, dyda(), na)
+
+    LET e1 = exp(-((x - a(2)) / a(3))^2)
+    LET e2 = exp(-((x - a(5)) / a(6))^2)
+    LET f = a(1) * e1 + a(4) * e2
+    LET df(1) = e1
+    LET df(4) = e2
+    LET df(2) = a(1) * e1 * 2 * (x - a(2)) / a(3)^2
+    LET df(5) = a(4) * e2 * 2 * (x - a(5)) / a(6)^2
+    LET df(3) = a(1) * e1 * 2 * (x - a(2))^2 / a(3)^3
+    LET df(6) = a(4) * e2 * 2 * (x - a(5))^2 / a(6)^3
+    PRINT "From fgauss"
+    PRINT using "--#.####": x, y;
+    FOR j = 1 to 6
+        PRINT using "--#.####": dyda(j);
+    NEXT j
+    PRINT
+    PRINT "Independent calc."
+    PRINT using "--#.####": x, f;
+    FOR j = 1 to 6
+        PRINT using "--#.####": df(j);
+    NEXT j
+    PRINT
+    PRINT
+NEXT i
+
+END

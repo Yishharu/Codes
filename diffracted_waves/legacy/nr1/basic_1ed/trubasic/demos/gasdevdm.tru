@@ -1,0 +1,39 @@
+PROGRAM D7r6
+
+! Driver for routine gasdev
+
+LIBRARY "gasdev"
+DECLARE FUNCTION gasdev
+
+LET n = 20
+LET np1 = n + 1
+DIM dist(0)
+MAT redim dist(np1)
+
+CLEAR
+LET nover2 = n / 2
+LET npts = 10000
+LET iscal = 400
+LET llen = 50
+LET idum = -13
+MAT dist = zer
+
+FOR i = 1 to npts
+    LET j = round(.25 * n * gasdev(idum)) + nover2 + 1
+    IF j >= 1 and j <= np1 then LET dist(j) = dist(j) + 1
+NEXT i
+
+PRINT "Normally distributed deviate of"; npts; "points"
+PRINT "    x       p(x)     graph:"
+FOR j = 1 to np1
+    LET dist(j) = dist(j) / npts
+    LET klim = int(iscal * dist(j))
+    IF klim > llen then LET klim = llen
+    LET x = j / (.25 * n)
+    PRINT using "####.##": x;
+    PRINT using "#####.####": dist(j);
+    PRINT "    ";
+    PRINT repeat$("*", klim)
+NEXT j
+
+END

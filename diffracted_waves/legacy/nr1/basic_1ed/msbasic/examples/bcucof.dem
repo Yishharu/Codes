@@ -1,0 +1,36 @@
+DECLARE SUB BCUCOF (Y!(), Y1!(), Y2!(), Y12!(), D1!, D2!, C!())
+
+'PROGRAM D3R10
+'Driver for routine BCUCOF
+CLS
+DIM C(4, 4), Y(4), Y1(4), Y2(4)
+DIM Y12(4), X1(4), X2(4)
+FOR I = 1 TO 4
+  READ X1(I)
+NEXT I
+DATA 0.0,2.0,2.0,0.0
+FOR I = 1 TO 4
+  READ X2(I)
+NEXT I
+DATA 0.0,0.0,2.0,2.0
+D1 = X1(2) - X1(1)
+D2 = X2(4) - X2(1)
+FOR I = 1 TO 4
+  X1X2 = X1(I) * X2(I)
+  EE = EXP(-X1X2)
+  Y(I) = X1X2 * EE
+  Y1(I) = X2(I) * (1! - X1X2) * EE
+  Y2(I) = X1(I) * (1! - X1X2) * EE
+  Y12(I) = (1! - 3! * X1X2 + X1X2 ^ 2) * EE
+NEXT I
+CALL BCUCOF(Y(), Y1(), Y2(), Y12(), D1, D2, C())
+PRINT "Coefficients for bicubic interpolation"
+FOR I = 1 TO 4
+  FOR J = 1 TO 4
+    PRINT "   ";
+    PRINT USING "#.######^^^^"; C(I, J);
+  NEXT J
+  PRINT
+NEXT I
+END
+

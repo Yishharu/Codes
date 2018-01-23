@@ -1,0 +1,23 @@
+DECLARE SUB MDIAN2 (X!(), N!, XMED!)
+DECLARE SUB MDIAN1 (X!(), N!, XMED!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D13R3
+'Driver for routine MDIAN2
+CLS
+NPTS = 50
+DIM DATQ(NPTS)
+IDUM& = -5
+FOR I = 1 TO NPTS
+  DATQ(I) = GASDEV(IDUM&)
+NEXT I
+CALL MDIAN2(DATQ(), NPTS, XMED)
+PRINT "Gaussian distrib., zero mean, unit variance"
+PRINT
+PRINT "Median according to MDIAN2 is";
+PRINT USING "#####.######"; XMED
+CALL MDIAN1(DATQ(), NPTS, XMED)
+PRINT "Median according to MDIAN1 is";
+PRINT USING "#####.######"; XMED
+END
+

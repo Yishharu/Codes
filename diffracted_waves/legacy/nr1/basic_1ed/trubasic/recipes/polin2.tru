@@ -1,0 +1,21 @@
+EXTERNAL
+
+SUB polin2 (x1a(), x2a(), ya(,), m, n, x1, x2, y, dy)
+
+    LIBRARY "polint"
+
+    DIM yntmp(0), ymtmp(0)
+    MAT redim yntmp(n), ymtmp(m)
+
+    FOR j = 1 to m
+        FOR k = 1 to n
+            LET yntmp(k) = ya(j, k)
+        NEXT k
+
+        CALL polint (x2a(), yntmp(), n, x2, ymtmp(j), dy)
+
+    NEXT j
+
+    CALL polint (x1a(), ymtmp(), m, x1, y, dy)
+
+END SUB

@@ -1,0 +1,77 @@
+PROGRAM D13r19
+
+! Driver for routine kendl2
+! Look for "ones-after-zeros" in irbit1 and irbit2 sequences
+
+LIBRARY "irbit1", "irbit2", "kendl2"
+DECLARE FUNCTION irbit1, irbit2
+
+LET ip = 8
+LET jp = 8
+DIM taq(0,0), text$(8)
+MAT redim taq(ip, jp)
+
+MAT READ text$
+DATA "000", "001", "010", "011", "100", "101", "110", "111"
+
+CLEAR
+LET ndat = 1000
+LET i = ip
+LET j = jp
+PRINT "Are ones followed by zeros and vice-versa?"
+PRINT
+FOR ifunc = 1 to 2
+    LET iseed = 2468
+    PRINT "Test of irbit";
+    PRINT using "#": ifunc
+    PRINT
+    FOR k = 1 to i
+        FOR l = 1 to j
+            LET taq(k, l) = 0
+        NEXT l
+    NEXT k
+    FOR m = 1 to ndat
+        LET k = 1
+        FOR n = 0 to 2
+            IF ifunc = 1 then
+               LET k = k + irbit1(iseed) * 2^n
+            ELSE
+               LET k = k + irbit2(iseed) * 2^n
+            END IF
+        NEXT n
+        LET l = 1
+        FOR n = 0 to 2
+            IF ifunc = 1 then
+               LET l = l + irbit1(iseed) * 2^n
+            ELSE
+               LET l = l + irbit2(iseed) * 2^n
+            END IF
+        NEXT n
+        LET taq(k, l) = taq(k, l) + 1
+    NEXT m
+
+    CALL kendl2 (taq(,), i, j, ip, jp, tau, z, prob)
+
+    PRINT "   ";
+    FOR n = 1 to 8
+        PRINT "   "; text$(n);
+    NEXT n
+    PRINT
+    PRINT
+    FOR n = 1 to 8
+        PRINT text$(n);
+        FOR m = 1 to 8
+            PRINT using "-----#": round(taq(n, m));
+        NEXT m
+        PRINT
+    NEXT n
+    PRINT
+    PRINT "      Kendall tau     Std. Dev.     Probability"
+    PRINT using "-------#.######": tau, z, prob
+    PRINT
+    PRINT "press Enter to continue ..."
+    LINE INPUT dum$
+    PRINT
+NEXT ifunc
+
+END

@@ -1,0 +1,50 @@
+DECLARE SUB EIGSRT (D!(), V!(), N!, NP!)
+DECLARE SUB JACOBI (A!(), N!, NP!, D!(), V!(), NROT!)
+
+'PROGRAM D11R2
+'Driver for routine EIGSRT
+CLS
+NP = 10
+DIM D(NP), V(NP, NP), C(NP, NP)
+FOR J = 1 TO NP
+  FOR I = 1 TO NP
+    READ C(I, J)
+  NEXT I
+NEXT J
+DATA 5.0,4.0,3.0,2.0,1.0,0.0,-1.0,-2.0,-3.0,-4.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0
+DATA -1.0,-2.0,-3.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0,-1.0,-2.0,2.0,3.0,4.0,5.0
+DATA 4.0,3.0,2.0,1.0,0.0,-1.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0,0.0,1.0
+DATA 2.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,2.0
+DATA -2.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,-3.0,-2.0,-1.0,0.0,1.0,2.0,3.0
+DATA 4.0,5.0,4.0,-4.0,-3.0,-2.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0
+CALL JACOBI(C(), NP, NP, D(), V(), NROT)
+PRINT "Unsorted Eigenvectors:"
+PRINT
+FOR I = 1 TO NP
+  PRINT
+  PRINT "Eigenvalue"; I; " =";
+  PRINT USING "#####.######"; D(I)
+  PRINT "Eigenvector:"
+  FOR J = 1 TO NP
+    PRINT USING "#####.######"; V(J, I);
+    IF (J MOD 5) = 0 OR J = NP THEN PRINT
+  NEXT J
+NEXT I
+PRINT
+PRINT "****** sorting ******"
+PRINT
+CALL EIGSRT(D(), V(), NP, NP)
+PRINT "Sorted Eigenvectors:"
+PRINT
+FOR I = 1 TO NP
+  PRINT
+  PRINT "Eigenvalue"; I; " =";
+  PRINT USING "#####.######"; D(I)
+  PRINT "Eigenvector:"
+  FOR J = 1 TO NP
+    PRINT USING "#####.######"; V(J, I);
+    IF (J MOD 5) = 0 OR J = NP THEN PRINT
+  NEXT J
+NEXT I
+END
+

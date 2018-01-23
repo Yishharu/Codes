@@ -1,0 +1,35 @@
+PROGRAM d8r3(input,output,dfile);
+(* driver for routine SORT *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   np = 100;
+TYPE
+   RealArrayNP = ARRAY [1..np] OF real;
+VAR
+   i,j: integer;
+   a: RealArrayNP;
+   dfile: text;
+
+(*$I SORT.PAS *)
+
+BEGIN
+   NROpen(dfile,'tarray.dat');
+   readln(dfile);
+   FOR i := 1 TO 100 DO read(dfile,a[i]);;
+   close(dfile);
+(* write original array *)
+   writeln('original array:');
+   FOR i := 1 TO 10 DO BEGIN
+      FOR j := 1 TO 10 DO write(a[10*(i-1)+j]:6:2);
+      writeln
+   END;
+(* write sorted array *)
+   sort(np,a);
+   writeln('sorted array:');
+   FOR i := 1 TO 10 DO BEGIN
+      FOR j := 1 TO 10 DO write(a[10*(i-1)+j]:6:2);
+      writeln
+   END
+END.

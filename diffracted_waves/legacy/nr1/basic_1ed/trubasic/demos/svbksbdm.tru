@@ -1,0 +1,104 @@
+PROGRAM D2r8
+
+! Driver for routine svbksb
+
+LIBRARY "svbksb", "svdcmp"
+
+LET np = 20
+DIM a(0,0), b(0,0), u(0,0), w(0)
+MAT redim a(np, np), b(np, np), u(np, np), w(np)
+DIM v(0,0), c(0), x(0)
+MAT redim v(np, np), c(np), x(np)
+
+CLEAR
+OPEN #1: name"matrx1.dat", access input
+DO
+   LINE INPUT #1: dum$
+   IF dum$ = "END" then EXIT DO
+   LINE INPUT #1: dum$
+   LINE INPUT #1: dum$
+   LET n = val(dum$[1:1])
+   LET m = val(dum$[3:3])
+   LINE INPUT #1: dum$
+   FOR k = 1 to n
+       LINE INPUT #1: dum$
+       FOR l = 1 to n
+           LET a(k, l) = val(dum$[4*l-3:4*l])
+       NEXT l
+   NEXT k
+   LINE INPUT #1: dum$
+   FOR l = 1 to m
+       LINE INPUT #1:dum$
+       FOR k = 1 to n
+           LET b(k, l) = val(dum$[4*k-3:4*k])
+       NEXT k
+   NEXT l
+
+   ! Copy A into U
+
+   FOR k = 1 to n
+       FOR l = 1 to n
+           LET u(k, l) = a(k, l)
+       NEXT l
+   NEXT k
+
+   ! Decompose matrix A
+
+   CALL svdcmp (u(,), n, n, np, np, w(), v(,))
+
+   ! Find maximum singular value
+
+   LET wmax = 0
+   FOR k = 1 to n
+       IF w(k) > wmax then LET wmax = w(k)
+   NEXT k
+
+   ! Define "small"
+
+   LET wmin = wmax * (.000001)
+
+   ! Zero the "small" singular values
+
+   FOR k = 1 to n
+       IF w(k) < wmin then LET w(k) = 0
+   NEXT k
+
+   ! Backsubstitute for each right-hand side vector
+
+   FOR l = 1 to m
+       PRINT "Vector number "; l
+       FOR k = 1 to n
+           LET c(k) = b(k, l)
+       NEXT k
+
+       CALL svbksb (u(,), w(), v(,), n, n, np, np, c(), x())
+
+       PRINT "    Solution vector is:"
+       FOR k = 1 to n
+           PRINT using "----#.######": x(k);
+       NEXT k
+       PRINT
+       PRINT "    Original right-hand side vector:"
+       FOR k = 1 to n
+           PRINT using "----#.######": c(k);
+       NEXT k
+       PRINT
+       PRINT "    Result of (matrix)*(sol'n vector):"
+       FOR k = 1 to n
+           LET c(k) = 0
+           FOR j = 1 to n
+               LET c(k) = c(k) + a(k, j) * x(j)
+           NEXT j
+       NEXT k
+       FOR k = 1 to n
+           PRINT using "----#.######": c(k);
+       NEXT k
+       PRINT
+   NEXT l
+   PRINT "***********************************"
+   PRINT "Press Enter for next problem ...";
+   LINE INPUT dum$
+LOOP
+CLOSE #1
+
+END

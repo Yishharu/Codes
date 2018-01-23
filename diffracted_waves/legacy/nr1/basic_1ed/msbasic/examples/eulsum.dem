@@ -1,0 +1,29 @@
+DECLARE SUB EULSUM (SUM!, TERM!, JTERM!, WKSP!())
+
+'PROGRAM D5R1
+'Driver for routine EULSUM
+CLS
+NVAL = 40
+DIM WKSP(NVAL)
+'Evaluate ln(1+x)=x-x^2/2+x^3/3-x^4/4... for -1<x<1
+DO
+  PRINT "How many terms in polynomial?"
+  PRINT "Enter n between 1 and"; STR$(NVAL); ". Enter n=0 to end."
+  LINE INPUT MVAL$
+  MVAL = VAL(MVAL$)
+  IF MVAL <= 0 OR MVAL > NVAL THEN EXIT DO
+  PRINT "        X        Actual    Polynomial"
+  FOR I = -8 TO 8 STEP 1
+    X = I / 10!
+    SUM = 0!
+    XPOWER = -1
+    FOR J = 1 TO MVAL
+      XPOWER = -X * XPOWER
+      TERM = XPOWER / J
+      CALL EULSUM(SUM, TERM, J, WKSP())
+    NEXT J
+    PRINT USING "#####.######"; X; LOG(1! + X); SUM
+  NEXT I
+LOOP
+END
+

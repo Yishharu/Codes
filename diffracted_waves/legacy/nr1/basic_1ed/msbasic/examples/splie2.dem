@@ -1,0 +1,44 @@
+DECLARE SUB SPLIE2 (X1A!(), X2A!(), YA!(), M!, N!, Y2A!())
+
+'PROGRAM D3R12
+'Driver for routine SPLIE2
+CLS
+M = 10
+N = 10
+DIM X1(M), X2(N), Y(M, N), Y2(M, N)
+FOR I = 1 TO M
+  X1(I) = .2 * I
+NEXT I
+FOR I = 1 TO N
+  X2(I) = .2 * I
+NEXT I
+FOR I = 1 TO M
+  FOR J = 1 TO N
+    X1X2 = X1(I) * X2(J)
+    Y(I, J) = X1X2 ^ 2
+  NEXT J
+NEXT I
+CALL SPLIE2(X1(), X2(), Y(), M, N, Y2())
+PRINT "Second derivatives from SPLIE2"
+PRINT "Natural spline assumed"
+PRINT
+FOR I = 1 TO 5
+  FOR J = 1 TO 5
+    PRINT USING "#####.######"; Y2(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+PRINT "Actual second derivatives"
+PRINT
+FOR I = 1 TO 5
+  FOR J = 1 TO 5
+    Y2(I, J) = 2! * X1(I) ^ 2
+  NEXT J
+  FOR J = 1 TO 5
+    PRINT USING "#####.######"; Y2(I, J);
+  NEXT J
+  PRINT
+NEXT I
+END
+

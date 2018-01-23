@@ -1,0 +1,39 @@
+DECLARE SUB FIT (X!(), Y!(), NDATA!, SIG!(), MWT!, A!, B!, SIGA!, SIGB!, CHI2!, Q!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D14R1
+'Driver for routine FIT
+CLS
+NPT = 100
+SPREAD = .5
+DIM X(NPT), Y(NPT), SIG(NPT)
+IDUM& = -117
+FOR I = 1 TO NPT
+  X(I) = .1 * I
+  Y(I) = -2! * X(I) + 1! + SPREAD * GASDEV(IDUM&)
+  SIG(I) = SPREAD
+NEXT I
+FOR MWT = 0 TO 1
+  CALL FIT(X(), Y(), NPT, SIG(), MWT, A, B, SIGA, SIGB, CHI2, Q)
+  IF MWT = 0 THEN
+    PRINT "Ignoring standard deviation"
+  ELSE
+    PRINT "Including standard deviation"
+  END IF
+  PRINT "   A = ";
+  PRINT USING "##.######"; A;
+  PRINT "      Uncertainty:   ";
+  PRINT USING "##.######"; SIGA
+  PRINT "   B = ";
+  PRINT USING "##.######"; B;
+  PRINT "      Uncertainty:   ";
+  PRINT USING "##.######"; SIGB
+  PRINT "   Chi-squared: ";
+  PRINT USING "#######.######"; CHI2
+  PRINT "   Goodness-of-fit: ";
+  PRINT USING "###.######"; Q
+  PRINT
+  PRINT
+NEXT MWT
+END
+

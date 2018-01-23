@@ -1,0 +1,57 @@
+PROGRAM d10r2(input,output);
+(* driver for routine GOLDEN *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   tol = 1.0e-6;
+   eql = 1.0e-3;
+TYPE
+   RealArray20 = ARRAY [1..20] OF real;
+VAR
+   ax,bx,cx,fa,fb,fc,xmin,gold: real;
+   i,iflag,j,nmin: integer;
+   amin: RealArray20;
+
+(*$I BESSJ0.PAS *)
+
+(*$I BESSJ1.PAS *)
+
+FUNCTION func(x: real): real;
+BEGIN
+   func := bessj0(x)
+END;
+
+(*$I MNBRAK.PAS *)
+
+(*$I GOLDEN.PAS *)
+
+BEGIN
+   nmin := 0;
+   writeln('minima of the function bessj0');
+   writeln('min. #':10,'x':8,'bessj0(x)':17,'bessj1(x)':12);
+   FOR i := 1 TO 100 DO BEGIN
+      ax := i;
+      bx := i+1.0;
+      mnbrak(ax,bx,cx,fa,fb,fc);
+      gold := golden(ax,bx,cx,tol,xmin);
+      IF nmin = 0 THEN BEGIN
+         amin[1] := xmin;
+         nmin := 1;
+         writeln(nmin:7,xmin:15:6,bessj0(xmin):12:6,
+            bessj1(xmin):12:6)
+      END ELSE BEGIN
+         iflag := 0;
+         FOR j := 1 TO nmin DO BEGIN
+            IF abs(xmin-amin[j]) <= eql*xmin THEN
+               iflag := 1;
+         END;
+         IF iflag = 0 THEN BEGIN
+            nmin := nmin+1;
+            amin[nmin] := xmin;
+            writeln(nmin:7,xmin:15:6,bessj0(xmin):12:6,
+               bessj1(xmin):12:6)
+         END
+      END
+   END
+END.

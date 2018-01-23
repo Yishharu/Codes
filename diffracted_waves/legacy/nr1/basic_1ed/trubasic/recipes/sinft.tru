@@ -1,0 +1,35 @@
+EXTERNAL
+
+SUB sinft (y(), n)
+
+    LIBRARY "realft"
+
+    LET theta = pi / n
+    LET wr = 1
+    LET wi = 0
+    LET wpr = -2 * sin(.5 * theta)^2
+    LET wpi = sin(theta)
+    LET y(1) = 0
+    LET m = n / 2
+    FOR j = 1 to m
+        LET wtemp = wr
+        LET wr = wr * wpr - wi * wpi + wr
+        LET wi = wi * wpr + wtemp * wpi + wi
+        LET y1 = wi * (y(j + 1) + y(n - j + 1))
+        LET y2 = .5 * (y(j + 1) - y(n - j + 1))
+        LET y(j + 1) = y1 + y2
+        LET y(n - j + 1) = y1 - y2
+    NEXT j
+
+    CALL realft (y(), m, 1)
+
+    LET sum = 0
+    LET y(1) = .5 * y(1)
+    LET y(2) = 0
+    FOR j = 1 to n - 1 step 2
+        LET sum = sum + y(j)
+        LET y(j) = y(j + 1)
+        LET y(j + 1) = sum
+    NEXT j
+
+END SUB

@@ -1,0 +1,76 @@
+DECLARE SUB SHOOT (NVAR!, V!(), DELV!(), N2!, X1!, X2!, EPS!, H1!, HMIN!, F!(), DV!())
+
+'PROGRAM D16R1
+'Driver for routine SHOOT
+'Solves for eigenvalues of Spheroidal Harmonics. Both
+'Prolate and Oblate case are handled simultaneously, leading
+'to six first-order equations. Unknown to SHOOT, these are
+'actually two independent sets of three coupled equations,
+'one set with c^2 positive and the other with c^2 negative.
+CLS
+NVAR = 6
+N2 = 2
+DELTA = .001
+EPS = .000001
+DIM V(2), DELV(2), F(2), DV(2)
+DX = .0001
+DO
+  PRINT "Input M,N,C-Squared (999 to end)"
+  INPUT M, N, C2
+  IF C2 = 999! THEN END
+LOOP WHILE N < M OR M < 0 OR N < 0
+FACTR = 1!
+IF M <> 0 THEN
+  Q1 = N
+  FOR I = 1 TO M
+    FACTR = -.5 * FACTR * (N + I) * (Q1 / I)
+    Q1 = Q1 - 1!
+  NEXT I
+END IF
+V(1) = N * (N + 1) - M * (M + 1) + C2 / 2!
+V(2) = N * (N + 1) - M * (M + 1) - C2 / 2!
+DELV(1) = DELTA * V(1)
+DELV(2) = DELV(1)
+H1 = .1
+HMIN = 0!
+X1 = -1! + DX
+X2 = 0!
+PRINT "          Prolate                 Oblate"
+PRINT "    Mu(M,N)    Error Est.   Mu(M,N)    Error Est."
+DO
+  CALL SHOOT(NVAR, V(), DELV(), N2, X1, X2, EPS, H1, HMIN, F(), DV())
+  PRINT USING "#####.######"; V(1); DV(1); V(2); DV(2)
+LOOP WHILE ABS(DV(1)) > ABS(EPS * V(1)) OR ABS(DV(2)) > ABS(EPS * V(2))
+END
+
+SUB DERIVS (X, Y(), DYDX())
+SHARED C2, M, N, FACTR, DX
+DYDX(1) = Y(2)
+DYDX(3) = 0!
+DYDX(2) = (2! * X * (M + 1!) * Y(2) - (Y(3) - C2 * X * X) * Y(1)) / (1! - X * X)
+DYDX(4) = Y(5)
+DYDX(6) = 0!
+DYDX(5) = (2! * X * (M + 1!) * Y(5) - (Y(6) + C2 * X * X) * Y(4)) / (1! - X * X)
+END SUB
+
+SUB LOAD (X1, V(), Y())
+SHARED C2, M, N, FACTR, DX
+Y(3) = V(1)
+Y(2) = -(Y(3) - C2) * FACTR / 2! / (M + 1!)
+Y(1) = FACTR + Y(2) * DX
+Y(6) = V(2)
+Y(5) = -(Y(6) + C2) * FACTR / 2! / (M + 1!)
+Y(4) = FACTR + Y(5) * DX
+END SUB
+
+SUB SCORE (X2, Y(), F())
+SHARED C2, M, N, FACTR, DX
+IF (N - M) MOD 2 = 0 THEN
+  F(1) = Y(2)
+  F(2) = Y(5)
+ELSE
+  F(1) = Y(1)
+  F(2) = Y(4)
+END IF
+END SUB
+

@@ -1,0 +1,62 @@
+PROGRAM d2r5(input,output);
+(* driver for routine MPROVE *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 5;
+   np = n;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayNP = ARRAY [1..n] OF real;
+   IntegerArrayNP = ARRAY [1..n] OF integer;
+   RealArrayNPbyNP = ARRAY [1..np,1..np] OF real;
+VAR
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   d: real;
+   i,idum,j: integer;
+   a,aa: RealArrayNPbyNP;
+   b,x: RealArrayNP;
+   indx: IntegerArrayNP;
+
+(*$I RAN3.PAS *)
+
+(*$I LUDCMP.PAS *)
+
+(*$I LUBKSB.PAS *)
+
+(*$I MPROVE.PAS *)
+
+BEGIN
+   a[1,1] := 1.0; a[1,2] := 2.0; a[1,3] := 3.0; a[1,4] := 4.0; 
+   a[1,5] := 5.0; a[2,1] := 2.0; a[2,2] := 3.0; a[2,3] := 4.0;
+   a[2,4] := 5.0; a[2,5] := 1.0; a[3,1] := 1.0; a[3,2] := 1.0;
+   a[3,3] := 1.0; a[3,4] := 1.0; a[3,5] := 1.0; a[4,1] := 4.0;
+   a[4,2] := 5.0; a[4,3] := 1.0; a[4,4] := 2.0; a[4,5] := 3.0;
+   a[5,1] := 5.0; a[5,2] := 1.0; a[5,3] := 2.0; a[5,4] := 3.0;
+   a[5,5] := 4.0;
+   b[1] := 1.0; b[2] := 1.0; b[3] := 1.0; b[4] := 1.0; b[5] := 1.0;
+   FOR i := 1 TO n DO BEGIN
+      x[i] := b[i];
+      FOR j := 1 TO n DO aa[i,j] := a[i,j]
+   END;
+   ludcmp(aa,n,indx,d);
+   lubksb(aa,n,indx,x);
+   writeln;
+   writeln('Solution vector for the equations:');
+   FOR i := 1 TO n DO write(x[i]:12:6);
+   writeln;
+(* now phoney up x and let mprove fit it *)
+   idum := -13;
+   FOR i := 1 TO n DO x[i] := x[i]*(1.0+0.2*ran3(idum));
+   writeln;
+   writeln('Solution vector with noise added:');
+   FOR i := 1 TO n DO write(x[i]:12:6);
+   writeln;
+   mprove(a,aa,n,indx,b,x);
+   writeln;
+   writeln('Solution vector recovered by mprove:');
+   FOR i := 1 TO n DO write(x[i]:12:6);
+   writeln
+END.

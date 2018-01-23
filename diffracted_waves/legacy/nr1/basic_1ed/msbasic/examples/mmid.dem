@@ -1,0 +1,50 @@
+DECLARE SUB MMID (Y!(), DYDX!(), NVAR!, XS!, HTOT!, NSTEP!, YOUT!(), DUM!)
+DECLARE FUNCTION BESSJ! (A!, X!)
+DECLARE FUNCTION BESSJ0! (X!)
+DECLARE FUNCTION BESSJ1! (X!)
+
+'PROGRAM D15R5
+'Driver for routine MMID
+CLS
+NVAR = 4
+X1 = 1!
+HTOT = .5
+DIM Y(NVAR), YOUT(NVAR), DYDX(NVAR)
+Y(1) = BESSJ0(X1)
+Y(2) = BESSJ1(X1)
+Y(3) = BESSJ(2, X1)
+Y(4) = BESSJ(3, X1)
+DYDX(1) = -Y(2)
+DYDX(2) = Y(1) - Y(2)
+DYDX(3) = Y(2) - 2! * Y(3)
+DYDX(4) = Y(3) - 3! * Y(4)
+XF = X1 + HTOT
+B1 = BESSJ0(XF)
+B2 = BESSJ1(XF)
+B3 = BESSJ(2, XF)
+B4 = BESSJ(3, XF)
+PRINT "First four Bessel functions"
+PRINT
+FOR I = 5 TO 50 STEP 5
+  CALL MMID(Y(), DYDX(), NVAR, X1, HTOT, I, YOUT(), DUM)
+  PRINT "X ="; .0001 * CINT(10000 * X1); "to";
+  PRINT .0001 * CINT(10000 * (X1 + HTOT)); "in";
+  PRINT I; "steps"
+  PRINT "   Integration    BESSJ"
+  PRINT USING "#####.######"; YOUT(1); B1
+  PRINT USING "#####.######"; YOUT(2); B2
+  PRINT USING "#####.######"; YOUT(3); B3
+  PRINT USING "#####.######"; YOUT(4); B4
+  PRINT
+  PRINT "press RETURN to continue..."
+  LINE INPUT DUM$
+NEXT I
+END
+
+SUB DERIVS (X, Y(), DYDX())
+DYDX(1) = -Y(2)
+DYDX(2) = Y(1) - (1! / X) * Y(2)
+DYDX(3) = Y(2) - (2! / X) * Y(3)
+DYDX(4) = Y(3) - (3! / X) * Y(4)
+END SUB
+

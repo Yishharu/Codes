@@ -1,0 +1,33 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE SUB ZBRAK (DUM!, X1!, X2!, N!, XB1!(), XB2!(), NB!)
+DECLARE FUNCTION BESSJ0! (X!)
+
+'PROGRAM D9R3
+'Driver for routine ZBRAK
+CLS
+N = 100
+NBMAX = 20
+X1 = 1!
+X2 = 50!
+DIM XB1(NBMAX), XB2(NBMAX)
+NB = NBMAX
+CALL ZBRAK(DUM, X1, X2, N, XB1(), XB2(), NB)
+PRINT "Brackets for roots of BESSJ0:"
+PRINT
+PRINT
+PRINT "               lower     upper          F(lower)  F(upper)"
+PRINT
+FOR I = 1 TO NB
+  PRINT "Root";
+  PRINT USING "###"; I;
+  PRINT USING "#########.####"; XB1(I);
+  PRINT USING "#####.####"; XB2(I);
+  PRINT USING "###########.####"; BESSJ0(XB1(I));
+  PRINT USING "#####.####"; BESSJ0(XB2(I))
+NEXT I
+END
+
+FUNCTION FUNC (X)
+FUNC = BESSJ0(X)
+END FUNCTION
+

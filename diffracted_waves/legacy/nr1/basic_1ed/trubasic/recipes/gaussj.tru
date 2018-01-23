@@ -1,0 +1,81 @@
+EXTERNAL
+
+SUB gaussj (a(,), n, np, b(,), m, mp)
+
+    DIM ipiv(0), indxr(0), indxc(0)
+    MAT redim ipiv(n), indxr(n), indxc(n)
+
+    MAT ipiv = zer   ! Zero out the vector ipiv()
+    FOR i = 1 to n
+        LET big = 0
+        FOR j = 1 to n
+            IF ipiv(j) <> 1 then
+               FOR k = 1 to n
+                   IF ipiv(k) = 0 then
+                      IF abs(a(j, k)) >= big then
+                         LET big = abs(a(j, k))
+                         LET irow = j
+                         LET icol = k
+                      END IF
+                   ELSEIF ipiv(k) > 1 then
+                      PRINT "Singular matrix"
+                      EXIT SUB
+                   END IF
+               NEXT k
+            END IF
+        NEXT j
+        LET ipiv(icol) = ipiv(icol) + 1
+
+        IF irow <> icol then
+           FOR l = 1 to n
+               LET dum = a(irow, l)
+               LET a(irow, l) = a(icol, l)
+               LET a(icol, l) = dum
+           NEXT l
+           FOR l = 1 to m
+               LET dum = b(irow, l)
+               LET b(irow, l) = b(icol, l)
+               LET b(icol, l) = dum
+           NEXT l
+        END IF
+        LET indxr(i) = irow
+        LET indxc(i) = icol
+        IF a(icol, icol) = 0 then
+           PRINT "Singular matrix."
+           EXIT SUB
+        END IF
+
+        LET pivinv = 1 / a(icol, icol)
+        LET a(icol, icol) = 1
+        FOR l = 1 to n
+            LET a(icol, l) = a(icol, l) * pivinv
+        NEXT l
+        FOR l = 1 to m
+            LET b(icol, l) = b(icol, l) * pivinv
+        NEXT l
+
+        FOR ll = 1 to n
+            IF ll <> icol then
+               LET dum = a(ll, icol)
+               LET a(ll, icol) = 0
+               FOR l = 1 to n
+                   LET a(ll, l) = a(ll, l) - a(icol, l) * dum
+               NEXT l
+               FOR l = 1 to m
+                   LET b(ll, l) = b(ll, l) - b(icol, l) * dum
+               NEXT l
+            END IF
+        NEXT ll
+    NEXT i
+
+    FOR l = n to 1 step -1
+        IF indxr(l) <> indxc(l) then
+           FOR k = 1 to n
+               LET dum = a(k, indxr(l))
+               LET a(k, indxr(l)) = a(k, indxc(l))
+               LET a(k, indxc(l)) = dum
+           NEXT k
+        END IF
+    NEXT l
+
+END SUB

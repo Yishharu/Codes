@@ -1,0 +1,56 @@
+DECLARE SUB TQLI (D!(), E!(), N!, NP!, Z!())
+DECLARE SUB TRED2 (A!(), N!, NP!, D!(), E!())
+
+'PROGRAM D11R4
+'Driver for routine TQLI
+CLS
+NP = 10
+TINY = .000001
+DIM A(NP, NP), C(NP, NP), D(NP), E(NP), F(NP)
+FOR J = 1 TO NP
+  FOR I = 1 TO NP
+    READ C(I, J)
+  NEXT I
+NEXT J
+DATA 5.0,4.0,3.0,2.0,1.0,0.0,-1.0,-2.0,-3.0,-4.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0
+DATA -1.0,-2.0,-3.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0,-1.0,-2.0,2.0,3.0,4.0,5.0
+DATA 4.0,3.0,2.0,1.0,0.0,-1.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,0.0,0.0,1.0
+DATA 2.0,3.0,4.0,5.0,4.0,3.0,2.0,1.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,2.0
+DATA -2.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0,4.0,3.0,-3.0,-2.0,-1.0,0.0,1.0,2.0,3.0
+DATA 4.0,5.0,4.0,-4.0,-3.0,-2.0,-1.0,0.0,1.0,2.0,3.0,4.0,5.0
+FOR I = 1 TO NP
+  FOR J = 1 TO NP
+    A(I, J) = C(I, J)
+  NEXT J
+NEXT I
+CALL TRED2(A(), NP, NP, D(), E())
+CALL TQLI(D(), E(), NP, NP, A())
+PRINT "Eigenvectors for a real symmetric matrix"
+FOR I = 1 TO NP
+  FOR J = 1 TO NP
+    F(J) = 0!
+    FOR K = 1 TO NP
+      F(J) = F(J) + C(J, K) * A(K, I)
+    NEXT K
+  NEXT J
+  PRINT
+  PRINT "Eigenvalue"; I; " =";
+  PRINT USING "#####.######"; D(I)
+  PRINT
+  PRINT "     Vector    Mtrx*Vect.      Ratio"
+  FOR J = 1 TO NP
+    IF ABS(A(J, I)) < TINY THEN
+      PRINT USING "#####.######"; A(J, I); F(J);
+      PRINT "       div. by 0"
+    ELSE
+      PRINT USING "#####.######"; A(J, I); F(J);
+      PRINT "     ";
+      PRINT USING ".######^^^^"; F(J) / A(J, I)
+    END IF
+  NEXT J
+  PRINT
+  PRINT "press ENTER to continue..."
+  LINE INPUT DUM$
+NEXT I
+END
+

@@ -1,0 +1,13 @@
+DEFINITION MODULE TridagS;
+
+   (* EXPORT QUALIFIED Tridag; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Tridag(A, B, C, R, U: Vector); 
+   (*
+     Solves for a vector U[n] the tridiagonal linear set given by equation 
+     (2.6.1).  A[n], B[n], C[n] and R[n] are input vectors and are not modified.
+   *)
+
+END TridagS.

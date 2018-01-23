@@ -1,0 +1,32 @@
+MODULE bessk0
+
+    SHARE p1, p2, p3, p4, p5, p6, p7
+    SHARE q1, q2, q3, q4, q5, q6, q7
+
+    READ p1, p2, p3, p4, p5, p6, p7
+    DATA -0.57721566,   0.42278420,  0.23069756
+    DATA  0.3488590e-1, 0.262698e-2, 0.10750e-3, 0.74e-5
+
+    READ q1, q2, q3, q4, q5, q6, q7
+    DATA  1.25331414,  -0.7832358e-1, 0.2189568e-1
+    DATA -0.1062446e-1, 0.587872e-2, -0.251540e-2, 0.53208e-3
+
+    FUNCTION bessk0 (x)
+
+        LIBRARY "bessi0"
+
+        DECLARE FUNCTION bessi0
+
+        IF x <= 2 then
+           LET y = x * x / 4
+           LET dum = p2 + y * (p3 + y * (p4 + y * (p5 + y * (p6 + y * p7))))
+           LET bessk0 = (-log(x / 2) * bessi0(x)) + (p1 + y * dum)
+        ELSE
+           LET y = 2 / x
+           LET dum = q2 + y * (q3 + y * (q4 + y * (q5 + y * (q6 + y * q7))))
+           LET bessk0 = (exp(-x) / sqr(x)) * (q1 + y * dum)
+        END IF
+
+    END FUNCTION
+
+END MODULE

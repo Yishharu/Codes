@@ -1,0 +1,26 @@
+MODULE qgaus
+
+    SHARE x(5), w(5)
+
+    MAT READ x
+    DATA 0.1488743389, 0.4333953941, 0.6794095682, 0.8650633666, 0.9739065285
+
+    MAT READ w
+    DATA 0.2955242247, 0.2692667193, 0.2190863625, 0.1494513491, 0.0666713443
+
+    SUB qgaus (dum, a, b, ss)
+
+        DECLARE FUNCTION func     ! Supplied by the user
+
+        LET xm = .5 * (b + a)
+        LET xr = .5 * (b - a)
+        LET ss = 0
+        FOR j = 1 to 5
+            LET dx = xr * x(j)
+            LET ss = ss + w(j) * (func(xm + dx) + func(xm - dx))
+        NEXT j
+        LET ss = xr * ss
+
+    END SUB
+
+END MODULE

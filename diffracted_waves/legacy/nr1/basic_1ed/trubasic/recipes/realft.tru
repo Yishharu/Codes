@@ -1,0 +1,57 @@
+EXTERNAL
+
+SUB realft (datq(), n, isign)
+
+    LIBRARY "four1"
+
+    LET theta = pi / n
+    LET c1 = .5
+    IF isign = 1 then
+       LET c2 = -.5
+
+       CALL four1 (datq(), n, 1)
+
+    ELSE
+       LET c2 = .5
+       LET theta = -theta
+    END IF
+
+    LET wpr = -2 * sin(.5 * theta)^2
+    LET wpi = sin(theta)
+    LET wr = 1 + wpr
+    LET wi = wpi
+    LET n2p3 = 2 * n + 3
+    FOR i = 2 to int(n / 2)
+        LET i1 = 2 * i - 1
+        LET i2 = i1 + 1
+        LET i3 = n2p3 - i2
+        LET i4 = i3 + 1
+        LET wrs = wr
+        LET wis = wi
+        LET h1r = c1 * (datq(i1) + datq(i3))
+        LET h1i = c1 * (datq(i2) - datq(i4))
+        LET h2r = -c2 * (datq(i2) + datq(i4))
+        LET h2i = c2 * (datq(i1) - datq(i3))
+        LET datq(i1) = h1r + wrs * h2r - wis * h2i
+        LET datq(i2) = h1i + wrs * h2i + wis * h2r
+        LET datq(i3) = h1r - wrs * h2r + wis * h2i
+        LET datq(i4) = -h1i + wrs * h2i + wis * h2r
+        LET wtemp = wr
+        LET wr = wr * wpr - wi * wpi + wr
+        LET wi = wi * wpr + wtemp * wpi + wi
+    NEXT i
+
+    IF isign = 1 then
+       LET h1r = datq(1)
+       LET datq(1) = h1r + datq(2)
+       LET datq(2) = h1r - datq(2)
+    ELSE
+       LET h1r = datq(1)
+       LET datq(1) = c1 * (h1r + datq(2))
+       LET datq(2) = c1 * (h1r - datq(2))
+
+       CALL four1 (datq(), n, -1)
+
+    END IF
+
+END SUB

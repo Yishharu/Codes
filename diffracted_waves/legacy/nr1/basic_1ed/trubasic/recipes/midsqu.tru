@@ -1,0 +1,37 @@
+MODULE midsqu
+
+    SHARE it, s                   ! STATIC, must be preserved between calls
+
+    SUB midsqu (dum, aa, bb, s, n)
+
+        DECLARE FUNCTION func, squ     ! func is supplied by the user
+
+        LET b = sqr(bb - aa)
+        LET a = 0
+        IF n = 1 then
+           LET s = (b - a) * squ(.5 * (a + b), bb)
+           LET it = 1
+        ELSE
+           LET tnm = it
+           LET del = (b - a) / (3 * tnm)
+           LET ddel = del + del
+           LET x = a + .5 * del
+           LET sum = 0
+           FOR j = 1 to it
+               LET sum = sum + squ(x, bb)
+               LET x = x + ddel
+               LET sum = sum + squ(x, bb)
+               LET x = x + del
+           NEXT j
+           LET s = (s + (b - a) * sum / tnm) / 3
+           LET it = 3 * it
+        END IF
+
+        FUNCTION squ (x, bb)
+            DECLARE FUNCTION func
+            LET squ = 2 * x * func(bb - x ^ 2)
+        END FUNCTION
+
+    END SUB
+
+END MODULE

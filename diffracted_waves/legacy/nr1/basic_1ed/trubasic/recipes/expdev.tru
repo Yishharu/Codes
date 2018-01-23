@@ -1,0 +1,13 @@
+EXTERNAL
+
+FUNCTION expdev (idum)
+
+    LIBRARY "ran1"
+    DECLARE FUNCTION ran1
+
+    DO
+       LET dum = ran1(idum)
+    LOOP while dum = 0            ! Make sure ran1 > 0
+    LET expdev = -log(dum)
+
+END FUNCTION

@@ -1,0 +1,39 @@
+DECLARE SUB TUTEST (DATA1!(), N1!, DATA2!(), N2!, T!, PROB!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D13R6A
+'Driver for routine TUTEST
+CLS
+NPTS = 5000
+MPTS = 1000
+EPS = .02
+VAR1 = 1!
+VAR2 = 4!
+NSHFT = 10
+DIM DATA1(NPTS), DATA2(MPTS)
+'Generate two Gaussian distributions of different variance
+IDUM& = -51773
+FCTR1 = SQR(VAR1)
+FOR I = 1 TO NPTS
+  DATA1(I) = FCTR1 * GASDEV(IDUM&)
+NEXT I
+FCTR2 = SQR(VAR2)
+FOR I = 1 TO MPTS
+  DATA2(I) = (NSHFT / 2!) * EPS + FCTR2 * GASDEV(IDUM&)
+NEXT I
+PRINT "Distribution #1 : variance = ";
+PRINT USING "###.##"; VAR1
+PRINT "Distribution #2 : variance = ";
+PRINT USING "###.##"; VAR2
+PRINT
+PRINT "        Shift         T      Probability"
+FOR I = 1 TO NSHFT + 1
+  CALL TUTEST(DATA1(), NPTS, DATA2(), MPTS, T, PROB)
+  SHIFT = (I - 1) * EPS
+  PRINT USING "#########.##"; SHIFT; T; PROB
+  FOR J = 1 TO NPTS
+    DATA1(J) = DATA1(J) + EPS
+  NEXT J
+NEXT I
+END
+

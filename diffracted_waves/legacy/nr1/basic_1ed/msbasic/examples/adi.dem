@@ -1,0 +1,74 @@
+DECLARE SUB ADI (A#(), B#(), C#(), D#(), E#(), F#(), G#(), U#(), JMAX!, K!, ALPHA#, BETA#, EPS#)
+
+'PROGRAM D17R2
+'Driver for routine ADI
+CLS
+DEFDBL A-H, O-Z
+JMAX = 11
+PI = 3.1415926#
+DIM A(JMAX, JMAX), B(JMAX, JMAX), C(JMAX, JMAX), D(JMAX, JMAX)
+DIM E(JMAX, JMAX), F(JMAX, JMAX), G(JMAX, JMAX), U(JMAX, JMAX)
+FOR I = 1 TO JMAX
+  FOR J = 1 TO JMAX
+    A(I, J) = -1!
+    B(I, J) = 2!
+    C(I, J) = -1!
+    D(I, J) = -1!
+    E(I, J) = 2!
+    F(I, J) = -1!
+    G(I, J) = 0!
+    U(I, J) = 0!
+  NEXT J
+NEXT I
+MID = JMAX / 2 + 1
+G(MID, MID) = 2!
+ALPHA = 2! * (1! - COS(PI / JMAX))
+BETA = 2! * (1! - COS((JMAX - 1) * PI / JMAX))
+ALIM = LOG(4! * JMAX / PI)
+K = 0
+DO
+  K = K + 1
+LOOP WHILE 2 ^ K < ALIM
+EPS = .0001
+CALL ADI(A(), B(), C(), D(), E(), F(), G(), U(), JMAX, K, ALPHA, BETA, EPS)
+PRINT "ADI Solution:"
+FOR I = 1 TO JMAX
+  FOR J = 1 TO JMAX
+    PRINT USING "####.##"; U(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+PRINT "Test that solution satisfies Difference Eqns:"
+FOR I = 2 TO JMAX - 1
+  FOR J = 2 TO JMAX - 1
+    DUM = -4! * U(I, J)
+    G(I, J) = DUM + U(I + 1, J) + U(I - 1, J) + U(I, J - 1) + U(I, J + 1)
+  NEXT J
+  PRINT "       ";
+  FOR J = 2 TO JMAX - 1
+    PRINT USING "####.##"; G(I, J);
+  NEXT J
+  PRINT
+NEXT I
+END
+
+SUB TRIDAG (A#(), B#(), C#(), R#(), U#(), N!)
+DEFDBL A-H, O-Z
+'This is a double precision version for use with ADI
+DIM GAM(N)
+IF B(1) = 0! THEN EXIT SUB
+BET = B(1)
+U(1) = R(1) / BET
+FOR J = 2 TO N
+  GAM(J) = C(J - 1) / BET
+  BET = B(J) - A(J) * GAM(J)
+  IF BET = 0! THEN EXIT SUB
+  U(J) = (R(J) - A(J) * U(J - 1)) / BET
+NEXT J
+FOR J = N - 1 TO 1 STEP -1
+  U(J) = U(J) - GAM(J + 1) * U(J + 1)
+NEXT J
+ERASE GAM
+END SUB
+

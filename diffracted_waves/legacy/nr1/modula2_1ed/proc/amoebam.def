@@ -1,0 +1,29 @@
+DEFINITION MODULE AmoebaM;
+
+  (* EXPORT QUALIFIED Amoeba; *)
+
+   FROM NRMath IMPORT VectorFunction;
+   FROM NRVect IMPORT Vector;
+   FROM NRMatr IMPORT Matrix;
+
+   PROCEDURE Amoeba(    P:     Matrix;
+                        Y:     Vector;
+                        ndim:  INTEGER;
+                        ftol:  REAL; 
+                        func:  VectorFunction;
+                    VAR nfunc: INTEGER); 
+   (*
+     Multidimensional minimization of the function func(x)
+     where x[ndim] is a vector in ndim dimensions, by the downhill
+     simplex method of Nelder and Mead.  The matrix P[ndim+1][ndim]
+     is input. Its ndim+1 rows are ndim-dimensional vectors which are the
+     vertices of the starting simplex.
+     Also input is the vector Y[ndim+1], whose components must be pre-
+     initialized to the values of func evaluated at the ndim+1 vertices (rows) 
+     of P; and ftol the fractional convergence tolerance to be achieved in the
+     function value (n.b.!).  On output, P and Y will have been reset to ndim+1
+     new points all within ftol of a minimum function value, and nfunc gives 
+     the number of function evaluations taken.
+   *)
+
+END AmoebaM.

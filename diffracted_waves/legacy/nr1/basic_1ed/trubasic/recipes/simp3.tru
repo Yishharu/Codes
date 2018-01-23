@@ -1,0 +1,22 @@
+EXTERNAL
+
+SUB simp3 (a(,), mp, np, i1, k1, ip, kp)
+
+    LET piv = 1 / a(ip + 1, kp + 1)
+    FOR ii = 1 to i1 + 1
+        IF ii - 1 <> ip then
+           LET a(ii, kp + 1) = a(ii, kp + 1) * piv
+           FOR kk = 1 to k1 + 1
+               IF kk - 1 <> kp then
+                  LET a(ii, kk) = a(ii, kk) - a(ip + 1, kk) * a(ii, kp + 1)
+               END IF
+           NEXT kk
+        END IF
+    NEXT ii
+
+    FOR kk = 1 to k1 + 1
+        IF kk - 1 <> kp then LET a(ip + 1, kk) = -a(ip + 1, kk) * piv
+    NEXT kk
+    LET a(ip + 1, kp + 1) = piv
+
+END SUB

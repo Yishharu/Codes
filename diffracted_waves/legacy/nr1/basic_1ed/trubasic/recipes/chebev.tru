@@ -1,0 +1,21 @@
+EXTERNAL
+
+FUNCTION chebev (a, b, c(), dum, m, x)
+
+    IF (x - a) * (x - b) > 0 then
+       PRINT "x not in range."
+       EXIT FUNCTION
+    END IF
+
+    LET d = 0
+    LET dd = 0
+    LET y = (2 * x - a - b) / (b - a)
+    LET y2 = 2 * y
+    FOR j = m to 2 step -1
+        LET sv = d
+        LET d = y2 * d - dd + c(j)
+        LET dd = sv
+    NEXT j
+    LET chebev = y * d - dd + .5 * c(1)
+
+END FUNCTION

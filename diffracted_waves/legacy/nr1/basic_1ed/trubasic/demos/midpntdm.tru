@@ -1,0 +1,33 @@
+PROGRAM D4r5
+
+! Driver for routine midpnt
+
+LIBRARY "midpnt"
+DECLARE FUNCTION fint             ! Defined below
+
+CLEAR
+LET nmax = 10
+LET a = 0
+LET b = 1
+PRINT "Integral of func computed with midpnt"
+PRINT "Actual value of integral is  ";
+PRINT using "----#.######": fint(b) - fint(a)
+PRINT "     n            Approx. Integral"
+FOR i = 1 to nmax
+
+    CALL midpnt (dum, a, b, s, i)
+
+    PRINT using "######": i;
+    PRINT using "----------------#.######": s
+NEXT i
+
+END
+
+FUNCTION fint (x)
+    ! Integral of func
+    LET fint = 2 * sqr(x)
+END FUNCTION
+
+FUNCTION func (x)
+    LET func = 1 / sqr(x)
+END FUNCTION

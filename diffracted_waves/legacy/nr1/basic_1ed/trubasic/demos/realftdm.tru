@@ -1,0 +1,56 @@
+PROGRAM D12r3
+
+! Driver for routine realft
+
+LIBRARY "realft"
+
+LET np = 32
+DIM datq(0), size(0)
+MAT redim datq(np), size(np)
+
+CLEAR
+LET eps = .001
+LET width = 50
+LET n = np / 2
+DO
+   PRINT "Period of sinusoid in channels (2-"; np; "; or 0 to stop)"
+   INPUT per
+   IF per <= 0 then EXIT DO
+   FOR i = 1 to np
+       LET datq(i) = cos(2 * pi * (i - 1) / per)
+   NEXT i
+
+   CALL realft (datq(), n, 1)
+
+   LET size(1) = abs(datq(1))
+   LET big = size(1)
+   FOR i = 2 to n
+       LET size(i) = sqr(datq(2 * i - 1)^2 + datq(2 * i)^2)
+       IF size(i) > big then LET big = size(i)
+   NEXT i
+   LET scal = width / big
+   FOR i = 1 to n
+       LET nlim = int(scal * size(i) + eps)
+       PRINT using "####": i;
+       PRINT " "; repeat$("*", nlim+1)
+   NEXT i
+   PRINT "press Enter to continue ..."
+   LINE INPUT dum$
+
+   CALL realft (datq(), n, -1)
+
+   LET big = -1e+10
+   LET small = 1e+10
+   FOR i = 1 to np
+       IF datq(i) < small then LET small = datq(i)
+       IF datq(i) > big then LET big = datq(i)
+   NEXT i
+   LET scal = width / (big - small)
+   FOR i = 1 to np
+       LET nlim = int(scal * (datq(i) - small) + eps)
+       PRINT using "####": i;
+       PRINT " "; repeat$("*", nlim+1)
+   NEXT i
+LOOP
+
+END

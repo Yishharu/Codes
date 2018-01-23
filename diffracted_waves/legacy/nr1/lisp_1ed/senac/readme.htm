@@ -1,0 +1,86 @@
+<html><head><title>Numerical Recipes in Common Lisp</title></head><body>
+<center><IMG src="scmslogo.gif"><br>
+
+<h1>Numerical Recipes in Common Lisp</h1> <h3>(Broughan/Senac Version)</h3>
+</center>
+
+The code in <a href="./">this directory</a> is organized into files
+with each file corresponding to a single chapter in Numerical Recipes
+in Fortran, First Edition. The first chapter contains support routines
+which may need to be loaded into Lisp before the Numerical Recipes
+Routines are called. If a function or functions are to be compiled the
+macros in nr00.l must be loaded into the compiler first.<p>
+
+In the main, the subroutines have been translated into Lisp
+defun's which may be called like any other Lisp function. A
+number of subprogrammes have been translated to defvar's: these
+are the ones where state is to be preserved between different
+invocations. To call these use <code>(funcall name arg1 arg2 ...)</code> where
+<code>name</code> is the symbol following the defvar (normally the name of
+the corresponding Numerical Recipes routine).<p>
+
+These functions have been tested with a range of implementations of
+Common Lisp. They have been incorporated into the
+symbolic-numeric-graphic problem solving software system Senac. This
+has an easy to use top level function for each Numerical Recipes
+function with argument datatype checking. For details concerning Senac
+contact <code>kab@waikato.ac.nz</code>.<p>
+
+Links to the individual Lisp files, in this directory:<p>
+
+<a href="nr00.l">nr00.l</a> |
+<a href="nr01.l">nr01.l</a> |
+<a href="nr02.l">nr02.l</a> |
+<a href="nr03.l">nr03.l</a> |
+<a href="nr04.l">nr04.l</a> |
+<a href="nr05.l">nr05.l</a> |
+<a href="nr06.l">nr06.l</a> |
+<a href="nr07.l">nr07.l</a> |
+<a href="nr08.l">nr08.l</a> |
+<a href="nr09.l">nr09.l</a> |
+<a href="nr10.l">nr10.l</a> |
+<a href="nr11.l">nr11.l</a> |
+<a href="nr12.l">nr12.l</a> |
+<a href="nr13.l">nr13.l</a> |
+<a href="nr14.l">nr14.l</a> |
+<a href="nr15.l">nr15.l</a> |
+<a href="nr16.l">nr16.l</a> |
+<a href="nr17.l">nr17.l</a> |
+<p>
+
+Links to related documentation files (PostScript) from the SENPACK
+manual, in this directory, are provided below.  Note that you will
+need either a PostScript printer, or else browser software such as the
+freely available
+<a href="http://www.cs.wisc.edu/~ghost/index.html">GhostScript [external
+link]</a> to utilize these files.<p>
+
+<a href="sp00.ps">sp00.ps</a> |
+<a href="sp01.ps">sp01.ps</a> |
+<a href="sp02.ps">sp02.ps</a> |
+<a href="sp03.ps">sp03.ps</a> |
+<a href="sp04.ps">sp04.ps</a> |
+<a href="sp05.ps">sp05.ps</a> |
+<a href="sp06.ps">sp06.ps</a> |
+<a href="sp07.ps">sp07.ps</a> |
+<a href="sp08.ps">sp08.ps</a> |
+<a href="sp09.ps">sp09.ps</a> |
+<a href="sp10.ps">sp10.ps</a> |
+<a href="sp11.ps">sp11.ps</a> |
+<a href="sp12.ps">sp12.ps</a> |
+<a href="sp13.ps">sp13.ps</a> |
+<a href="sp14.ps">sp14.ps</a> |
+<a href="sp15.ps">sp15.ps</a> |
+<a href="sp16.ps">sp16.ps</a> |
+<a href="sp17.ps">sp17.ps</a> |
+<p>
+
+
+Kevin Broughan<br>
+Hamilton, New Zealand<br>
+24 April 1996<br>
+</body>
+</html>
+
+
+

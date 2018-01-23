@@ -1,0 +1,62 @@
+PROGRAM D12r8
+
+! Driver for routine spctrm
+
+LIBRARY "spctrm"
+
+CLEAR
+LET m = 16
+LET m4 = 4 * m
+DIM p(0), q(0), w1(0), w2(0)
+MAT redim p(m), q(m), w1(m4), w2(m)
+
+! The file operations in this program, and in the recipe spctrm, use
+! the INPUT$ function.  This function is not in ANSI/ISO Basic, but can
+! provided as in the module following this program.
+
+CALL flopen ("spctrl.dat")
+
+LET k = 8
+LET ovrlap = -1
+
+CALL spctrm (p(), m, k, ovrlap, w1(), w2())
+
+CALL fclose
+
+CALL flopen ("spctrl.dat")
+
+LET k = 16
+LET ovrlap = 0
+
+CALL spctrm (q(), m, k, ovrlap, w1(), w2())
+
+CALL fclose
+
+PRINT "Spectrum of data in file spctrl.dat"
+PRINT "            Overlapped     Non-overlapped"
+FOR j = 1 to m
+    PRINT using "####": j;
+    PRINT using "---------#.######": p(j), q(j)
+NEXT j
+
+END
+
+MODULE filestuff
+
+    SHARE #1
+
+    SUB flopen (name$)
+        OPEN #1: name name$, org byte, access input
+    END SUB
+
+    SUB fclose
+        CLOSE #1
+    END SUB
+
+    FUNCTION input$(n, f)
+        ! ANSI/ISO Basic does not have an input$ function.
+        READ #f, bytes n: s$
+        LET input$ = s$
+    END FUNCTION
+
+END MODULE

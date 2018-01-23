@@ -1,0 +1,41 @@
+PROGRAM D13r15
+
+! Driver for routine pearsn
+
+LIBRARY "pearsn"
+
+DIM dose(10), spore(10)
+
+CLEAR
+MAT READ dose
+DATA 56.1, 64.1, 70.0, 66.6, 82.0, 91.3, 90.0, 99.7, 115.3, 110.0
+
+MAT READ spore
+DATA 0.11, 0.40, 0.37, 0.48, 0.75, 0.66, 0.71, 1.20, 1.01, 0.95
+
+PRINT "Effect of gamma rays on man-in-the-moon marigolds"
+PRINT "Count Rate (cpm)           Pollen index"
+FOR i = 1 to 10
+    PRINT using "#######.##": dose(i);
+    PRINT "               ";
+    PRINT using "#######.##": spore(i)
+NEXT i
+PRINT
+
+CALL pearsn (dose(), spore(), 10, r, prob, z)
+
+PRINT "                      Pearsn         Expected"
+PRINT "Corr. coeff.        ";
+PRINT using ".######^^^^": r;
+PRINT "     ";
+PRINT using ".######^^^^": .906959
+PRINT "Probability         ";
+PRINT using ".######^^^^": prob;
+PRINT "     ";
+PRINT using ".######^^^^": 2.9265e-04
+PRINT "Fisher's z          ";
+PRINT using ".######^^^^": z;
+PRINT "     ";
+PRINT using ".######^^^^": 1.51011
+
+END

@@ -1,0 +1,169 @@
+EXTERNAL
+
+SUB simplx (a(,), m, n, mp, np, m1, m2, m3, icase, izrov(), iposv())
+
+    LIBRARY "simp1", "simp2", "simp3"
+
+    LET eps = .000001
+
+    DIM l1(0), l2(0), l3(0)
+    MAT redim l1(m), l2(m), l3(m)
+
+    ! Initialization
+
+    IF m <> m1 + m2 + m3 then
+       PRINT "bad input constraint counts."
+       EXIT SUB
+    END IF
+
+    LET nl1 = n
+    FOR k = 1 to n
+        LET l1(k) = k
+        LET izrov(k) = k
+    NEXT k
+
+    LET nl2 = m
+    FOR i = 1 to m
+        IF a(i + 1, 1) < 0 then
+           PRINT "bad input tableau."
+           EXIT SUB
+        END IF
+        LET l2(i) = i
+        LET iposv(i) = n + i
+    NEXT i
+
+    MAT l3 = con                  ! Vector of all 1's
+
+    ! Done with initialization
+
+    LET icase = 0                 ! Assume phase1 ends ok
+    IF m2 + m3 <> 0 then CALL phase1
+
+    IF icase <> 0 then EXIT SUB   ! If not, exit
+
+    CALL phase2
+
+    EXIT SUB                      ! All done; icase = 0 means ok
+
+    ! Now the internal routines
+
+    SUB phase1
+
+        FOR k = 1 to n + 1
+            LET q1 = 0
+            FOR i = m1 + 1 to m
+                LET q1 = q1 + a(i + 1, k)
+            NEXT i
+            LET a(m + 2, k) = -q1
+        NEXT k
+
+        DO
+           CALL simp1 (a(,), mp, np, m + 1, l1(), nl1, 0, kp, bmax)
+
+           LET gotoone = 0
+           IF bmax <= eps and a(m + 2, 1) < -eps then
+              LET icase = -1
+              EXIT SUB
+
+           ELSEIF bmax <= eps and a(m + 2, 1) <= eps then
+              LET m12 = m1 + m2 + 1
+              FOR ip = m12 to m
+                  IF iposv(ip) = ip + n then
+
+                     CALL simp1 (a(,), mp, np, ip, l1(), nl1, 1, kp, bmax)
+
+                     IF bmax > 0 then
+                        LET gotoone = -1
+                        EXIT FOR  ! Jump out early
+                     END IF
+                  END IF
+              NEXT ip
+              IF gotoone=0 then
+                 LET m12 = m12 - 1
+                 IF m1 + 1 > m12 then EXIT SUB
+                 FOR i = m1 + 1 to m12
+                     IF l3(i - m1) = 1 then
+                        FOR k = 1 to n + 1
+                            LET a(i + 1, k) = -a(i + 1, k)
+                        NEXT k
+                     END IF
+                 NEXT i
+                 EXIT SUB
+              END IF
+           END IF
+
+           IF gotoone=0 then
+
+              CALL simp2 (a(,), m, n, mp, np, l2(), nl2, ip, kp, q1)
+
+              IF ip = 0 then
+                 LET icase = -1
+                 EXIT SUB
+              END IF
+           END IF
+
+           ! Here is label one:
+
+           CALL simp3 (a(,), mp, np, m + 1, n, ip, kp)
+
+           IF iposv(ip) >= n + m1 + m2 + 1 then
+              FOR k = 1 to nl1
+                  IF l1(k) = kp then EXIT FOR
+              NEXT k
+              LET nl1 = nl1 - 1
+              FOR iq = k to nl1
+                  LET l1(iq) = l1(iq + 1)
+              NEXT iq
+              LET a(m + 2, kp + 1) = a(m + 2, kp + 1) + 1
+              FOR i = 1 to m + 2
+                  LET a(i, kp + 1) = -a(i, kp + 1)
+              NEXT i
+           ELSE
+              IF iposv(ip) >= n + m1 + 1 then
+                 LET kh = iposv(ip) - m1 - n
+                 IF l3(kh) <> 0 then
+                    LET l3(kh) = 0
+                    LET a(m + 2, kp + 1) = a(m + 2, kp + 1) + 1
+                    FOR i = 1 to m + 2
+                        LET a(i, kp + 1) = -a(i, kp + 1)
+                    NEXT i
+                 END IF
+              END IF
+           END IF
+           LET is = izrov(kp)
+           LET izrov(kp) = iposv(ip)
+           LET iposv(ip) = is
+        LOOP
+
+    END SUB
+
+    SUB phase2
+
+        ! Keep looping until one of the exit conditions is met
+
+        DO
+
+           CALL simp1 (a(,), mp, np, 0, l1(), nl1, 0, kp, bmax)
+
+           IF bmax <= 0 then
+              LET icase = 0
+              EXIT SUB
+           END IF
+
+           CALL simp2 (a(,), m, n, mp, np, l2(), nl2, ip, kp, q1)
+
+           IF ip = 0 then
+              LET icase = 1
+              EXIT SUB
+           END IF
+
+           CALL simp3 (a(,), mp, np, m, n, ip, kp)
+
+           LET iq = izrov(kp)
+           LET izrov(kp) = iposv(ip)
+           LET iposv(ip) = iq
+        LOOP
+
+    END SUB
+
+END SUB

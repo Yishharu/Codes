@@ -1,0 +1,18 @@
+EXTERNAL
+
+FUNCTION erfcc (x)
+
+    LET z = abs(x)
+    LET t = 1 / (1 + .5 * z)
+    LET dum = t * (-.82215223 + t * .17087277)
+    LET dum = t * (-1.13520398 + t * (1.48851587 + dum))
+    LET dum = t * (.09678418 + t * (-.18628806 + t * (.27886807 + dum)))
+    LET dum = -z * z - 1.26551223 + t * (1.00002368 + t * (.37409196 + dum))
+    LET dum = t * exp(dum)
+    IF x < 0 then
+       LET erfcc = 2 - dum
+    ELSE
+       LET erfcc = dum
+    END IF
+
+END FUNCTION

@@ -1,0 +1,29 @@
+DECLARE SUB POLIN2 (X1A!(), X2A!(), YA!(), M!, N!, X1!, X2!, Y!, DY!)
+
+'PROGRAM D3R9
+'Driver for routine POLIN2
+CLS
+N = 5
+PI = 3.141593
+DIM X1A(N), X2A(N), YA(N, N)
+FOR I = 1 TO N
+  X1A(I) = I * PI / N
+  FOR J = 1 TO N
+    X2A(J) = 1! * J / N
+    YA(I, J) = SIN(X1A(I)) * EXP(X2A(J))
+  NEXT J
+NEXT I
+'Test 2-dimensional interpolation
+PRINT "       x1          x2         f(x)    interpolated    error"
+FOR I = 1 TO 4
+  X1 = (-.1 + I / 5!) * PI
+  FOR J = 1 TO 4
+    X2 = -.1 + J / 5!
+    F = SIN(X1) * EXP(X2)
+    CALL POLIN2(X1A(), X2A(), YA(), N, N, X1, X2, Y, DY)
+    PRINT USING "#####.######"; X1; X2; F; Y; DY
+  NEXT J
+  PRINT "***********************************"
+NEXT I
+END
+

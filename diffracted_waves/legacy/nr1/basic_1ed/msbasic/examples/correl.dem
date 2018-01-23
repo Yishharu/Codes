@@ -1,0 +1,28 @@
+DECLARE SUB CORREL (DATA1!(), DATA2!(), N!, ANS!())
+
+'PROGRAM D12R7
+'Driver for routine CORREL
+CLS
+N = 64
+N2 = 128
+PI = 3.1415927#
+DIM DATA1(N), DATA2(N), ANS(N2)
+FOR I = 1 TO N
+  DATA1(I) = 0!
+  IF I > (N / 2 - N / 8) AND I < (N / 2 + N / 8) THEN DATA1(I) = 1!
+  DATA2(I) = DATA1(I)
+NEXT I
+CALL CORREL(DATA1(), DATA2(), N, ANS())
+'Calculate directly
+PRINT "  n        CORREL      Direct Calc."
+PRINT
+FOR I = 0 TO 16
+  CMP = 0!
+  FOR J = 1 TO N
+    CMP = CMP + DATA1(((I + J - 1) MOD N) + 1) * DATA2(J)
+  NEXT J
+  PRINT USING "###"; I;
+  PRINT USING "########.######"; ANS(I + 1); CMP
+NEXT I
+END
+

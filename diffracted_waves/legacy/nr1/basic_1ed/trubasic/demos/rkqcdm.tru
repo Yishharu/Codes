@@ -1,0 +1,44 @@
+PROGRAM D15r3
+
+! Driver for routine rkqc
+
+LIBRARY "rkqc", "bessj0", "bessj1", "bessj"
+DECLARE FUNCTION bessj0, bessj1, bessj
+
+LET n = 4
+DIM y(0), dydx(0), yscal(0)
+MAT redim y(n), dydx(n), yscal(n)
+
+CLEAR
+LET x = 1
+LET y(1) = bessj0(x)
+LET y(2) = bessj1(x)
+LET y(3) = bessj(2, x)
+LET y(4) = bessj(3, x)
+LET dydx(1) = -y(2)
+LET dydx(2) = y(1) - y(2)
+LET dydx(3) = y(2) - 2 * y(3)
+LET dydx(4) = y(3) - 3 * y(4)
+FOR i = 1 to n
+    LET yscal(i) = 1
+NEXT i
+LET htry = .1
+PRINT "      eps        htry      hdid        hnext"
+FOR i = 1 to 15
+    LET eps = exp(-i)
+
+    CALL rkqc (y(), dydx(), n, x, htry, eps, yscal(), hdid, hnext, dum)
+
+    PRINT using "    .####^^^^": eps;
+    PRINT using "----#.##": htry;
+    PRINT using "----#.######": hdid, hnext
+NEXT i
+
+END
+
+SUB derivs (x, y(), dydx())
+    LET dydx(1) = -y(2)
+    LET dydx(2) = y(1) - (1 / x) * y(2)
+    LET dydx(3) = y(2) - (2 / x) * y(3)
+    LET dydx(4) = y(3) - (3 / x) * y(4)
+END SUB

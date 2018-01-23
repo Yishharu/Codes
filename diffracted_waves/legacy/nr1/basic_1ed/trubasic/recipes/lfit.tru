@@ -1,0 +1,79 @@
+EXTERNAL
+
+SUB lfit (x(), y(), sig(), ndata, a(), ma, lista(), mfit, covar(,), ncvm, chisq, dum)
+
+    LIBRARY "gaussj", "covsrt"
+
+    DECLARE FUNCTION funcs        ! Supplied by the user
+
+    DIM beta(0,0), afunc(0)
+    MAT redim beta(ma, 1), afunc(ma)
+
+    LET kk = mfit + 1
+    FOR j = 1 to ma
+        LET ihit = 0
+        FOR k = 1 to mfit
+            IF lista(k) = j then LET ihit = ihit + 1
+        NEXT k
+        IF ihit = 0 then
+           LET lista(kk) = j
+           LET kk = kk + 1
+        ELSEIF ihit > 1 then
+           PRINT "Improper set in lista"
+           EXIT SUB
+        END IF
+    NEXT j
+    IF kk <> (ma + 1) then
+       PRINT "Improper set in lista"
+       EXIT SUB
+    END IF
+
+    FOR j = 1 to mfit
+        FOR k = 1 to mfit
+            LET covar(j, k) = 0
+        NEXT k
+        LET beta(j, 1) = 0
+    NEXT j
+    FOR i = 1 to ndata
+
+        CALL funcs (x(i), afunc(), ma)
+
+        LET ym = y(i)
+        FOR j = mfit + 1 to ma
+            LET ym = ym - a(lista(j)) * afunc(lista(j))
+        NEXT j
+        LET sig2i = 1 / sig(i)^2
+        FOR j = 1 to mfit
+            LET wt = afunc(lista(j)) * sig2i
+            FOR k = 1 to j
+                LET covar(j, k) = covar(j, k) + wt * afunc(lista(k))
+            NEXT k
+            LET beta(j, 1) = beta(j, 1) + ym * wt
+        NEXT j
+    NEXT i
+    FOR j = 2 to mfit
+        FOR k = 1 to j - 1
+            LET covar(k, j) = covar(j, k)
+        NEXT k
+    NEXT j
+
+    CALL gaussj (covar(,), mfit, ncvm, beta(,), 1, 1)
+
+    FOR j = 1 to mfit
+        LET a(lista(j)) = beta(j, 1)
+    NEXT j
+    LET chisq = 0
+    FOR i = 1 to ndata
+
+        CALL funcs (x(i), afunc(), ma)
+
+        LET sum = 0
+        FOR j = 1 to ma
+            LET sum = sum + a(j) * afunc(j)
+        NEXT j
+        LET chisq = chisq + ((y(i) - sum) / sig(i))^2
+    NEXT i
+
+    CALL covsrt (covar(,), ncvm, ma, lista(), mfit)
+
+END SUB

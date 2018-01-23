@@ -1,0 +1,15 @@
+EXTERNAL
+
+SUB chder (a, b, c(), cder(), n)
+
+    LET cder(n) = 0
+    LET cder(n - 1) = 2 * (n - 1) * c(n)
+    FOR j = n - 2 to 1 step -1
+        LET cder(j) = cder(j + 2) + 2 * j * c(j + 1)
+    NEXT j
+    LET const = 2 / (b - a)
+    FOR j = 1 to n
+        LET cder(j) = cder(j) * const
+    NEXT j
+
+END SUB

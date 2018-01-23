@@ -1,0 +1,40 @@
+MODULE bessj1
+
+    SHARE r1, r2, r3, r4, r5, r6, s1, s2, s3, s4, s5, s6
+    SHARE p1, p2, p3, p4, p5, q1, q2, q3, q4, q5
+
+    READ r1, r2, r3, r4, r5, r6
+    READ s1, s2, s3, s4, s5, s6
+    DATA  72362614232.0, -7895059235.0, 242396853.1, -2972611.439
+    DATA        15704.48260,     -30.16036606
+    DATA 144725228442.0,  2300535178.0,  18583304.74,   99447.43394
+    DATA          376.9991397,     1.0
+
+    READ p1, p2, p3, p4, p5
+    READ q1, q2, q3, q4, q5
+    DATA  1.0,              0.183105e-2,    -0.3516396496e-4
+    DATA  0.2457520174e-5, -0.240337019e-6
+    DATA  0.04687499995,   -0.2002690873e-3, 0.8449199096e-5
+    DATA -0.88228987e-6,    0.105787412e-6
+
+    FUNCTION bessj1 (x)
+
+        IF abs(x) < 8 then
+           LET y = x^2
+           LET num = r1 + y * (r2 + y * (r3 + y * (r4 + y * (r5 + y * r6))))
+           LET dum = s1 + y * (s2 + y * (s3 + y * (s4 + y * (s5 + y * s6))))
+           LET bessj1 = x * num / dum
+        ELSE
+           LET ax = abs(x)
+           LET z = 8 / ax
+           LET y = z^2
+           LET xx = ax - 2.356194491
+           LET dum = cos(xx) * (p1 + y * (p2 + y * (p3 + y * (p4 + y * p5))))
+           LET dum = dum - z * sin(xx) * (q1 + y * (q2 + y * (q3 + y * (q4 + y * q5))))
+           LET dum = dum * sgn(x)
+           LET bessj1 = sqr(.636619772 / ax) * dum
+        END IF
+
+    END FUNCTION
+
+END MODULE

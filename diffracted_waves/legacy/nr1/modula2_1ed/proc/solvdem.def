@@ -1,0 +1,45 @@
+DEFINITION MODULE SolvDEM;
+
+   (* EXPORT QUALIFIED SolvDE; *)
+
+   FROM NRVect IMPORT Vector;
+   FROM NRIVect IMPORT IVector;
+   FROM NRMatr IMPORT Matrix;
+
+	CONST
+	   MaxI = 5;
+	   MaxJ = 5;
+	   MaxK = 50;
+	TYPE
+	   RealArray3Dim = ARRAY [0..MaxI-1], [0..MaxJ-1], [0..MaxK-1] OF REAL;
+      DifeqFunc = PROCEDURE(INTEGER, INTEGER, INTEGER, INTEGER, INTEGER, INTEGER,
+                            IVector, Matrix, Matrix);
+
+   PROCEDURE SolvDE(itmax: INTEGER; 
+                    conv, slowc: REAL; 
+                    SCALV: Vector;
+                    INDEXV: IVector; 
+                    nb, m: INTEGER; 
+                    Y: Matrix; 
+                    c: RealArray3Dim; 
+                    S: Matrix;
+                    Difeq: DifeqFunc); 
+   (*
+     Driver routine for solution of two point boundary value problems 
+     by relaxation. itmax is the maximum number of iterations. conv is 
+     the convergence criterion (see text). slowc controls the fraction 
+     of corrections actually used after each iteration. SCALV[ne] contains
+     typical sizes for each dependent variable, used to weight errors. 
+     INDEXV[ne] lists the column ordering of variables used to construct 
+     the matrix S[ne, 2*ne+1] of derivatives. (The nb boundary conditions at 
+     the first mesh point must contain some dependence on the first nb 
+     variables listed in INDEXV.) The problem involves ne equations 
+     for ne adjustable dependent variables at each point. At the first mesh 
+     point there are nb boundary conditions. There are a total of m mesh points.
+     Y[ne, m] is the two-dimensional array that contains the initial guess for 
+     all the dependent variables at each mesh point. On each iteration, it 
+     is updated by the calculated correction. The arrays C[0..ne][0..ne-nb][0..m]
+     and S supply dummy storage used by the relaxation code.
+   *)
+
+END SolvDEM.

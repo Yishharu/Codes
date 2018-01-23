@@ -1,0 +1,23 @@
+DEFINITION MODULE CorrelM;
+
+   (* EXPORT QUALIFIED Correl; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Correl(DATA1, DATA2: Vector; 
+                    n:            INTEGER; 
+                    ANS:          Vector); 
+   (*
+     Computes the correlation of two real data sets DATA1[0, n-1]
+     and DATA2[0, n-1], each of length n (including any user-supplied
+     zero padding).  n MUST be an integer power of two.  The answer
+     is returned as the first n points in ANS[0, 2*n-1] stored in wraparound
+     order, i.e.correlations at increasingly negative lags are in ANS[n-1]
+     on down to ANS[n/2], while correlations at increasingly positive
+     lags are in ANS[0] (zero lag) on up to ANS[n/2-1].  Note that
+     ANS must be supplied in the calling program with length at least
+     2*n, since it is also used as working space.  Sign convention of this
+     routine: if DATA1 lags DATA2, i.e. is shifted to the right of it,
+     then ANS will show a peak at positive lags.
+   *)
+END CorrelM.

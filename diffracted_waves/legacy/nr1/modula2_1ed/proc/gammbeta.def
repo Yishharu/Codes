@@ -1,0 +1,32 @@
+DEFINITION MODULE GammBeta;
+
+   (*  EXPORT QUALIFIED GammLn, Factrl, BiCo, FactLn, Beta; *)
+
+   PROCEDURE GammLn(xx: REAL): REAL; 
+   (*
+     Returns the value ln["Gamma"(xx)] for xx>0.  Full accuracy is obtained 
+     for xx > 1. For 0 < xx <1, the reflection formula (6.1.4) can be used first.
+   *)
+
+   PROCEDURE Factrl(n: INTEGER): REAL; 
+   (*
+     Returns the value n! as a floating point number.
+   *)
+
+   PROCEDURE BiCo(n, k: INTEGER): REAL; 
+   (*
+     Returns the binomial coefficient (n choose k) as a floating-point
+     number.
+   *)
+
+   PROCEDURE FactLn(n: INTEGER): REAL; 
+   (*
+     Returns ln(n!).
+   *)
+
+   PROCEDURE Beta(z, w: REAL): REAL; 
+   (*
+     Returns the value of the beta function b(z,w).
+   *)
+
+END GammBeta.

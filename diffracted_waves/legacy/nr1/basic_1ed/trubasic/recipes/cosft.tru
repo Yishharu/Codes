@@ -1,0 +1,51 @@
+EXTERNAL
+
+SUB cosft (y(), n, isign)
+
+    LIBRARY "realft"
+
+    LET theta = pi / n
+    LET wr = 1
+    LET wi = 0
+    LET wpr = -2 * sin(.5 * theta)^2
+    LET wpi = sin(theta)
+    LET sum = y(1)
+    LET m = n / 2
+    FOR j = 1 to m - 1
+        LET wtemp = wr
+        LET wr = wr * wpr - wi * wpi + wr
+        LET wi = wi * wpr + wtemp * wpi + wi
+        LET y1 = .5 * (y(j + 1) + y(n - j + 1))
+        LET y2 = y(j + 1) - y(n - j + 1)
+        LET y(j + 1) = y1 - wi * y2
+        LET y(n - j + 1) = y1 + wi * y2
+        LET sum = sum + wr * y2
+    NEXT j
+
+    CALL realft (y(), m, 1)
+
+    LET y(2) = sum
+    FOR j = 4 to n step 2
+        LET sum = sum + y(j)
+        LET y(j) = sum
+    NEXT j
+
+    IF isign = -1 then
+       LET even = y(1)
+       LET odd = y(2)
+       FOR i = 3 to n - 1 step 2
+           LET even = even + y(i)
+           LET odd = odd + y(i + 1)
+       NEXT i
+       LET enf0 = 2 * (even - odd)
+       LET sumo = y(1) - enf0
+       LET sume = 2 * odd / n - sumo
+       LET y(1) = .5 * enf0
+       LET y(2) = y(2) - sume
+       FOR i = 3 to n - 1 step 2
+           LET y(i) = y(i) - sumo
+           LET y(i + 1) = y(i + 1) - sume
+       NEXT i
+    END IF
+
+END SUB

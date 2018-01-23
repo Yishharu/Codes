@@ -1,0 +1,20 @@
+DEFINITION MODULE FitM;
+
+   (* EXPORT QUALIFIED Fit; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Fit(    X, Y, SIG: Vector; mwt: INTEGER; 
+                 VAR a, b, siga, sigb, chi2, q: REAL); 
+   (*
+     Fit a straight line y=a+bx to a given set of points 
+     X[0, ndata-1], Y[0, ndata-1], with standard deviations
+     SIG[0, ndata], by minimizing  "chi"^2.
+     Returned are a, b and their respective probable uncertainties siga and
+     sigb, the chi-square chi2, and the goodness-of-fit probability q
+     (that the fit would have "chi"^2 this large or larger). If mwt=0 on 
+     input, then the standard deviations are assumed to be unavailable: q is 
+     returned as 1.0 and the normalization of chi2 is to unit 
+     standard deviation on all points.
+   *)
+END FitM.

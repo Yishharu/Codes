@@ -1,0 +1,49 @@
+EXTERNAL
+
+SUB golden (ax, bx, cx, dum, tol, golden, xmin)
+
+    ! This routine has been repackaged as a subroutine
+    ! since it returns two values: golden and xmin.
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    LET r = .61803399
+    LET c = 1 - r
+
+    LET x0 = ax
+    LET x3 = cx
+    IF abs(cx - bx) > abs(bx - ax) then
+       LET x1 = bx
+       LET x2 = bx + c * (cx - bx)
+    ELSE
+       LET x2 = bx
+       LET x1 = bx - c * (bx - ax)
+    END IF
+
+    LET f1 = func(x1)
+    LET f2 = func(x2)
+    DO WHILE abs(x3 - x0) > tol * (abs(x1) + abs(x2))
+       IF f2 < f1 then
+          LET x0 = x1
+          LET x1 = x2
+          LET x2 = r * x1 + c * x3
+          LET f1 = f2
+          LET f2 = func(x2)
+       ELSE
+          LET x3 = x2
+          LET x2 = x1
+          LET x1 = r * x2 + c * x0
+          LET f2 = f1
+          LET f1 = func(x1)
+       END IF
+    LOOP
+
+    IF f1 < f2 then
+       LET golden = f1
+       LET xmin = x1
+    ELSE
+       LET golden = f2
+       LET xmin = x2
+    END IF
+
+END SUB

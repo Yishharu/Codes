@@ -1,0 +1,51 @@
+PROGRAM d15r3(input,output);
+(* driver for routine RKQC *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 4;
+TYPE
+   RealArrayNVAR = ARRAY [1..n] OF real;
+VAR
+   eps,hdid,hnext,htry,x: real;
+   i: integer;
+   y,dydx,yscal: RealArrayNVAR;
+
+(*$I BESSJ0.PAS *)
+
+(*$I BESSJ1.PAS *)
+
+(*$I BESSJ.PAS *)
+
+PROCEDURE derivs(x: real; VAR y,dydx: RealArrayNVAR);
+BEGIN
+   dydx[1] := -y[2];
+   dydx[2] := y[1]-(1.0/x)*y[2];
+   dydx[3] := y[2]-(2.0/x)*y[3];
+   dydx[4] := y[3]-(3.0/x)*y[4]
+END;
+
+(*$I RK4.PAS *)
+
+(*$I RKQC.PAS *)
+
+BEGIN
+   x := 1.0;
+   y[1] := bessj0(x);
+   y[2] := bessj1(x);
+   y[3] := bessj(2,x);
+   y[4] := bessj(3,x);
+   dydx[1] := -y[2];
+   dydx[2] := y[1]-y[2];
+   dydx[3] := y[2]-2.0*y[3];
+   dydx[4] := y[3]-3.0*y[4];
+   FOR i := 1 TO n DO yscal[i] := 1.0;
+   htry := 0.1;
+   writeln('eps':8,'htry':13,'hdid':12,'hnext':13);
+   FOR i := 1 TO 15 DO BEGIN
+      eps := exp(-i);
+      rkqc(y,dydx,n,x,htry,eps,yscal,hdid,hnext);
+      writeln(eps:13,htry:8:2,hdid:14:6,hnext:12:6)
+   END
+END.

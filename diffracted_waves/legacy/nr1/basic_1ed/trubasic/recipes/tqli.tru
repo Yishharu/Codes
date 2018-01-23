@@ -1,0 +1,65 @@
+EXTERNAL
+
+SUB tqli (d(), e(), n, np, z(,))
+
+    FOR i = 2 to n
+        LET e(i - 1) = e(i)
+    NEXT i
+    LET e(n) = 0
+    FOR l = 1 to n
+        LET iter = 0
+        DO
+           FOR m = l to n - 1
+               LET dd = abs(d(m)) + abs(d(m + 1))
+               IF abs(e(m)) + dd = dd then EXIT FOR
+           NEXT m
+           IF m = l then EXIT DO  ! Normal exit
+
+           IF iter = 30 then
+              PRINT "too many iterations"
+              EXIT SUB
+           END IF
+
+           LET iter = iter + 1
+           LET g = (d(l + 1) - d(l)) / (2 * e(l))
+           LET r = sqr(g^2 + 1)
+           LET g = d(m) - d(l) + e(l) / (g + abs(r) * sgn(g))
+           LET s = 1
+           LET c = 1
+           LET p = 0
+           FOR i = m - 1 to l step -1
+               LET f = s * e(i)
+               LET b = c * e(i)
+               IF abs(f) >= abs(g) then
+                  LET c = g / f
+                  LET r = sqr(c^2 + 1)
+                  LET e(i + 1) = f * r
+                  LET s = 1 / r
+                  LET c = c * s
+               ELSE
+                  LET s = f / g
+                  LET r = sqr(s^2 + 1)
+                  LET e(i + 1) = g * r
+                  LET c = 1 / r
+                  LET s = s * c
+               END IF
+               LET g = d(i + 1) - p
+               LET r = (d(i) - g) * s + 2 * c * b
+               LET p = s * r
+               LET d(i + 1) = g + p
+               LET g = c * r - b
+               ! omit lines from here ...
+               FOR k = 1 to n
+                   LET f = z(k, i + 1)
+                   LET z(k, i + 1) = s * z(k, i) + c * f
+                   LET z(k, i) = c * z(k, i) - s * f
+               NEXT k
+               ! ... to here when finding only eigenvalues.
+           NEXT i
+           LET d(l) = d(l) - p
+           LET e(l) = g
+           LET e(m) = 0
+        LOOP
+    NEXT l
+
+END SUB

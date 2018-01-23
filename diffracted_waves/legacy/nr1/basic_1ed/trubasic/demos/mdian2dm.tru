@@ -1,0 +1,30 @@
+PROGRAM D13r3
+
+! Driver for routine mdian2
+
+LIBRARY "mdian2", "gasdev", "mdian1"
+DECLARE FUNCTION gasdev
+
+LET npts = 50
+DIM data(0)
+MAT redim data(npts)
+
+CLEAR
+LET idum = -5
+FOR i = 1 to npts
+    LET data(i) = gasdev(idum)
+NEXT i
+
+CALL mdian2 (data(), npts, xmed)
+
+PRINT "Gaussian distrib., zero mean, unit variance"
+PRINT
+PRINT "Median according to mdian2 is";
+PRINT using "----#.######": xmed
+
+CALL mdian1 (data(), npts, xmed)
+
+PRINT "Median according to mdian1 is";
+PRINT using "----#.######": xmed
+
+END

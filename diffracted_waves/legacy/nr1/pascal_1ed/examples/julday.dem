@@ -1,0 +1,47 @@
+PROGRAM d1r2(input,output,dfile);
+(* driver for JULDAY *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+TYPE
+   StrArray10 = string[10];
+   StrArray40 = string[40];
+VAR
+   i,id,im,iy,n: integer;
+   txt: StrArray40;
+   name: ARRAY [1..12] OF StrArray10;
+   dfile: text;
+
+(*$I JULDAY.PAS *)
+
+BEGIN
+   name[1] := 'january   '; name[2] := 'february  ';
+   name[3] := 'march     '; name[4] := 'april     ';
+   name[5] := 'may       '; name[6] := 'june      ';
+   name[7] := 'july      '; name[8] := 'august    ';
+   name[9] := 'september '; name[10] := 'october   ';
+   name[11] := 'november  '; name[12] := 'december  ';
+   NROpen(dfile,'dates1.dat');
+   readln(dfile,txt);
+   readln(dfile,n);
+   writeln;
+   writeln('month':5,'day':8,'year':6,'julian day':12,'event':9);
+   writeln;
+   FOR i := 1 TO n DO BEGIN
+      readln(dfile,im,id,iy,txt);
+      writeln(name[im]:10,id:3,iy:6,julday(im,id,iy):10,' ':5,txt);
+   END;
+   close(dfile);
+   writeln;
+   writeln('your choices:');
+   writeln('month day year (e.g. 1 13 1905)');
+   FOR i := 1 TO 20 DO BEGIN
+      writeln;
+      writeln('mm dd yyyy ?');
+      readln(im,id,iy);
+      IF im < 0 THEN GOTO 99;
+      writeln('julian day: ',julday(im,id,iy))
+   END;
+99:
+END.

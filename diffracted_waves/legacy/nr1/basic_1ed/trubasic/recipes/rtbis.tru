@@ -1,0 +1,32 @@
+EXTERNAL
+
+FUNCTION rtbis (dum, x1, x2, xacc)
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    LET jmax = 40
+    LET fmid = func(x2)
+    LET f = func(x1)
+    IF f * fmid >= 0 then
+       PRINT "root must be bracketed for bisection."
+       EXIT FUNCTION
+    END IF
+
+    IF f < 0 then
+       LET trtbis = x1
+       LET dx = x2 - x1
+    ELSE
+       LET trtbis = x2
+       LET dx = x1 - x2
+    END IF
+    FOR j = 1 to jmax
+        LET dx = dx * .5
+        LET xmid = trtbis + dx
+        LET fmid = func(xmid)
+        IF fmid <= 0 then LET trtbis = xmid
+        LET rtbis = trtbis
+        IF abs(dx) < xacc or fmid = 0 then EXIT FUNCTION
+    NEXT j
+    PRINT "too many bisections"
+
+END FUNCTION

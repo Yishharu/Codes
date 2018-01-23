@@ -1,0 +1,454 @@
+%!PS-Adobe-3.0
+%%Creator: groff version 1.06
+%%DocumentNeededResources: font Times-Bold
+%%+ font Times-Roman
+%%DocumentSuppliedResources: procset grops 1.06 0
+%%Pages: 5
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset grops 1.06 0
+
+/setpacking where {
+	pop
+	currentpacking
+	true setpacking
+} if
+
+/grops 120 dict dup begin 
+
+% The ASCII code of the space character.
+/SC 32 def
+
+/A /show load def
+/B { 0 SC 3 -1 roll widthshow } bind def
+/C { 0 exch ashow } bind def
+/D { 0 exch 0 SC 5 2 roll awidthshow } bind def
+/E { 0 rmoveto show } bind def
+/F { 0 rmoveto 0 SC 3 -1 roll widthshow } bind def
+/G { 0 rmoveto 0 exch ashow } bind def
+/H { 0 rmoveto 0 exch 0 SC 5 2 roll awidthshow } bind def
+/I { 0 exch rmoveto show } bind def
+/J { 0 exch rmoveto 0 SC 3 -1 roll widthshow } bind def
+/K { 0 exch rmoveto 0 exch ashow } bind def
+/L { 0 exch rmoveto 0 exch 0 SC 5 2 roll awidthshow } bind def
+/M { rmoveto show } bind def
+/N { rmoveto 0 SC 3 -1 roll widthshow } bind def
+/O { rmoveto 0 exch ashow } bind def
+/P { rmoveto 0 exch 0 SC 5 2 roll awidthshow } bind def
+/Q { moveto show } bind def 
+/R { moveto 0 SC 3 -1 roll widthshow } bind def
+/S { moveto 0 exch ashow } bind def
+/T { moveto 0 exch 0 SC 5 2 roll awidthshow } bind def
+
+% name size font SF -
+
+/SF {
+	findfont exch
+	[ exch dup 0 exch 0 exch neg 0 0 ] makefont
+	dup setfont
+	[ exch /setfont cvx ] cvx bind def
+} bind def
+
+% name a c d font MF -
+
+/MF {
+	findfont
+	[ 5 2 roll
+	0 3 1 roll % b
+	neg 0 0 ] makefont
+	dup setfont
+	[ exch /setfont cvx ] cvx bind def
+} bind def
+
+/level0 0 def
+/RES 0 def
+/PL 0 def
+/LS 0 def
+
+% Guess the page length.
+% This assumes that the imageable area is vertically centered on the page.
+% PLG - length
+
+/PLG {
+	gsave newpath clippath pathbbox grestore
+	exch pop add exch pop
+} bind def
+
+% BP -
+
+/BP {
+	/level0 save def
+	1 setlinecap
+	1 setlinejoin
+	72 RES div dup scale
+	LS {
+		90 rotate
+	} {
+		0 PL translate
+	} ifelse
+	1 -1 scale
+} bind def
+
+/EP {
+	level0 restore
+	showpage
+} bind def
+
+
+% centerx centery radius startangle endangle DA -
+
+/DA {
+	newpath arcn stroke
+} bind def
+
+% x y SN - x' y'
+% round a position to nearest (pixel + (.25,.25))
+
+/SN {
+	transform 
+	.25 sub exch .25 sub exch
+	round .25 add exch round .25 add exch
+	itransform
+} bind def
+	
+% endx endy startx starty DL -
+% we round the endpoints of the line, so that parallel horizontal
+% and vertical lines will appear even
+
+/DL {
+	SN
+	moveto
+	SN
+	lineto stroke
+} bind def
+
+% centerx centery radius DC -
+
+/DC {
+	newpath 0 360 arc closepath
+} bind def
+
+
+/TM matrix def
+
+%  width height centerx centery DE -
+
+/DE {
+	TM currentmatrix pop
+	translate scale newpath 0 0 .5 0 360 arc closepath
+	TM setmatrix
+} bind def
+
+% these are for splines
+
+/RC /rcurveto load def
+/RL /rlineto load def
+/ST /stroke load def
+/MT /moveto load def
+/CL /closepath load def
+
+% fill the last path
+
+% amount FL -
+
+/FL {
+	currentgray exch setgray fill setgray
+} bind def
+
+% fill with the ``current color''
+
+/BL /fill load def
+
+/LW /setlinewidth load def
+% new_font_name encoding_vector old_font_name RE -
+
+/RE {
+	findfont
+	dup maxlength dict begin
+	{
+		1 index /FID ne { def } { pop pop } ifelse
+	} forall
+	/Encoding exch def
+	dup /FontName exch def
+	currentdict end definefont pop
+} bind def
+
+/DEFS 0 def
+
+% hpos vpos EBEGIN -
+
+/EBEGIN {
+	moveto
+	DEFS begin
+} bind def
+
+/EEND /end load def
+
+/CNT 0 def
+/level1 0 def
+
+% llx lly newwid wid newht ht newllx newlly PBEGIN -
+
+/PBEGIN {
+	/level1 save def
+	translate
+	div 3 1 roll div exch scale
+	neg exch neg exch translate
+	% set the graphics state to default values
+	0 setgray
+	0 setlinecap
+	1 setlinewidth
+	0 setlinejoin
+	10 setmiterlimit
+	[] 0 setdash
+	/setstrokeadjust where {
+		pop
+		false setstrokeadjust
+	} if
+	/setoverprint where {
+		pop
+		false setoverprint
+	} if
+	newpath
+	/CNT countdictstack def
+	userdict begin
+	/showpage {} def
+} bind def
+
+/PEND {
+	clear
+	countdictstack CNT sub { end } repeat
+	level1 restore
+} bind def
+
+end def
+
+/setpacking where {
+	pop
+	setpacking
+} if
+%%EndResource
+%%IncludeResource: font Times-Bold
+%%IncludeResource: font Times-Roman
+grops begin/DEFS 1 dict def DEFS begin/u{.001 mul}bind def end/RES 72 def/PL
+841.89 def/LS false def/ENC0[/asciicircum/asciitilde/Scaron/Zcaron/scaron
+/zcaron/Ydieresis/trademark/quotesingle/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/space
+/exclam/quotedbl/numbersign/dollar/percent/ampersand/quoteright/parenleft
+/parenright/asterisk/plus/comma/hyphen/period/slash/zero/one/two/three/four
+/five/six/seven/eight/nine/colon/semicolon/less/equal/greater/question/at/A/B/C
+/D/E/F/G/H/I/J/K/L/M/N/O/P/Q/R/S/T/U/V/W/X/Y/Z/bracketleft/backslash
+/bracketright/circumflex/underscore/quoteleft/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q
+/r/s/t/u/v/w/x/y/z/braceleft/bar/braceright/tilde/.notdef/quotesinglbase
+/guillemotleft/guillemotright/bullet/florin/fraction/perthousand/dagger
+/daggerdbl/endash/emdash/ff/fi/fl/ffi/ffl/dotlessi/dotlessj/grave/hungarumlaut
+/dotaccent/breve/caron/ring/ogonek/quotedblleft/quotedblright/oe/lslash
+/quotedblbase/OE/Lslash/.notdef/exclamdown/cent/sterling/currency/yen/brokenbar
+/section/dieresis/copyright/ordfeminine/guilsinglleft/logicalnot/minus
+/registered/macron/degree/plusminus/twosuperior/threesuperior/acute/mu
+/paragraph/periodcentered/cedilla/onesuperior/ordmasculine/guilsinglright
+/onequarter/onehalf/threequarters/questiondown/Agrave/Aacute/Acircumflex/Atilde
+/Adieresis/Aring/AE/Ccedilla/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute
+/Icircumflex/Idieresis/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis
+/multiply/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn/germandbls
+/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla/egrave/eacute
+/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis/eth/ntilde/ograve
+/oacute/ocircumflex/otilde/odieresis/divide/oslash/ugrave/uacute/ucircumflex
+/udieresis/yacute/thorn/ydieresis]def/Times-Roman@0 ENC0/Times-Roman RE
+/Times-Bold@0 ENC0/Times-Bold RE
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 36/Times-Bold@0 SF(The SENP)117.8 122 Q -1.98(AC)276.164 122 S 9(KM)1.98 G
+(anual)397.16 122 Q/F1 16/Times-Roman@0 SF(by)280 244 Q/F2 16/Times-Bold@0 SF
+-3.44 -.4(Ke v)222.008 310 T(in A. Br).4 E(oughan)-.288 E F1 4(AL)72 420 S
+(ibrary of Numeric)97.328 420 Q(Functions for Senac)72 442 Q EP
+%%Page: 2 2
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(Cop)72 84 Q(yright)-.1 E/F1 12/Times-Roman@0 SF<a9>2.5
+E F0(1992-1994 Uni)3 E -.15(ve)-.25 G(rsity of W).15 E
+(aikato - all rights reserv)-.8 E(ed)-.15 E .093(The information in this docum\
+ent is subject to change without notice and should not be considered as)97
+159.6 R 2.946(ac)72 171.6 S .446(ommitment by the Uni)83.826 171.6 R -.15(ve)
+-.25 G .446(rsity of W).15 F 2.947(aikato. The)-.8 F(Uni)2.947 E -.15(ve)-.25 G
+.447(rsity assumes no responsibility for errors that may).15 F(appear)72 183.6
+Q(.)-.55 E .484(The softw)97 211.2 R .484(are discussed in this document is fu\
+rnished under a licence or agreement and may be used)-.1 F .643(or copied only\
+ in accordance with the terms of such a licence or agreement. The softw)72
+223.2 R .643(are is based in part)-.1 F 2.898
+(on a translation of the suite of programs called `)72 235.2 R 2.897
+(`Numerical Recipes" and the translation has been)-.74 F 5.214(performed with \
+permission. The translation of Numerical Recipes is subject to the follo)72
+247.2 R(wing)-.25 E(cop)72 257.2 Q(yright:`)-.1 E(`Cop)-.74 E(yright)-.1 E F1
+<a9>2.5 E F0(1986, 1989 Numerical Recipes Softw)3 E(are" and the follo)-.1 E
+(wing disclaimer:)-.25 E/F2 8/Times-Roman@0 SF(DISCLAIMER OF W)112 287.2 Q
+(ARRANTY)-.96 E .85(THIS SOFTW)72 307.2 R .85(ARE IS FURNISHED `)-.96 F -.64
+(`A)-.592 G 2.85(SI).64 G .85(S". NEITHER NUMERICAL RECIPES SOFTW)215.162 307.2
+R .849(ARE, NOR THE A)-.96 F .849(UTHORS OF THE)-.44 F 1.982
+(NUMERICAL RECIPES BOOKS, NOR THE PUBLISHER OF THOSE BOOKS MAKE ANY W)72 317.2
+R(ARRANTY)-.96 E 3.983(,E)-1.032 G 1.983(XPRESS OR)459.561 317.2 R .994
+(IMPLIED, THA)72 327.2 R 2.994(TT)-.888 G .994(HIS SOFTW)137.756 327.2 R .994
+(ARE IS FREE OF ERR)-.96 F .993(OR, OR IS CONSISTENT WITH ANY P)-.32 F(AR)-.736
+E .993(TICULAR ST)-.48 F(AND)-.744 E .993(ARD OF)-.32 F(MERCHANT)72 337.2 Q
+(ABILITY)-.744 E 3.628(,O)-1.032 G 3.628(RT)158.508 337.2 S(HA)172.36 337.2 Q
+3.628(TI)-.888 G 3.628(TW)194.204 337.2 S 1.629(ILL MEET ANY USER'S REQ)210.272
+337.2 R 1.629(UIREMENTS FOR A P)-.08 F(AR)-.736 E 1.629(TICULAR APPLICA)-.48 F
+(TION.)-.888 E 1.181(NUMERICAL RECIPES SOFTW)72 347.2 R 1.181(ARE, THE A)-.96 F
+1.181(UTHORS, AND THE PUBLISHER A)-.44 F 1.18(CCEPT NO RESPONSIBILITY FOR ANY)
+-.32 F(MA)72 357.2 Q(THEMA)-.888 E 1.869(TICAL OR TECHNICAL LIMIT)-.888 F -.888
+(AT)-.744 G 1.869(IONS OF THE PR).888 F 1.87
+(OCEDURES AND FUNCTIONS WHICH MAKE UP THE)-.32 F(SOFTW)72 367.2 Q 2.79
+(ARE. THIS SOFTW)-.96 F 2.79(ARE SHOULD NO)-.96 F 4.79(TB)-.32 G 4.79(ER)
+253.926 367.2 S 2.789(ELIED ON FOR SOL)268.94 367.2 R 2.789(VING A PR)-.8 F
+2.789(OBLEM WHOSE INCORRECT)-.32 F 1.85(SOLUTION COULD RESUL)72 377.2 R 3.85
+(TI)-.736 G 3.85(NI)183.246 377.2 S(NJUR)195.536 377.2 Q 3.85(YT)-.52 G 3.85
+(OAP)229.386 377.2 S 1.85(ERSON OR LOSS OF PR)253.086 377.2 R(OPER)-.32 E(TY)
+-.48 E 5.851(.N)-1.032 G 1.851(EITHER NUMERICAL RECIPES)388.298 377.2 R(SOFTW)
+72 387.2 Q 1.18(ARE, NOR THE A)-.96 F 1.179
+(UTHORS OF THE NUMERICAL RECIPES BOOKS, NOR THE PUBLISHER OF THOSE BOOKS)-.44 F
+.736(SHALL IN ANY EVENT BE LIABLE FOR ANY D)72 397.2 R(AMA)-.32 E .737
+(GES, WHETHER DIRECT OR INDIRECT)-.32 F 2.737(,S)-.592 G .737
+(PECIAL OR GENERAL,)420.086 397.2 R(CONSEQ)72 407.2 Q 1.27(UENTIAL OR INCIDENT)
+-.08 F 1.269(AL, ARISING FR)-.744 F 1.269(OM USE OF THIS SOFTW)-.32 F 3.269
+(ARE. Y)-.96 F 1.269(OUR USE OF THIS SOFTW)-.24 F 1.269(ARE IS)-.96 F(ENTIREL)
+72 419.2 Q 2(YA)-.8 G 2(TY)117.192 419.2 S(OUR O)129.616 419.2 Q(WN RISK.)-.28
+E F0 .139(No part of this publication may be reproduced or transmitted in an)97
+446.8 R 2.64(yf)-.15 G .14(orm or by an)374.59 446.8 R 2.64(ym)-.15 G .14
+(eans, electronic)441.66 446.8 R .952(or mechanical, including photocop)72
+458.8 R .952(ying, recording or an)-.1 F 3.452(yi)-.15 G .951
+(nformation storage or retrie)311.434 458.8 R -.25(va)-.25 G 3.451(ls).25 G
+.951(ystem, without)443.599 458.8 R(permission in writing from the Uni)72 470.8
+Q -.15(ve)-.25 G(rsity of W).15 E(aikato.)-.8 E
+(Senac and Senpack are trademarks of the Uni)72 510.4 Q -.15(ve)-.25 G
+(rsity of W).15 E(aikato)-.8 E EP
+%%Page: 3 3
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(\(ii\))281.89 48 Q/F1 10/Times-Bold@0 SF(Ackno)72 84 Q
+(wledgements)-.1 E F0 .661(Senpack is being de)97 123.6 R -.15(ve)-.25 G .661
+(loped at the Uni).15 F -.15(ve)-.25 G .661(rsity of W).15 F .661
+(aikato by staf)-.8 F 3.161(fa)-.25 G .662(nd students in the Department of)
+369.871 123.6 R 3.839(Mathematics and Statistics. The support of the follo)72
+135.6 R 3.838(wing sections of the Uni)-.25 F -.15(ve)-.25 G 3.838
+(rsity is gratefully).15 F(ackno)72 147.6 Q .619
+(wledged: the Department of Mathematics and Statistics, the Uni)-.25 F -.15(ve)
+-.25 G .619(rsity Research Committee and the).15 F
+(Computer Services Department.)72 159.6 Q .279(Senpack includes a v)97 175.2 R
+.278(ersion of the numerical subroutine library Numerical Recipes which I tran\
+slated)-.15 F .188(into Lisp and then interf)72 187.2 R .188
+(aced with Senac. This translation w)-.1 F .188
+(as performed by agreement with the permission)-.1 F
+(of Numerical Recipes Authors, whose agreement is gratefully ackno)72 199.2 Q
+(wledged.)-.25 E 1.9(Optimization functions include lar)97 214.8 R 1.9
+(ge sparse linear programming, inte)-.18 F 1.9(ger programming, simulated)-.15
+F(annealing, assignment problem and global optimization for functions of a rea\
+l v)72 226.8 Q(ariable.)-.25 E .367(The most recent addition is an e)97 242.4 R
+.367(xtension to the f)-.15 F .368
+(acilities in Chapter 18 for solving partial dif)-.1 F(ferential)-.25 E 1.072
+(equations using the \214nite element method. These include boundary v)72 254.4
+R 1.072(alue problem, eigen v)-.25 F 1.072(alue problems)-.25 F 1.261
+(and initial boundary v)72 266.4 R 1.261(alue problems in one and tw)-.25 F
+3.761(os)-.1 G 1.261(pace dimensions. There are four dif)295.479 266.4 R 1.262
+(ferent types of)-.25 F 1.615(mesh generation: manual entry)72 278.4 R 4.115
+(,g)-.65 G 1.615
+(rid entry for structured meshes, automatic triangulation and automatic)211.4
+278.4 R(quadrilateral mesh decomposition. Output plotting requires the Sengrap\
+h module.)72 290.4 Q .875(Richard Shepherd, Diane K)97 306 R(oore)-.35 E 3.375
+(yW)-.15 G .875(illcock and Martin Glan)244.84 306 R .875(vill ha)-.4 F 1.175
+-.15(ve a)-.2 H .875(ssisted with the de).15 F -.15(ve)-.25 G(lopment).15 E
+(of Senpack.)72 318 Q -.25(Kev)108 336 S(in Broughan).25 E(Hamilton, Ne)108 348
+Q 2.5(wZ)-.25 G(ealand)178.02 348 Q(February 1994)108 360 Q -.74(``)108 420 S
+(Lisp also has a reputation for being slo).74 E 2.5(wa)-.25 G 2.5(tn)283.09 420
+S(umeric computations. Ho)293.37 420 Q(we)-.25 E -.15(ve)-.25 G -.4(r,).15 G
+(applications such as symbolic algebra, computer graphics, and vision ha)108
+432 Q -.15(ve)-.2 G
+(caused Lisp implementors to pay special attention to making Lisp as ef)108 444
+Q(\214cient)-.25 E(at C or F)108 456 Q(ortran at numerically intensi)-.15 E .3
+-.15(ve a)-.25 H(pplications. Lisp').15 E 2.5(sa)-.55 G(bility to)352.43 456 Q
+(easily manipulate functions and compose ne)108 468 Q 2.5(wp)-.25 G
+(rograms mak)299.39 468 Q(es it e)-.1 E(xceptionally)-.15 E(good at b)108 480 Q
+(uilding libraries of comple)-.2 E 2.5(xn)-.15 G(umerical algorithms.")263.75
+480 Q(in "Common Lisp" by W)108 492 Q(ade L. Hennesse)-.8 E(y)-.15 E EP
+%%Page: 4 4
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(\(iii\))280.5 48 Q/F1 10/Times-Bold@0 SF -.92(Ta)
+250.405 84 S(ble of Contents).92 E F0(Cop)72 144 Q -1.96(yright ..............\
+..............................................................................\
+..................................................\(i\))-.1 F(Ackno)72 156 Q
+-.68(wledgements .............................................................\
+.................................................................\(ii\))-.25 F
+-2.06(Contents ...............................................................\
+..............................................................................\
+...\(iii\))72 168 R -.1(Addresses ............................................\
+..............................................................................\
+...................\(iii\))72 180 R(Pref)72 192 Q(ace)-.1 E(Ch 1 Introduction)
+72 216 Q(Ch 2 Solution to linear algebraic equations)72 228 Q
+(Ch 3 Interpolation and e)72 240 Q(xtrapolation)-.15 E(Ch 4 Inte)72 252 Q
+(gration of functions)-.15 E(Ch 5 Ev)72 264 Q(aluation of functions)-.25 E
+(Ch 6 Special functions)72 276 Q(Ch 7 Random numbers)72 288 Q(Ch 8 Sorting)72
+300 Q(Ch 9 Root \214nding)72 312 Q
+(Ch 10 Minimization and maximization of functions)72 324 Q(Ch 11 Eigenproblems)
+72 336 Q(Ch 12 F)72 348 Q(ast F)-.15 E(ourier T)-.15 E(ransform)-.35 E
+(Ch 13 Statistical description of data)72 360 Q(Ch 14 Modelling of data)72 372
+Q(Ch 15 Inte)72 384 Q(gration of ordinary dif)-.15 E(ferential equations)-.25 E
+(Ch 16 T)72 396 Q .2 -.1(wo p)-.8 H(oint boundary v).1 E(alue problems)-.25 E
+(Ch 17 P)72 408 Q(artial dif)-.15 E(ferential equations)-.25 E
+(Ch 18 Finite element method)72 420 Q(Ch 19 Discrete and global optimization)72
+432 Q/F2 12/Times-Bold@0 SF(Addr)72 480 Q(esses)-.216 E F1 -.25(Fo)72 504 S 2.5
+(rf).25 G(urther inf)93.13 504 Q(ormation in the UK/Eur)-.25 E(ope contact:)
+-.18 E F0(Uni)72 516 Q -.15(ve)-.25 G(rsity of London Computer Centre \(ULCC\))
+.15 E(20 Guilford Street)72 528 Q(London WC1N 1DZ)72 540 Q -.74(FA)72 552 S 2.5
+(X\().74 G(071\)242-1845)97.09 552 Q -.7(Te)72 564 S 2.5(l\().7 G
+(071\)405-8400)90.46 564 Q(e-mail: senac@ulcc.ac.uk)72 576 Q F1(All other r)72
+600 Q(egions:)-.18 E F0(Associate Professor K)72 612 Q -.25(ev)-.25 G
+(in A. Broughan).25 E(Uni)72 624 Q -.15(ve)-.25 G(rsity of W).15 E(aikato,)-.8
+E(Hamilton, Ne)72 636 Q 2.5(wZ)-.25 G(ealand)142.02 636 Q -.7(Te)72 648 S
+(lephone: country and area code 647 then 8562889 or 8566358).7 E -.15(Fa)72 660
+S(x: 647 8384155).15 E(e-mail: senac@w)72 672 Q(aikato.ac.nz)-.1 E .4 LW 77 684
+72 684 DL 82 684 77 684 DL 87 684 82 684 DL 92 684 87 684 DL 97 684 92 684 DL
+102 684 97 684 DL 107 684 102 684 DL 112 684 107 684 DL 117 684 112 684 DL 122
+684 117 684 DL 127 684 122 684 DL 132 684 127 684 DL 137 684 132 684 DL 142 684
+137 684 DL 147 684 142 684 DL 152 684 147 684 DL 157 684 152 684 DL 162 684 157
+684 DL 167 684 162 684 DL 172 684 167 684 DL 177 684 172 684 DL 182 684 177 684
+DL 187 684 182 684 DL 192 684 187 684 DL 197 684 192 684 DL 202 684 197 684 DL
+207 684 202 684 DL 212 684 207 684 DL 217 684 212 684 DL 222 684 217 684 DL 227
+684 222 684 DL 232 684 227 684 DL 237 684 232 684 DL 242 684 237 684 DL 247 684
+242 684 DL 252 684 247 684 DL 257 684 252 684 DL 262 684 257 684 DL 267 684 262
+684 DL 272 684 267 684 DL 277 684 272 684 DL 282 684 277 684 DL 287 684 282 684
+DL 292 684 287 684 DL 297 684 292 684 DL 302 684 297 684 DL 307 684 302 684 DL
+312 684 307 684 DL 317 684 312 684 DL 322 684 317 684 DL 327 684 322 684 DL 332
+684 327 684 DL 337 684 332 684 DL 342 684 337 684 DL 347 684 342 684 DL 352 684
+347 684 DL 357 684 352 684 DL 362 684 357 684 DL 367 684 362 684 DL 372 684 367
+684 DL 377 684 372 684 DL 382 684 377 684 DL 387 684 382 684 DL 392 684 387 684
+DL 397 684 392 684 DL 402 684 397 684 DL 407 684 402 684 DL 412 684 407 684 DL
+417 684 412 684 DL 422 684 417 684 DL 427 684 422 684 DL 432 684 427 684 DL 437
+684 432 684 DL 442 684 437 684 DL 447 684 442 684 DL 452 684 447 684 DL 457 684
+452 684 DL 462 684 457 684 DL 467 684 462 684 DL 472 684 467 684 DL 477 684 472
+684 DL 482 684 477 684 DL 487 684 482 684 DL 492 684 487 684 DL 497 684 492 684
+DL 502 684 497 684 DL 507 684 502 684 DL 512 684 507 684 DL 517 684 512 684 DL
+522 684 517 684 DL 527 684 522 684 DL 532 684 527 684 DL 537 684 532 684 DL 542
+684 537 684 DL 547 684 542 684 DL 552 684 547 684 DL 557 684 552 684 DL 562 684
+557 684 DL 567 684 562 684 DL 572 684 567 684 DL 577 684 572 684 DL 582 684 577
+684 DL 587 684 582 684 DL 592 684 587 684 DL 597 684 592 684 DL 602 684 597 684
+DL 607 684 602 684 DL 612 684 607 684 DL 617 684 612 684 DL 622 684 617 684 DL
+627 684 622 684 DL 632 684 627 684 DL 637 684 632 684 DL 642 684 637 684 DL 647
+684 642 684 DL 652 684 647 684 DL 657 684 652 684 DL 662 684 657 684 DL 667 684
+662 684 DL 672 684 667 684 DL EP
+%%Page: 5 5
+%%BeginPageSetup
+BP
+%%EndPageSetup
+/F0 10/Times-Roman@0 SF(\(iii\))280.5 48 Q EP
+%%Trailer
+end
+%%EOF

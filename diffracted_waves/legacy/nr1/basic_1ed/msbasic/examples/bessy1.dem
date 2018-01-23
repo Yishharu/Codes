@@ -1,0 +1,24 @@
+DECLARE FUNCTION BESSY1! (X!)
+
+'PROGRAM D6R18
+'Driver for routine BESSY1
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "Bessel Function Y1"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT TEXT$
+PRINT "   X      Actual    BESSY1(X)"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  X = VAL(MID$(DUM$, 1, 6))
+  VALUE = VAL(MID$(DUM$, 7))
+  PRINT USING "##.##"; X;
+  PRINT USING "####.#######"; VALUE;
+  PRINT USING "####.#######"; BESSY1(X)
+NEXT I
+CLOSE #1
+END
+

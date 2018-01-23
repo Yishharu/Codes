@@ -1,0 +1,50 @@
+DECLARE SUB ELMHES (A!(), N!, NP!)
+DECLARE SUB BALANC (A!(), N!, NP!)
+
+'PROGRAM D11R6
+'Driver for ELMHES
+CLS
+NP = 5
+DIM A(NP, NP), R(NP), C(NP)
+FOR J = 1 TO NP
+  FOR I = 1 TO NP
+    READ A(I, J)
+  NEXT I
+NEXT J
+DATA 1.0,2.0,3.0,4.0,5.0,2.0,3.0,4.0,5.0,6.0,300.0,400.0,5.0,600.0,700.0,4.0
+DATA 5.0,6.0,7.0,8.0,5.0,6.0,7.0,8.0,9.0
+PRINT "***** Original Matrix *****"
+PRINT
+FOR I = 1 TO NP
+  FOR J = 1 TO NP
+    PRINT USING "#########.##"; A(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+PRINT "***** Balance Matrix *****"
+CALL BALANC(A(), NP, NP)
+FOR I = 1 TO NP
+  FOR J = 1 TO NP
+    PRINT USING "#########.##"; A(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+PRINT "***** Reduce to Hessenberg Form *****"
+PRINT
+CALL ELMHES(A(), NP, NP)
+FOR J = 1 TO NP - 2
+  FOR I = J + 2 TO NP
+    A(I, J) = 0!
+  NEXT I
+NEXT J
+FOR I = 1 TO NP
+  FOR J = 1 TO NP
+    PRINT "  ";
+    PRINT USING "#.####^^^^"; A(I, J);
+  NEXT J
+  PRINT
+NEXT I
+END
+

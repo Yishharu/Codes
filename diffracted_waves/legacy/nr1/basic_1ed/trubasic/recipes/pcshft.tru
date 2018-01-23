@@ -1,0 +1,18 @@
+EXTERNAL
+
+SUB pcshft (a, b, d(), n)
+
+    LET const = 2 / (b - a)
+    LET fac = const
+    FOR j = 2 to n
+        LET d(j) = d(j) * fac
+        LET fac = fac * const
+    NEXT j
+    LET const = .5 * (a + b)
+    FOR j = 1 to n - 1
+        FOR k = n - 1 to j step -1
+            LET d(k) = d(k) - const * d(k + 1)
+        NEXT k
+    NEXT j
+
+END SUB

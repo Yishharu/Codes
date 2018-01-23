@@ -1,0 +1,69 @@
+EXTERNAL
+
+SUB toeplz (r(), x(), y(), n)
+
+    DIM g(0), h(0)
+    MAT redim g(n), h(n)
+
+    IF r(n) = 0 then
+       PRINT "Levinson method fails: singular principal minor"
+       EXIT SUB
+    END IF
+
+    LET x(1) = y(1) / r(n)
+    IF n = 1 then EXIT SUB
+    LET g(1) = r(n - 1) / r(n)
+    LET h(1) = r(n + 1) / r(n)
+    FOR m = 1 to n - 1
+        LET m1 = m + 1
+        LET sxn = -y(m1)
+        LET sd = -r(n)
+        FOR j = 1 to m
+            LET sxn = sxn + r(n + m1 - j) * x(j)
+            LET sd = sd + r(n + m1 - j) * g(m - j + 1)
+        NEXT j
+        IF sd = 0 then
+           PRINT "Levinson method fails: singular principal minor"
+           EXIT SUB
+        END IF
+
+        LET x(m1) = sxn / sd
+        FOR j = 1 to m
+            LET x(j) = x(j) - x(m1) * g(m - j + 1)
+        NEXT j
+
+        IF m1 = n then EXIT SUB   ! Normal exit
+
+        LET sgq = -r(n - m1)
+        LET shn = -r(n + m1)
+        LET sgd = -r(n)
+        FOR j = 1 to m
+            LET sgq = sgq + r(n + j - m1) * g(j)
+            LET shn = shn + r(n + m1 - j) * h(j)
+            LET sgd = sgd + r(n + j - m1) * h(m - j + 1)
+        NEXT j
+        IF sd = 0 or sgd = 0 then
+           PRINT "Levinson method fails: singular principal minor"
+           EXIT SUB
+        END IF
+
+        LET g(m1) = sgq / sgd
+        LET h(m1) = shn / sd
+        LET k = m
+        LET m2 = int((m + 1) / 2)
+        LET pp = g(m1)
+        LET qq = h(m1)
+        FOR j = 1 to m2
+            LET pt1 = g(j)
+            LET pt2 = g(k)
+            LET qt1 = h(j)
+            LET qt2 = h(k)
+            LET g(j) = pt1 - pp * qt2
+            LET g(k) = pt2 - pp * qt1
+            LET h(j) = qt1 - qq * pt2
+            LET h(k) = qt2 - qq * pt1
+            LET k = k - 1
+        NEXT j
+    NEXT m
+
+END SUB

@@ -1,0 +1,39 @@
+PROGRAM D10R13(input,output);
+
+(*$I MODFILE.PAS *)
+
+CONST
+   ncity = 10;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayNCITY = ARRAY [1..ncity] OF real;
+   IntegerArrayNCITY = ARRAY [1..ncity] OF integer;
+VAR
+   Ran3Inext,Ran3Inextp,MetropJdum,idum,i,ii: integer;
+   Ran3Ma: RealArray55;
+   x,y: RealArrayNCITY;
+   iorder: IntegerArrayNCITY;
+
+(*$I RAN3.PAS *)
+
+(*$I IRBIT1.PAS *)
+
+(*$I ANNEAL.PAS *)
+ 
+BEGIN
+   MetropJdum := 1;
+   idum := -1;
+   FOR i := 1 TO ncity DO BEGIN
+      x[i] := ran3(idum);
+      y[i] := ran3(idum);
+      iorder[i] := i
+   END;
+   anneal(x,y,iorder,ncity);
+   writeln('*** System Frozen ***');
+   writeln('Final path:');
+   writeln(' ':3,'city',' ':6,'x',' ':9,'y');
+   FOR i := 1 TO ncity DO BEGIN
+      ii := iorder[i];
+      writeln(ii:4,x[ii]:10:4,y[ii]:10:4)
+   END
+END.

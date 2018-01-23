@@ -1,0 +1,34 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE SUB ZBRAK (DUM!, X1!, X2!, N!, XB1!(), XB2!(), NB!)
+DECLARE FUNCTION BESSJ0! (X!)
+DECLARE FUNCTION RTBIS! (DUM!, X1!, X2!, XA!)
+
+'PROGRAM D9R4
+'Driver for routine RTBIS
+CLS
+N = 100
+NBMAX = 20
+X1 = 1!
+X2 = 50!
+DIM XB1(NBMAX), XB2(NBMAX)
+NB = NBMAX
+CALL ZBRAK(DUM, X1, X2, N, XB1(), XB2(), NB)
+PRINT "Roots of BESSJ0:"
+PRINT
+PRINT "                 x          F(x)"
+PRINT
+FOR I = 1 TO NB
+  XACC = .000001 * (XB1(I) + XB2(I)) / 2!
+  ROOT = RTBIS(DUM, XB1(I), XB2(I), XACC)
+  PRINT "Root";
+  PRINT USING "###"; I;
+  PRINT USING "#######.######"; ROOT;
+  PRINT "     ";
+  PRINT USING "#.####^^^^"; BESSJ0(ROOT)
+NEXT I
+END
+
+FUNCTION FUNC (X)
+FUNC = BESSJ0(X)
+END FUNCTION
+

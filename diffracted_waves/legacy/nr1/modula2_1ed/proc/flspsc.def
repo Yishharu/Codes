@@ -1,0 +1,21 @@
+DEFINITION MODULE FlspSc;
+
+   (* EXPORT QUALIFIED RtFlsp, RtSec; *)
+
+   FROM NRMath IMPORT RealFunction;
+
+   PROCEDURE RtFlsp(fx: RealFunction; x1, x2, xacc: REAL): REAL; 
+   (*
+     Using the false position method, find the root of a function fx
+     known to lie between x1 and x2. The root, returned as RtFlsp, is
+     refined until its accuracy is (+-)xacc.
+   *)
+
+   PROCEDURE RtSec(fx: RealFunction; x1, x2, xacc: REAL): REAL; 
+   (*
+     Using the secant method, find the root of a function fx
+     thought to lie between x1 and x2. The root, returned
+     as RtSec, is refined until its accuracy is (+-)xacc.
+   *)
+
+END FlspSc.

@@ -1,0 +1,33 @@
+DEFINITION MODULE Pre;
+
+   (* EXPORT QUALIFIED JulDay, BadLuk, CalDat; *)
+
+   FROM NRSystem IMPORT LongInt;
+
+   PROCEDURE JulDay(mm, id, iyyy: INTEGER): LongInt; 
+   (*
+     In this routine JulDay returns the Julian Day Number which begins at 
+     noon of the calendar date specified by month mm, day id, and  year 
+     iyyy, all integer variables.  Positive year signifies A.D.; negative, B.C.  
+     Remember that the year after 1 B.C. was 1 A.D. Note that this routine 
+     will not run on systems with 2-byte integers. The type LongInt (4-byte 
+     integer) is discussed further in section 1.2.
+   *)
+
+   PROCEDURE BadLuk; 
+   (*
+     Uses the procedures FlMoon and JulDay. Note that this routine will 
+     not run on systems with 2-byte integers. The type LongInt (4-byte integer) 
+     is discussed further in section 1.2.
+   *)
+
+   PROCEDURE CalDat(    julian:       LongInt; 
+                    VAR mm, id, iyyy: INTEGER); 
+   (*
+     Inverse of the function JulDay given above. Here julian is input as a 
+     Julian Day Number, and the routine outputs mm,id, nd iyyy as the month,
+     day, and year on which the specified Julian Day started at noon.
+     Note that this routine will not run on systems with 2-byte integers.
+     The type LongInt (4-byte integer) is discussed further in section 1.2.
+   *)
+END Pre.

@@ -1,0 +1,16 @@
+DEFINITION MODULE QRombM;
+
+   (* EXPORT QUALIFIED QRomb; *)
+
+   FROM NRMath IMPORT RealFunction;
+
+   PROCEDURE QRomb(    func: RealFunction;
+                       a, b: REAL; 
+                   VAR ss:   REAL); 
+   (*
+     Returns as ss the integral of the function func from a to b. Integration
+     is performed by Romberg's method of order 2K, where, e.g., K=2 is 
+     Simpson's rule.
+   *)
+
+END QRombM.

@@ -1,0 +1,29 @@
+DECLARE FUNCTION BESSK! (N!, X!)
+
+'PROGRAM D6R25
+'Driver for routine BESSK
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+  TEXT$ = LEFT$(TEXT$, 27)
+LOOP WHILE TEXT$ <> "Modified Bessel Function Kn"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT TEXT$
+PRINT "   N      X       Actual         BESSK(N,X)"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  N = VAL(MID$(DUM$, 1, 6))
+  X = VAL(MID$(DUM$, 7, 6))
+  VALUE = VAL(MID$(DUM$, 13))
+  PRINT USING "####"; N;
+  PRINT USING "#####.##"; X;
+  PRINT "   ";
+  PRINT USING "#.#######^^^^"; VALUE;
+  PRINT "   ";
+  PRINT USING "#.#######^^^^"; BESSK(N, X)
+NEXT I
+CLOSE #1
+END
+

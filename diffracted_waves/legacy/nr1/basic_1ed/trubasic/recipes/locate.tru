@@ -1,0 +1,17 @@
+EXTERNAL
+
+SUB locate (xx(), n, x, j)
+
+    LET jl = 0
+    LET ju = n + 1
+    DO while ju - jl > 1
+       LET jm = int((ju + jl) / 2)
+       IF sgn(xx(n) - xx(1)) * sgn(x - xx(jm)) > 0 then
+          LET jl = jm
+       ELSE
+          LET ju = jm
+       END IF
+    LOOP
+    LET j = jl
+
+END SUB

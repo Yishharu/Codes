@@ -1,0 +1,143 @@
+EXTERNAL
+
+SUB hqr (a(,), n, np, wr(), wi())
+
+    LET anorm = abs(a(1, 1))
+    FOR i = 2 to n
+        FOR j = i - 1 to n
+            LET anorm = anorm + abs(a(i, j))
+        NEXT j
+    NEXT i
+
+    LET nn = n
+    LET t = 0
+    DO while nn >= 1
+       LET its = 0
+       DO
+          FOR l = nn to 2 step -1
+              LET s = abs(a(l-1, l-1)) + abs(a(l, l))
+              IF s = 0 then LET s = anorm
+              IF abs(a(l, l-1)) + s = s then EXIT FOR
+          NEXT l
+          LET x = a(nn, nn)
+          IF l = nn then
+             LET wr(nn) = x + t
+             LET wi(nn) = 0
+             LET nn = nn - 1
+             EXIT DO
+
+          ELSE
+             LET y = a(nn-1, nn-1)
+             LET w = a(nn, nn-1) * a(nn-1, nn)
+             IF l = nn - 1 then
+                LET p = .5 * (y - x)
+                LET q = p^2 + w
+                LET z = sqr(abs(q))
+                LET x = x + t
+                IF q >= 0 then
+                   LET z = p + abs(z) * sgn(p)
+                   LET wr(nn) = x + z
+                   LET wr(nn-1) = wr(nn)
+                   IF z <> 0 then LET wr(nn) = x - w/z
+                   LET wi(nn) = 0
+                   LET wi(nn-1) = 0
+                ELSE
+                   LET wr(nn) = x + p
+                   LET wr(nn-1) = wr(nn)
+                   LET wi(nn) = z
+                   LET wi(nn-1) = -z
+                END IF
+                LET nn = nn - 2
+                EXIT DO
+
+             ELSE
+                IF its = 30 then
+                   PRINT "Too many iterations"
+                   EXIT SUB
+                END IF
+                IF its = 10 or its = 20 then
+                   LET t = t + x
+                   FOR i = 1 to nn
+                       LET a(i, i) = a(i, i) - x
+                   NEXT i
+                   LET s = abs(a(nn, nn-1)) + abs(a(nn-1, nn-2))
+                   LET x = .75 * s
+                   LET y = x
+                   LET w = -.4375 * s^2
+                END IF
+
+                LET its = its + 1
+                FOR m = nn - 2 to l step -1
+                    LET z = a(m, m)
+                    LET r = x - z
+                    LET s = y - z
+                    LET p = (r*s - w) / a(m+1, m) + a(m, m+1)
+                    LET q = a(m+1, m+1) - z - r - s
+                    LET r = a(m+2, m+1)
+                    LET s = abs(p) + abs(q) + abs(r)
+                    LET p = p / s
+                    LET q = q / s
+                    LET r = r / s
+                    IF m = l then EXIT FOR
+
+                    LET u = abs(a(m, m-1)) * (abs(q) + abs(r))
+                    LET v = abs(p) * (abs(a(m-1, m-1)) + abs(z) + abs(a(m+1, m+1)))
+                    IF u + v = v then EXIT FOR
+
+                NEXT m
+                FOR i = m + 2 to nn
+                    LET a(i, i-2) = 0
+                    IF i <> m + 2 then LET a(i, i-3) = 0
+                NEXT i
+                FOR k = m to nn - 1
+                    IF k <> m then
+                       LET p = a(k, k-1)
+                       LET q = a(k+1, k-1)
+                       LET r = 0
+                       IF k <> nn - 1 then LET r = a(k+2, k-1)
+                       LET x = abs(p) + abs(q) + abs(r)
+                       IF x <> 0 then
+                          LET p = p / x
+                          LET q = q / x
+                          LET r = r / x
+                       END IF
+                    END IF
+                    LET s = sqr(p^2 + q^2 + r^2) * sgn(p)
+                    IF s <> 0 then
+                       IF k = m then
+                          IF l <> m then LET a(k, k-1) = -a(k, k-1)
+                       ELSE
+                          LET a(k, k-1) = -s * x
+                       END IF
+                       LET p = p + s
+                       LET x = p / s
+                       LET y = q / s
+                       LET z = r / s
+                       LET q = q / p
+                       LET r = r / p
+                       FOR j = k to nn
+                           LET p = a(k, j) + q * a(k+1, j)
+                           IF k <> nn - 1 then
+                              LET p = p + r * a(k+2, j)
+                              LET a(k+2, j) = a(k+2, j) - p * z
+                           END IF
+                           LET a(k+1, j) = a(k+1, j) - p * y
+                           LET a(k, j) = a(k, j) - p * x
+                       NEXT j
+                       FOR i = l to min(nn, k + 3)
+                           LET p = x * a(i, k) + y * a(i, k+1)
+                           IF k <> nn - 1 then
+                              LET p = p + z * a(i, k+2)
+                              LET a(i, k+2) = a(i, k+2) - p * r
+                           END IF
+                           LET a(i, k+1) = a(i, k+1) - p * q
+                           LET a(i, k) = a(i, k) - p
+                       NEXT i
+                    END IF
+                NEXT k
+             END IF
+          END IF
+       LOOP
+    LOOP
+
+END SUB

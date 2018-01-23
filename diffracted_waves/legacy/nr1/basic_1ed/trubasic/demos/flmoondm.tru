@@ -1,0 +1,72 @@
+PROGRAM D1r1
+
+! Driver for routine flmoon
+
+LIBRARY "flmoon", "julday", "caldat"
+DECLARE FUNCTION julday
+
+DIM phase$(4), timstr$(2)
+
+CLEAR
+LET tzone = 5
+MAT READ phase$
+DATA "new moon", "first quarter", "full moon", "last quarter"
+
+MAT READ timstr$
+DATA " AM", " PM"
+
+PRINT "Date of the next few phases of the moon"
+PRINT "Enter today's date (e.g. 1,31,1982)";
+INPUT im, id, iy
+PRINT
+LET timzon = -tzone / 24
+
+! Approximate number of full moons since January 1900
+
+LET n = int(12.37 * (iy - 1900 + (im - .5) / 12))
+LET nph = 2
+LET j1 = julday(im, id, iy)
+
+CALL flmoon (n, nph, j2, frac)
+
+LET n = int(n + (j1 - j2) / 28)
+PRINT "   Date         Time(est)    Phase"
+FOR i = 1 to 20
+
+    CALL flmoon (n, nph, j2, frac)
+
+    LET ifrac = round(24 * (frac + timzon))
+    IF ifrac < 0 then
+       LET j2 = j2 - 1
+       LET ifrac = ifrac + 24
+    END IF
+    IF ifrac >= 12 then
+       LET j2 = j2 + 1
+       LET ifrac = ifrac - 12
+    ELSE
+       LET ifrac = ifrac + 12
+    END IF
+    IF ifrac > 12 then
+       LET ifrac = ifrac - 12
+       LET istr = 2
+    ELSE
+       LET istr = 1
+    END IF
+
+    CALL caldat (j2, im, id, iy)
+
+    PRINT using "##": im;
+    PRINT using "###": id;
+    PRINT using "#####": iy;
+    PRINT using "#########": ifrac;
+    PRINT timstr$(istr); "     "; phase$(nph + 1)
+    IF nph = 3 then
+       LET nph = 0
+       LET n = n + 1
+    ELSE
+       LET nph = nph + 1
+    END IF
+
+NEXT i
+
+END

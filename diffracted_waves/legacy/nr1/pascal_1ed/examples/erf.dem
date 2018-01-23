@@ -1,0 +1,35 @@
+PROGRAM d6r10(input,output,dfile);
+(* driver for routine ERF *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   StrArray14 = string[14];
+VAR 
+   i,nval: integer;
+   val,x: real;
+   txt: StrArray14;
+   dfile: text;
+
+(*$I GAMMLN.PAS *)
+
+(*$I GSER.PAS *)
+
+(*$I GCF.PAS *)
+
+(*$I GAMMP.PAS *)
+
+(*$I ERF.PAS *)
+
+BEGIN
+   NROpen(dfile,'fncval.dat');
+   REPEAT readln(dfile,txt) UNTIL txt = 'Error Function';
+   readln(dfile,nval);
+   writeln(txt);
+   writeln('x':5,'actual':12,'erf(x)':12);
+   FOR i := 1 TO nval DO BEGIN
+      readln(dfile,x,val);
+      writeln(x:6:2,val:12:7,erf(x):12:7)
+   END;
+   close(dfile)
+END.

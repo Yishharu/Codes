@@ -1,0 +1,31 @@
+PROGRAM d12r9(input,output,dfile);
+(* driver for routine MEMCOF *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 1000;
+   m = 10;
+TYPE
+   RealArrayNP = ARRAY [1..n] OF real;
+   RealArrayMP = ARRAY [1..m] OF real;
+VAR
+   i: integer;
+   pm: real;
+   cof: RealArrayMP;
+   data: RealArrayNP;
+   dfile: text;
+
+(*$I MEMCOF.PAS *)
+
+BEGIN
+   NROpen(dfile,'spctrl.dat');
+   FOR i := 1 TO n DO read(dfile,data[i]);
+   close(dfile);
+   memcof(data,n,m,pm,cof);
+   writeln('Coefficients for spectral estimation of SPCTRL.DAT');
+   writeln;
+   FOR i := 1 TO m DO writeln('a[',i:2,'] =',cof[i]:12:6);
+   writeln;
+   writeln('a0 =',pm:12:6)
+END.

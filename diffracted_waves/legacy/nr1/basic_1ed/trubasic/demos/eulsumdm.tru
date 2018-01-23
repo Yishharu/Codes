@@ -1,0 +1,38 @@
+PROGRAM D5r1
+
+! Driver for routine eulsum
+
+LIBRARY "eulsum"
+
+LET nval = 40
+DIM wksp(0)
+MAT redim wksp(nval)
+
+! Evaluate ln(1+x)=x-x^2/2+x^3/3-x^4/4... for -1<x<1
+
+CLEAR
+DO
+   PRINT "How many terms in polynomial?"
+   PRINT "Enter n between 1 and "; str$(nval); ". Enter n=0 to end."
+   LINE INPUT mval$
+   LET mval = val(mval$)
+
+   IF mval <= 0 or mval > nval then EXIT DO
+
+   PRINT "        x        Actual    Polynomial"
+   FOR i = -8 to 8 step 1
+       LET x = i / 10
+       LET sum = 0
+       LET xpower = -1
+       FOR j = 1 to mval
+           LET xpower = -x * xpower
+           LET term = xpower / j
+
+           CALL eulsum (sum, term, j, wksp())
+
+       NEXT j
+       PRINT using "----#.######": x, log(1 + x), sum
+   NEXT i
+LOOP
+
+END

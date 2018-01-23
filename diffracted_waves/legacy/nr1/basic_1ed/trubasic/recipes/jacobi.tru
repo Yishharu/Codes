@@ -1,0 +1,96 @@
+EXTERNAL
+
+SUB jacobi (a(,), n, np, d(), v(,), nrot)
+
+    DIM b(0), z(0)
+    MAT redim b(n), z(n)
+
+    FOR ip = 1 to n
+        FOR iq = 1 to n
+            LET v(ip, iq) = 0
+        NEXT iq
+        LET v(ip, ip) = 1
+    NEXT ip
+    FOR ip = 1 to n
+        LET b(ip) = a(ip, ip)
+        LET d(ip) = b(ip)
+        LET z(ip) = 0
+    NEXT ip
+
+    LET nrot = 0
+    FOR i = 1 to 50
+        LET sm = 0
+        FOR ip = 1 to n - 1
+            FOR iq = ip + 1 to n
+                LET sm = sm + abs(a(ip, iq))
+            NEXT iq
+        NEXT ip
+        IF sm = 0 then EXIT SUB
+        IF i < 4 then
+           LET tresh = .2 * sm / n^2
+        ELSE
+           LET tresh = 0
+        END IF
+
+        FOR ip = 1 to n - 1
+            FOR iq = ip + 1 to n
+                LET g = 100 * abs(a(ip, iq))
+                LET dum = abs(d(ip))
+                LET dum1 = abs(d(iq))
+                IF i > 4 and dum + g = dum and dum1 + g = dum1 then
+                   LET a(ip, iq) = 0
+                ELSEIF abs(a(ip, iq)) > tresh then
+                   LET h = d(iq) - d(ip)
+                   IF abs(h) + g = abs(h) then
+                      LET t = a(ip, iq) / h
+                   ELSE
+                      LET theta = .5 * h / a(ip, iq)
+                      LET t = 1 / (abs(theta) + sqr(1 + theta^2))
+                      IF theta < 0 then LET t = -t
+                   END IF
+                   LET c = 1 / sqr(1 + t^2)
+                   LET s = t * c
+                   LET tau = s / (1 + c)
+                   LET h = t * a(ip, iq)
+                   LET z(ip) = z(ip) - h
+                   LET z(iq) = z(iq) + h
+                   LET d(ip) = d(ip) - h
+                   LET d(iq) = d(iq) + h
+                   LET a(ip, iq) = 0
+                   FOR j = 1 to ip - 1
+                       LET g = a(j, ip)
+                       LET h = a(j, iq)
+                       LET a(j, ip) = g - s * (h + g * tau)
+                       LET a(j, iq) = h + s * (g - h * tau)
+                   NEXT j
+                   FOR j = ip + 1 to iq - 1
+                       LET g = a(ip, j)
+                       LET h = a(j, iq)
+                       LET a(ip, j) = g - s * (h + g * tau)
+                       LET a(j, iq) = h + s * (g - h * tau)
+                   NEXT j
+                   FOR j = iq + 1 to n
+                       LET g = a(ip, j)
+                       LET h = a(iq, j)
+                       LET a(ip, j) = g - s * (h + g * tau)
+                       LET a(iq, j) = h + s * (g - h * tau)
+                   NEXT j
+                   FOR j = 1 to n
+                       LET g = v(j, ip)
+                       LET h = v(j, iq)
+                       LET v(j, ip) = g - s * (h + g * tau)
+                       LET v(j, iq) = h + s * (g - h * tau)
+                   NEXT j
+                   LET nrot = nrot + 1
+                END IF
+            NEXT iq
+        NEXT ip
+        FOR ip = 1 to n
+            LET b(ip) = b(ip) + z(ip)
+            LET d(ip) = b(ip)
+            LET z(ip) = 0
+        NEXT ip
+    NEXT i
+    PRINT "50 iterations should never happen"
+
+END SUB

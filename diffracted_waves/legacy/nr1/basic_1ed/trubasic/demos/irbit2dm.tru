@@ -1,0 +1,39 @@
+PROGRAM D7r11
+
+! Driver for routine irbit2
+
+! Calculate distribution of runs of zeros
+
+LIBRARY "irbit2"
+DECLARE FUNCTION irbit2
+
+LET nbin = 15
+DIM delaq(0)
+MAT redim delaq(nbin)
+
+CLEAR
+LET ntries = 10000
+LET iseed = 111
+MAT delaq = zer
+
+LET ipts = 0
+FOR i = 1 to ntries
+    IF irbit2(iseed) = 1 then
+       LET ipts = ipts + 1
+       FOR j = 1 to nbin
+           IF irbit2(iseed) = 1 then
+              LET delaq(j) = delaq(j) + 1
+              EXIT FOR
+           END IF
+       NEXT j
+    END IF
+NEXT i
+
+PRINT "Distribution of runs of n zeros"
+PRINT "     n        Probability         Expected"
+FOR n = 1 to nbin
+    PRINT using "######": n - 1;
+    PRINT using "###########.######": delaq(n) / ipts, 1 / 2^n
+NEXT n
+
+END

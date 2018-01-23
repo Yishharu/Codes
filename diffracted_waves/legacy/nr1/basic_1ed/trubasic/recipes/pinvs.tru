@@ -1,0 +1,79 @@
+EXTERNAL
+
+SUB pinvs (ie1, ie2, je1, jsf, jc1, k, c(,,), nci, ncj, nck, s(,), nsi, nsj)
+
+    LET zero = 0
+    LET one = 1
+    LET nmax = 10
+
+    DIM pscl(0), indxr(0)
+    MAT redim pscl(nmax), indxr(nmax)
+
+    LET je2 = je1 + ie2 - ie1
+    LET js1 = je2 + 1
+    FOR i = ie1 to ie2
+        LET big = zero
+        FOR j = je1 to je2
+            IF abs(s(i, j)) > big then LET big = abs(s(i, j))
+        NEXT j
+        IF big = zero then
+           PRINT "singular matrix, row all 0"
+           EXIT SUB
+        END IF
+
+        LET pscl(i) = one / big
+        LET indxr(i) = 0
+    NEXT i
+
+    FOR id = ie1 to ie2
+        LET piv = zero
+        FOR i = ie1 to ie2
+            IF indxr(i) = 0 then
+               LET big = zero
+               FOR j = je1 to je2
+                   IF abs(s(i, j)) > big then
+                      LET jp = j
+                      LET big = abs(s(i, j))
+                   END IF
+               NEXT j
+               IF big * pscl(i) > piv then
+                  LET ipiv = i
+                  LET jpiv = jp
+                  LET piv = big * pscl(i)
+               END IF
+            END IF
+        NEXT i
+        IF s(ipiv, jpiv) = zero then
+           PRINT "Singular matrix"
+           EXIT SUB
+        END IF
+
+        LET indxr(ipiv) = jpiv
+        LET pivinv = one / s(ipiv, jpiv)
+        FOR j = je1 to jsf
+            LET s(ipiv, j) = s(ipiv, j) * pivinv
+        NEXT j
+        LET s(ipiv, jpiv) = one
+        FOR i = ie1 to ie2
+            IF indxr(i) <> jpiv then
+               IF s(i, jpiv) <> zero then
+                  LET dum = s(i, jpiv)
+                  FOR j = je1 to jsf
+                      LET s(i, j) = s(i, j) - dum * s(ipiv, j)
+                  NEXT j
+                  LET s(i, jpiv) = zero
+               END IF
+            END IF
+        NEXT i
+    NEXT id
+
+    LET jcoff = jc1 - js1
+    LET icoff = ie1 - je1
+    FOR i = ie1 to ie2
+        LET irow = indxr(i) + icoff
+        FOR j = js1 to jsf
+            LET c(irow, j + jcoff, k) = s(i, j)
+        NEXT j
+    NEXT i
+
+END SUB

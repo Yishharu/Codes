@@ -1,0 +1,52 @@
+PROGRAM badluk
+
+LIBRARY "flmoon", "julday"
+
+DECLARE FUNCTION julday
+
+CLEAR
+LET timzon = -5 / 24
+READ iybeg, iyend
+DATA 1900,2000
+
+PRINT "Full moons on Friday the 13th from"; iybeg; "to"; iyend
+PRINT
+FOR iyyy = iybeg to iyend
+    FOR im = 1 to 12
+        LET jday = julday(im, 13, iyyy)
+        LET idwk = (jday + 1) - 7 * int((jday + 1) / 7)
+        IF idwk = 5 then
+           LET n = int(12.37 * (iyyy - 1900 + (im - .5) / 12))
+           LET icon = 0
+           DO
+
+              CALL flmoon (n, 2, jd, frac)
+
+              LET ifrac = round(24 * (frac + timzon))
+              IF ifrac < 0 then
+                 LET jd = jd - 1
+                 LET ifrac = ifrac + 24
+              END IF
+              IF ifrac > 12 then
+                 LET jd = jd + 1
+                 LET ifrac = ifrac - 12
+              ELSE
+                 LET ifrac = ifrac + 12
+              END IF
+              IF jd = jday then
+                 PRINT im; "/"; 13; "/"; iyyy
+                 PRINT "Full moon"; ifrac; "hrs after midnight (EST)."
+                 PRINT
+                 EXIT DO
+              ELSE
+                 LET ic = sgn(jday - jd)
+                 IF ic = -icon then EXIT DO
+                 LET icon = ic
+                 LET n = n + ic
+              END IF
+           LOOP
+        END IF
+    NEXT im
+NEXT iyyy
+
+END

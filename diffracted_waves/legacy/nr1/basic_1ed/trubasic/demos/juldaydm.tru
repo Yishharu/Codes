@@ -1,0 +1,47 @@
+PROGRAM D1r2
+
+! Driver for julday
+
+LIBRARY "julday"
+
+DECLARE FUNCTION julday
+
+DIM namq$(12)
+
+CLEAR
+MAT READ namq$
+DATA "January", "February", "March", "April", "May", "June", "July"
+DATA  "August", "September", "October", "November", "December"
+
+OPEN #1: name "dates.dat", access input
+LINE INPUT #1: dum$
+LINE INPUT #1: dum$
+LET n = val(dum$[1:3])
+PRINT "Month         Day  Year   Julian Day    Event"
+PRINT
+FOR i = 1 to n
+    LINE INPUT #1: dum$
+    LET im = val(dum$[1:2])
+    LET id = val(dum$[3:5])
+    LET iy = val(dum$[6:10])
+    LET txt$ = dum$[11:1000]
+    PRINT namq$(im),
+    PRINT using "###": id;
+    PRINT using "-----#": iy;
+    PRINT using "###########": julday(im, id, iy);
+    PRINT "     "; txt$
+NEXT i
+CLOSE #1
+
+PRINT
+PRINT "Month, day, year (e.g. 1,13,1905)"
+PRINT
+FOR i = 1 to 20
+    PRINT "mm, dd, yyyy";
+    INPUT im, id, iy
+    IF im < 0 then EXIT FOR
+    PRINT "Julian Day: "; julday(im, id, iy)
+    PRINT
+NEXT i
+
+END

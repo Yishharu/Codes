@@ -1,0 +1,24 @@
+EXTERNAL
+
+FUNCTION gammq (a, x)
+
+    LIBRARY "gser", "gcf"
+
+    IF x < 0 or a <= 0 then
+       PRINT "Abnormal exit"
+       EXIT FUNCTION
+    END IF
+
+    IF x < a + 1 then
+
+       CALL gser (gamser, a, x, gln)
+
+       LET gammq = 1 - gamser
+    ELSE
+
+       CALL gcf (gammcf, a, x, gln)
+
+       LET gammq = gammcf
+    END IF
+
+END FUNCTION

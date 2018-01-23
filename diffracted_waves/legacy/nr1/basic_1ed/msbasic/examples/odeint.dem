@@ -1,0 +1,41 @@
+DECLARE SUB ODEINT (YSTART!(), NVAR!, X1!, X2!, EPS!, H1!, HMIN!, NOK!, NBAD!, DUM1!, DUM2!)
+DECLARE FUNCTION BESSJ! (A!, X!)
+DECLARE FUNCTION BESSJ0! (X!)
+DECLARE FUNCTION BESSJ1! (X!)
+COMMON KMAX, KOUNT, DXSAV, XP(), YP()
+
+'PROGRAM D15R4
+'Driver for ODEINT
+CLS
+NVAR = 4
+DIM YSTART(NVAR), XP(200), YP(10, 200)
+X1 = 1!
+X2 = 10!
+YSTART(1) = BESSJ0(X1)
+YSTART(2) = BESSJ1(X1)
+YSTART(3) = BESSJ(2, X1)
+YSTART(4) = BESSJ(3, X1)
+EPS = .0001
+H1 = .1
+HMIN = 0!
+KMAX = 100
+DXSAV = (X2 - X1) / 20!
+CALL ODEINT(YSTART(), NVAR, X1, X2, EPS, H1, HMIN, NOK, NBAD, DUM, RKQC)
+PRINT "Successful steps:          "; NOK
+PRINT "Bad steps:                 "; NBAD
+PRINT "Stored intermediate values:"; KOUNT
+PRINT
+PRINT "       X          Integral       BESSJ(3,X)"
+FOR I = 1 TO KOUNT
+  PRINT USING "#####.####"; XP(I);
+  PRINT USING "#########.######"; YP(4, I); BESSJ(3, XP(I))
+NEXT I
+END
+
+SUB DERIVS (X, Y(), DYDX())
+DYDX(1) = -Y(2)
+DYDX(2) = Y(1) - (1! / X) * Y(2)
+DYDX(3) = Y(2) - (2! / X) * Y(3)
+DYDX(4) = Y(3) - (3! / X) * Y(4)
+END SUB
+

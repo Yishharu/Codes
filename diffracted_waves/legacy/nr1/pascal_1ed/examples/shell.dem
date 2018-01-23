@@ -1,0 +1,36 @@
+PROGRAM d8r9(input,output,dfile);
+(* driver for routine SHELL *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npt = 100;
+TYPE
+   RealArrayNP = ARRAY [1..npt] OF real;
+VAR
+   i,j: integer;
+   a: RealArrayNP;
+   dfile: text;
+
+(*$I SHELL.PAS *)
+
+BEGIN
+   NROpen(dfile,'tarray.dat');
+   readln(dfile);
+   FOR i := 1 TO npt DO read(dfile,a[i]);
+   close(dfile);
+(* write original array *)
+   writeln('Original array:');
+   FOR i := 1 TO npt DIV 10 DO BEGIN
+      FOR j := 1 TO 10 DO write(a[10*(i-1)+j]:6:2);
+      writeln
+   END;
+(* write sorted array *)
+   shell(npt,a);
+   writeln;
+   writeln('Sorted array:');
+   FOR i := 1 TO npt DIV 10 DO BEGIN
+      FOR j := 1 TO 10 DO write(a[10*(i-1)+j]:6:2);
+      writeln
+   END;
+END.

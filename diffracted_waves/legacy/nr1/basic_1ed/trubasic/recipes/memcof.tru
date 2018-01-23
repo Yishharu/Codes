@@ -1,0 +1,41 @@
+EXTERNAL
+
+SUB memcof (datq(), n, m, pm, cof(), wk1(), wk2(), wkm())
+
+    LET p = 0
+    FOR j = 1 to n
+        LET p = p + datq(j)^2
+    NEXT j
+    LET pm = p / n
+    LET wk1(1) = datq(1)
+    LET wk2(n - 1) = datq(n)
+    FOR j = 2 to n - 1
+        LET wk1(j) = datq(j)
+        LET wk2(j - 1) = datq(j)
+    NEXT j
+    FOR k = 1 to m
+        LET pneum = 0
+        LET denom = 0
+        FOR j = 1 to n - k
+            LET pneum = pneum + wk1(j) * wk2(j)
+            LET denom = denom + wk1(j)^2 + wk2(j)^2
+        NEXT j
+        LET cof(k) = 2 * pneum / denom
+        LET pm = pm * (1 - cof(k)^2)
+        FOR i = 1 to k - 1
+            LET cof(i) = wkm(i) - cof(k) * wkm(k - i)
+        NEXT i
+
+        IF k = m then EXIT SUB
+
+        FOR i = 1 to k
+            LET wkm(i) = cof(i)
+        NEXT i
+        FOR j = 1 to n - k - 1
+            LET wk1(j) = wk1(j) - wkm(k) * wk2(j)
+            LET wk2(j) = wk2(j + 1) - wkm(k) * wk1(j + 1)
+        NEXT j
+    NEXT k
+    PRINT "never get here"
+
+END SUB

@@ -1,0 +1,26 @@
+DECLARE FUNCTION BICO! (N!, K!)
+
+'PROGRAM D6R3
+'Driver for routine BICO
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "Binomial Coefficients"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT TEXT$
+PRINT "    N     K      Actual  BICO(N,K)"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  N = VAL(MID$(DUM$, 1, 4))
+  K = VAL(MID$(DUM$, 8, 6))
+  BINCO = VAL(MID$(DUM$, 16))
+  PRINT USING "#####"; N;
+  PRINT " ";
+  PRINT USING "#####"; K;
+  PRINT USING "##########."; BINCO; BICO(N, K)
+NEXT I
+CLOSE #1
+END
+

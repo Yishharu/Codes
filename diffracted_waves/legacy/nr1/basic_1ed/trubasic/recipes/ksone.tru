@@ -1,0 +1,23 @@
+EXTERNAL
+
+SUB ksone (data(), n, dum, d, prob)
+
+    LIBRARY "sort", "probks"
+
+    DECLARE FUNCTION func, probks      ! func is supplied by the user
+
+    CALL sort (n, data())
+
+    LET en = n
+    LET d = 0
+    LET fo = 0
+    FOR j = 1 to n
+        LET fn = j / en
+        LET ff = func(data(j))
+        LET dt = max(abs(fn - ff), abs(fo - ff))
+        LET d = max(dt, d)
+        LET fo = fn
+    NEXT j
+    LET prob = probks(sqr(en) * d)
+
+END SUB

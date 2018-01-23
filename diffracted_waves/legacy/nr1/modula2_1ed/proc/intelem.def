@@ -1,0 +1,41 @@
+DEFINITION MODULE IntElem;
+
+   (* EXPORT QUALIFIED Trapzd, QTrap, QSimp; *)
+
+   FROM NRMath IMPORT RealFunction;
+
+   PROCEDURE Trapzd(    func: RealFunction;
+                        a, b: REAL; 
+                    VAR s:    REAL; 
+                        n:    INTEGER); 
+   (*
+     This routine computes the n'th stage of refinement of an
+     extended trapezoidal rule. The function func is
+     to be integrated between limits a and b.  When called
+     with n=1, the routine returns the crudest estimate of
+     (int (a, b) f(x) dx).  Subsequent calls with n=2,3,... (in that
+     sequential order) will improve the accuracy by adding 2^(n-2) 
+     additional interior points.
+   *)
+
+   PROCEDURE QTrap(    func: RealFunction;
+                       a, b: REAL; 
+                   VAR s:    REAL); 
+   (*
+     Returns the integral of the function func from a to b.  
+     The parameter eps can be set to the desired fractional accuracy, 
+     and jMax so that 2^(jMax-1) is the maximum allowed number of steps.  
+     Integration is performed by the trapezoidal rule.
+   *)
+
+   PROCEDURE QSimp(    func: RealFunction;
+                       a, b: REAL; 
+                   VAR s:    REAL); 
+   (*
+     Returns the integral of the function func from  to b.  
+     The parameter eps should be set to the desired fractional accuracy 
+     and jMax so that 2^jMax-1 is the maximum allowed number of steps.  
+     Integration is performed by Simpson's rule.
+   *)
+
+END IntElem.

@@ -1,0 +1,40 @@
+PROGRAM D13r9
+
+! Driver for routine chstwo
+
+LIBRARY "chstwo", "expdev"
+DECLARE FUNCTION expdev
+
+LET nbins = 10
+DIM bins1(0), bins2(0)
+MAT redim bins1(nbins), bins2(nbins)
+
+CLEAR
+LET npts = 2000
+LET idum = -17
+
+MAT bins1 = zer
+MAT bins2 = zer
+
+FOR i = 1 to npts
+    LET x = expdev(idum)
+    LET ibin = int(x * nbins / 3) + 1
+    IF ibin <= nbins then LET bins1(ibin) = bins1(ibin) + 1
+    LET x = expdev(idum)
+    LET ibin = int(x * nbins / 3) + 1
+    IF ibin <= nbins then LET bins2(ibin) = bins2(ibin) + 1
+NEXT i
+
+CALL chstwo (bins1(), bins2(), nbins, -1, df, chsq, prob)
+
+PRINT "        Dataset 1      Dataset 2"
+FOR i = 1 to nbins
+    PRINT using "     #######.##": bins1(i), bins2(i)
+NEXT i
+PRINT
+PRINT "        chi-squared:   ";
+PRINT using ".####^^^^": chsq
+PRINT "        probability:   ";
+PRINT using ".####^^^^": prob
+
+END

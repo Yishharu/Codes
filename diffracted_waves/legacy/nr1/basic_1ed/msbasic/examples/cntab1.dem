@@ -1,0 +1,54 @@
+DECLARE SUB CNTAB1 (NN!(), NI!, NJ!, CHISQ!, DF!, PROB!, CRAMRV!, CCC!)
+
+'PROGRAM D13R13
+'Driver for routine CNTAB1
+'Contingency table in file TABLE.DAT
+CLS
+NDAT = 9
+NMON = 12
+DIM NMBR(NDAT, NMON)
+DIM FATE$(NDAT), MON$(NMON)
+OPEN "TABLE.DAT" FOR INPUT AS #1
+LINE INPUT #1, DUM$
+LINE INPUT #1, TITLE$
+LINE INPUT #1, DUM$
+TEXT$ = LEFT$(DUM$, 15)
+FOR I = 1 TO 12
+  MON$(I) = MID$(DUM$, 5 * I + 11, 5)
+NEXT I
+LINE INPUT #1, DUM$
+FOR I = 1 TO NDAT
+  LINE INPUT #1, DUM$
+  FATE$(I) = LEFT$(DUM$, 15)
+  FOR J = 1 TO 12
+    NMBR(I, J) = VAL(MID$(DUM$, 5 * J + 11, 5))
+  NEXT J
+NEXT I
+CLOSE #1
+PRINT TITLE$
+PRINT
+PRINT "               ";
+FOR I = 1 TO 12
+  PRINT MON$(I);
+NEXT I
+FOR I = 1 TO NDAT
+  PRINT FATE$(I);
+  FOR J = 1 TO 12
+    PRINT USING "#####"; NMBR(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+CALL CNTAB1(NMBR(), NDAT, NMON, CHISQ, DF, PROB, CRAMRV, CCC)
+PRINT "Chi-squared             ";
+PRINT USING "###########.##"; CHISQ
+PRINT "Degrees of Freedom      ";
+PRINT USING "###########.##"; DF
+PRINT "Probability             ";
+PRINT USING "#########.####"; PROB
+PRINT "Cramer-V                ";
+PRINT USING "#########.####"; CRAMRV
+PRINT "Contingency Coeff.      ";
+PRINT USING "#########.####"; CCC
+END
+

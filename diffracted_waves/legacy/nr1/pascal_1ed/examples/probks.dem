@@ -1,0 +1,31 @@
+PROGRAM d13r12(input,output);
+(* driver for routine PROBKS *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npts = 20;
+   eps = 0.1;
+   iscal = 40;
+TYPE
+   CharArrayISCAL = PACKED ARRAY [1..iscal] OF char;
+VAR
+   alam,aval: real;
+   i,j: integer;
+   txt: CharArrayISCAL;
+
+(*$I PROBKS.PAS *)
+
+BEGIN
+   writeln('probability function for kolmogorov-smirnov statistic');
+   writeln;
+   writeln('lambda':7,'value:':10,'graph:':13);
+   FOR i := 1 TO npts DO BEGIN
+      alam := i*eps;
+      aval := probks(alam);
+      FOR j := 1 TO iscal DO
+         IF j <= round(iscal*aval) THEN txt[j] := '*'
+         ELSE txt[j] := ' ';
+      writeln(alam:8:6,aval:10:6,' ':5,txt)
+   END
+END.

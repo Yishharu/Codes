@@ -1,0 +1,25 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE SUB QGAUS (DUM!, A!, B!, SS!)
+
+'PROGRAM D4R8
+'Driver for routine QGAUS
+CLS
+X1 = 0!
+X2 = 5!
+NVAL = 10
+DX = (X2 - X1) / NVAL
+PRINT "0.0 to    QGAUS      Expected"
+PRINT
+FOR I = 1 TO NVAL
+  X = X1 + I * DX
+  CALL QGAUS(DUM, X1, X, SS)
+  PRINT USING "##.##"; X;
+  PRINT USING "#####.######"; SS;
+  PRINT USING "#####.######"; -(1! + X) * EXP(-X) + (1! + X1) * EXP(-X1)
+NEXT I
+END
+
+FUNCTION FUNC (X)
+FUNC = X * EXP(-X)
+END FUNCTION
+

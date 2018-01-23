@@ -1,0 +1,38 @@
+MODULE midinf
+
+    SHARE it, s                   ! STATIC, must be preserved between calls
+
+    SUB midinf (dum, aa, bb, s, n)
+
+        DECLARE FUNCTION inf, func     ! func is supplied by the user
+
+        LET b = 1 / aa
+        LET a = 1 / bb
+        IF n = 1 then
+           LET x = .5 * (a + b)
+           LET s = (b - a) * inf(.5 * (a + b))
+           LET it = 1
+        ELSE
+           LET tnm = it
+           LET del = (b - a) / (3 * tnm)
+           LET ddel = del + del
+           LET x = a + .5 * del
+           LET sum = 0
+           FOR j = 1 to it
+               LET sum = sum + inf(x)
+               LET x = x + ddel
+               LET sum = sum + inf(x)
+               LET x = x + del
+           NEXT j
+           LET s = (s + (b - a) * sum / tnm) / 3
+           LET it = 3 * it
+        END IF
+
+        FUNCTION inf (x)
+            DECLARE FUNCTION func
+            LET inf = func(1 / x) / x ^ 2
+        END FUNCTION
+
+    END SUB
+
+END MODULE

@@ -1,0 +1,27 @@
+PROGRAM D10r1
+
+! Driver for routine mnbrak
+
+LIBRARY "mnbrak"
+
+CLEAR
+FOR i = 1 to 10
+    LET ax = i * .5
+    LET bx = (i + 1) * .5
+
+    CALL mnbrak (ax, bx, cx, fa, fb, fc, dum)
+
+    PRINT "           a           b           c"
+    PRINT "  x";
+    PRINT using "----#.######": ax, bx, cx
+    PRINT "  f";
+    PRINT using "----#.######": fa, fb, fc
+NEXT i
+
+END
+
+FUNCTION func (u)
+    LIBRARY "bessj0"
+    DECLARE FUNCTION bessj0
+    LET func = bessj0(u)
+END FUNCTION

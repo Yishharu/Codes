@@ -1,0 +1,60 @@
+DECLARE SUB CNTAB2 (NN!(), NI!, NJ!, H!, HX!, HY!, HYGX!, HXGY!, UYGX!, UXGY!, UXY!)
+
+'PROGRAM D13R14
+'Driver for routine CNTAB2
+'Contingency table in file TABLE.DAT
+CLS
+NI = 9
+NMON = 12
+DIM NMBR(NI, NMON)
+DIM FATE$(NI), MON$(NMON)
+OPEN "TABLE.DAT" FOR INPUT AS #1
+LINE INPUT #1, DUM$
+LINE INPUT #1, TITLE$
+LINE INPUT #1, DUM$
+TEXT$ = LEFT$(DUM$, 15)
+FOR I = 1 TO 12
+  MON$(I) = MID$(DUM$, 5 * I + 11, 5)
+NEXT I
+LINE INPUT #1, DUM$
+FOR I = 1 TO NI
+  LINE INPUT #1, DUM$
+  FATE$(I) = LEFT$(DUM$, 15)
+  FOR J = 1 TO 12
+    NMBR(I, J) = VAL(MID$(DUM$, 5 * J + 11, 5))
+  NEXT J
+NEXT I
+CLOSE #1
+PRINT TITLE$
+PRINT
+PRINT "               ";
+FOR I = 1 TO 12
+  PRINT MON$(I);
+NEXT I
+FOR I = 1 TO NI
+  PRINT FATE$(I);
+  FOR J = 1 TO 12
+    PRINT USING "#####"; NMBR(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+CALL CNTAB2(NMBR(), NI, NMON, H, HX, HY, HYGX, HXGY, UYGX, UXGY, UXY)
+PRINT "Entropy of Table          ";
+PRINT USING "#######.####"; H
+PRINT "Entropy of x-distribution ";
+PRINT USING "#######.####"; HX
+PRINT "Entropy of y-distribution ";
+PRINT USING "#######.####"; HY
+PRINT "Entropy of y given x      ";
+PRINT USING "#######.####"; HYGX
+PRINT "Entropy of x given y      ";
+PRINT USING "#######.####"; HXGY
+PRINT "Dependency of y on x      ";
+PRINT USING "#######.####"; UYGX
+PRINT "Dependency of x on y      ";
+PRINT USING "#######.####"; UXGY
+PRINT "Symmetrical dependency    ";
+PRINT USING "#######.####"; UXY
+END
+

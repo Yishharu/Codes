@@ -1,0 +1,33 @@
+DECLARE FUNCTION PROBKS! (ALAM!)
+
+'PROGRAM D13R12
+'Driver for routine PROBKS
+CLS
+DIM TEXT$(50)
+PRINT "Probability func. for Kolmogorov-Smirnov statistic"
+PRINT
+PRINT " Lambda:     Value:      Graph:"
+NPTS = 20
+EPS = .1
+SCALE = 40!
+FOR I = 1 TO NPTS
+  ALAM = I * EPS
+  VALUE = PROBKS(ALAM)
+  TEXT$(1) = "*"
+  FOR J = 1 TO 50
+    IF J <= CINT(SCALE * VALUE) THEN
+      TEXT$(J) = "*"
+    ELSE
+      TEXT$(J) = " "
+    END IF
+  NEXT J
+  PRINT USING "##.######"; ALAM;
+  PRINT USING "#####.######"; VALUE;
+  PRINT "    ";
+  FOR J = 1 TO 50
+    PRINT TEXT$(J);
+  NEXT J
+  PRINT
+NEXT I
+END
+

@@ -1,0 +1,95 @@
+# Numerical Recipes (FORTRAN)
+# Exception file for conversions to double precision
+# Rev. 1.01
+#  the substitutions in this file are performed BEFORE the following
+#  automatic substitutions:
+#    REAL -> DOUBLE PRECISION
+#    COMPLEX -> COMPLEX*16
+#    (non-exponent floating number) -> (floating number)d0
+#    (e or E exponent number) -> d exponent number
+#    sngl( -> dble(
+#    float( ->  dble(
+#    real( -> dreal(
+#    aimag( -> dimag(
+#    cmplx( -> dcmplx(
+#
+&airy:PI=3.1415927:PI=3.141592653589793d0:
+     :ONOVRT=.57735027:ONOVRT=.577350269189626d0:
+     :ai=.35502805:ai=.355028053887817d0:
+     :aip=-.25881940:aip=-.258819403792807d0:
+&beschb:NUSE1=5,NUSE2=5:NUSE1=7,NUSE2=8:
+&bessi:IACC=40:IACC=200:
+&bessik:EPS=1.e-10:EPS=3.d-16:
+&bessj:IACC=40:IACC=160:
+&bessjy:EPS=1.e-10:EPS=3.d-16:
+&betacf:EPS=3.e-7:EPS=3.d-16:
+&bnldev:PI=3.141592654:PI=3.141592653589793d0:
+&brent:ZEPS=1.0e-10:ZEPS=1.d-18:
+&broydn:EPS=1.e-7,TOLF=1.e-4,TOLMIN=1.e-6:EPS=3.d-16,TOLF=1.d-8,TOLMIN=1.d-12:
+&cisi:EPS=6.e-8,EULER=.57721566,:EPS=3.d-16,EULER=.577215664901533d0,:
+     :MAXIT=100,PIBY2=1.5707963,:MAXIT=100,PIBY2=1.570796326794897d0,:
+&dbrent:ZEPS=1.0e-10:ZEPS=1.d-18:
+&dfpmin:EPS=3.e-8:EPS=3.d-16:
+&dftint:TWOPI=2.*3.14159265:TWOPI=2.d0*3.141592653589793d0:
+&ei:EPS=6.e-8,EULER=.57721566:EPS=3.d-16,EULER=.577215664901533d0:
+&expint:EPS=1.e-7:EPS=3.d-16:
+       :EULER=.5772156649:EULER=.577215664901533d0:
+&fdjac:EPS=1.e-4:EPS=1.d-8:
+&fitexy:PI=3.14159265:PI=3.141592653589793d0:
+&fredex:PI=3.14159265:PI=3.141592653589793d0:
+&frenel:EPS=6.e-8:EPS=3.d-16:
+       :PI=3.1415927,:PI=3.141592653589793d0,:
+       :PIBY2=1.5707963:PIBY2=1.570796326794897d0:
+&frprmn:EPS=1.e-10:EPS=1.d-18:
+&gauher:EPS=3.D-14:EPS=1.d-14:
+&gaujac:EPS=3.D-14:EPS=1.d-14:
+&gaulag:EPS=3.D-14:EPS=1.d-14:
+&gauleg:EPS=3.d-14:EPS=1.d-14:
+&gcf:EPS=3.e-7:EPS=3.d-16:
+&gser:EPS=3.e-7:EPS=3.d-16:
+&hypgeo:EPS=1.e-6:EPS=1.d-14:
+       :INTEGER kmax,nbad,nok:INTEGER kmax,nbad,nok,iifill(20402):
+       :COMMON /path/ kmax:COMMON /path/ kmax,iifill:
+&laguer:EPSS=2.e-7:EPSS=3.d-16:
+&linmin:TOL=1.e-4:TOL=1.d-8:
+&lnsrch:TOLX=1.e-7:TOLX=3.d-16:
+&newt:TOLF=1.e-4,TOLMIN=1.e-6,TOLX=1.e-7:TOLF=1.d-8,TOLMIN=1.d-12,TOLX=3.d-16:
+&poidev:PI=3.141592654:PI=3.141592653589793d0:
+&probks:EPS1=0.001, EPS2=1.e-8:EPS1=1.d-6, EPS2=1.d-16:
+&qgaus:DATA w/.2955242247,:DATA w/.2955242247147529d0,:
+      :.2692667193,:.2692667193099963d0,:
+      :.2190863625,:.2190863625159821d0,:
+      :.1494513491,:.1494513491505806d0,:
+      :.0666713443/:.0666713443086881d0/:
+      :DATA x/.1488743389,:DATA x/.1488743389816312d0,:
+      :.4333953941,:.4333953941292472d0,:
+      :.6794095682,:.6794095682990244d0,:
+      :.8650633666,:.8650633666889845d0,:
+      :.9739065285/:.9739065285171717d0/:
+&qromb:EPS=1.e-6:EPS=1.d-10:
+&qromo:EPS=1.e-6:EPS=3.d-9:
+&qroot:TINY=1.0e-6:TINY=1.d-14:
+&qsimp:EPS=1.e-6:EPS=1.d-10:
+&qtrap:EPS=1.e-6:EPS=1.d-10:
+&quadmx:PI=3.14159265:PI=3.141592653589793d0:
+&ran1:EPS=1.2e-7:EPS=3.d-16:
+&ran2:EPS=1.2e-7:EPS=3.d-16:
+&rc:ERRTOL=.04:ERRTOL=.0012d0:
+&rd:ERRTOL=.05:ERRTOL=.0015d0:
+&rf:ERRTOL=.08:ERRTOL=.0025d0:
+&rj:ERRTOL=.05:ERRTOL=.0015d0:
+&rofunc:EPS=1.e-7:EPS=1.d-14:
+&sfroid:conv=5.e-6:conv=1.d-14:
+&shoot:EPS=1.e-6:EPS=1.d-14:
+&shootf:EPS=1.e-6:EPS=1.d-14:
+&simp2:EPS=1.e-6:EPS=1.d-14:
+&simplx:EPS=1.e-6:EPS=1.d-14:
+&sncndn:CA=.0003:CA=1.d-8:
+&sor:EPS=1.d-5:EPS=1.d-13:
+&sphbes:RTPIO2=1.2533141:RTPIO2=1.253314137315500d0:
+&sphfpt:DXX=1.e-4:DXX=1.d-8:
+&sphoot:dx=1.e-4:dx=1.d-4:
+&svdfit:TOL=1.e-5:TOL=1.d-13:
+&zbrent:EPS=3.e-8:EPS=3.d-16:
+&zroots:EPS=1.e-6:EPS=1.d-14:
+&END:

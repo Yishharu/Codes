@@ -1,0 +1,29 @@
+PROGRAM D6r6
+
+! Driver for routine gammp
+
+LIBRARY "gammp"
+DECLARE FUNCTION gammp
+
+CLEAR
+OPEN #1: name "fncval.dat", access input
+DO
+   LINE INPUT #1: text$
+LOOP while text$ <> "Incomplete Gamma Function"
+
+LINE INPUT #1: nval$
+LET nval = val(nval$[1:3])
+PRINT text$
+PRINT "   a          x        Actual    gammp(a,x)"
+FOR i = 1 to nval
+    LINE INPUT #1: dum$
+    LET a = val(dum$[1:6])
+    LET x = val(dum$[7:22])
+    LET value = val(dum$[23:1000])
+    PRINT using "###.##": a;
+    PRINT using "#####.######": x;
+    PRINT using "----#.######": value, gammp(a, x)
+NEXT i
+CLOSE #1
+
+END

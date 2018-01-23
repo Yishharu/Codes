@@ -1,0 +1,52 @@
+PROGRAM d4r9(input,output);
+(* driver for routine QUAD3D *)
+
+(*$I MODFILE.PAS *)   
+
+CONST
+   pi = 3.1415926;
+   nval = 10;
+VAR
+   i: integer;
+   s,xmax,xmin,xmax5: real;
+   Quad3dX,Quad3dY: real;
+
+FUNCTION func(x,y,z: real): real;
+BEGIN
+   func := sqr(x)+sqr(y)+sqr(z)
+END;
+
+FUNCTION z1(x,y: real): real;
+BEGIN
+   z1 := -sqrt(sqr(xmax)-sqr(x)-sqr(y))
+END;
+
+FUNCTION z2(x,y: real): real;
+BEGIN
+   z2 := sqrt(sqr(xmax)-sqr(x)-sqr(y))
+END;
+
+FUNCTION y1(x: real): real;
+BEGIN
+   y1 := -sqrt(sqr(xmax)-sqr(x))
+END;
+
+FUNCTION y2(x: real): real;
+BEGIN
+   y2 := sqrt(sqr(xmax)-sqr(x))
+END;
+
+(*$I QUAD3D.PAS *)
+
+BEGIN
+   writeln('Integral of r^2 over a spherical volume');
+   writeln;
+   writeln('radius':13,'QUAD3D':9,'Actual':10);
+   FOR i := 1 TO nval DO BEGIN
+      xmax := 0.1*i;
+      xmin := -xmax;
+      quad3d(xmin,xmax,s);
+      xmax5 := sqr(sqr(xmax))*xmax;
+      writeln(xmax:12:2,s:10:4,4.0*pi*(xmax5)/5.0:10:4)
+   END
+END.

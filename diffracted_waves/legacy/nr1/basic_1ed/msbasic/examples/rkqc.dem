@@ -1,0 +1,41 @@
+DECLARE SUB RKQC (Y!(), DYDX!(), N!, X!, HTRY!, EPS!, YSCAL!(), HDID!, HNEXT!, DUM!)
+DECLARE FUNCTION BESSJ! (A!, X!)
+DECLARE FUNCTION BESSJ0! (X!)
+DECLARE FUNCTION BESSJ1! (X!)
+
+'PROGRAM D15R3
+'Driver for routine RKQC
+CLS
+N = 4
+DIM Y(N), DYDX(N), YSCAL(N)
+X = 1!
+Y(1) = BESSJ0(X)
+Y(2) = BESSJ1(X)
+Y(3) = BESSJ(2, X)
+Y(4) = BESSJ(3, X)
+DYDX(1) = -Y(2)
+DYDX(2) = Y(1) - Y(2)
+DYDX(3) = Y(2) - 2! * Y(3)
+DYDX(4) = Y(3) - 3! * Y(4)
+FOR I = 1 TO N
+  YSCAL(I) = 1!
+NEXT I
+HTRY = .1
+PRINT "      eps        htry      hdid        hnext"
+FOR I = 1 TO 15
+  EPS = EXP(-CSNG(I))
+  CALL RKQC(Y(), DYDX(), N, X, HTRY, EPS, YSCAL(), HDID, HNEXT, DUM)
+  PRINT "    ";
+  PRINT USING ".####^^^^"; EPS;
+  PRINT USING "#####.##"; HTRY;
+  PRINT USING "#####.######"; HDID; HNEXT
+NEXT I
+END
+
+SUB DERIVS (X, Y(), DYDX())
+DYDX(1) = -Y(2)
+DYDX(2) = Y(1) - (1! / X) * Y(2)
+DYDX(3) = Y(2) - (2! / X) * Y(3)
+DYDX(4) = Y(3) - (3! / X) * Y(4)
+END SUB
+

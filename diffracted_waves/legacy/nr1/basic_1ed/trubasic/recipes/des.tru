@@ -1,0 +1,75 @@
+MODULE des
+
+    ! This routine is in a module to permit the arrays ip(), ipm(),
+    ! and kns(,) to be stored as "static".  Furthermore, the
+    ! initialization of ip() and ipm() is in the module header
+    ! and so is done only upon program startup.
+
+    LIBRARY "desks"   ! Contains routines cyfun and ks
+
+    SHARE ip(64), ipm(64), kns(48, 16)
+
+    MAT READ ip
+    DATA 58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4
+    DATA 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8
+    DATA 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3
+    DATA 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7
+
+    MAT READ ipm
+    DATA 40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31
+    DATA 38, 6, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29
+    DATA 36, 4, 44, 12, 52, 20, 60, 28, 35, 3, 43, 11, 51, 19, 59, 27
+    DATA 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41, 9, 49, 17, 57, 25
+
+    SUB des (inpuq(), keq(), newkey, isw, jotput())
+
+        DIM itmp(64), titmp(32), tkns(48), icf(32)
+
+        IF newkey <> 0 then
+           LET newkey = 0
+           FOR i = 1 to 16
+
+               CALL ks (keq(), i, tkns())
+
+               FOR j = 1 to 48
+                   LET kns(j, i) = tkns(j)
+               NEXT j
+           NEXT i
+        END IF
+
+        FOR j = 1 to 64
+            LET itmp(j) = inpuq(ip(j))
+        NEXT j
+
+        FOR i = 1 to 16
+            LET ii = i
+            IF isw = 1 then LET ii = 17 - i
+            FOR j = 1 to 48
+                LET tkns(j) = kns(j, ii)
+            NEXT j
+            FOR j = 1 to 32
+                LET titmp(j) = itmp(32 + j)
+            NEXT j
+
+            CALL cyfun (titmp(), tkns(), icf())
+
+            FOR j = 1 to 32
+                LET ic = icf(j) + itmp(j)
+                LET itmp(j) = itmp(j + 32)
+                LET itmp(j + 32) = mod(ic, 2)
+            NEXT j
+        NEXT i
+
+        FOR j = 1 to 32
+            LET ic = itmp(j)
+            LET itmp(j) = itmp(j + 32)
+            LET itmp(j + 32) = ic
+        NEXT j
+
+        FOR j = 1 to 64
+            LET jotput(j) = itmp(ipm(j))
+        NEXT j
+
+    END SUB
+
+END MODULE

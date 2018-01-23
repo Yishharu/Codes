@@ -1,0 +1,117 @@
+DECLARE SUB LFIT (X!(), Y!(), SIG!(), NDATA!, A!(), MA!, LISTA!(), MFIT!, COVAR!(), NCVM!, CHISQ!, DUM!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D14R2
+'Driver for routine LFIT
+CLS
+NPT = 100
+SPREAD = .1
+NTERM = 3
+DIM X(NPT), Y(NPT), SIG(NPT), A(NTERM), COVAR(NTERM, NTERM), LISTA(NTERM)
+IDUM& = -911
+FOR I = 1 TO NPT
+  X(I) = .1 * I
+  Y(I) = CSNG(NTERM)
+  FOR J = NTERM - 1 TO 1 STEP -1
+    Y(I) = J + Y(I) * X(I)
+  NEXT J
+  Y(I) = Y(I) + SPREAD * GASDEV(IDUM&)
+  SIG(I) = SPREAD
+NEXT I
+MFIT = NTERM
+FOR I = 1 TO MFIT
+  LISTA(I) = I
+NEXT I
+CALL LFIT(X(), Y(), SIG(), NPT, A(), NTERM, LISTA(), MFIT, COVAR(), NTERM, CHISQ, DUM)
+PRINT "  Parameter         Uncertainty"
+FOR I = 1 TO NTERM
+  PRINT "   A(";
+  PRINT USING "#"; I;
+  PRINT ") = ";
+  PRINT USING "#.######"; A(I);
+  PRINT USING "####.######"; SQR(COVAR(I, I))
+NEXT I
+PRINT
+PRINT "  Chi-squared = ";
+PRINT USING "#.######^^^^"; CHISQ
+PRINT
+PRINT "  Full covariance matrix"
+FOR I = 1 TO NTERM
+  FOR J = 1 TO NTERM
+    PRINT "    ";
+    PRINT USING "#.##^^^^"; COVAR(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+PRINT "press RETURN to continue..."
+LINE INPUT DUM$
+PRINT
+'Now test the LISTA feature
+FOR I = 1 TO NTERM
+  LISTA(I) = NTERM + 1 - I
+NEXT I
+CALL LFIT(X(), Y(), SIG(), NPT, A(), NTERM, LISTA(), MFIT, COVAR(), NTERM, CHISQ, DUM)
+PRINT "  Parameter        Uncertainty"
+FOR I = 1 TO NTERM
+  PRINT "   A(";
+  PRINT USING "#"; I;
+  PRINT ") = ";
+  PRINT USING "#.######"; A(I);
+  PRINT USING "####.######"; SQR(COVAR(I, I))
+NEXT I
+PRINT
+PRINT "  Chi-squared = ";
+PRINT USING "#.######^^^^"; CHISQ
+PRINT
+PRINT "  Full covariance matrix"
+FOR I = 1 TO NTERM
+  FOR J = 1 TO NTERM
+    PRINT "    ";
+    PRINT USING "#.##^^^^"; COVAR(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+PRINT "press RETURN to continue..."
+LINE INPUT DUM$
+PRINT
+'Now check results of restricting fit parameters
+II = 1
+FOR I = 1 TO NTERM
+  IF (I MOD 2) = 1 THEN
+    LISTA(II) = I
+    II = II + 1
+  END IF
+NEXT I
+MFIT = II - 1
+CALL LFIT(X(), Y(), SIG(), NPT, A(), NTERM, LISTA(), MFIT, COVAR(), NTERM, CHISQ, DUM)
+PRINT "  Parameter        Uncertainty"
+FOR I = 1 TO NTERM
+  PRINT "   A(";
+  PRINT USING "#"; I;
+  PRINT ") = ";
+  PRINT USING "#.######"; A(I);
+  PRINT USING "####.######"; SQR(COVAR(I, I))
+NEXT I
+PRINT
+PRINT "  Chi-squared = ";
+PRINT USING "#.######^^^^"; CHISQ
+PRINT
+PRINT "  Full covariance matrix"
+FOR I = 1 TO NTERM
+  FOR J = 1 TO NTERM
+    PRINT "    ";
+    PRINT USING "#.##^^^^"; COVAR(I, J);
+  NEXT J
+  PRINT
+NEXT I
+END
+
+SUB FUNCS (X, AFUNC(), MA)
+AFUNC(1) = 1!
+FOR I = 2 TO MA
+  AFUNC(I) = X * AFUNC(I - 1)
+NEXT I
+END SUB
+

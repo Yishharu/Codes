@@ -1,0 +1,63 @@
+PROGRAM d7r9(input,output);
+(* driver for routine BNLDEV *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+CONST
+   n = 20;
+   npts = 1000;
+   iscal = 200;
+   nn = 100;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArray21 = ARRAY [0..20] OF real;
+   CharArray50 = PACKED ARRAY [1..50] OF char;
+VAR
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   BnldevNold: integer;
+   BnldevPold: real;
+   BnldevOldg: real;
+   BnldevEn: real;
+   BnldevPc: real;
+   BnldevPlog: real;
+   BnldevPclog: real;
+   i,j,k,idum,klim,llen: integer;
+   pp,xm: real;
+   dist: RealArray21;
+   txt: CharArray50;
+
+(*$I RAN3.PAS *)
+
+(*$I GAMMLN.PAS *)
+
+(*$I BNLDEV.PAS *)
+
+BEGIN
+   idum := -133;
+   BnldevNold := -1;
+   BnldevPold := -1.0;
+   llen := 50;
+   WHILE true DO BEGIN
+      FOR j := 0 TO 20 DO dist[j] := 0.0;
+      writeln('Mean of binomial distribution (0 to 20) (neg to end)');
+      read(xm);
+      IF xm < 0 THEN GOTO 99;
+      pp := xm/nn;
+      FOR i := 1 TO npts DO BEGIN
+         j := round(bnldev(pp,nn,idum));
+         IF (j >= 0) AND (j <= 20) THEN dist[j] := dist[j]+1
+      END;
+      writeln('x':4,'p(x)':8,'graph:':10);
+      FOR j := 0 TO 19 DO BEGIN
+         FOR k := 1 TO llen DO txt[k] := ' ';
+         dist[j] := dist[j]/npts;
+         klim := round(iscal*dist[j])+1;
+         IF klim > llen THEN klim := llen;
+         FOR k := 1 TO klim DO txt[k] := '*';
+         writeln(j:4,dist[j]:9:4,'   ',txt)
+      END
+   END;
+99:
+END.

@@ -1,0 +1,44 @@
+PROGRAM D7r4
+
+! Driver for routine ran3
+! Calculates pi statistically using volume of unit n-sphere
+
+LIBRARY "ran3"
+DECLARE FUNCTION ran3
+
+DEF fnc (x1, x2, x3, x4) = sqr(x1^2 + x2^2 + x3^2 + x4^2)
+
+DIM iy(3), yprob(3)
+
+CLEAR
+LET idum = -1
+MAT iy = zer
+
+PRINT "            Volume of unit n-sphere, n=2,3,4"
+PRINT
+PRINT "# points      pi       (4/3)*pi   (1/2)*pi^2"
+FOR j = 1 to 15
+    FOR k = 2^(j - 1) to 2^j
+        LET x1 = ran3(idum)
+        LET x2 = ran3(idum)
+        LET x3 = ran3(idum)
+        LET x4 = ran3(idum)
+        IF fnc(x1, x2, 0, 0) < 1 then LET iy(1) = iy(1) + 1
+        IF fnc(x1, x2, x3, 0) < 1 then LET iy(2) = iy(2) + 1
+        IF fnc(x1, x2, x3, x4) < 1 then LET iy(3) = iy(3) + 1
+    NEXT k
+    FOR i = 1 to 3
+        LET yprob(i) = 1 * 2^(i + 1) * iy(i) / 2^j
+    NEXT i
+    PRINT using "#######": 2^j;
+    FOR i = 1 to 3
+        PRINT using "#####.######": yprob(i);
+    NEXT i
+    PRINT
+NEXT j
+PRINT
+
+PRINT " Actual";
+PRINT using "#####.######": pi, 4 * pi / 3, .5 * pi^2
+
+END

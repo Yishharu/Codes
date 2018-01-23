@@ -1,0 +1,52 @@
+PROGRAM d8r7(input,output,dfile);
+(* driver for routine RANK *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   np = 100;
+TYPE
+   IntegerArrayNP = ARRAY [1..np] OF integer;
+   RealArrayNP = ARRAY [1..np] OF real;
+   RealArray10 = ARRAY [1..10] OF real;
+VAR
+   i,j,k,l: integer;
+   a: RealArrayNP;
+   b: RealArray10;
+   indx,irank: IntegerArrayNP;
+   dfile: text;
+
+(*$I INDEXX.PAS *)
+
+(*$I RANK.PAS *)
+
+BEGIN
+   NROpen(dfile,'tarray.dat');
+   readln(dfile);
+   FOR i := 1 TO 100 DO read(dfile,a[i]);
+   close(dfile);
+   indexx(np,a,indx);
+   rank(np,indx,irank);
+   writeln('original array is:');
+   FOR i := 1 TO 10 DO BEGIN
+      FOR j := 1 TO 10 DO write(a[10*(i-1)+j]:6:2);
+      writeln
+   END;
+   writeln('table of ranks is:');
+   FOR i := 1 TO 10 DO BEGIN
+      FOR j := 1 TO 10 DO write(irank[10*(i-1)+j]:6);
+      writeln
+   END;
+   writeln('press return to continue...');
+   readln;
+   writeln('array sorted according to rank table:');
+   FOR i := 1 TO 10 DO BEGIN
+      FOR j := 1 TO 10 DO BEGIN
+         k := 10*(i-1)+j;
+         FOR l := 1 TO 100 DO
+            IF irank[l] = k THEN b[j] := a[l]
+      END;
+      FOR j := 1 TO 10 DO write(b[j]:6:2);
+   writeln
+   END
+END.

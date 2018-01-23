@@ -1,0 +1,11 @@
+EXTERNAL
+
+FUNCTION bico (n, k)
+
+    LIBRARY "factln"
+
+    DECLARE FUNCTION factln
+
+    LET bico = round(exp(factln(n) - factln(k) - factln(n - k)))
+
+END FUNCTION

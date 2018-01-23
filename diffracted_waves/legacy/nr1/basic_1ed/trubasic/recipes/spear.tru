@@ -1,0 +1,39 @@
+EXTERNAL
+
+SUB spear (data1(), data2(), n, wksp1(), wksp2(), d, zd, probd, rs, probrs)
+
+    LIBRARY "crank", "sort2", "erfcc", "betai"
+    DECLARE FUNCTION erfcc, betai
+
+    FOR j = 1 to n
+        LET wksp1(j) = data1(j)
+        LET wksp2(j) = data2(j)
+    NEXT j
+
+    CALL sort2 (n, wksp1(), wksp2())
+    CALL crank (n, wksp1(), sf)
+    CALL sort2 (n, wksp2(), wksp1())
+    CALL crank (n, wksp2(), sg)
+
+    LET d = 0
+    FOR j = 1 to n
+        LET d = d + (wksp1(j) - wksp2(j))^2
+    NEXT j
+    LET en = n
+    LET en3n = en^3 - en
+    LET aved = en3n / 6 - (sf + sg) / 12
+    LET fac = (1 - sf / en3n) * (1 - sg / en3n)
+    LET vard = ((en - 1) * en^2 * (en + 1)^2 / 36) * fac
+    LET zd = (d - aved) / sqr(vard)
+    LET probd = erfcc(abs(zd) / 1.4142136)
+    LET rs = (1 - (6 / en3n) * (d + (sf + sg) / 12)) / sqr(fac)
+    LET fac = (1 + rs) * (1 - rs)
+    IF fac > 0 then
+       LET t = rs * sqr((en - 2) / fac)
+       LET df = en - 2
+       LET probrs = betai (.5 * df, .5, df / (df + t^2))
+    ELSE
+       LET probrs = 0
+    END IF
+
+END SUB

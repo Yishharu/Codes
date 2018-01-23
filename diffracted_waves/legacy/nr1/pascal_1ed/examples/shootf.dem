@@ -1,0 +1,127 @@
+PROGRAM d16r2(input,output);
+(* driver for routine SHOOTF *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 1;
+CONST
+   nvar = 3;
+   n1 = 2;
+   n2 = 1;
+   delta = 1.0e-3;
+   eps = 1.0e-6;
+   dx = 1.0e-4;
+TYPE
+   RealArrayN1 = ARRAY [1..n1] OF real;
+   RealArrayN2 = ARRAY [1..n2] OF real;
+   RealArrayNVAR = ARRAY [1..nvar] OF real;
+   RealArrayNP = RealArrayNVAR;
+   RealArrayNVARbyNVAR = ARRAY [1..nvar,1..nvar] OF real;
+   RealArrayNPbyNP = RealArrayNVARbyNVAR;
+   IntegerArrayNP = ARRAY [1..nvar] OF integer;
+   RealArray200 = ARRAY [1..200] OF real;
+   RealArrayNby200 = ARRAY [1..nvar,1..200] OF real;
+VAR
+   ShootfC2,ShootfFactr,h1,hmin: real;
+   q1,x1,x2,xf: real;
+   i,ShootfM,ShootfN: integer;
+   v1,delv1,dv1: RealArrayN2;
+   v2,delv2,dv2: RealArrayN1;
+   f: RealArrayNVAR;
+   OdeintKmax,OdeintKount: integer;
+   OdeintDxsav: real;
+   OdeintXp: RealArray200;
+   OdeintYp: RealArrayNby200;
+
+PROCEDURE load1(x1: real; VAR v1: RealArrayN2; VAR y: RealArrayNVAR);
+(* Programs using routine LOAD1 must declare the variables
+VAR
+   ShootfC2,ShootfFactr: real;
+   ShootfM: integer;
+in the main routine. *)
+BEGIN
+   y[3] := v1[1];
+   y[2] := -(y[3]-ShootfC2)*ShootfFactr/2.0/(ShootfM+1.0);
+   y[1] := ShootfFactr+y[2]*dx
+END;
+
+PROCEDURE load2(x2: real; VAR v2: RealArrayN1; VAR y: RealArrayNVAR);
+(* Programs using routine LOAD2 must declare the variables
+   ShootfC2: real;
+   ShootfM: integer;
+in the main routine. *)
+BEGIN
+   y[3] := v2[2];
+   y[1] := v2[1];
+   y[2] := (y[3]-ShootfC2)*y[1]/2.0/(ShootfM+1.0)
+END;
+
+PROCEDURE score(xf: real; VAR y,f: RealArrayNVAR);
+VAR
+   i: integer;
+BEGIN
+   FOR i := 1 TO 3 DO f[i] := y[i]
+END;
+
+PROCEDURE derivs(x: real; VAR y,dydx: RealArrayNVAR);
+(* Programs using routine DERIVS must declare the variables
+   ShootfC2: real;
+   ShootfM: integer;
+in the main routine. *)
+BEGIN
+   dydx[1] := y[2];
+   dydx[3] := 0.0;
+   dydx[2] := (2.0*x*(ShootfM+1.0)*y[2]-(y[3]-ShootfC2*x*x)*y[1])/(1.0-x*x)
+END;
+
+(*$I LUBKSB.PAS *)
+
+(*$I LUDCMP.PAS *)
+
+(*$I RK4.PAS *)
+
+(*$I RKQC.PAS *)
+
+(*$I ODEINT.PAS *)
+
+(*$I SHOOTF.PAS *)
+
+BEGIN
+1: write('Input M,N,C-SQUARED: ');
+   readln(ShootfM,ShootfN,ShootfC2);
+   IF (ShootfN < ShootfM) OR (ShootfM < 0) THEN BEGIN
+      writeln('Improper arguments');
+      GOTO 1
+   END;
+   ShootfFactr := 1.0;
+   IF ShootfM <> 0 THEN BEGIN
+      q1 := ShootfN;
+      FOR i := 1 TO ShootfM DO BEGIN
+         ShootfFactr := -0.5*ShootfFactr*(ShootfN+i)*(q1/i);
+         q1 := q1-1.0
+      END
+   END;
+   v1[1] := ShootfN*(ShootfN+1)-ShootfM*(ShootfM+1)+ShootfC2/2.0;
+   IF odd(ShootfN-ShootfM) THEN
+      v2[1] := -ShootfFactr
+   ELSE
+      v2[1] := ShootfFactr;
+   v2[2] := v1[1]+1.0;
+   delv1[1] := delta*v1[1];
+   delv2[1] := delta*ShootfFactr;
+   delv2[2] := delv1[1];
+   h1 := 0.1;
+   hmin := 0.0;
+   x1 := -1.0+dx;
+   x2 := 1.0-dx;
+   xf := 0.0;
+   writeln;
+   writeln('mu(-1)':26,'y(1-dx)':20,'mu(+1)':19);
+   REPEAT
+      shootf(nvar,v1,v2,delv1,delv2,n1,n2,x1,x2,
+         xf,eps,h1,hmin,f,dv1,dv2);
+      writeln;
+      writeln('v ':6,v1[1]:20:6,v2[1]:20:6,v2[2]:20:6);
+      writeln('dv':6,dv1[1]:20:6,dv2[1]:20:6,dv2[2]:20:6);
+   UNTIL abs(dv1[1]) <= abs(eps*v1[1])
+END.

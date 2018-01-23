@@ -1,0 +1,42 @@
+MODULE irbit1
+
+    LIBRARY "funlib"
+    DECLARE FUNCTION and, or, nott
+
+    SHARE ib1, ib3, ib5, ib14, two14, iseed, iff
+
+    LET iff = 0
+    LET ib1 = 2^0
+    LET ib3 = 2^2
+    LET ib5 = 2^4
+    LET ib14 = 2^13
+    LET two14 = 2^14
+
+    FUNCTION irbit1 (iiseed)
+
+        ! The argument iiseed is the seed only on the first use.
+        ! On subsequent use, the shared iseed is used.
+
+        IF iff=0 then
+           LET iseed = iiseed
+           LET iff = 1
+        END IF
+
+        ! Here, newbit = 1 means true, = -1 means false
+
+        LET newbit = 2*sgn(and(iseed, ib14)) - 1
+        IF and(iseed, ib5) <> 0 then LET newbit = -newbit
+        IF and(iseed, ib3) <> 0 then LET newbit = -newbit
+        IF and(iseed, ib1) <> 0 then LET newbit = -newbit
+        IF iseed > two14 then LET iseed = iseed - two14
+        LET iseed = 2 * iseed
+        IF newbit=1 then
+           LET irbit1 = 1
+           LET iseed = iseed + ib1     ! Just use +
+        ELSE
+           LET irbit1 = 0
+        END IF
+
+    END FUNCTION
+
+END MODULE

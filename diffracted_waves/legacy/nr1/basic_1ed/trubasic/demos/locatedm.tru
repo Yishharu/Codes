@@ -1,0 +1,45 @@
+PROGRAM D3r5
+
+! Driver for routine locatq
+
+LIBRARY "locate"                  ! Routine locatq is in file locate
+
+LET n = 100
+DIM xx(0)
+MAT redim xx(n)
+
+! Create array to be searched
+
+CLEAR
+FOR i = 1 to n
+    LET xx(i) = exp(i / 20) - 74
+NEXT i
+PRINT "Result of:   j=0 indicates x too small"
+PRINT "           j=100 indicates x too large"
+PRINT "   locate      j      xx(j)     xx(j+1)"
+
+! Do test
+
+FOR i = 1 to 19
+    LET x = -100 + 200 * i / 20
+
+    CALL locate (xx(), n, x, j)
+
+    IF j = 0 then
+       PRINT using "----#.####": x;
+       PRINT using "-----#": j;
+       PRINT "   lower lim";
+       PRINT using "----#.######": xx(j + 1)
+    ELSEIF j = n then
+       PRINT using "----#.####": x;
+       PRINT using "-----#": j;
+       PRINT using "----#.######": xx(j);
+       PRINT "   upper lim"
+    ELSE
+       PRINT using "----#.####": x;
+       PRINT using "-----#": j;
+       PRINT using "----#.######": xx(j), xx(j + 1)
+    END IF
+NEXT i
+
+END

@@ -1,0 +1,45 @@
+PROGRAM D5r2
+
+! Driver for routine ddpoly
+! Polynomial (x-1)^5
+
+LIBRARY "ddpoly", "factrl"
+DECLARE FUNCTION factrl
+
+LET nc = 6
+LET ncm1 = nc - 1
+LET np = 20
+DIM c(0), pd(0), d(0,0), a$(0)
+MAT redim c(nc), pd(ncm1), d(ncm1, np), a$(ncm1)
+
+CLEAR
+MAT READ a$
+DATA "Polynomial:", "First deriv:", "Second deriv:", "Third deriv:"
+DATA "Fourth deriv:"
+
+MAT READ c
+DATA -1.0, 5.0, -10.0, 10.0, -5.0, 1.0
+
+FOR i = 1 to np
+    LET x = .1 * i
+
+    CALL ddpoly(c(), nc, x, pd(), ncm1)
+
+    FOR j = 1 to ncm1
+        LET d(j, i) = pd(j)
+    NEXT j
+NEXT i
+
+FOR i = 1 to ncm1
+    PRINT "     "; a$(i)
+    PRINT "           x           ddpoly         actual"
+    FOR j = 1 to np
+        LET x = .1 * j
+        PRINT using "-------#.######": x, d(i, j);
+        PRINT using "-------#.######": factrl(nc-1) / factrl(nc-i) * (x-1)^(nc-i)
+    NEXT j
+    PRINT "Press Enter to continue..."
+    LINE INPUT dum$
+NEXT i
+
+END

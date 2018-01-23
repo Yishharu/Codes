@@ -1,0 +1,37 @@
+PROGRAM D8r3
+
+! Driver for routine sort
+
+LIBRARY "sort"
+
+DIM a(100)
+
+CLEAR
+OPEN #1: name "tarray.dat", access input
+FOR i = 1 to 10
+    LINE INPUT #1: dum$
+    FOR j = 1 to 10
+        LET a(10 * (i - 1) + j) = val(dum$[6*j-5:6*j])
+    NEXT j
+NEXT i
+CLOSE #1
+
+PRINT "Original array:"
+FOR i = 1 to 10
+    FOR j = 1 to 10
+        PRINT using "###.##": a(10 * (i - 1) + j);
+    NEXT j
+    PRINT
+NEXT i
+
+CALL sort (100, a())
+
+PRINT "Sorted array:"
+FOR i = 1 to 10
+    FOR j = 1 to 10
+        PRINT using "###.##": a(10 * (i - 1) + j);
+    NEXT j
+    PRINT
+NEXT i
+
+END

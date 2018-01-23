@@ -1,0 +1,55 @@
+PROGRAM d14r1(input,output);
+(* driver for routine FIT *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npt = 100;
+   spread = 0.5;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayNDATA = ARRAY [1..npt] OF real;
+VAR
+   GasdevIset: integer;
+   GasdevGset: real;
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   a,b,chi2,q,siga,sigb: real;
+   i,idum,mwt: integer;
+   x,y,sig: RealArrayNDATA;
+
+(*$I GAMMLN.PAS *)
+
+(*$I GSER.PAS *)
+
+(*$I GCF.PAS *)
+
+(*$I GAMMQ.PAS *)
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+(*$I FIT.PAS *)
+
+BEGIN
+   GasdevIset := 0;
+   idum := -117;
+   FOR i := 1 TO npt DO BEGIN
+      x[i] := 0.1*i;
+      y[i] := -2.0*x[i]+1.0+spread*gasdev(idum);
+      sig[i] := spread
+   END;
+   FOR mwt := 0 TO 1 DO BEGIN
+      fit(x,y,npt,sig,mwt,a,b,siga,sigb,chi2,q);
+      writeln;
+      IF mwt = 0 THEN
+         writeln('ignoring standard deviations')
+      ELSE
+         writeln('including standard deviation');
+      writeln(' ':5,'a  =  ',a:9:6,' ':6,'uncertainty:',siga:9:6);
+      writeln(' ':5,'b  =  ',b:9:6,' ':6,'uncertainty:',sigb:9:6);
+      writeln(' ':5,'chi-squared: ',chi2:14:6);
+      writeln(' ':5,'goodness-of-fit: ',q:10:6)
+   END
+END.

@@ -1,0 +1,43 @@
+PROGRAM D13r1
+
+! Driver for routine moment
+
+LIBRARY "moment"
+
+LET npts = 10000
+LET nbin = 100
+LET ndat = npts + nbin
+DIM data(0)
+MAT redim data(ndat)
+
+CLEAR
+LET i = 1
+FOR j = 1 to nbin
+    LET x = pi * j / nbin
+    LET nlim = round(sin(x) * pi / 2 * npts / nbin)
+    FOR k = 1 to nlim
+        LET data(i) = x
+        LET i = i + 1
+    NEXT k
+NEXT j
+PRINT "Moments of a sinusoidal distribution"
+PRINT
+
+CALL moment (data(), i - 1, ave, adev, sdev, var, skew, curt)
+
+PRINT "                           Calculated    Expected"
+PRINT
+PRINT "Mean :                  ";
+PRINT using "------#.####": ave, pi / 2
+PRINT "Average deviation :     ";
+PRINT using "------#.####": adev, .570796
+PRINT "Standard deviation :    ";
+PRINT using "------#.####": sdev, .683667
+PRINT "Variance :              ";
+PRINT using "------#.####": var, .467401
+PRINT "Skewness :              ";
+PRINT using "------#.####": skew, 0
+PRINT "Kurtosis :              ";
+PRINT using "------#.####": curt, -.806249
+
+END

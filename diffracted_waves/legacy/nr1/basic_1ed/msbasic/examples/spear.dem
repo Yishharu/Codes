@@ -1,0 +1,68 @@
+DECLARE SUB SPEAR (DATA1!(), DATA2!(), N!, WKSP1!(), WKSP2!(), D!, ZD!, PROBD!, RS!, PROBRS!)
+
+'PROGRAM D13R16
+'Driver for routine SPEAR
+CLS
+NDAT = 20
+NMON = 12
+DIM DATA1(NDAT), DATA2(NDAT), RAYS(NDAT, NMON)
+DIM WKSP1(NDAT), WKSP2(NDAT), AVE(NDAT), ZLAT(NDAT)
+DIM CITY$(NDAT), MON$(NMON)
+OPEN "TABLE2.DAT" FOR INPUT AS #1
+LINE INPUT #1, DUM$
+LINE INPUT #1, TITLE$
+LINE INPUT #1, DUM$
+TEXT$ = LEFT$(DUM$, 15)
+FOR I = 1 TO 12
+  MON$(I) = MID$(DUM$, 4 * I + 12, 4)
+NEXT I
+LINE INPUT #1, DUM$
+FOR I = 1 TO NDAT
+  LINE INPUT #1, DUM$
+  CITY$(I) = LEFT$(DUM$, 15)
+  FOR J = 1 TO 12
+    RAYS(I, J) = VAL(MID$(DUM$, 4 * J + 12, 4))
+  NEXT J
+  AVE(I) = VAL(MID$(DUM$, 66, 5))
+  ZLAT(I) = VAL(MID$(DUM$, 71, 5))
+NEXT I
+CLOSE #1
+PRINT TITLE$
+PRINT "               ";
+FOR I = 1 TO 12
+  PRINT MON$(I);
+NEXT I
+PRINT
+FOR I = 1 TO NDAT
+  PRINT CITY$(I);
+  FOR J = 1 TO 12
+    PRINT USING "####"; CINT(RAYS(I, J));
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+'Check temperature correlations between different months
+PRINT "Are sunny summer places also sunny winter places?"
+PRINT "Check correlation of sampled U.S. solar radiation ";
+PRINT "(july with other months)"
+PRINT
+PRINT "Month         D      St. Dev.      PROBD       Spearman R    PROBRS"
+PRINT
+FOR I = 1 TO NDAT
+  DATA1(I) = RAYS(I, 1)
+NEXT I
+FOR J = 1 TO 12
+  FOR I = 1 TO NDAT
+    DATA2(I) = RAYS(I, J)
+  NEXT I
+  CALL SPEAR(DATA1(), DATA2(), NDAT, WKSP1(), WKSP2(), D, ZD, PROBD, RS, PROBRS)
+  PRINT MON$(J);
+  PRINT USING "##########.##"; D;
+  PRINT "   ";
+  PRINT USING "##.######"; ZD;
+  PRINT USING "#####.######"; PROBD;
+  PRINT USING "########.######"; RS;
+  PRINT USING "#####.######"; PROBRS
+NEXT J
+END
+

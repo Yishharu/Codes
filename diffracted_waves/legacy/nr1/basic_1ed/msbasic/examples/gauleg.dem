@@ -1,0 +1,36 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE SUB GAULEG (X1!, X2!, X!(), W!(), N!)
+
+'PROGRAM D4R9
+'Driver for routine GAULEG
+CLS
+NPOINT = 10
+X1 = 0!
+X2 = 1!
+X3 = 10!
+DIM X(NPOINT), W(NPOINT)
+CALL GAULEG(X1, X2, X(), W(), NPOINT)
+PRINT " #      X(I)        W(I)"
+PRINT
+FOR I = 1 TO NPOINT
+  PRINT USING "##"; I;
+  PRINT USING "#####.######"; X(I);
+  PRINT USING "#####.######"; W(I)
+NEXT I
+PRINT
+'Demonstrate the use of GAULEG for an integral
+CALL GAULEG(X1, X3, X(), W(), NPOINT)
+XX = 0!
+FOR I = 1 TO NPOINT
+  XX = XX + W(I) * FUNC(X(I))
+NEXT I
+PRINT "Integral from GAULEG:";
+PRINT USING "#####.######"; XX
+PRINT "Actual value:";
+PRINT USING "#####.######"; 1! - (1! + X3) * EXP(-X3)
+END
+
+FUNCTION FUNC (X)
+FUNC = X * EXP(-X)
+END FUNCTION
+

@@ -1,0 +1,63 @@
+DECLARE SUB FLMOON (N!, NPH!, JD&, FRAC!)
+DECLARE SUB CALDAT (JULIAN&, MM!, ID!, IYYY!)
+DECLARE FUNCTION JULDAY& (IM!, ID!, IY!)
+
+'PROGRAM D1R1
+'Driver for routine FLMOON
+CLS
+TZONE = 5!
+DIM PHASE$(4), TIMSTR$(2)
+FOR I = 1 TO 4
+  READ PHASE$(I)
+NEXT I
+DATA "new moon","first quarter","full moon","last quarter"
+FOR I = 1 TO 2
+  READ TIMSTR$(I)
+NEXT I
+DATA " AM"," PM"
+PRINT "Date of the next few phases of the moon"
+PRINT "Enter today's date (e.g. 1,31,1982)"
+INPUT IM, ID, IY
+PRINT
+TIMZON = -TZONE / 24!
+'Approximate number of full moons since January 1900
+N = INT(12.37 * (IY - 1900 + (IM - .5) / 12!))
+NPH = 2
+J1& = JULDAY&(IM, ID, IY)
+CALL FLMOON(N, NPH, J2&, FRAC)
+N = INT(N + (J1& - J2&) / 28!)
+PRINT "   Date", "  Time(EST)", " Phase"
+FOR I = 1 TO 20
+  CALL FLMOON(N, NPH, J2&, FRAC)
+  IFRAC = CINT(24! * (FRAC + TIMZON))
+  IF IFRAC < 0 THEN
+    J2& = J2& - 1
+    IFRAC = IFRAC + 24
+  END IF
+  IF IFRAC >= 12 THEN
+    J2& = J2& + 1
+    IFRAC = IFRAC - 12
+  ELSE
+    IFRAC = IFRAC + 12
+  END IF
+  IF IFRAC > 12 THEN
+    IFRAC = IFRAC - 12
+    ISTR = 2
+  ELSE
+    ISTR = 1
+  END IF
+  CALL CALDAT(J2&, IM, ID, IY)
+  PRINT USING "##"; IM;
+  PRINT USING "###"; ID;
+  PRINT USING "#####"; IY;
+  PRINT USING "#########"; IFRAC;
+  PRINT TIMSTR$(ISTR); "     "; PHASE$(NPH + 1)
+  IF NPH = 3 THEN
+    NPH = 0
+    N = N + 1
+  ELSE
+    NPH = NPH + 1
+  END IF
+NEXT I
+END
+

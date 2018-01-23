@@ -1,0 +1,67 @@
+DEFINITION MODULE NRIMatr;
+
+  (* EXPORT QUALIFIED IMatrix, PtrToILine, PtrToILines, NilIMatrix, EmptyIMatrix,
+                      CreateIMatrix, DisposeIMatrix, DimensionsOfIMatrix,
+                      IMatrixPtr, GetIMatrixAttr; *)
+
+   CONST
+      MaxNM = 1000;
+   TYPE
+      IMatrix;
+      PtrToILine  = POINTER TO ARRAY [0..MaxNM-1] OF INTEGER;
+      PtrToILines = POINTER TO ARRAY [0..MaxNM-1] OF PtrToILine;
+   VAR
+      NilIMatrix: IMatrix;
+
+
+   PROCEDURE EmptyIMatrix(n, m: INTEGER): IMatrix;
+
+      (* 
+       * It creates a new integer matrix with line number n and column number m if
+       * n, m > 0. Otherwise it returns NilIMatrix;
+       * The elements in the matrix are undefined.
+       *)
+
+   PROCEDURE CreateIMatrix(    n, 
+                               m: INTEGER;
+                           VAR matrix: IMatrix;
+                           VAR lines: PtrToILines);
+
+      (* 
+       * It creates a new matrix with n lines and m columns, if n, m > 0.  
+       * It returns the reference variable "matrix" and a pointer to the lines
+       * of the matrix. If n = 0 and m = 0, then matrix = NilIMatrix, lines = NIL.
+       * The elements in the matrix are undefined.
+       *)
+
+   PROCEDURE DisposeIMatrix(VAR matrix: IMatrix);
+
+      (*
+       * The input "matrix" is deallocated. 
+       * Output: "matrix"=NilImatrix;
+       * Use this procedure only for matrices created before!
+       *)
+
+   PROCEDURE DimensionsOfIMatrix(    matrix: IMatrix;
+                                 VAR n, m:   INTEGER);
+
+      (* 
+       * It returns the number lines and columns of matrix.
+       *)
+
+   PROCEDURE IMatrixPtr(matrix: IMatrix): PtrToILines;
+
+      (* 
+       * This procedure returns a pointer to the lines of matrix.
+       *)
+
+   PROCEDURE GetIMatrixAttr(    matrix: IMatrix;
+                            VAR n, m:   INTEGER;
+                            VAR lines:  PtrToILines);
+      (* 
+       * n, m: The number of lines and columns of matrix;
+       * lines: Pointer to the lines of the matrix.
+       *)
+
+
+END NRIMatr.

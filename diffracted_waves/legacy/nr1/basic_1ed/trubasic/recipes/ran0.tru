@@ -1,0 +1,37 @@
+MODULE ran0
+
+    ! Ran0 is coded as a module in order to
+    ! provide the "static" array v(), which allows the routine
+    ! to add an additional level of randomness; i.e., to NOT
+    ! just give the next number in the rnd sequence.
+
+    SHARE v(97), y
+
+    ! This initialization is done during program startup, rather than
+    ! upon first use or upon receiving a negative idum.
+
+    FOR j = 1 to 97
+        LET dum = rnd
+    NEXT j
+    FOR j = 1 to 97
+        LET v(j) = rnd
+    NEXT j
+    LET y = rnd
+
+    FUNCTION ran0 (idum)
+
+        ! Note: iseed is ignored here inasmuch as rnd ALWAYS gives
+        ! the next number in the sequence.  As a consequence, idum
+        ! is also ignored, since it is not necessary to produce
+        ! iseed nor is it necessary to force first use initialization.
+        ! Additional initial randomization can be provided by the
+        ! RANDOMIZE statement, which can appear anywhere in the calling program.
+
+        LET j = 1 + int(97 * y)
+        LET y = v(j)              ! The array v() was set up in initialization.
+        LET ran0 = y
+        LET v(j) = rnd
+
+    END FUNCTION
+
+END MODULE

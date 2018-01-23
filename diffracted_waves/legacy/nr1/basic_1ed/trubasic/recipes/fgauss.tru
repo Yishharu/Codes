@@ -1,0 +1,16 @@
+EXTERNAL
+
+SUB fgauss (x, a(), y, dyda(), na)
+
+    LET y = 0
+    FOR i = 1 to na - 1 step 3
+        LET arg = (x - a(i + 1)) / a(i + 2)
+        LET ex = exp(-arg^2)
+        LET fac = a(i) * ex * 2 * arg
+        LET y = y + a(i) * ex
+        LET dyda(i) = ex
+        LET dyda(i + 1) = fac / a(i + 2)
+        LET dyda(i + 2) = fac * arg / a(i + 2)
+    NEXT i
+
+END SUB

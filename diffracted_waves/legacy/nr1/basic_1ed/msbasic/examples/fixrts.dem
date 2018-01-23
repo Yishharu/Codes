@@ -1,0 +1,63 @@
+DECLARE SUB FIXRTS (D!(), NPOLES!)
+DECLARE SUB ZROOTS (A!(), M!, ROOTS!(), POLISH%)
+
+'PROGRAM D12R11
+'Driver for routine FIXRTS
+CLS
+NPOLES = 6
+NPOL = NPOLES + 1
+DIM D(NPOLES)
+DIM ZCOEF(2, NPOL), ZEROS(2, NPOLES), Z(2)
+FOR I = 1 TO NPOLES
+  READ D(I)
+NEXT I
+DATA 6.0,-15.0,20.0,-15.0,6.0,0.0
+'Finding roots of (z-1.0)^6=1.0
+'First print roots
+ZCOEF(1, NPOLES + 1) = 1!
+ZCOEF(2, NPOLES + 1) = 0!
+FOR I = NPOLES TO 1 STEP -1
+  ZCOEF(1, I) = -D(NPOLES + 1 - I)
+  ZCOEF(2, I) = 0!
+NEXT I
+POLISH% = -1
+CALL ZROOTS(ZCOEF(), NPOLES, ZEROS(), POLISH%)
+PRINT "Roots of (z-1.0)^6 = 1.0"
+PRINT "                  Root                  (z-1.0)^6"
+FOR I = 1 TO NPOLES
+  Z(1) = 1!
+  Z(2) = 0!
+  FOR J = 1 TO 6
+    DUM = Z(1)
+    Z(1) = DUM * (ZEROS(1, I) - 1!) - Z(2) * ZEROS(2, I)
+    Z(2) = DUM * ZEROS(2, I) + Z(2) * (ZEROS(1, I) - 1!)
+  NEXT J
+  PRINT USING "######"; I;
+  PRINT USING "#####.######"; ZEROS(1, I); ZEROS(2, I); Z(1); Z(2)
+NEXT I
+PRINT
+'Now fix them to lie within unit circle
+CALL FIXRTS(D(), NPOLES)
+'Check results
+ZCOEF(1, NPOLES + 1) = 1!
+ZCOEF(2, NPOLES + 1) = 0!
+FOR I = NPOLES TO 1 STEP -1
+  ZCOEF(1, I) = -D(NPOLES + 1 - I)
+  ZCOEF(2, I) = 0!
+NEXT I
+CALL ZROOTS(ZCOEF(), NPOLES, ZEROS(), POLISH%)
+PRINT "Roots reflected in unit circle"
+PRINT "                  Root                  (z-1.0)^6"
+FOR I = 1 TO NPOLES
+  Z(1) = 1!
+  Z(2) = 0!
+  FOR J = 1 TO 6
+    DUM = Z(1)
+    Z(1) = DUM * (ZEROS(1, I) - 1!) - Z(2) * ZEROS(2, I)
+    Z(2) = DUM * ZEROS(2, I) + Z(2) * (ZEROS(1, I) - 1!)
+  NEXT J
+  PRINT USING "######"; I;
+  PRINT USING "#####.######"; ZEROS(1, I); ZEROS(2, I); Z(1); Z(2)
+NEXT I
+END
+

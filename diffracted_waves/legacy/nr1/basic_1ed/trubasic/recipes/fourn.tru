@@ -1,0 +1,69 @@
+EXTERNAL
+
+SUB fourn (datq(), nn(), ndim, isign)
+
+    LET ntot = 1
+    FOR idim = 1 to ndim
+        LET ntot = ntot * nn(idim)
+    NEXT idim
+    LET nprev = 1
+    FOR idim = 1 to ndim
+        LET n = nn(idim)
+        LET nrem = ntot / (n * nprev)
+        LET ip1 = 2 * nprev
+        LET ip2 = ip1 * n
+        LET ip3 = ip2 * nrem
+        LET i2rev = 1
+        FOR i2 = 1 to ip2 step ip1
+            IF i2 < i2rev then
+               FOR i1 = i2 to i2 + ip1 - 2 step 2
+                   FOR i3 = i1 to ip3 step ip2
+                       LET i3rev = i2rev + i3 - i2
+                       LET tempr = datq(i3)
+                       LET tempi = datq(i3 + 1)
+                       LET datq(i3) = datq(i3rev)
+                       LET datq(i3 + 1) = datq(i3rev + 1)
+                       LET datq(i3rev) = tempr
+                       LET datq(i3rev + 1) = tempi
+                   NEXT i3
+               NEXT i1
+            END IF
+            LET ibit = ip2 / 2
+            DO while ibit >= ip1 and i2rev > ibit
+               LET i2rev = i2rev - ibit
+               LET ibit = ibit / 2
+            LOOP
+            LET i2rev = i2rev + ibit
+        NEXT i2
+
+        LET ifp1 = ip1
+        DO while ifp1 < ip2
+           LET ifp2 = 2 * ifp1
+           LET theta = isign * 2*pi / (ifp2 / ip1)
+           LET wpr = -2 * sin(.5 * theta)^2
+           LET wpi = sin(theta)
+           LET wr = 1
+           LET wi = 0
+           FOR i3 = 1 to ifp1 step ip1
+               FOR i1 = i3 to i3 + ip1 - 2 step 2
+                   FOR i2 = i1 to ip3 step ifp2
+                       LET k1 = i2
+                       LET k2 = k1 + ifp1
+                       LET tempr = wr * datq(k2) - wi * datq(k2 + 1)
+                       LET tempi = wr * datq(k2 + 1) + wi * datq(k2)
+                       LET datq(k2) = datq(k1) - tempr
+                       LET datq(k2 + 1) = datq(k1 + 1) - tempi
+                       LET datq(k1) = datq(k1) + tempr
+                       LET datq(k1 + 1) = datq(k1 + 1) + tempi
+                   NEXT i2
+               NEXT i1
+               LET wtemp = wr
+               LET wr = wr * wpr - wi * wpi + wr
+               LET wi = wi * wpr + wtemp * wpi + wi
+           NEXT i3
+           LET ifp1 = ifp2
+        LOOP
+        LET nprev = n * nprev
+    NEXT idim
+
+END SUB

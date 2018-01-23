@@ -1,0 +1,46 @@
+PROGRAM D2r6
+
+! Driver for routine vander
+
+LIBRARY "vander"
+
+LET n = 5
+DIM x(0), q(0), w(0), term(0)
+MAT redim x(n), q(n), w(n), term(n)
+
+CLEAR
+MAT READ x
+DATA 1.0, 1.5, 2.0, 2.5, 3.0
+
+MAT READ q
+DATA 1.0, 1.5, 2.0, 2.5, 3.0
+
+CALL vander (x(), w(), q(), n)
+
+PRINT "Solution vector:"
+FOR i = 1 to n
+    PRINT "    w(";
+    PRINT using "#": i;
+    PRINT ") = ";
+    PRINT using "#.######^^^^": w(i)
+NEXT i
+PRINT
+
+PRINT "Test of solution vector:"
+PRINT "    mtrx*sol'n   original"
+LET sum = 0
+FOR i = 1 to n
+    LET term(i) = w(i)
+    LET sum = sum + w(i)
+NEXT i
+PRINT using "------#.####": sum, q(1)
+FOR i = 2 to n
+    LET sum = 0
+    FOR j = 1 to n
+        LET term(j) = term(j) * x(j)
+        LET sum = sum + term(j)
+    NEXT j
+    PRINT using "------#.####": sum, q(i)
+NEXT i
+
+END

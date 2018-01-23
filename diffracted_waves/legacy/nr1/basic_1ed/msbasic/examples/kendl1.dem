@@ -1,0 +1,47 @@
+DECLARE SUB KENDL1 (DATA1!(), DATA2!(), N!, TAU!, Z!, PROB!)
+DECLARE FUNCTION RAN0! (IDUM&)
+DECLARE FUNCTION RAN1! (IDUM&)
+DECLARE FUNCTION RAN2! (IDUM&)
+DECLARE FUNCTION RAN3! (IDUM&)
+DECLARE FUNCTION RAN4! (IDUM&)
+
+'PROGRAM D13R18
+'Driver for routine KENDL1
+'Look for correlations in RAN0 ... RAN4
+CLS
+NDAT = 200
+DIM DATA1(NDAT), DATA2(NDAT), TEXT$(5)
+FOR I = 1 TO 5
+  READ TEXT$(I)
+NEXT I
+DATA "RAN0","RAN1","RAN2","RAN3","RAN4"
+PRINT "Pair correlations of RAN0 ... RAN4"
+PRINT
+PRINT " Program      Kendall Tau     Std. Dev.     Probability"
+PRINT
+FOR I = 1 TO 5
+  IDUM& = -1357
+  FOR J = 1 TO NDAT
+    IF I = 1 THEN
+      DATA1(J) = RAN0(IDUM&)
+      DATA2(J) = RAN0(IDUM&)
+    ELSEIF I = 2 THEN
+      DATA1(J) = RAN1(IDUM&)
+      DATA2(J) = RAN1(IDUM&)
+    ELSEIF I = 3 THEN
+      DATA1(J) = RAN2(IDUM&)
+      DATA2(J) = RAN2(IDUM&)
+    ELSEIF I = 4 THEN
+      DATA1(J) = RAN3(IDUM&)
+      DATA2(J) = RAN3(IDUM&)
+    ELSEIF I = 5 THEN
+      DATA1(J) = RAN4(IDUM&)
+      DATA2(J) = RAN4(IDUM&)
+    END IF
+  NEXT J
+  CALL KENDL1(DATA1(), DATA2(), NDAT, TAU, Z, PROB)
+  PRINT "  "; TEXT$(I); "  ";
+  PRINT USING "########.######"; TAU; Z; PROB
+NEXT I
+END
+

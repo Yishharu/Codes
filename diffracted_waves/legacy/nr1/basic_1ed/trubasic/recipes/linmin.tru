@@ -1,0 +1,31 @@
+MODULE linmin
+
+    DECLARE PUBLIC ncom, pcom(), xicom()    ! Labelled COMMON /F1COM/
+
+    SUB linmin (p(), xi(), n, fret)
+
+        ! The function brent has been converted to a subroutine.
+
+        LIBRARY "mnbrak", "brent"
+
+        LET tol = .000001
+
+        LET ncom = n
+        FOR j = 1 to n
+            LET pcom(j) = p(j)
+            LET xicom(j) = xi(j)
+        NEXT j
+        LET ax = 0
+        LET xx = 1
+
+        CALL mnbrak (ax, xx, bx, fa, fx, fb, dum)
+        CALL brent (ax, xx, bx, dum, tol, fret, xmin)
+
+        FOR j = 1 to n
+            LET xi(j) = xmin * xi(j)
+            LET p(j) = p(j) + xi(j)
+        NEXT j
+
+    END SUB
+
+END MODULE

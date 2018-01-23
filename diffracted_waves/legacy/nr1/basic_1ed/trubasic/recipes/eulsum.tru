@@ -1,0 +1,30 @@
+MODULE eulsum
+
+    SHARE nterm
+
+    SUB eulsum (sum, term, jterm, wksp())
+
+        IF jterm = 1 then
+           LET nterm = 1
+           LET wksp(1) = term
+           LET sum = .5 * term
+        ELSE
+           LET tmp = wksp(1)
+           LET wksp(1) = term
+           FOR j = 1 to nterm - 1
+               LET dum = wksp(j + 1)
+               LET wksp(j + 1) = .5 * (wksp(j) + tmp)
+               LET tmp = dum
+           NEXT j
+           LET wksp(nterm + 1) = .5 * (wksp(nterm) + tmp)
+           IF abs(wksp(nterm + 1)) <= abs(wksp(nterm)) then
+              LET sum = sum + .5 * wksp(nterm + 1)
+              LET nterm = nterm + 1
+           ELSE
+              LET sum = sum + wksp(nterm + 1)
+           END IF
+        END IF
+
+    END SUB
+
+END MODULE

@@ -1,0 +1,198 @@
+DEFINITION MODULE NRVect;
+
+  (* EXPORT QUALIFIED Vector, PtrToReals, NilVector, NewVector, EmptyVector,
+                      CreateVector, DisposeVector, LengthOfVector, VectorPtr,
+                      GetVectorAttr, GetVectorValues, SetElement, GetElement,
+                      InsertElement, DeleteElement, Increase, Decrease,
+                      SetVector, DuplicateVector, CopyVector, MinVector,
+                      MaxVector; *)
+
+   CONST
+      MaxVectorLength = 2000;
+   TYPE
+      Vector;
+      PtrToReals = POINTER TO ARRAY [0..MaxVectorLength-1] OF REAL;
+   VAR 
+      NilVector: Vector;
+
+   PROCEDURE NewVector(values: ARRAY OF REAL): Vector;
+
+      (* 
+       * This procedure creates a new vector from the numbers of "values".
+       * Possible structures of "values":
+       *   1. ARRAY OF REAL, where every element of the array is a real 
+       *      number.
+       *   2. ARRAY OF REAL, where the numbers are followed by NilReal.
+       *      The role of NilREAL is the same as the role of "0C" in
+       *      the Modula-2 strings.
+       *)
+
+   PROCEDURE EmptyVector(length: INTEGER): Vector;
+
+      (* 
+       * It creates a new vector with length "length", if
+       * length > 0. Otherwise it returns NilVector;
+       * The elements in vector are undefined.
+       *)
+
+   PROCEDURE CreateVector(    n:      INTEGER;
+                          VAR vector: Vector;
+                          VAR reals:  PtrToReals);
+
+      (* 
+       * It creates a new vector with length n, if n > 0.  
+       * It returns the reference variable "vector" and a pointer to the elements
+       * of the vector in "reals". If n = 0: vector = NilVector, reals = NIL.
+       * The elements in vector are undefined.
+       *)
+
+   PROCEDURE DisposeVector(VAR vector: Vector (* in/out *));
+
+      (*
+       * The input "vector" is deallocated. 
+       * Output: "vector"=NilVector;
+       * Use this procedure only for vectors created before!
+       *)
+
+   PROCEDURE LengthOfVector(vector: Vector): INTEGER;
+
+      (* 
+       * It returns the number of elements of vector.
+       *)
+
+   PROCEDURE VectorPtr(vector: Vector): PtrToReals;
+
+      (* 
+       * This procedure returns a pointer to an array of reals, 
+       * where the numbers from vector can be found. This array is 
+       * defined for the indices: [0..LengthOfVector(vector)-1].
+       *)
+
+   PROCEDURE GetVectorAttr(    vector: Vector;
+                           VAR length: INTEGER;
+                           VAR values: PtrToReals);
+
+      (* 
+       * length: The length of the vector;
+       * values: Pointer to an array of reals, where the numbers from 
+       *         vector can be found. This array is defined for the 
+       *         indices: [0..length-1].
+       *)
+
+   PROCEDURE GetVectorValues(    vector: Vector;
+                             VAR length: INTEGER;
+                             VAR values: ARRAY OF REAL);
+
+      (* 
+       * length: The length of the vector;
+       * values: The numbers in vector. If there is enough place in
+       *         values, then the numbers are followed by NilREAL.
+       * If vector = NilVector then length := 0, values[0] := NilREAL.
+       *)
+
+   PROCEDURE SetElement(vector: Vector;
+                        ix:     INTEGER;
+                        number: REAL);
+
+      (* 
+       * Sets the element with index ix to number. 
+       * 0 <= ix <= LengthOfVector(vector)-1.
+       * If ix > LengthOfVector(vector)-1 -> no change in vector.
+       *)
+
+   PROCEDURE GetElement(    vector: Vector;
+                            ix:     INTEGER;
+                        VAR number: REAL);
+
+      (* 
+       * number := the element with index ix in vector. 
+       * 0 <= ix <= LengthOfVector(vector)-1.
+       * If ix > LengthOfVector(vector)-1 -> number := NilREAL.
+       *)
+
+   PROCEDURE InsertElement(VAR vector:  Vector; (* in/out *)
+                               i:       INTEGER;
+                               valueIn: REAL);
+
+      (* 
+       * A new vector will be created from the values of vector
+       * and valueIn. The index of valueIn in the new vector is i.
+       * 0 <= i <= (length of input vector).
+       *)
+
+   PROCEDURE DeleteElement(VAR vector: Vector; (* in/out *)
+                               i:      INTEGER);
+
+      (* 
+       * The value with index i will be deleted from vector. 
+       * The values of vector will be rearranged.
+       * 0 <= i <= (length of input vector - 1).
+       *)
+
+   PROCEDURE Increase(vector: Vector; 
+                      value:   REAL);
+
+      (* 
+       * values[i] of vector := values[i] + value
+       * 0 <= i <= (length of vector - 1).
+       *)
+
+   PROCEDURE Decrease(vector: Vector; 
+                      value:   REAL);
+
+      (* 
+       * values[i] of vector := values[i] - value
+       * 0 <= i <= (length of vector - 1).
+       *)
+
+   PROCEDURE SetVector(source, dest: Vector);
+
+      (* 
+       * If (source # NilVector) AND (dest # NilVector) AND
+       *    (LengthOfVector(source) = (LengthOfVector(dest)) THEN
+       *   values of dest := values of source
+       * else error.
+       *)
+
+   PROCEDURE DuplicateVector(    source: Vector;
+                             VAR dest:   Vector);
+      (* 
+       * This procedure creates a new vector in dest, and copies
+       * the numbers from source into dest. 
+       *)
+
+   PROCEDURE CopyVector(    source: Vector;
+                            n:      INTEGER;
+                        VAR dest:   Vector);
+      (* 
+       * This procedure creates a new vector in dest, and copies
+       * the n elements of source into dest, if 1 <= n <= length(source).
+       *    n = 0: dest = NilVector.
+       *    n > length(source): dest is the duplicate of source. 
+       *)
+
+   PROCEDURE MinVector(vector: Vector): REAL;
+
+      (* 
+       * It returns the minimal element of the vector.
+       *)
+
+   PROCEDURE MaxVector(vector: Vector): REAL;
+
+      (* 
+       * It returns the maximal element of the vector.
+       *)
+
+   (*
+    * Remarks:
+    *    The following procedures allocate memory for a vector:
+    *       - NewVector
+    *       - CreateVector
+    *       - DuplicateVector
+    *       - CopyVector
+    *
+    *    The following procedures deallocate memory:
+    *       - DisposeVector
+    *)
+
+END NRVect.

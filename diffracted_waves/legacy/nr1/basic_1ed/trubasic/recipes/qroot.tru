@@ -1,0 +1,48 @@
+EXTERNAL
+
+SUB qroot (p(), n, b, c, eps)
+
+    LIBRARY "poldiv"
+
+    DIM q(0), d(0), req(0), qq(0)
+    MAT redim q(n), d(3), req(n), qq(n)
+
+    LET itmax = 20
+    LET tiny = .000001
+    LET d(3) = 1
+    FOR iter = 1 to itmax
+        LET d(2) = b
+        LET d(1) = c
+
+        CALL poldiv (p(), n, d(), 3, q(), req())
+
+        LET s = req(1)
+        LET r = req(2)
+
+        CALL poldiv (q(), n - 1, d(), 3, qq(), req())
+
+        LET sc = -req(1)
+        LET rc = -req(2)
+        FOR i = n - 1 to 1 step -1
+            LET q(i + 1) = q(i)
+        NEXT i
+        LET q(1) = 0
+
+        CALL poldiv (q(), n, d(), 3, qq(), req())
+
+        LET sb = -req(1)
+        LET rb = -req(2)
+        LET div = 1 / (sb * rc - sc * rb)
+        LET delb = (r * sc - s * rc) * div
+        LET delc = (-r * sb + s * rb) * div
+        LET b = b + delb
+        LET c = c + delc
+        LET db = abs(delb) - eps * abs(b)
+        LET dc = abs(delc) - eps * abs(c)
+        IF (db <= 0 or abs(b) < tiny) and (dc <= 0 or abs(c) < tiny) then
+           EXIT SUB
+        END IF
+    NEXT iter
+    PRINT "too many iterations in qroot"
+
+END SUB

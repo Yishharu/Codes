@@ -1,0 +1,84 @@
+DECLARE SUB SVDCMP (A!(), M!, N!, MP!, NP!, W!(), V!())
+
+'PROGRAM D2R9
+'Driver for routine SVDCMP
+CLS
+NP = 20
+DIM A(NP, NP), U(NP, NP), W(NP), V(NP, NP)
+OPEN "MATRX3.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, DUM$
+  IF DUM$ = "END" THEN EXIT DO
+  LINE INPUT #1, DUM$
+  LINE INPUT #1, DUM$
+  M = VAL(MID$(DUM$, 1, 2))
+  N = VAL(MID$(DUM$, 3, 2))
+  LINE INPUT #1, DUM$
+  'Copy original matrix into U
+  FOR K = 1 TO M
+    LINE INPUT #1, DUM$
+    FOR L = 1 TO N
+      A(K, L) = VAL(MID$(DUM$, 4 * L - 3, 4))
+      U(K, L) = A(K, L)
+    NEXT L
+  NEXT K
+  IF N > M THEN
+    FOR K = M + 1 TO N
+      FOR L = 1 TO N
+        A(K, L) = 0!
+        U(K, L) = 0!
+      NEXT L
+    NEXT K
+    M = N
+  END IF
+  'Perform decomposition
+  CALL SVDCMP(U(), M, N, NP, NP, W(), V())
+  'Print results
+  PRINT "Decomposition Matrices:"
+  PRINT "Matrix U"
+  FOR K = 1 TO M
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; U(K, L);
+    NEXT L
+    PRINT
+  NEXT K
+  PRINT "Diagonal of Matrix W"
+  FOR K = 1 TO N
+    PRINT USING "#####.######"; W(K);
+  NEXT K
+  PRINT
+  PRINT "Matrix V-Transpose"
+  FOR K = 1 TO N
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; V(L, K);
+    NEXT L
+    PRINT
+  NEXT K
+  PRINT "Check product against original matrix:"
+  PRINT "Original Matrix:"
+  FOR K = 1 TO M
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; A(K, L);
+    NEXT L
+    PRINT
+  NEXT K
+  PRINT "Product U*W*(V-Transpose):"
+  FOR K = 1 TO M
+    FOR L = 1 TO N
+      A(K, L) = 0!
+      FOR J = 1 TO N
+        A(K, L) = A(K, L) + U(K, J) * W(J) * V(L, J)
+      NEXT J
+    NEXT L
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; A(K, L);
+    NEXT L
+    PRINT
+  NEXT K
+  PRINT "***********************************"
+  PRINT "Press RETURN for next problem"
+  LINE INPUT DUM$
+LOOP
+CLOSE #1
+END
+

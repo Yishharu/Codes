@@ -1,0 +1,74 @@
+EXTERNAL
+
+SUB shootf (nvar, v1(), v2(), delv1(), delv2(), n1, n2, x1, x2, xf, eps, h1, hmin, f(), dv1(), dv2())
+
+    LIBRARY "odeint", "ludcmp", "lubksb"
+
+    ! Routines load1, load2, and score are in the main program
+
+    DIM y(0), f1(0), f2(0), dfdv(0,0), indx(0)
+    MAT redim y(nvar), f1(nvar), f2(nvar), dfdv(nvar, nvar), indx(nvar)
+
+    DECLARE PUBLIC kmax           ! COMMON in odeint
+
+    LET kmax = 0
+
+    CALL load1 (x1, v1(), y())
+    CALL odeint (y(), nvar, x1, xf, eps, h1, hmin, nok, nbad, derivs, rkqc)
+    CALL score (xf, y(), f1())
+    CALL load2 (x2, v2(), y())
+    CALL odeint (y(), nvar, x2, xf, eps, h1, hmin, nok, nbad, derivs, rkqc)
+    CALL score (xf, y(), f2())
+
+    LET j = 0
+    FOR iv = 1 to n2
+        LET j = j + 1
+        LET sav = v1(iv)
+        LET v1(iv) = v1(iv) + delv1(iv)
+
+        CALL load1 (x1, v1(), y())
+        CALL odeint (y(), nvar, x1, xf, eps, h1, hmin, nok, nbad, derivs, rkqc)
+        CALL score (xf, y(), f())
+
+        FOR i = 1 to nvar
+            LET dfdv(i, j) = (f(i) - f1(i)) / delv1(iv)
+        NEXT i
+        LET v1(iv) = sav
+    NEXT iv
+
+    FOR iv = 1 to n1
+        LET j = j + 1
+        LET sav = v2(iv)
+        LET v2(iv) = v2(iv) + delv2(iv)
+
+        CALL load2  (x2, v2(), y())
+        CALL odeint (y(), nvar, x2, xf, eps, h1, hmin, nok, nbad, derivs, rkqc)
+        CALL score  (xf, y(), f())
+
+        FOR i = 1 to nvar
+            LET dfdv(i, j) = (f2(i) - f(i)) / delv2(iv)
+        NEXT i
+        LET v2(iv) = sav
+    NEXT iv
+
+    FOR i = 1 to nvar
+        LET f(i) = f1(i) - f2(i)
+        LET f1(i) = -f(i)
+    NEXT i
+
+    CALL ludcmp (dfdv(,), nvar, nvar, indx(), det)
+    CALL lubksb (dfdv(,), nvar, nvar, indx(), f1())
+
+    LET j = 0
+    FOR iv = 1 to n2
+        LET j = j + 1
+        LET v1(iv) = v1(iv) + f1(j)
+        LET dv1(iv) = f1(j)
+    NEXT iv
+    FOR iv = 1 to n1
+        LET j = j + 1
+        LET v2(iv) = v2(iv) + f1(j)
+        LET dv2(iv) = f1(j)
+    NEXT iv
+
+END SUB

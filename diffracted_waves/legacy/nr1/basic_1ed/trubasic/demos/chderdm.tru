@@ -1,0 +1,50 @@
+PROGRAM D5r7
+
+! Driver for routine chder
+
+LIBRARY "chebft", "chder", "chebev"
+DECLARE FUNCTION chebev, fder     ! fder defined below
+
+LET nval = 40
+LET pio2 = pi/2
+
+DIM c(0), cder(0)
+MAT redim c(nval), cder(nval)
+
+CLEAR
+LET a = -pio2
+LET b = pio2
+
+CALL chebft (a, b, c(), nval, dum)
+
+! Test derivative
+
+DO
+   PRINT "How many terms in Chebyshev evaluation?"
+   PRINT "Enter n between 6 and "; str$(nval); ".  Enter n=0 to end."
+   LINE INPUT mval$
+   LET mval = val(mval$)
+   IF mval <= 0 or mval > nval then EXIT DO
+
+   CALL chder (a, b, c(), cder(), mval)
+
+   PRINT "        x        Actual   Cheby. deriv."
+   FOR i = 1 to nval
+       LET c(i) = cder(i)
+   NEXT i
+   FOR i = -8 to 8 step 1
+       LET x = i * pio2 / 10
+       PRINT using "----#.######": x, fder(x), chebev(a, b, c(), dum, mval, x)
+   NEXT i
+LOOP
+
+END
+
+FUNCTION fder (x)
+    ! Derivative of func
+    LET fder = 4 * x * ((x ^ 2) - 1) * sin(x) + (x ^ 2) * (x ^ 2 - 2) * cos(x)
+END FUNCTION
+
+FUNCTION func (x)
+    LET func = (x ^ 2) * (x ^ 2 - 2) * sin(x)
+END FUNCTION

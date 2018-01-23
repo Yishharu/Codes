@@ -1,0 +1,17 @@
+DEFINITION MODULE RatIntM;
+
+   (* EXPORT QUALIFIED RatInt; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE RatInt(    XA, YA: Vector; 
+                        x:      REAL; 
+                    VAR y, dy:  REAL); 
+   (*
+     Given arrays XA[0, n-1] and YA[0, n-1], and given a value x,
+     this routine returns a value of y and an accuracy estimate dy.  
+     The value returned is that of the diagonal rational function, 
+     evaluated at x, which passes through the n points (XAi,YAi), i=0...n-1.
+   *)
+
+END RatIntM.

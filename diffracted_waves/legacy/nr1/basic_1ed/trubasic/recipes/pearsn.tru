@@ -1,0 +1,36 @@
+EXTERNAL
+
+SUB pearsn (x(), y(), n, r, prob, z)
+
+    LIBRARY "betai"
+    DECLARE FUNCTION betai
+
+    LET tiny = 1e-20
+
+    LET ax = 0
+    LET ay = 0
+    FOR j = 1 to n
+        LET ax = ax + x(j)
+        LET ay = ay + y(j)
+    NEXT j
+    LET ax = ax / n
+    LET ay = ay / n
+    LET sxx = 0
+    LET syy = 0
+    LET sxy = 0
+    FOR j = 1 to n
+        LET xt = x(j) - ax
+        LET yt = y(j) - ay
+        LET sxx = sxx + xt^2
+        LET syy = syy + yt^2
+        LET sxy = sxy + xt * yt
+    NEXT j
+    LET r = sxy / sqr(sxx * syy)
+    LET z = .5 * log(((1 + r) + tiny) / ((1 - r) + tiny))
+    LET df = n - 2
+    LET t = r * sqr(df / (((1 - r) + tiny) * ((1 + r) + tiny)))
+    LET prob = betai(.5 * df, .5, df / (df + t^2))
+
+    ! LET prob = erfcc(abs(z * sqr(n - 1)) / 1.4142136)
+
+END SUB

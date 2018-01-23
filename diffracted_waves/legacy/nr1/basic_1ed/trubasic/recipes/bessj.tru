@@ -1,0 +1,59 @@
+EXTERNAL
+
+FUNCTION bessj (n, x)
+
+    LIBRARY "bessj0", "bessj1"
+    DECLARE FUNCTION bessj0, bessj1
+
+    LET iacc = 40
+    LET bigno = 1e+10
+    LET bigni = 1e-10
+
+    IF n < 2 then
+       PRINT "Bad argument n in bessj"
+       EXIT FUNCTION
+    END IF
+
+    LET ax = abs(x)
+    IF ax = 0 then
+       LET bessj = 0
+
+    ELSEIF ax > n then
+       LET tox = 2 / ax
+       LET bjm = bessj0(ax)
+       LET bj = bessj1(ax)
+       FOR j = 1 to n - 1
+           LET bjp = j * tox * bj - bjm
+           LET bjm = bj
+           LET bj = bjp
+       NEXT j
+       LET bessj = bj
+
+    ELSE
+       LET tox = 2 / ax
+       LET m = 2 * int((n + int(sqr(iacc * n))) / 2)
+       LET besj = 0
+       LET jsum = 0
+       LET sum = 0
+       LET bjp = 0
+       LET bj = 1
+       FOR j = m to 1 step -1
+           LET bjm = j * tox * bj - bjp
+           LET bjp = bj
+           LET bj = bjm
+           IF abs(bj) > bigno then
+              LET bj = bj * bigni
+              LET bjp = bjp * bigni
+              LET besj = besj * bigni
+              LET sum = sum * bigni
+           END IF
+           IF jsum <> 0 then LET sum = sum + bj
+           LET jsum = 1 - jsum
+           IF j = n then LET besj = bjp
+       NEXT j
+       LET sum = 2 * sum - bj
+       LET bessj = besj / sum
+
+    END IF
+
+END FUNCTION

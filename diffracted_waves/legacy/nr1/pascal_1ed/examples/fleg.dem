@@ -1,0 +1,35 @@
+PROGRAM d14r7(input,output);
+(* driver for routine FLEG *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nval = 5;
+   dx = 0.2;
+   npoly = 5;
+TYPE
+   RealArrayNL = ARRAY [1..npoly] OF real;
+VAR
+   i,j: integer;
+   x: real;
+   afunc: RealArrayNL;
+
+(*$I PLGNDR.PAS *)
+
+(*$I FLEG.PAS *)
+
+BEGIN
+   writeln;
+   writeln('legendre polynomials':43);
+   writeln('n=1':9,'n=2':10,'n=3':10,'n=4':10,'n=5':10);
+   FOR i := 1 TO nval DO BEGIN
+      x := i*dx;
+      fleg(x,afunc,npoly);
+      writeln('x  := ',x:6:2);
+      FOR j := 1 TO npoly DO write(afunc[j]:10:4);
+      writeln('  routine FLEG');
+      FOR j := 1 TO npoly DO write(plgndr(j-1,0,x):10:4);
+      writeln('  routine PLGNDR');
+      writeln
+   END
+END.

@@ -1,0 +1,24 @@
+EXTERNAL
+
+FUNCTION rtnewt (dum, x1, x2, xacc)
+
+    ! The subroutine funcd is supplied by the user
+
+    LET jmax = 20
+    LET trtnewt = .5 * (x1 + x2)
+    FOR j = 1 to jmax
+
+        CALL funcd (trtnewt, f, df)
+
+        LET dx = f / df
+        LET trtnewt = trtnewt - dx
+        IF (x1 - trtnewt) * (trtnewt - x2) < 0 then
+           PRINT "Jumped out of brackets"
+           EXIT FUNCTION          ! Error exit
+        END IF
+        LET rtnewt = trtnewt
+        IF abs(dx) < xacc then EXIT FUNCTION     ! Normal exit
+    NEXT j
+    PRINT "rtnewt exceeding maximum iterations"
+
+END FUNCTION

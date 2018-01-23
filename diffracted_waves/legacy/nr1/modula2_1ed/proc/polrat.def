@@ -1,0 +1,28 @@
+DEFINITION MODULE PolRat;
+
+   (* EXPORT QUALIFIED DDPoly, PolDiv; *)
+
+   FROM NRVect IMPORT Vector, PtrToReals, GetVectorAttr;
+
+   PROCEDURE DDPoly(C:  Vector; 
+                    x:  REAL; 
+                    PD: Vector); 
+   (*
+     Given the nc coefficients of a polynomial of degree nc-1 as an array 
+     C[0, nc-1] with C[0] being the constant term, and given a value x, 
+     and given the vector PD of length nd>1, this routine returns the 
+     polynomial evaluated at x as PD[0] and nd-1 derivatives as PD[1]...PD[nd-1].
+   *)
+
+   PROCEDURE PolDiv(U, V, Q, R: Vector); 
+   (*
+     Given the n coefficients of a polynomial in U[0, n-1] and the nv 
+     coefficients of another polynomial in V[0, nv-1], divide the polynomial 
+     U by the polynomial V ("U"/"V") giving a quotient polynomial whose 
+     coefficients are returned in Q[0, n-1], and a remainder polynomial 
+     whose coefficients are returned in R[0, n-1]. The arrays  and R are 
+     dimensioned with lengths n, but the elements R[nv-1]...R[n-1] and 
+     Q[n-nv+1]...Q[n-1] will be returned as zero.
+   *)
+
+END PolRat.

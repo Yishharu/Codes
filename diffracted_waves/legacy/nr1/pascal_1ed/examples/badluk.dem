@@ -1,0 +1,14 @@
+PROGRAM d1r3(input,output);
+(* driver for BADLUK *)
+
+(*$I MODFILE.PAS *)
+
+(*$I JULDAY.PAS *)
+
+(*$I FLMOON.PAS *)
+
+(*$I BADLUK.PAS *)
+
+BEGIN
+   badluk
+END.

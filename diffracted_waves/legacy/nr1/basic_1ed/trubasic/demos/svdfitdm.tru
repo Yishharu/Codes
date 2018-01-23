@@ -1,0 +1,52 @@
+PROGRAM D14r4
+
+! Driver for routine svdfit
+
+LIBRARY "svdfit", "gasdev", "svdvar"
+DECLARE FUNCTION gasdev
+
+LET npt = 100
+LET npol = 5
+DIM x(0), y(0), sig(0), a(0), cvm(0,0), u(0,0), v(0,0), w(0)
+MAT redim x(npt), y(npt), sig(npt), a(npol), cvm(npol, npol)
+MAT redim u(npt, npol), v(npol, npol), w(npol)
+
+CLEAR
+LET spread = .02
+
+LET idum = -911
+LET mp = npt
+LET np = npol
+FOR i = 1 to npt
+    LET x(i) = .02 * i
+    LET y(i) = 1 + x(i) * (2 + x(i) * (3 + x(i) * (4 + x(i) * 5)))
+    LET y(i) = y(i) * (1 + spread * gasdev(idum))
+    LET sig(i) = y(i) * spread
+NEXT i
+
+CALL svdfit (x(), y(), sig(), npt, a(), npol, u(,), v(,), w(), mp, np, chisq, "fpoly")
+CALL svdvar (v(,), npol, np, w(), cvm(,), npol)
+
+PRINT "Polynomial fit:"
+FOR i = 1 to npol
+    PRINT using "----#.######": a(i);
+    PRINT "  +-";
+    PRINT using "###.######": sqr(cvm(i, i))
+NEXT i
+PRINT "chi-squared";
+PRINT using "#####.######": chisq
+PRINT
+
+CALL svdfit (x(), y(), sig(), npt, a(), npol, u(,), v(,), w(), mp, np, chisq, "fleg")
+CALL svdvar (v(,), npol, np, w(), cvm(,), npol)
+
+PRINT "Legendre polynomial fit"
+FOR i = 1 to npol
+    PRINT using "----#.######": a(i);
+    PRINT "  +-";
+    PRINT using "###.######": sqr(cvm(i, i))
+NEXT i
+PRINT "chi-squared";
+PRINT using "#####.######": chisq
+
+END

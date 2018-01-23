@@ -1,0 +1,51 @@
+EXTERNAL
+
+SUB ratint (xa(), ya(), n, x, y, dy)
+
+    DIM c(0), d(0)
+    MAT redim c(n), d(n)
+
+    LET tiny = 1e-25
+    LET ns = 1
+    LET hh = abs(x - xa(1))
+    FOR i = 1 to n
+        LET h = abs(x - xa(i))
+        IF h = 0 then
+           LET y = ya(i)
+           LET dy = 0
+           EXIT SUB
+        ELSEIF h < hh then
+           LET ns = i
+           LET hh = h
+        END IF
+        LET c(i) = ya(i)
+        LET d(i) = ya(i) + tiny
+    NEXT i
+
+    LET y = ya(ns)
+    LET ns = ns - 1
+    FOR m = 1 to n - 1
+        FOR i = 1 to n - m
+            LET w = c(i + 1) - d(i)
+            LET h = xa(i + m) - x
+            LET t = (xa(i) - x) * d(i) / h
+            LET dd = t - c(i + 1)
+            IF dd = 0 then
+               PRINT "abnormal exit"
+               EXIT SUB
+            END IF
+
+            LET dd = w / dd
+            LET d(i) = c(i + 1) * dd
+            LET c(i) = t * dd
+        NEXT i
+        IF 2 * ns < n - m then
+           LET dy = c(ns + 1)
+        ELSE
+           LET dy = d(ns)
+           LET ns = ns - 1
+        END IF
+        LET y = y + dy
+    NEXT m
+
+END SUB

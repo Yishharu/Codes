@@ -1,0 +1,41 @@
+PROGRAM D13r4
+
+! Driver for routine ttest
+
+LIBRARY "ttest", "gasdev"
+DECLARE FUNCTION gasdev
+
+LET npts = 1024
+LET mpts = 512
+DIM data1(0), data2(0)
+MAT redim data1(npts), data2(mpts)
+
+CLEAR
+LET eps = .02
+LET nshft = 10
+
+! Generate Gaussian distributed data
+
+LET idum = -5
+FOR i = 1 to npts
+    LET data1(i) = gasdev(idum)
+NEXT i
+
+LET idum = -11      ! Note: this does NOT start a new sequence.
+FOR i = 1 to mpts
+    LET data2(i) = int(nshft / 2) * eps + gasdev(idum)
+NEXT i
+
+PRINT "        Shift         t      Probability"
+FOR i = 1 to nshft + 1
+
+    CALL ttest (data1(), npts, data2(), mpts, t, prob)
+
+    LET shift = (i - 1) * eps
+    PRINT using "--------#.##": shift, t, prob
+    FOR j = 1 to npts
+        LET data1(j) = data1(j) + eps
+    NEXT j
+NEXT i
+
+END

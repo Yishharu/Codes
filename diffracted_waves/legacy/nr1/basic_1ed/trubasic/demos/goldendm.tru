@@ -1,0 +1,54 @@
+PROGRAM D10r2
+
+! Driver for routine golden
+
+! The routine golden has been converted to a subroutine.
+
+LIBRARY "golden", "mnbrak", "bessj0", "bessj1"
+DECLARE FUNCTION bessj0, bessj1
+
+DIM amin(20)
+
+CLEAR
+LET tol = .000001
+LET eql = .001
+LET nmin = 0
+PRINT "Minima of the function bessj0"
+PRINT
+PRINT "    min. #       x       bessj0(x)    bessj1(x)"
+PRINT
+FOR i = 1 to 100
+    LET ax = i
+    LET bx = i + 1
+
+    CALL mnbrak (ax, bx, cx, fa, fb, fc, dum)
+    CALL golden (ax, bx, cx, dum, tol, g, xmin)
+
+    IF nmin = 0 then
+       LET amin(1) = xmin
+       LET nmin = 1
+       PRINT using "#######": nmin;
+       PRINT "   ";
+       PRINT using "----#.######": xmin, bessj0(xmin), bessj1(xmin)
+    ELSE
+       LET iflag = 0
+       FOR j = 1 to nmin
+           IF abs(xmin - amin(j)) <= eql * xmin then LET iflag = 1
+       NEXT j
+       IF iflag = 0 then
+          LET nmin = nmin + 1
+          LET amin(nmin) = xmin
+          PRINT using "#######": nmin;
+          PRINT "   ";
+          PRINT using "----#.######": xmin, bessj0(xmin), bessj1(xmin)
+       END IF
+    END IF
+NEXT i
+
+END
+
+FUNCTION func (x)
+    LIBRARY "bessj0"
+    DECLARE FUNCTION bessj0
+    LET func = bessj0(x)
+END FUNCTION

@@ -1,0 +1,58 @@
+DECLARE SUB SVDVAR (V!(), MA!, NP!, W!(), CVM!(), NCVM!)
+
+'PROGRAM D14R5
+'Driver for routine SVDVAR
+CLS
+MP = 6
+MA = 3
+NCVM = MA
+DIM V(MP, MP), W(MP), CVM(NCVM, NCVM), TRU(MA, MA)
+FOR I = 1 TO MP
+  READ W(I)
+NEXT I
+DATA 0.0,1.0,2.0,3.0,4.0,5.0
+FOR J = 1 TO MP
+  FOR I = 1 TO MP
+    READ V(I, J)
+  NEXT I
+NEXT J
+DATA 1.0,2.0,3.0,4.0,5.0,6.0,1.0,2.0,3.0,4.0,5.0,6.0,1.0,2.0,3.0,4.0,5.0,6.0
+DATA 1.0,2.0,3.0,4.0,5.0,6.0,1.0,2.0,3.0,4.0,5.0,6.0,1.0,2.0,3.0,4.0,5.0,6.0
+FOR J = 1 TO MA
+  FOR I = 1 TO MA
+    READ TRU(I, J)
+  NEXT I
+NEXT J
+DATA 1.25,2.5,3.75,2.5,5.0,7.5,3.75,7.5,11.25
+PRINT "Matrix V"
+FOR I = 1 TO MP
+  FOR J = 1 TO MP
+    PRINT USING "#####.######"; V(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+PRINT "Vector W"
+FOR I = 1 TO MP
+  PRINT USING "#####.######"; W(I);
+NEXT I
+PRINT
+CALL SVDVAR(V(), MA, MP, W(), CVM(), NCVM)
+PRINT
+PRINT "Covariance matrix from SVDVAR"
+FOR I = 1 TO MA
+  FOR J = 1 TO MA
+    PRINT USING "#####.######"; CVM(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+PRINT "Expected covariance matrix"
+FOR I = 1 TO MA
+  FOR J = 1 TO MA
+    PRINT USING "#####.######"; TRU(I, J);
+  NEXT J
+  PRINT
+NEXT I
+END
+

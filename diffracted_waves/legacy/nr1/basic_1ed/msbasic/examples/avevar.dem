@@ -1,0 +1,22 @@
+DECLARE SUB AVEVAR (DATQ!(), N!, AVE!, VAR!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D13R5
+'Driver for routine AVEVAR
+CLS
+NPTS = 1000
+EPS = .1
+DIM DATQ(NPTS)
+'Generate Gaussian distributed data
+IDUM& = -5
+PRINT "        Shift     Average     Variance"
+FOR I = 1 TO 11
+  SHIFT = (I - 1) * EPS
+  FOR J = 1 TO NPTS
+    DATQ(J) = SHIFT + I * GASDEV(IDUM&)
+  NEXT J
+  CALL AVEVAR(DATQ(), NPTS, AVE, VAR)
+  PRINT USING "#########.##"; SHIFT; AVE; VAR
+NEXT I
+END
+

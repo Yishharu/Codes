@@ -1,0 +1,73 @@
+PROGRAM D12r11
+
+! Driver for routine fixrts
+
+LIBRARY "fixrts", "zroots"
+
+CLEAR
+LET npoles = 6
+LET npol = npoles + 1
+DIM d(0), zcoef(0,0), zeros(0,0), z(0)
+MAT redim d(npoles), zcoef(2, npol), zeros(2, npoles), z(2)
+
+MAT READ d
+DATA 6.0, -15.0, 20.0, -15.0, 6.0, 0.0
+
+LET zcoef(1, npoles + 1) = 1
+LET zcoef(2, npoles + 1) = 0
+FOR i = npoles to 1 step -1
+    LET zcoef(1, i) = -d(npoles + 1 - i)
+    LET zcoef(2, i) = 0
+NEXT i
+LET polish = -1
+
+! Finding roots of (z-1.0)^6=1.0
+! First print roots
+
+CALL zroots (zcoef(,), npoles, zeros(,), polish)
+
+PRINT "Roots of (z-1.0)^6 = 1.0"
+PRINT "                  Root                  (z-1.0)^6"
+FOR i = 1 to npoles
+    LET z(1) = 1
+    LET z(2) = 0
+    FOR j = 1 to 6
+        LET dum = z(1)
+        LET z(1) = dum * (zeros(1, i) - 1) - z(2) * zeros(2, i)
+        LET z(2) = dum * zeros(2, i) + z(2) * (zeros(1, i) - 1)
+    NEXT j
+    PRINT using "######": i;
+    PRINT using "----#.######": zeros(1, i), zeros(2, i), z(1), z(2)
+NEXT i
+PRINT
+
+! Now fix them to lie within unit circle
+
+CALL fixrts (d(), npoles)
+
+! Check results
+
+LET zcoef(1, npoles + 1) = 1
+LET zcoef(2, npoles + 1) = 0
+FOR i = npoles to 1 step -1
+    LET zcoef(1, i) = -d(npoles + 1 - i)
+    LET zcoef(2, i) = 0
+NEXT i
+
+CALL zroots (zcoef(,), npoles, zeros(,), polish)
+
+PRINT "Roots reflected in unit circle"
+PRINT "                  Root                  (z-1.0)^6"
+FOR i = 1 to npoles
+    LET z(1) = 1
+    LET z(2) = 0
+    FOR j = 1 to 6
+        LET dum = z(1)
+        LET z(1) = dum * (zeros(1, i) - 1) - z(2) * zeros(2, i)
+        LET z(2) = dum * zeros(2, i) + z(2) * (zeros(1, i) - 1)
+    NEXT j
+    PRINT using "######": i;
+    PRINT using "----#.######": zeros(1, i), zeros(2, i), z(1), z(2)
+NEXT i
+
+END

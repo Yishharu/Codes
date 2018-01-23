@@ -1,0 +1,48 @@
+PROGRAM d8r11(input,output);
+(* driver for routine ECLAZZ *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 15;
+TYPE
+   IntegerArrayNP = ARRAY [1..n] OF integer;
+VAR
+   i,j,k,lclas,nclass: integer;
+   nf,nflag,nsav: IntegerArrayNP;
+
+FUNCTION equiv(i,j: integer): boolean;
+BEGIN
+   IF i MOD 4 = j MOD 4 THEN
+      equiv := TRUE
+   ELSE
+      equiv := FALSE
+END;
+
+(*$I ECLAZZ.PAS *)
+
+BEGIN
+   eclazz(nf,n);
+   FOR i := 1 TO n DO nflag[i] := 1;
+   writeln;
+   writeln('Numbers from 1-15 divided according to');
+   writeln('their value modulo 4:');
+   lclas := 0;
+   FOR i := 1 TO n DO BEGIN
+      nclass := nf[i];
+      IF nflag[nclass] <> 0 THEN BEGIN
+         nflag[nclass] := 0;
+         lclas := lclas+1;
+         k := 0;
+         FOR j := i TO n DO BEGIN
+            IF nf[j] = nf[i] THEN BEGIN
+               k := k+1;
+               nsav[k] := j
+            END
+         END;
+         write('Class',lclas:2,':   ');
+         FOR j := 1 TO k DO write(nsav[j]:3);
+         writeln
+      END
+   END
+END.

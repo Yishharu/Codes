@@ -1,0 +1,43 @@
+PROGRAM D3r11
+
+! Driver for routine bcuint
+
+LIBRARY "bcuint"
+
+DIM y(4), y1(4), y2(4), y12(4), xx(4), yy(4)
+
+MAT READ xx
+DATA 0.0, 2.0, 2.0, 0.0
+
+MAT READ yy
+DATA 0.0, 0.0, 2.0, 2.0
+
+CLEAR
+LET x1l = xx(1)
+LET x1u = xx(2)
+LET x2l = yy(1)
+LET x2u = yy(4)
+FOR i = 1 to 4
+    LET xxyy = xx(i) * yy(i)
+    LET y(i) = xxyy^2
+    LET y1(i) = 2 * yy(i) * xxyy
+    LET y2(i) = 2 * xx(i) * xxyy
+    LET y12(i) = 4 * xxyy
+NEXT i
+
+PRINT "    x1      x2      y     expect    y1    expect    y2    expect"
+PRINT
+FOR i = 1 to 10
+    LET x1 = .2 * i
+    LET x2 = x1
+
+    CALL bcuint (y(), y1(), y2(), y12(), x1l, x1u, x2l, x2u, x1, x2, ansy, ansy1, ansy2)
+
+    LET x1x2 = x1 * x2
+    LET ey = x1x2 ^ 2
+    LET ey1 = 2 * x2 * x1x2
+    LET ey2 = 2 * x1 * x1x2
+    PRINT using "--#.####": x1, x2, ansy, ey, ansy1, ey1, ansy2, ey2
+NEXT i
+
+END

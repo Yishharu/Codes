@@ -1,0 +1,45 @@
+EXTERNAL
+
+SUB convlv (data(), n, respns(), m, isign, ans())
+
+    LIBRARY "twofft", "realft"
+
+    DIM fft(0)
+    MAT redim fft(2 * n)
+
+    FOR i = 1 to int((m - 1) / 2)
+        LET respns(n + 1 - i) = respns(m + 1 - i)
+    NEXT i
+    FOR i = int((m + 3) / 2) to n - int((m - 1) / 2)
+        LET respns(i) = 0
+    NEXT i
+
+    CALL twofft (data(), respns(), fft(), ans(), n)
+
+    LET no2 = int(n / 2)
+    FOR i = 1 to no2 + 1
+        LET ans2im1 = ans(2 * i - 1)
+        LET ans2i = ans(2 * i)
+        IF isign = 1 then
+           LET ans(2 * i - 1) = (fft(2 * i - 1) * ans2im1 - fft(2 * i) * ans2i) / no2
+           LET ans(2 * i) = (fft(2 * i - 1) * ans2i + fft(2 * i) * ans2im1) / no2
+        ELSEIF isign = -1 then
+           IF ans2im1 = 0 and ans2i = 0 then
+              PRINT "deconvolving at a response zero"
+              EXIT SUB
+           END IF
+           LET ansden = (ans2im1 * ans2im1 + ans2i * ans2i) * no2
+           LET ansnum = fft(2 * i - 1) * ans2im1 + fft(2 * i) * ans2i
+           LET ans(2 * i - 1) = ansnum / ansden
+           LET ansnum = fft(2 * i) * ans2im1 - fft(2 * i - 1) * ans2i
+           LET ans(2 * i) = ansnum / ansden
+        ELSE
+           PRINT "no meaning for isign"
+           EXIT SUB
+        END IF
+    NEXT i
+    LET ans(2) = ans(2 * no2 + 1)
+
+    CALL realft (ans(), no2, -1)
+
+END SUB

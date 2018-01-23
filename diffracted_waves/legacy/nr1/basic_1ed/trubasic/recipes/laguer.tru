@@ -1,0 +1,156 @@
+EXTERNAL
+
+! Subroutines for complex ABS, DIVIDE, and SQR follow
+
+SUB laguer (a(,), m, x(), eps, polish)
+
+    DECLARE FUNCTION cabs, cdiv1, cdiv2, csqr1, csqr2
+
+    DIM b(2), d(2), f(2), g(2), h(2)
+    DIM g2(2), sq(2), gp(2), gm(2), dx(2), x1(2)
+
+    LET epss = 6e-08
+    LET maxit = 100
+    LET dxold = cabs(x(1), x(2))
+    FOR iter = 1 to maxit
+        LET b(1) = a(1, m + 1)
+        LET b(2) = a(2, m + 1)
+        LET erq = cabs(b(1), b(2))
+        MAT d = zer
+        MAT f = zer
+        LET abx = cabs(x(1), x(2))
+        FOR j = m to 1 step -1
+            LET dum = x(1) * f(1) - x(2) * f(2) + d(1)
+            LET f(2) = x(2) * f(1) + x(1) * f(2) + d(2)
+            LET f(1) = dum
+            LET dum = x(1) * d(1) - x(2) * d(2) + b(1)
+            LET d(2) = x(2) * d(1) + x(1) * d(2) + b(2)
+            LET d(1) = dum
+            LET dum = x(1) * b(1) - x(2) * b(2) + a(1, j)
+            LET b(2) = x(2) * b(1) + x(1) * b(2) + a(2, j)
+            LET b(1) = dum
+            LET erq = cabs(b(1), b(2)) + abx * erq
+        NEXT j
+        LET erq = epss * erq
+        IF cabs(b(1), b(2)) <= erq then
+           EXIT SUB
+        ELSE
+           LET g(1) = cdiv1(d(1), d(2), b(1), b(2))
+           LET g(2) = cdiv2(d(1), d(2), b(1), b(2))
+           LET g2(1) = g(1) * g(1) - g(2) * g(2)
+           LET g2(2) = 2 * g(1) * g(2)
+           LET h(1) = g2(1) - 2 * cdiv1(f(1), f(2), b(1), b(2))
+           LET h(2) = g2(2) - 2 * cdiv2(f(1), f(2), b(1), b(2))
+           LET dum1 = (m - 1) * (m * h(1) - g2(1))
+           LET dum2 = (m - 1) * (m * h(2) - g2(2))
+           LET sq(1) = csqr1(dum1, dum2)
+           LET sq(2) = csqr2(dum1, dum2)
+           MAT gp = g + sq
+           MAT gm = g - sq
+           IF cabs(gp(1), gp(2)) < cabs(gm(1), gm(2)) then MAT gp = gm
+           LET dx(1) = cdiv1(m, 0, gp(1), gp(2))
+           LET dx(2) = cdiv2(m, 0, gp(1), gp(2))
+        END IF
+        MAT x1 = x - dx
+
+        IF x(1) = x1(1) and x(2) = x1(2) then EXIT SUB
+
+        LET x(1) = x1(1)
+        LET x(2) = x1(2)
+        LET cdx = cabs(dx(1), dx(2))
+        LET dxold = cdx
+        IF not polish=-1 then
+           IF cdx <= eps * cabs(x(1), x(2)) then EXIT SUB
+        END IF
+    NEXT iter
+    PRINT "too many iterations"
+
+END SUB
+
+FUNCTION cabs (a1, a2)
+
+    LET x = abs(a1)
+    LET y = abs(a2)
+    IF x = 0 then
+       LET cabs = y
+    ELSEIF y = 0 then
+       LET cabs = x
+    ELSEIF x > y then
+       LET cabs = x * sqr(1 + (y / x)^2)
+    ELSE
+       LET cabs = y * sqr(1 + (x / y)^2)
+    END IF
+
+END FUNCTION
+
+FUNCTION cdiv1 (a1, a2, b1, b2)
+
+    IF abs(b1) >= abs(b2) then
+       LET r = b2 / b1
+       LET den = b1 + r * b2
+       LET cdiv1 = (a1 + a2 * r) / den
+    ELSE
+       LET r = b1 / b2
+       LET den = b2 + r * b1
+       LET cdiv1 = (a1 * r + a2) / den
+    END IF
+
+END FUNCTION
+
+FUNCTION cdiv2 (a1, a2, b1, b2)
+
+    IF abs(b1) >= abs(b2) then
+       LET r = b2 / b1
+       LET den = b1 + r * b2
+       LET cdiv2 = (a2 - a1 * r) / den
+    ELSE
+       LET r = b1 / b2
+       LET den = b2 + r * b1
+       LET cdiv2 = (a2 * r - a1) / den
+    END IF
+
+END FUNCTION
+
+FUNCTION csqr1 (x, y)
+
+    IF x = 0 and y = 0 then
+       LET u = 0
+    ELSE
+       IF abs(x) >= abs(y) then
+          LET w = sqr(abs(x)) * sqr(.5 * (1 + sqr(1 + (y / x)^2)))
+       ELSE
+          LET r = abs(x / y)
+          LET w = sqr(abs(y)) * sqr(.5 * (r + sqr(1 + r^2)))
+       END IF
+       IF x >= 0 then
+          LET u = w
+       ELSE
+          IF y >= 0 then LET v = w else LET v = -w
+          LET u = y / (2 * v)
+       END IF
+    END IF
+    LET csqr1 = u
+
+END FUNCTION
+
+FUNCTION csqr2 (x, y)
+
+    IF x = 0 and y = 0 then
+       LET v = 0
+    ELSE
+       IF abs(x) >= abs(y) then
+          LET w = sqr(abs(x)) * sqr(.5 * (1 + sqr(1 + (y / x)^2)))
+       ELSE
+          LET r = abs(x / y)
+          LET w = sqr(abs(y)) * sqr(.5 * (r + sqr(1 + r^2)))
+       END IF
+       IF x >= 0 then
+          LET u = w
+          LET v = y / (2 * u)
+       ELSE
+          IF y >= 0 then LET v = w else LET v = -w
+       END IF
+    END IF
+    LET csqr2 = v
+
+END FUNCTION

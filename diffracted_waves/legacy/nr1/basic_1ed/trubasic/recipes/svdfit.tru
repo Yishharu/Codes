@@ -1,0 +1,48 @@
+EXTERNAL
+
+SUB svdfit (x(), y(), sig(), ndata, a(), ma, u(,), v(,), w(), mp, np, chisq, funcs$)
+
+    LIBRARY "fpoly", "fleg", "svdcmp", "svbksb"
+
+    LET tol = .00001
+
+    DIM b(0), afunc(0)
+    MAT redim b(ndata), afunc(ma)
+
+    FOR i = 1 to ndata
+
+        IF funcs$ = "fpoly" then CALL fpoly (x(i), afunc(), ma)
+        IF funcs$ = "fleg"  then CALL fleg (x(i), afunc(), ma)
+
+        LET tmp = 1 / sig(i)
+        FOR j = 1 to ma
+            LET u(i, j) = afunc(j) * tmp
+        NEXT j
+        LET b(i) = y(i) * tmp
+    NEXT i
+
+    CALL svdcmp (u(,), ndata, ma, mp, np, w(), v(,))
+
+    LET wmax = 0
+    FOR j = 1 to ma
+        LET wmax = max(wmax, w(j))
+    NEXT j
+    LET thresh = tol * wmax
+    FOR j = 1 to ma
+        IF w(j) < thresh then LET w(j) = 0
+    NEXT j
+
+    CALL svbksb (u(,), w(), v(,), ndata, ma, mp, np, b(), a())
+
+    LET chisq = 0
+    FOR i = 1 to ndata
+        IF funcs$ = "fpoly" then CALL fpoly (x(i), afunc(), ma)
+        IF funcs$ = "fleg" then CALL fleg (x(i), afunc(), ma)
+        LET sum = 0
+        FOR j = 1 to ma
+            LET sum = sum + a(j) * afunc(j)
+        NEXT j
+        LET chisq = chisq + ((y(i) - sum) / sig(i))^2
+    NEXT i
+
+END SUB

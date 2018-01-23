@@ -1,0 +1,47 @@
+PROGRAM D11r7
+
+! Driver for routine hqr
+
+LIBRARY "hqr", "balanc", "elmhes"
+
+LET np = 5
+DIM a(0,0), wr(0), wi(0)
+MAT redim a(np, np), wr(np), wi(np)
+
+CLEAR
+FOR j = 1 to np
+    FOR i = 1 to np
+        READ a(i, j)
+    NEXT i
+NEXT j
+DATA 1.0, -2.0,  3.0,  -4.0,  -5.0
+DATA 2.0,  3.0,  4.0,   5.0,   6.0
+DATA 0.0,  0.0, 50.0, -60.0, -70.0
+DATA 0.0,  0.0,  0.0,   7.0,   8.0
+DATA 0.0,  0.0,  0.0,   0.0,  -9.0
+
+PRINT "Matrix:"
+FOR i = 1 to np
+    FOR j = 1 to np
+        PRINT using "--------#.##": a(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+
+CALL balanc (a(,), np, np)
+CALL elmhes (a(,), np, np)
+CALL hqr (a(,), np, np, wr(), wi())
+
+PRINT "Eigenvalues:"
+PRINT
+PRINT "       real           imag."
+PRINT
+FOR i = 1 to np
+    PRINT "   ";
+    PRINT using "-#.######^^^^": wr(i);
+    PRINT "   ";
+    PRINT using "-#.######^^^^": wi(i)
+NEXT i
+
+END

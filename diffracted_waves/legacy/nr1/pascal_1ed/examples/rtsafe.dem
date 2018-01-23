@@ -1,0 +1,48 @@
+PROGRAM d9r9(input,output);
+(* driver for routine RTSAFE *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 100;
+   nbmax = 20;
+   x1 = 1.0;
+   x2 = 50.0;
+TYPE
+   RealArrayNBMAX = ARRAY [1..nbmax] OF real;
+VAR
+   i,nb: integer;
+   root,xacc: real;
+   xb1,xb2: RealArrayNBMAX;
+
+(*$I BESSJ0.PAS *)
+
+(*$I BESSJ1.PAS *)
+
+FUNCTION fx(x: real): real;
+BEGIN
+   fx := bessj0(x)
+END;
+
+PROCEDURE funcd(x: real; VAR fn,df: real);
+BEGIN
+   fn := fx(x);
+   df := -bessj1(x)
+END;
+
+(*$I ZBRAK.PAS *)
+
+(*$I RTSAFE.PAS *)
+
+BEGIN
+   nb := nbmax;
+   zbrak(x1,x2,n,xb1,xb2,nb);
+   writeln;
+   writeln('roots of bessj0:');
+   writeln('x':19,'f(x)':16);
+   FOR i := 1 TO nb DO BEGIN
+      xacc := (1.0e-6)*(xb1[i]+xb2[i])/2.0;
+      root := rtsafe(xb1[i],xb2[i],xacc);
+      writeln(' root ',i:2,'  ',root:12:6,fx(root):14:6)
+   END
+END.

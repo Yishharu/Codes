@@ -1,0 +1,45 @@
+PROGRAM D14r1
+
+! Driver for routine fit
+
+LIBRARY "fit", "gasdev"
+DECLARE FUNCTION gasdev
+
+LET npt = 100
+LET spread = .5
+DIM x(0), y(0), sig(0)
+MAT redim x(npt), y(npt), sig(npt)
+
+CLEAR
+LET idum = -117
+FOR i = 1 to npt
+    LET x(i) = .1 * i
+    LET y(i) = -2 * x(i) + 1 + spread * gasdev(idum)
+    LET sig(i) = spread
+NEXT i
+FOR mwt = 0 to 1
+
+    CALL fit(x(), y(), npt, sig(), mwt, a, b, siga, sigb, chi2, q)
+
+    IF mwt = 0 then
+       PRINT "Ignoring standard deviation"
+    ELSE
+       PRINT "Including standard deviation"
+    END IF
+    PRINT "   a = ";
+    PRINT using "##.######": a;
+    PRINT "      Uncertainty:   ";
+    PRINT using "##.######": siga
+    PRINT "   b = ";
+    PRINT using "##.######": b;
+    PRINT "      Uncertainty:   ";
+    PRINT using "##.######": sigb
+    PRINT "   Chi-squared: ";
+    PRINT using "#######.######": chi2
+    PRINT "   Goodness-of-fit: ";
+    PRINT using "###.######": q
+    PRINT
+    PRINT
+NEXT mwt
+
+END

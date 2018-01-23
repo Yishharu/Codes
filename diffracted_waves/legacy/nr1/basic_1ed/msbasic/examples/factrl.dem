@@ -1,0 +1,34 @@
+DECLARE FUNCTION FACTRL! (N!)
+
+'PROGRAM D6R2
+'Driver for routine FACTRL
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "N-factorial"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT TEXT$
+PRINT "    N                Actual            FACTRL(N)"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  N = VAL(MID$(DUM$, 1, 2))
+  ACTUAL = VAL(MID$(DUM$, 8))
+  IF ACTUAL < 1E+10 THEN
+    PRINT USING "#####"; N;
+    PRINT "        ";
+    PRINT USING "############."; ACTUAL;
+    PRINT "        ";
+    PRINT USING "############."; FACTRL(N)
+  ELSE
+    PRINT USING "#####"; N;
+    PRINT "        ";
+    PRINT USING "#.#######^^^^"; ACTUAL;
+    PRINT "        ";
+    PRINT USING "#.#######^^^^"; FACTRL(N)
+  END IF
+NEXT I
+CLOSE #1
+END
+

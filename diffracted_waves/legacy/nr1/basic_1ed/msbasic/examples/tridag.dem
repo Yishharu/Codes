@@ -1,0 +1,68 @@
+DECLARE SUB TRIDAG (A!(), B!(), C!(), R!(), U!(), N!)
+
+'PROGRAM D2R4
+'Driver for routine TRIDAG
+CLS
+NP = 20
+DIM DIAG(NP), SUPERD(NP), SUBD(NP), RHS(NP), U(NP)
+OPEN "MATRX2.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TXT$
+  IF TXT$ = "END" THEN EXIT DO
+  LINE INPUT #1, DUM$
+  LINE INPUT #1, DUM$
+  N = VAL(DUM$)
+  LINE INPUT #1, DUM$
+  LINE INPUT #1, DUM$
+  FOR K = 1 TO N
+    DIAG(K) = VAL(MID$(DUM$, 4 * K - 3, 4))
+  NEXT K
+  LINE INPUT #1, DUM$
+  LINE INPUT #1, DUM$
+  FOR K = 1 TO N - 1
+    SUPERD(K) = VAL(MID$(DUM$, 4 * K - 3, 4))
+  NEXT K
+  LINE INPUT #1, DUM$
+  LINE INPUT #1, DUM$
+  FOR K = 2 TO N
+    SUBD(K) = VAL(MID$(DUM$, 4 * K - 7, 4))
+  NEXT K
+  LINE INPUT #1, DUM$
+  LINE INPUT #1, DUM$
+  FOR K = 1 TO N
+    RHS(K) = VAL(MID$(DUM$, 4 * K - 3, 4))
+  NEXT K
+  'Carry out solution
+  CALL TRIDAG(SUBD(), DIAG(), SUPERD(), RHS(), U(), N)
+  PRINT "The solution vector is:"
+  FOR K = 1 TO N
+    PRINT USING "#####.######"; U(K);
+  NEXT K
+  PRINT
+  'Test solution
+  PRINT "(matrix)*(sol'n vector) should be:"
+  FOR K = 1 TO N
+    PRINT USING "#####.######"; RHS(K);
+  NEXT K
+  PRINT
+  PRINT "Actual result is:"
+  FOR K = 1 TO N
+    IF K = 1 THEN
+      RHS(K) = DIAG(1) * U(1) + SUPERD(1) * U(2)
+    ELSEIF K = N THEN
+      RHS(K) = SUBD(N) * U(N - 1) + DIAG(N) * U(N)
+    ELSE
+      RHS(K) = SUBD(K) * U(K - 1) + DIAG(K) * U(K) + SUPERD(K) * U(K + 1)
+    END IF
+  NEXT K
+  FOR K = 1 TO N
+    PRINT USING "#####.######"; RHS(K);
+  NEXT K
+  PRINT
+  PRINT "*************************************"
+  PRINT "Press RETURN for next problem:"
+  LINE INPUT DUM$
+LOOP
+CLOSE #1
+END
+

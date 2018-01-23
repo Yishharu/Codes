@@ -1,0 +1,20 @@
+DEFINITION MODULE BrentM;
+
+  (* EXPORT QUALIFIED Brent; *)
+
+   FROM NRMath IMPORT RealFunction;
+
+   PROCEDURE Brent(    ax, bx, cx:  REAL;
+                       func:        RealFunction;
+                       tol:         REAL; 
+                   VAR xmin: REAL): REAL; 
+   (*
+     Given a function func, and given a bracketing triplet of
+     abscissas ax, bx, cx (such that bx is between ax and cx, and func(bx) 
+     is less than both func(ax) and func(cx)), this routine isolates the 
+     minimum to a fractional precision of about tol using Brent's method.  
+     The abscissa of the minimum is returned as xmin, and the minimum function
+     value is returned as the returned function value.
+   *)
+
+END BrentM.

@@ -1,0 +1,33 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE FUNCTION ERF! (X!)
+DECLARE SUB KSONE (DATQ!(), N!, DUM!, D!, PROB!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D13R10
+'Driver for routine KSONE
+CLS
+NPTS = 1000
+EPS = .1
+DIM DATQ(NPTS)
+IDUM& = -5
+PRINT "   Variance Ratio      K-S Statistic       Probability"
+PRINT
+FOR I = 1 TO 11
+  VAR = 1! + (I - 1) * EPS
+  FACTR = SQR(VAR)
+  FOR J = 1 TO NPTS
+    DATQ(J) = FACTR * ABS(GASDEV(IDUM&))
+  NEXT J
+  CALL KSONE(DATQ(), NPTS, DUM, D, PROB)
+  PRINT USING "#######.######"; VAR;
+  PRINT USING "############.######"; D;
+  PRINT "           ";
+  PRINT USING ".####^^^^"; PROB
+NEXT I
+END
+
+FUNCTION FUNC (X)
+Y = X / SQR(2!)
+FUNC = ERF(Y)
+END FUNCTION
+

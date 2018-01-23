@@ -1,0 +1,52 @@
+PROGRAM d6r28(input,output);
+(* driver for routine EL2 *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+VAR
+   TrapzdIt: integer;
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   FuncA,FuncB,FuncAkc: real;
+   ago,astop,s,x: real;
+   i,idum: integer;
+
+FUNCTION func(phi: real): real;
+(* Programs using routine FUNC must declare the variables
+VAR
+   FuncAkc,FuncA,FuncB: real;
+in the main routine, and must assign their values. *)
+VAR
+   tn,tsq: real;
+BEGIN
+   tn := sin(phi)/cos(phi);
+   tsq := tn*tn;
+   func := (FuncA+FuncB*tsq)/sqrt((1.0+tsq)*(1.0+FuncAkc*FuncAkc*tsq))
+END;
+
+(*$I RAN3.PAS *)
+
+(*$I TRAPZD.PAS *)
+
+(*$I QSIMP.PAS *)
+
+(*$I EL2.PAS *)
+
+BEGIN
+   writeln('general elliptic integral of second kind');
+   writeln('x':7,'kc':10,'a':10,'b':10,'el2':11,'integral':12);
+   idum := -55;
+   ago := 0.0;
+   FOR i := 1 TO 20 DO BEGIN
+      FuncAkc := 5.0*ran3(idum);
+      FuncA := 10.0*ran3(idum);
+      FuncB := 10.0*ran3(idum);
+      x := 10.0*ran3(idum);
+      astop := arctan(x);
+      qsimp(ago,astop,s);
+      writeln(x:10:6,FuncAkc:10:6,FuncA:10:6,FuncB:10:6,
+         el2(x,FuncAkc,FuncA,FuncB):10:6,s:10:6)
+   END
+END.

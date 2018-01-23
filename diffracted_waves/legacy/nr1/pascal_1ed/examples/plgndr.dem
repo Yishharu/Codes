@@ -1,0 +1,32 @@
+PROGRAM d6r27(input,output,dfile);
+(* driver for routine PLGNDR *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   StrArray20 = string[20];
+VAR
+   fac,val,x: real;
+   i,j,m,n,nval: integer;
+   txt: StrArray20;
+   dfile: text;
+
+(*$I PLGNDR.PAS *)
+
+BEGIN
+   NROpen(dfile,'fncval.dat');
+   REPEAT readln(dfile,txt) UNTIL txt = 'Legendre Polynomials';
+   readln(dfile,nval);
+   writeln(txt);
+   writeln('n':4,'m':4,'x':10,'actual':19,'plgndr(n,m,x)':20);
+   FOR i := 1 TO nval DO BEGIN
+      readln(dfile,n,m,x,val);
+      fac := 1.0;
+      IF m > 0 THEN
+         FOR j := n-m+1 TO n+m DO fac := fac*j;
+      fac := 2.0*fac/(2.0*n+1.0);
+      val := val*sqrt(fac);
+      writeln(n:4,m:4,'   ',x:13,'   ',val:13,'   ',plgndr(n,m,x):13)
+   END;
+   close(dfile)
+END.

@@ -1,0 +1,63 @@
+PROGRAM d1r1(input,output);
+(* driver for routine FLMOON *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   zon = -5.0;
+TYPE
+   CharArray13 = PACKED ARRAY [1..13] OF char;
+VAR
+   timzon,frac,secs: real;
+   i,i1,i2,i3,id,im,iy,n,nph: integer;
+   j1,j2: longint;
+   phase: ARRAY [0..3] OF CharArray13;
+
+(*$I JULDAY.PAS *)
+
+(*$I CALDAT.PAS *)
+
+(*$I FLMOON.PAS *)
+
+BEGIN
+   timzon := zon/24.0;
+   phase[0] := 'new moon     ';
+   phase[1] := 'first quarter';
+   phase[2] := 'full moon    ';
+   phase[3] := 'last quarter ';
+   writeln('date of the next few phases of the moon');
+   writeln('enter today''s date (e.g. 1 31 1982)  :  ');
+   readln(im,id,iy);
+(* approximate number of full moons since january 1900 *)
+   n := trunc(12.37*(iy-1900+trunc((im-0.5)/12.0)));
+   nph := 2;
+   j1 := julday(im,id,iy);
+   flmoon(n,nph,j2,frac);
+   n := n+trunc((j1-j2)/28.0);
+   writeln;
+   writeln('date':10,'time(est)':19,'phase':9);
+   FOR i := 1 TO 20 DO BEGIN
+      flmoon(n,nph,j2,frac);
+      frac := 24.0*(frac+timzon);
+      IF frac < 0.0 THEN BEGIN
+         j2 := j2-1;
+         frac := frac+24.0
+      END;
+      IF frac > 12.0 THEN BEGIN
+         j2 := j2+1;
+         frac := frac-12.0
+      END ELSE
+         frac := frac+12.0;
+      i1 := trunc(frac);
+      secs := 3600.0*(frac-i1);
+      i2 := trunc(secs/60.0);
+      i3 := trunc(secs-60*i2);
+      caldat(j2,im,id,iy);
+      writeln(im:5,id:3,iy:5,i1:9,':',i2:2,':',i3:2,' ':5,phase[nph]);
+      IF nph = 3 THEN BEGIN
+         nph := 0;
+         n := n+1
+      END ELSE
+         nph := nph+1
+   END
+END.

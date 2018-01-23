@@ -1,0 +1,75 @@
+PROGRAM D9r13
+
+! Driver for routine mnewt
+
+LIBRARY "mnewt"
+
+LET np = 15
+DIM x(0), alpha(0,0), beta(0)
+MAT redim x(np), alpha(np, np), beta(np)
+
+CLEAR
+LET ntrial = 5
+LET tolx = .000001
+LET n = 4
+LET tolf = .000001
+FOR kk = -1 to 1 step 2
+    FOR k = 1 to 3
+        LET xx = .2001 * k * kk
+        PRINT "Starting vector number"; k
+        FOR i = 1 to 4
+            LET x(i) = xx + .2 * i
+            PRINT "   x(";
+            PRINT using "#": i;
+            PRINT ") =";
+            PRINT using "--#.##": x(i)
+        NEXT i
+        PRINT
+        FOR j = 1 to ntrial
+
+            CALL mnewt (1, x(), n, tolx, tolf)
+
+            CALL usrfun (x(), alpha(,), beta())
+
+            PRINT "   i        x(i)           f"
+            PRINT
+            FOR i = 1 to n
+                PRINT using "####": i;
+                PRINT "   ";
+                PRINT using "#.######^^^^": x(i);
+                PRINT "   ";
+                PRINT using "#.######^^^^": -beta(i)
+            NEXT i
+            PRINT
+            PRINT "press Enter to continue..."
+            LINE INPUT dum$
+        NEXT j
+    NEXT k
+NEXT kk
+
+END
+
+SUB usrfun (x(), alpha(,), beta())
+
+    LET alpha(1, 1) = -2 * x(1)
+    LET alpha(1, 2) = -2 * x(2)
+    LET alpha(1, 3) = -2 * x(3)
+    LET alpha(1, 4) = 1
+    LET alpha(2, 1) = 2 * x(1)
+    LET alpha(2, 2) = 2 * x(2)
+    LET alpha(2, 3) = 2 * x(3)
+    LET alpha(2, 4) = 2 * x(4)
+    LET alpha(3, 1) = 1
+    LET alpha(3, 2) = -1
+    LET alpha(3, 3) = 0
+    LET alpha(3, 4) = 0
+    LET alpha(4, 1) = 0
+    LET alpha(4, 2) = 1
+    LET alpha(4, 3) = -1
+    LET alpha(4, 4) = 0
+    LET beta(1) = x(1)^2 + x(2)^2 + x(3)^2 - x(4)
+    LET beta(2) = -x(1)^2 - x(2)^2 - x(3)^2 - x(4)^2 + 1
+    LET beta(3) = -x(1) + x(2)
+    LET beta(4) = -x(2) + x(3)
+
+END SUB

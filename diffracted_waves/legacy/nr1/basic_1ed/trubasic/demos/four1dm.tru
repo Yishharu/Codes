@@ -1,0 +1,106 @@
+PROGRAM D12r1
+
+! Driver for routine four1
+
+LIBRARY "four1"
+
+LET nn = 32
+LET nn2 = 2 * nn
+DIM datq(0), dcmp(0)
+MAT redim datq(nn2), dcmp(nn2)
+
+CLEAR
+PRINT "h(t) = real-valued even-function"
+PRINT "H(n) = H(N-n) and real?"
+PRINT
+FOR i = 1 to 2 * nn - 1 step 2
+    LET datq(i) = 1 / (((i - nn - 1) / nn) ^ 2 + 1)
+    LET datq(i + 1) = 0
+NEXT i
+LET isign = 1
+
+CALL four1 (datq(), nn, isign)
+CALL prntft (datq(), nn2)         ! Defined below
+
+PRINT "h(t) = imaginary-valued even-function"
+PRINT "H(n) = H(N-n) and imaginary?"
+PRINT
+FOR i = 1 to 2 * nn - 1 step 2
+    LET datq(i + 1) = 1 / (((i - nn - 1) / nn) ^ 2 + 1)
+    LET datq(i) = 0
+NEXT i
+LET isign = 1
+
+CALL four1 (datq(), nn, isign)
+CALL prntft (datq(), nn2)
+
+PRINT "h(t) = real-valued odd-function"
+PRINT "H(n) = -H(N-n) and imaginary?"
+PRINT
+FOR i = 1 to 2 * nn - 1 step 2
+    LET datq(i) = (i - nn - 1) / nn / (((i - nn - 1) / nn) ^ 2 + 1)
+    LET datq(i + 1) = 0
+NEXT i
+LET datq(1) = 0
+LET isign = 1
+
+CALL four1 (datq(), nn, isign)
+CALL prntft (datq(), nn2)
+
+PRINT "h(t) = imaginary-valued odd-function"
+PRINT "H(n) = -H(N-n) and real?"
+PRINT
+FOR i = 1 to 2 * nn - 1 step 2
+    LET datq(i + 1) = (i - nn - 1) / nn / (((i - nn - 1) / nn) ^ 2 + 1)
+    LET datq(i) = 0
+NEXT i
+LET datq(2) = 0
+LET isign = 1
+
+CALL four1 (datq(), nn, isign)
+CALL prntft (datq(), nn2)
+
+! Transform, inverse-transform test
+
+FOR i = 1 to 2 * nn - 1 step 2
+    LET datq(i) = 1 / ((.5 * (i - nn - 1) / nn) ^ 2 + 1)
+    LET dcmp(i) = datq(i)
+    LET datq(i + 1) = (.25 * (i - nn - 1) / nn) * exp(-(.5 * (i - nn - 1) / nn) ^ 2)
+    LET dcmp(i + 1) = datq(i + 1)
+NEXT i
+LET isign = 1
+
+CALL four1 (datq(), nn, isign)
+
+LET isign = -1
+
+CALL four1 (datq(), nn, isign)
+
+PRINT "        Original Data:                   Double Fourier Transform:"
+PRINT
+PRINT "   k     Real h(k)      Imag h(k)     Real h(k)     Imag h(k)"
+PRINT
+FOR i = 1 to nn step 2
+    LET j = (i + 1) / 2
+    PRINT using "####": j;
+    PRINT using "------#.######": dcmp(i), dcmp(i+1), datq(i)/nn, datq(i+1)/nn
+NEXT i
+
+END
+
+SUB prntft (datq(), nn2)
+
+    PRINT "   n     Real H(n)     Imag H(n)    Real H(N-n)    Imag H(N-n)"
+    PRINT using "####": 0;
+    PRINT using "------#.######": datq(1), datq(2), datq(1), datq(2)
+    FOR n = 3 to nn2 / 2 + 1 step 2
+        LET m = (n - 1) / 2
+        LET mm = nn2 + 2 - n
+        PRINT using "####": m;
+        PRINT using "------#.######": datq(n), datq(n+1), datq(mm), datq(mm+1)
+    NEXT n
+    PRINT
+    PRINT "Press Enter to continue ..."
+    LINE INPUT dum$
+
+END SUB

@@ -1,0 +1,36 @@
+EXTERNAL
+
+FUNCTION gamdev (ia, idum)
+
+    LIBRARY "ran1"
+    DECLARE FUNCTION ran1
+
+    IF ia < 1 then
+       PRINT "abnormal exit"
+       EXIT FUNCTION
+    END IF
+
+    IF ia < 6 then
+       LET x = 1
+       FOR j = 1 to ia
+           LET x = x * ran1(idum)
+       NEXT j
+       LET x = -log(x)
+    ELSE
+       DO
+          DO
+             DO
+                LET v1 = 2 * ran1(idum) - 1
+                LET v2 = 2 * ran1(idum) - 1
+             LOOP while v1^2 + v2^2 > 1
+             LET y = v2 / v1
+             LET am = ia - 1
+             LET s = sqr(2 * am + 1)
+             LET x = s * y + am
+          LOOP while x <= 0
+          LET e = (1 + y^2) * exp(am * log(x / am) - s * y)
+       LOOP while ran1(idum) > e
+    END IF
+    LET gamdev = x
+
+END FUNCTION

@@ -1,0 +1,72 @@
+PROGRAM D13r17
+
+! Driver for routine crank
+
+LIBRARY "crank", "sort2"
+
+LET ndat = 20
+LET nmon = 12
+DIM data(0), rays(0,0), order(0), ave(0), zlat(0), city$(0), mon$(0)
+MAT redim data(ndat), rays(ndat, nmon), order(ndat)
+MAT redim ave(ndat), zlat(ndat), city$(ndat), mon$(nmon)
+
+CLEAR
+OPEN #1: name "table2.dat", access input
+LINE INPUT #1: dum$
+LINE INPUT #1: title$
+LINE INPUT #1: dum$
+LET text$ = dum$[1:15]
+FOR i = 1 to 12
+    LET mon$(i) = dum$[4*i+12 : 4*i+15]
+NEXT i
+LINE INPUT #1: dum$
+FOR i = 1 to ndat
+    LINE INPUT #1: dum$
+    LET city$(i) = dum$[1:15]
+    FOR j = 1 to 12
+        LET rays(i, j) = val(dum$[4*j+12 : 4*j+15])
+    NEXT j
+    LET ave(i) = val(dum$[66:70])
+    LET zlat(i) = val(dum$[71:75])
+NEXT i
+CLOSE #1
+
+PRINT title$
+PRINT "               ";
+FOR i = 1 to 12
+    PRINT mon$(i);
+NEXT i
+PRINT
+FOR i = 1 to ndat
+    PRINT city$(i);
+    FOR j = 1 to 12
+        PRINT using "####": round(rays(i, j));
+    NEXT j
+    PRINT
+NEXT i
+
+! Replace solar flux in each column by rank order
+
+DO
+   INPUT prompt "Number of month (1-12): ": month
+   IF month = 0 then EXIT DO
+
+   LET month = mod(month + 5, 12) + 1
+   FOR i = 1 to ndat
+       LET data(i) = rays(i, month)
+       LET order(i) = i
+   NEXT i
+
+   CALL sort2 (ndat, data(), order())
+   CALL crank (ndat, data(), s)
+
+   PRINT "Month of"; mon$(month)
+   PRINT "City                   Rank     Solar flux   Latitude"
+   FOR i = 1 to ndat
+       LET nn = round(order(i))
+       PRINT city$(nn);
+       PRINT using "##########.#": data(i), rays(nn, month), zlat(nn)
+   NEXT i
+LOOP
+
+END

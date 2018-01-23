@@ -1,0 +1,25 @@
+DEFINITION MODULE LinPred;
+
+   (* EXPORT QUALIFIED FixRts, Predic; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE FixRts(D: Vector); 
+   (*
+     Given the LP coefficients D[0, NPOLES-1], this routine
+     finds all roots of the characteristic polynomial (12.10.3), reflects
+     any roots that are outside the unit circle back inside, and then
+     returns a modified set of D's.  The routine Zroots of section 9.5 is 
+     referenced.
+   *)
+
+   PROCEDURE Predic(DATA, D, FUTURE: Vector); 
+   (*
+     Given DATA[0, NDATA-1], and given the data's LP coefficients 
+     D[0, NPOLES-1], this routine applies equation (12.10.1) to predict the 
+     next NFUT data points, which it returns in the array FUTURE[0, NFUT-1].  
+     Note that the routine references only the last NPOLES values of DATA, as
+     initial values for the prediction.
+   *)
+
+END LinPred.

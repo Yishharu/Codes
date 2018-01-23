@@ -1,0 +1,33 @@
+PROGRAM d6r7(input,output,dfile);
+(* driver for routine GAMMQ *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   StrArray25 = string[25];
+VAR
+   a,val,x: real;
+   i,nval: integer;
+   txt: StrArray25;
+   dfile: text;
+
+(*$I GAMMLN.PAS *)
+
+(*$I GSER.PAS *)
+
+(*$I GCF.PAS *)
+
+(*$I GAMMQ.PAS *)
+
+BEGIN
+   NROpen(dfile,'fncval.dat');
+   REPEAT readln(dfile,txt) UNTIL txt = 'Incomplete Gamma Function';
+   readln(dfile,nval);
+   writeln(txt);
+   writeln('a':4,'x':11,'actual':14,'gammq(a,x)':14);
+   FOR i := 1 TO nval DO BEGIN
+      readln(dfile,a,x,val);
+      writeln(a:6:2,x:12:6,(1.0-val):12:6,gammq(a,x):12:6)
+   END;
+   close(dfile)
+END.

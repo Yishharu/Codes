@@ -1,0 +1,43 @@
+DECLARE SUB FOURN (DATQ!(), NN!(), NDIM!, ISIGN!)
+
+'PROGRAM D12R13
+'Driver for routine FOURN
+CLS
+NDIM = 3
+NDAT = 1024
+DIM NN(NDIM), DATQ(NDAT)
+FOR I = 1 TO NDIM
+  NN(I) = 2 * (2 ^ I)
+NEXT I
+FOR I = 1 TO NN(3)
+  FOR J = 1 TO NN(2)
+    FOR K = 1 TO NN(1)
+      L = K + (J - 1) * NN(1) + (I - 1) * NN(2) * NN(1)
+      LL = 2 * L - 1
+      DATQ(LL) = CSNG(LL)
+      DATQ(LL + 1) = CSNG(LL + 1)
+    NEXT K
+  NEXT J
+NEXT I
+ISIGN = 1
+CALL FOURN(DATQ(), NN(), NDIM, ISIGN)
+ISIGN = -1
+PRINT "Double 3-dimensional Transform"
+PRINT
+PRINT "        Double Transf.           Original Data               Ratio"
+PRINT "      Real        Imag.        Real        Imag.       Real        ";
+PRINT "Imag."
+PRINT
+CALL FOURN(DATQ(), NN(), NDIM, ISIGN)
+FOR I = 1 TO 4
+  J = 2 * I
+  K = 2 * J
+  L = K + (J - 1) * NN(1) + (I - 1) * NN(2) * NN(1)
+  LL = 2 * L - 1
+  PRINT USING "#########.##"; DATQ(LL); DATQ(LL + 1); CSNG(LL); CSNG(LL + 1);
+  PRINT USING "#########.##"; DATQ(LL) / LL; DATQ(LL + 1) / (LL + 1)
+NEXT I
+PRINT
+PRINT "The product of transform lengths is:"; NN(1) * NN(2) * NN(3)
+END
+

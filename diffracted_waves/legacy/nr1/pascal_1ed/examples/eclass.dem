@@ -1,0 +1,50 @@
+PROGRAM d8r10(input,output);
+(* driver for routine ECLASS *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   m = 11;
+   n = 15;
+TYPE
+   IntegerArrayNP = ARRAY [1..n] OF integer;
+   IntegerArrayMP = ARRAY [1..m] OF integer;
+VAR
+   i,j,k,lclas,nclass: integer;
+   lista,listb: IntegerArrayMP;
+   nf,nflag,nsav: IntegerArrayNP;
+
+(*$I ECLASS.PAS *)
+
+BEGIN
+   lista[1] := 1; lista[2] := 1; lista[3] := 5; lista[4] := 2;
+   lista[5] := 6; lista[6] := 2; lista[7] := 7; lista[8] := 11;
+   lista[9] := 3; lista[10] := 4; lista[11] := 12;
+   listb[1] := 5; listb[2] := 9; listb[3] := 13; listb[4] := 6;
+   listb[5] := 10; listb[6] := 14; listb[7] := 3; listb[8] := 7;
+   listb[9] := 15; listb[10] := 8; listb[11] := 4;
+   eclass(nf,n,lista,listb,m);
+   FOR i := 1 TO n DO nflag[i] := 1;
+   writeln;
+   writeln('Numbers from 1-15 divided according to');
+   writeln('their value modulo 4:');
+   writeln;
+   lclas := 0;
+   FOR i := 1 TO n DO BEGIN
+      nclass := nf[i];
+      IF nflag[nclass] <> 0 THEN BEGIN
+         nflag[nclass] := 0;
+         lclas := lclas+1;
+         k := 0;
+         FOR j := i TO n DO BEGIN
+            IF nf[j] = nf[i] THEN BEGIN
+               k := k+1;
+               nsav[k] := j
+            END
+         END;
+         write('Class',lclas:2,':   ');
+         FOR j := 1 TO k DO write(nsav[j]:3);
+         writeln
+      END
+   END
+END.

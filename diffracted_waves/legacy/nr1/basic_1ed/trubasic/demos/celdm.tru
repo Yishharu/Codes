@@ -1,0 +1,39 @@
+PROGRAM D6r29
+
+! Driver for routine cel
+
+LIBRARY "ran3", "cel", "qsimp"
+DECLARE FUNCTION ran3, cel
+
+DECLARE PUBLIC a, b, p, akc       ! To set parameter values in func
+
+CLEAR
+LET pio2 = pi/2
+PRINT "Complete Elliptic Integral"
+PRINT "     kc         p         a         b        cel    integral"
+LET idum = -55
+LET ago = 0
+LET astop = pio2
+FOR i = 1 to 20
+    LET akc = .1 + ran3(idum)
+    LET a = 10 * ran3(idum)
+    LET b = 10 * ran3(idum)
+    LET p = .1 + ran3(idum)
+    CALL qsimp (dum, ago, astop, s)
+    PRINT using "###.######": akc, p, a, b, cel(akc, p, a, b), s
+NEXT i
+
+END
+
+MODULE functions
+
+    PUBLIC a, b, p, akc
+
+    FUNCTION func (phi)
+        LET cs = cos(phi)
+        LET csq = cs * cs
+        LET ssq = 1 - csq
+        LET func = (a * csq + b * ssq) / (csq + p * ssq) / sqr(csq + akc * akc * ssq)
+    END FUNCTION
+
+END MODULE

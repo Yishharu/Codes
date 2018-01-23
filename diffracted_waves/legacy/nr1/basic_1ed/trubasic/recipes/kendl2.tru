@@ -1,0 +1,43 @@
+EXTERNAL
+
+SUB kendl2 (taq(,), i, j, ip, jp, tau, z, prob)
+
+    LIBRARY "erfcc"
+    DECLARE FUNCTION erfcc
+
+    LET en1 = 0
+    LET en2 = 0
+    LET s = 0
+    LET nn = i * j
+    LET points = taq(i, j)
+    FOR k = 0 to nn - 2
+        LET ki = int(k / j)
+        LET kj = k - j * ki
+        LET points = points + taq(ki + 1, kj + 1)
+        FOR l = k + 1 to nn - 1
+            LET li = int(l / j)
+            LET lj = l - j * li
+            LET m1 = li - ki
+            LET m2 = lj - kj
+            LET mm = m1 * m2
+            LET pairs = taq(ki + 1, kj + 1) * taq(li + 1, lj + 1)
+            IF mm <> 0 then
+               LET en1 = en1 + pairs
+               LET en2 = en2 + pairs
+               IF mm > 0 then
+                  LET s = s + pairs
+               ELSE
+                  LET s = s - pairs
+               END IF
+            ELSE
+               IF m1 <> 0 then LET en1 = en1 + pairs
+               IF m2 <> 0 then LET en2 = en2 + pairs
+            END IF
+        NEXT l
+    NEXT k
+    LET tau = s / sqr(en1 * en2)
+    LET var = (4 * points + 10) / (9 * points * (points - 1))
+    LET z = tau / sqr(var)
+    LET prob = erfcc(abs(z) / 1.4142136)
+
+END SUB

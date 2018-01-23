@@ -1,0 +1,56 @@
+PROGRAM D10R5
+
+! Driver for routine amoeba
+
+LIBRARY "amoeba"
+
+DECLARE FUNCTION func            ! Definition below
+
+LET np = 3
+LET mp = 4
+DIM p(0,0), x(0), y(0)
+MAT redim p(mp, np), x(np), y(mp)
+
+CLEAR
+LET ftol = .000001
+FOR j = 1 to np
+    FOR i = 1 to mp
+        READ p(i, j)
+    NEXT i
+NEXT j
+DATA 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0
+
+LET ndim = np
+FOR i = 1 to mp
+    FOR j = 1 to np
+        LET x(j) = p(i, j)
+    NEXT j
+    LET y(i) = func(x(), np)
+NEXT i
+
+CALL amoeba (p(,), y(), mp, np, ndim, ftol, dum, iter)
+
+PRINT "Iterations: "; iter
+PRINT
+PRINT "Vertices of final 3-d simplex and"
+PRINT "function values at the vertices:"
+PRINT
+PRINT "  i      x(i)        y(i)        z(i)      function"
+PRINT
+FOR i = 1 to mp
+    PRINT using "###": i;
+    FOR j = 1 to np
+        PRINT using "----#.######": p(i, j);
+    NEXT j
+    PRINT using "----#.######": y(i)
+NEXT i
+PRINT
+PRINT "True minimum is at (0.5, 0.6, 0.7)"
+
+END
+
+FUNCTION func (x(), ndim)
+    LIBRARY "bessj0"
+    DECLARE FUNCTION bessj0
+    LET func = .6 - bessj0((x(1) - .5) ^ 2 + (x(2) - .6) ^ 2 + (x(3) - .7) ^ 2)
+END FUNCTION

@@ -1,0 +1,93 @@
+EXTERNAL
+
+SUB sparse (b(), n, dum1, dum2, x(), rsq)
+
+    ! Subroutines asub and atsub supplied by the user.
+
+    LET eps = .000000001
+
+    DIM g(0), h(0), xi(0), xj(0)
+    MAT redim g(n), h(n), xi(n), xj(n)
+
+    LET eps2 = n * eps^2
+    LET irst = 0
+    DO
+       LET irst = irst + 1
+
+       CALL asub (x(), xi())
+
+       LET rp = 0
+       LET bsq = 0
+       FOR j = 1 to n
+           LET bsq = bsq + b(j)^2
+           LET xi(j) = xi(j) - b(j)
+           LET rp = rp + xi(j)^2
+       NEXT j
+
+       CALL atsub (xi(), g())
+
+       FOR j = 1 to n
+           LET g(j) = -g(j)
+           LET h(j) = g(j)
+       NEXT j
+       FOR iter = 1 to 10 * n
+
+           CALL asub (h(), xi())
+
+           LET anum = 0
+           LET aden = 0
+           FOR j = 1 to n
+               LET anum = anum + g(j) * h(j)
+               LET aden = aden + xi(j)^2
+           NEXT j
+           IF aden = 0 then
+              PRINT "very singular matrix"
+              EXIT SUB
+           END IF
+
+           LET anum = anum / aden
+           FOR j = 1 to n
+               LET xi(j) = x(j)
+               LET x(j) = x(j) + anum * h(j)
+           NEXT j
+
+           CALL asub (x(), xj())
+
+           LET rsq = 0
+           FOR j = 1 to n
+               LET xj(j) = xj(j) - b(j)
+               LET rsq = rsq + xj(j)^2
+           NEXT j
+           IF rsq = rp or rsq <= bsq * eps2 then EXIT SUB
+           IF rsq > rp then
+              FOR j = 1 to n
+                  LET x(j) = xi(j)
+              NEXT j
+              IF irst >= 3 then EXIT SUB
+              EXIT FOR
+           END IF
+           IF not done=-1 then EXIT FOR
+           LET rp = rsq
+
+           CALL atsub (xj(), xi())
+
+           LET gg = 0
+           LET dgg = 0
+           FOR j = 1 to n
+               LET gg = gg + g(j)^2
+               LET dgg = dgg + (xi(j) + g(j)) * xi(j)
+           NEXT j
+           IF gg = 0 then EXIT SUB
+           LET gam = dgg / gg
+           FOR j = 1 to n
+               LET g(j) = -xi(j)
+               LET h(j) = g(j) + gam * h(j)
+           NEXT j
+       NEXT iter
+       IF iter > 10 * n then
+          PRINT "too many iterations"
+          EXIT SUB
+       END IF
+    LOOP
+
+END SUB

@@ -1,0 +1,59 @@
+PROGRAM D12r2
+
+! Driver for routine twofft
+
+LIBRARY "twofft", "four1"
+
+LET n = 32
+LET n2 = 2 * n
+DIM data1(0), data2(0), fft1(0), fft2(0)
+MAT redim data1(n), data2(n), fft1(n2), fft2(n2)
+
+CLEAR
+LET per = 8
+FOR i = 1 to n
+    LET x = 2 * pi * i / per
+    LET data1(i) = int(cos(x) + .5)
+    LET data2(i) = int(sin(x) + .5)
+NEXT i
+
+CALL twofft (data1(), data2(), fft1(), fft2(), n)
+
+PRINT "Fourier transform of first function:"
+CALL prntft (fft1(), n2)
+
+PRINT "Fourier transform of second function:"
+CALL prntft (fft2(), n2)
+
+! Inverse transform
+
+LET isign = -1
+
+CALL four1 (fft1(), n, isign)
+
+PRINT "Inverted transform = first function:"
+CALL prntft (fft1(), n2)
+
+CALL four1 (fft2(), n, isign)
+
+PRINT "Inverted transform = second function:"
+CALL prntft (fft2(), n2)
+
+END
+
+SUB prntft (datq(), n2)
+
+    PRINT "     n     Real(n)    Imag.(n)   Real(n-n)   Imag.(n-n)"
+    PRINT using "######": 0;
+    PRINT using "----#.######": datq(1), datq(2), datq(1), datq(2)
+    FOR i = 3 to n2 / 2 + 1 step 2
+        LET m = (i - 1) / 2
+        LET nn2 = n2 + 2 - i
+        PRINT using "######": m;
+        PRINT using "----#.######": datq(i), datq(i + 1), datq(nn2), datq(nn2 + 1)
+    NEXT i
+    PRINT
+    PRINT " press Enter to continue ...";
+    LINE INPUT dum$
+
+END SUB

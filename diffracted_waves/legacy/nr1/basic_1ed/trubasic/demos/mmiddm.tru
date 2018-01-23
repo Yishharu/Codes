@@ -1,0 +1,55 @@
+PROGRAM D15r5
+
+! Driver for routine mmid
+
+LIBRARY "mmid", "bessj0", "bessj1", "bessj"
+DECLARE FUNCTION bessj0, bessj1, bessj
+
+LET nvar = 4
+DIM y(0), yout(0), dydx(0)
+MAT redim y(nvar), yout(nvar), dydx(nvar)
+
+CLEAR
+LET x1 = 1
+LET htot = .5
+LET y(1) = bessj0(x1)
+LET y(2) = bessj1(x1)
+LET y(3) = bessj(2, x1)
+LET y(4) = bessj(3, x1)
+LET dydx(1) = -y(2)
+LET dydx(2) = y(1) - y(2)
+LET dydx(3) = y(2) - 2 * y(3)
+LET dydx(4) = y(3) - 3 * y(4)
+LET xf = x1 + htot
+LET b1 = bessj0(xf)
+LET b2 = bessj1(xf)
+LET b3 = bessj(2, xf)
+LET b4 = bessj(3, xf)
+
+PRINT "First four Bessel functions"
+PRINT
+FOR i = 5 to 50 step 5
+
+    CALL mmid (y(), dydx(), nvar, x1, htot, i, yout(), dum)
+
+    PRINT "x ="; round(x1, 4); "to";
+    PRINT round(x1 + htot, 4); "in";
+    PRINT i; "steps"
+    PRINT "   Integration    Bessj"
+    PRINT using "----#.######": yout(1), b1
+    PRINT using "----#.######": yout(2), b2
+    PRINT using "----#.######": yout(3), b3
+    PRINT using "----#.######": yout(4), b4
+    PRINT
+    PRINT "press Enter to continue..."
+    LINE INPUT dum$
+NEXT i
+
+END
+
+SUB derivs (x, y(), dydx())
+    LET dydx(1) = -y(2)
+    LET dydx(2) = y(1) - (1 / x) * y(2)
+    LET dydx(3) = y(2) - (2 / x) * y(3)
+    LET dydx(4) = y(3) - (3 / x) * y(4)
+END SUB

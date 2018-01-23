@@ -1,0 +1,28 @@
+EXTERNAL
+
+SUB lubksb (a(,), n, np, indx(), b())
+
+    LET ii = 0
+    FOR i = 1 to n
+        LET ll = indx(i)
+        LET sum = b(ll)
+        LET b(ll) = b(i)
+        IF ii <> 0 then
+           FOR j = ii to i - 1
+               LET sum = sum - a(i, j) * b(j)
+           NEXT j
+        ELSEIF sum <> 0 then
+           LET ii = i
+        END IF
+        LET b(i) = sum
+    NEXT i
+
+    FOR i = n to 1 step -1
+        LET sum = b(i)
+        FOR j = i + 1 to n
+            LET sum = sum - a(i, j) * b(j)
+        NEXT j
+        LET b(i) = sum / a(i, i)
+    NEXT i
+
+END SUB

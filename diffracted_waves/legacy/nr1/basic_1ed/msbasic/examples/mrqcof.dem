@@ -1,0 +1,79 @@
+DECLARE SUB MRQCOF (X!(), Y!(), SIG!(), NDATA!, A!(), MA!, LISTA!(), MFIT!, ALPHA!(), BETA!(), NALP!, CHISQ!, DUM!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D14R8B
+'Driver for routine MRQCOF
+CLS
+NPT = 100
+MA = 6
+SPREAD = .1
+DIM X(NPT), Y(NPT), SIG(NPT), A(MA), LISTA(MA)
+DIM COVAR(MA, MA), ALPHA(MA, MA), BETA(MA, 1), GUES(MA)
+FOR I = 1 TO MA
+  READ A(I)
+NEXT I
+DATA 5.0,2.0,3.0,2.0,5.0,3.0
+FOR I = 1 TO MA
+  READ GUES(I)
+NEXT I
+DATA 4.9,2.1,2.9,2.1,4.9,3.1
+IDUM& = -911
+'First try sum of two gaussians
+FOR I = 1 TO 100
+  X(I) = .1 * I
+  Y(I) = 0!
+  FOR J = 1 TO 4 STEP 3
+    Y(I) = Y(I) + A(J) * EXP(-((X(I) - A(J + 1)) / A(J + 2)) ^ 2)
+  NEXT J
+  Y(I) = Y(I) * (1! + SPREAD * GASDEV(IDUM&))
+  SIG(I) = SPREAD * Y(I)
+NEXT I
+MFIT = MA
+FOR I = 1 TO MFIT
+  LISTA(I) = I
+NEXT I
+FOR I = 1 TO MA
+  A(I) = GUES(I)
+NEXT I
+CALL MRQCOF(X(), Y(), SIG(), NPT, A(), MA, LISTA(), MFIT, ALPHA(), BETA(), MA, CHISQ, FGAUSS)
+PRINT "matrix alpha"
+FOR I = 1 TO MA
+  FOR J = 1 TO MA
+    PRINT USING "#######.####"; ALPHA(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT "vector beta"
+FOR I = 1 TO MA
+  PRINT USING "#######.####"; BETA(I, 1);
+NEXT I
+PRINT
+PRINT "Chi-squared:";
+PRINT USING "#######.####"; CHISQ
+PRINT
+'Next fix one line and improve the other
+FOR I = 1 TO 3
+  LISTA(I) = I + 3
+NEXT I
+MFIT = 3
+FOR I = 1 TO MA
+  A(I) = GUES(I)
+NEXT I
+CALL MRQCOF(X(), Y(), SIG(), NPT, A(), MA, LISTA(), MFIT, ALPHA(), BETA(), MA, CHISQ, FGAUSS)
+PRINT "matrix alpha"
+FOR I = 1 TO MFIT
+  FOR J = 1 TO MFIT
+    PRINT USING "#######.####"; ALPHA(I, J);
+  NEXT J
+  PRINT
+NEXT I
+PRINT
+PRINT "vector beta"
+FOR I = 1 TO MFIT
+  PRINT USING "#######.####"; BETA(I, 1);
+NEXT I
+PRINT
+PRINT "Chi-squared:";
+PRINT USING "#######.####"; CHISQ
+END
+

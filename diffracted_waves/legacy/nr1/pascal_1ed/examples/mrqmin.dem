@@ -1,0 +1,107 @@
+PROGRAM D14R8(input,output);
+(* driver for routine MRQMIN *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npt = 100;
+   ma = 6;
+   spread = 0.001;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayMA = ARRAY [1..ma] OF real;
+   IntegerArrayMFIT = ARRAY [1..ma] OF integer;
+   RealArrayMAbyMA = ARRAY [1..ma,1..ma] OF real;
+   RealArrayMAby1 = ARRAY [1..ma,1..1] OF real;
+   IntegerArrayNP = IntegerArrayMFIT;
+   RealArrayNPbyNP = RealArrayMAbyMA;
+   RealArrayNPbyMP = RealArrayMAby1;
+   RealArrayNDATA = ARRAY [1..npt] OF real;
+VAR
+   MrqminOchisq: real;
+   MrqminBeta: RealArrayMA;
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   GasdevIset: integer;
+   GasdevGset: real;
+   alamda,chisq,ochisq: real;
+   i,idum,itst,j,jj,k,mfit: integer;
+   x,y,sig: RealArrayNDATA;
+   lista: IntegerArrayMFIT;
+   a,gues: RealArrayMA;
+   covar,alpha: RealArrayMAbyMA;
+
+(*$I COVSRT.PAS *)
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+PROCEDURE funcs(x: real; VAR a: RealArrayMA; VAR y: real;
+       VAR dyda: RealArrayMA; ma: integer);
+VAR
+   i,ii: integer;
+   fac,ex,arg: real;
+BEGIN
+   y := 0.0;
+   FOR ii := 1 TO ma DIV 3 DO BEGIN
+      i := 3*ii-2;
+      arg := (x-a[i+1])/a[i+2];
+      ex := exp(-sqr(arg));
+      fac := a[i]*ex*2.0*arg;
+      y := y+a[i]*ex;
+      dyda[i] := ex;
+      dyda[i+1] := fac/a[i+2];
+      dyda[i+2] := fac*arg/a[i+2]
+   END
+END;
+
+(*$I GAUSSJ.PAS *)
+
+(*$I MRQMIN.PAS *)
+
+BEGIN
+   GasdevIset := 0;
+   a[1] := 5.0; a[2] := 2.0; a[3] := 3.0;
+   a[4] := 2.0; a[5] := 5.0; a[6] := 3.0;
+   gues[1] := 4.5; gues[2] := 2.2; gues[3] := 2.8;
+   gues[4] := 2.5; gues[5] := 4.9; gues[6] := 2.8;
+   idum := -911;
+   FOR i := 1 TO 100 DO BEGIN
+      x[i] := 0.1*i;
+      y[i] := 0.0;
+      FOR jj := 1 TO 2 DO BEGIN
+         j := 3*jj-2;
+         y[i] := y[i]+a[j]*exp(-sqr((x[i]-a[j+1])/a[j+2]))
+      END;
+      y[i] := y[i]*(1.0+spread*gasdev(idum));
+      sig[i] := spread*y[i]
+   END;
+   mfit := 6;
+   FOR i := 1 TO mfit DO lista[i] := i;
+   alamda := -1;
+   FOR i := 1 TO ma DO a[i] := gues[i];
+   mrqmin(x,y,sig,npt,a,ma,lista,mfit,covar,alpha,chisq,alamda);
+   k := 1;
+   itst := 0;
+   REPEAT
+      writeln;
+      writeln('Iteration #',k:2,'chi-squared:':17,chisq:10:4,
+         'alamda:':10,alamda:9);
+      writeln('a[1]':7,'a[2]':8,'a[3]':8,'a[4]':8,'a[5]':8,'a[6]':8);
+      FOR i := 1 TO 6 DO write(a[i]:8:4);
+      writeln;
+      k := k+1;
+      ochisq := chisq;
+      mrqmin(x,y,sig,npt,a,ma,lista,mfit,covar,alpha,chisq,alamda);
+      IF chisq > ochisq THEN
+         itst := 0
+      ELSE IF abs(ochisq-chisq) < 0.1 THEN
+         itst := itst+1;
+   UNTIL itst >=2;
+   alamda := 0.0;
+   mrqmin(x,y,sig,npt,a,ma,lista,mfit,covar,alpha,chisq,alamda);
+   writeln('Uncertainties:');
+   FOR i := 1 TO 6 DO write(sqrt(covar[i,i]):8:4);
+   writeln
+END.

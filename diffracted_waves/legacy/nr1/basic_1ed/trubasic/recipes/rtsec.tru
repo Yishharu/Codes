@@ -1,0 +1,31 @@
+EXTERNAL
+
+FUNCTION rtsec (dum, x1, x2, xacc)
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    LET maxit = 30
+    LET fl = func(x1)
+    LET f = func(x2)
+    IF abs(fl) < abs(f) then
+       LET trtsec = x1
+       LET xl = x2
+       LET swap = fl
+       LET fl = f
+       LET f = swap
+    ELSE
+       LET xl = x1
+       LET trtsec = x2
+    END IF
+    FOR j = 1 to maxit
+        LET dx = (xl - trtsec) * f / (f - fl)
+        LET xl = trtsec
+        LET fl = f
+        LET trtsec = trtsec + dx
+        LET f = func(trtsec)
+        LET rtsec = trtsec
+        IF abs(dx) < xacc or f = 0 then EXIT FUNCTION
+    NEXT j
+    PRINT "rtsec exceed maximum iterations"
+
+END FUNCTION

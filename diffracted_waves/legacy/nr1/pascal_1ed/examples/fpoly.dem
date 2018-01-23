@@ -1,0 +1,30 @@
+PROGRAM d14r6(input,output);
+(* driver for routine FPOLY *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nval = 15;
+   dx = 0.1;
+   npoly = 5;
+TYPE
+   RealArrayNP = ARRAY [1..npoly] OF real;
+VAR
+   i,j: integer;
+   x: real;
+   afunc: RealArrayNP;
+
+(*$I FPOLY.PAS *)
+
+BEGIN
+   writeln;
+   writeln('powers of x':38);
+   writeln('x':8,'x**0':11,'x**1':10,'x**2':10,'x**3':10,'x**4':10);
+   FOR i := 1 TO nval DO BEGIN
+      x := i*dx;
+      fpoly(x,afunc,npoly);
+      write(x:10:4);
+      FOR j := 1 TO npoly DO write(afunc[j]:10:4);
+      writeln
+   END
+END.

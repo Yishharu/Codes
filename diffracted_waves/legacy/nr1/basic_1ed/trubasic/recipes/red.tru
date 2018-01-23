@@ -1,0 +1,21 @@
+EXTERNAL
+
+SUB red (iz1, iz2, jz1, jz2, jm1, jm2, jmf, ic1, jc1, jcf, kc, c(,,), nci, ncj, nck, s(,))
+
+    LET loff = jc1 - jm1
+    LET ic = ic1
+    FOR j = jz1 to jz2
+        FOR l = jm1 to jm2
+            LET vx = c(ic, l + loff, kc)
+            FOR i = iz1 to iz2
+                LET s(i, l) = s(i, l) - s(i, j) * vx
+            NEXT i
+        NEXT l
+        LET vx = c(ic, jcf, kc)
+        FOR i = iz1 to iz2
+            LET s(i, jmf) = s(i, jmf) - s(i, j) * vx
+        NEXT i
+        LET ic = ic + 1
+    NEXT j
+
+END SUB

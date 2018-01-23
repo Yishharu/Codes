@@ -1,0 +1,30 @@
+PROGRAM d9r2(input,output);
+(* driver for routine ZBRAC *)
+
+(*$I MODFILE.PAS *)
+
+VAR
+   succes: boolean;
+   i: integer;
+   x1,x2: real;
+
+(*$I BESSJ0.PAS *)
+
+FUNCTION fx(x: real): real;
+BEGIN
+   fx := bessj0(x)
+END;
+
+(*$I ZBRAC.PAS *)
+
+BEGIN
+   writeln('bracketing values:':21,'function values:':23);
+   writeln('x1':6,'x2':10,'bessj0(x1)':21,'bessj0(x2)':12);
+   FOR i := 1 TO 10 DO BEGIN
+      x1 := i;
+      x2 := x1+1.0;
+      zbrac(x1,x2,succes);
+      IF succes THEN
+         writeln(x1:7:2,x2:10:2,' ':7,fx(x1):12:6,fx(x2):12:6)
+   END
+END.

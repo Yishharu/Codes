@@ -1,0 +1,20 @@
+DEFINITION MODULE SortM;
+
+   (* EXPORT QUALIFIED Sort, Sort2; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Sort(RA: Vector); 
+   (*
+     Sorts an array RA[n] into ascending numerical order using the Heapsort 
+     algorithm. RA is replaced on output by its sorted rearrangement.
+   *)
+
+   PROCEDURE Sort2(RA, RB: Vector); 
+   (*
+     Sorts an array RA[n] into ascending numerical order using the Heapsort 
+     algorithm, while making the corresponding rearrangement of the array 
+     RB[n].
+   *)
+
+END SortM.

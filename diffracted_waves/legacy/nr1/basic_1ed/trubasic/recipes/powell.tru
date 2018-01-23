@@ -1,0 +1,66 @@
+EXTERNAL
+
+SUB powell (p(), xi(,), n, np, ftol, iter, fret)
+
+    LIBRARY "linmin"
+
+    DECLARE FUNCTION func2        ! Supplied by the user
+
+    DIM pt(0), ptt(0), xit(0)
+    MAT redim pt(n), ptt(n), xit(n)
+
+    LET itmax = 200
+
+    LET fret = func2(p(), n)
+    FOR j = 1 to n
+        LET pt(j) = p(j)
+    NEXT j
+    LET iter = 0
+    DO
+       DO
+          DO
+             LET iter = iter + 1
+             LET fp = fret
+             LET ibig = 0
+             LET del = 0
+             FOR i = 1 to n
+                 FOR j = 1 to n
+                     LET xit(j) = xi(j, i)
+                 NEXT j
+                 LET fptt = fret
+
+                 CALL linmin (p(), xit(), n, fret)
+
+                 IF abs(fptt - fret) > del then
+                    LET del = abs(fptt - fret)
+                    LET ibig = i
+                 END IF
+             NEXT i
+
+             IF 2 * abs(fp - fret) <= ftol * (abs(fp) + abs(fret)) then
+                EXIT SUB
+             END IF
+             IF iter = itmax then
+                PRINT "Powell exceeding maximum iterations."
+                EXIT SUB
+             END IF
+
+             FOR j = 1 to n
+                 LET ptt(j) = 2 * p(j) - pt(j)
+                 LET xit(j) = p(j) - pt(j)
+                 LET pt(j) = p(j)
+             NEXT j
+             LET fptt = func2(ptt(), n)
+          LOOP while fptt >= fp
+          LET dum = fp - 2 * fret + fptt
+          LET t = 2 * dum * (fp - fret - del)^2 - del * (fp - fptt)^2
+       LOOP while t >= 0
+
+       CALL linmin (p(), xit(), n, fret)
+
+       FOR j = 1 to n
+           LET xi(j, ibig) = xit(j)
+       NEXT j
+    LOOP
+
+END SUB

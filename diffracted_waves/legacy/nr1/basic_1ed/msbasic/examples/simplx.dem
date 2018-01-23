@@ -1,0 +1,76 @@
+DECLARE SUB SIMPLX (A!(), M!, N!, MP!, NP!, M1!, M2!, M3!, ICASE!, IZROV!(), IPOSV!())
+
+'PROGRAM D10R12
+'Driver for routine SIMPLX
+'Incorporates examples discussed in text
+CLS
+N = 4
+M = 4
+NP = 5
+MP = 6
+M1 = 2
+M2 = 1
+M3 = 1
+NM1M2 = N + M1 + M2
+DIM A(MP, NP), IZROV(N), IPOSV(M), ANUM(NP), TXT$(NM1M2), ALPHA$(NP)
+FOR I = 1 TO NM1M2
+  READ TXT$(I)
+NEXT I
+DATA x1,x2,x3,x4,y1,y2,y3
+FOR J = 1 TO NP
+  FOR I = 1 TO MP
+    READ A(I, J)
+  NEXT I
+NEXT J
+DATA 0.0,740.0,0.0,0.5,9.0,0.0,1.0,-1.0,0.0,0.0,-1.0,0.0,1.0,0.0,-2.0,-1.0
+DATA -1.0,0.0,3.0,-2.0,0.0,1.0,-1.0,0.0,-0.5,0.0,7.0,-2.0,-1.0,0.0
+CALL SIMPLX(A(), M, N, MP, NP, M1, M2, M3, ICASE, IZROV(), IPOSV())
+IF ICASE = 1 THEN
+  PRINT "Unbounded objective function"
+ELSEIF ICASE = -1 THEN
+  PRINT "No solutions satisfy constraints given"
+ELSE
+  JJ = 1
+  FOR I = 1 TO N
+    IF IZROV(I) <= NM1M2 THEN
+      ALPHA$(JJ) = TXT$(IZROV(I))
+      JJ = JJ + 1
+    END IF
+  NEXT I
+  JMAX = JJ - 1
+  PRINT "           ";
+  FOR JJ = 1 TO JMAX
+    PRINT "        ";
+    PRINT ALPHA$(JJ);
+  NEXT JJ
+  PRINT
+  FOR I = 1 TO M + 1
+    IF I = 1 THEN
+      ALPHA$(1) = "  "
+      RITE% = -1
+    ELSEIF IPOSV(I - 1) <= NM1M2 THEN
+      ALPHA$(1) = TXT$(IPOSV(I - 1))
+      RITE% = -1
+    ELSE
+      RITE% = 0
+    END IF
+    IF RITE% THEN
+      ANUM(1) = A(I, 1)
+      JJ = 2
+      FOR J = 2 TO N + 1
+        IF IZROV(J - 1) <= NM1M2 THEN
+          ANUM(JJ) = A(I, J)
+          JJ = JJ + 1
+        END IF
+      NEXT J
+      JMAX = JJ - 1
+      PRINT ALPHA$(1);
+      FOR JJ = 1 TO JMAX
+        PRINT USING "#######.##"; ANUM(JJ);
+      NEXT JJ
+      PRINT
+    END IF
+  NEXT I
+END IF
+END
+

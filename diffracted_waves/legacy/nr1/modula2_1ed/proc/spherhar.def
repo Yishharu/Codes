@@ -1,0 +1,13 @@
+DEFINITION MODULE SpherHar;
+
+   (*  EXPORT QUALIFIED PLgndr; *)
+
+   PROCEDURE PLgndr(l, m: INTEGER; 
+                    x:    REAL): REAL; 
+   (*
+     Computes the associated Legendre polynomial Pl^m(x). Here m and
+     l are integers satisfying 0 <= m <= l, while x lies in the range 
+     -1 <= x <= 1.
+   *)
+
+END SpherHar.

@@ -1,0 +1,9 @@
+EXTERNAL
+
+SUB rank (n, indx(), irank())
+
+    FOR j = 1 to n
+        LET irank(indx(j)) = j
+    NEXT j
+
+END SUB

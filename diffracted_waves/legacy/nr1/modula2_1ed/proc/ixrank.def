@@ -1,0 +1,28 @@
+DEFINITION MODULE IxRank;
+
+   (* EXPORT QUALIFIED Indexx, Rank, Sort3; *)
+
+   FROM NRIVect IMPORT IVector;
+   FROM NRVect  IMPORT Vector;
+
+   PROCEDURE Indexx(ARRIN: Vector; INDX: IVector); 
+   (*
+     Indexes an array ARRIN[0, n-1], i.e.outputs an array INDX[0, n-1]
+     with the property that ARRIN[INDX[j]] is in ascending order for 
+     j=0,1,...,n-1. The input quantity ARRIN is not changed.
+   *)
+
+   PROCEDURE Rank(INDX, IRANK: IVector); 
+   (*
+     Given INDX[0, n-1] as output from the routine INDEXX, this routine 
+     returns  the corresponding table of ranks as an array IRANK[0, n-1].
+   *)
+
+   PROCEDURE Sort3(RA, RB, RC: Vector); 
+   (*
+     Sorts an array RA[0, n-1] into ascending numerical order while making
+     the corresponding rearrangements of the arrays RB[0, n-1] and RC[0, n-1]. 
+     An index table is constructed via the routine INDEXX.
+   *)
+
+END IxRank.

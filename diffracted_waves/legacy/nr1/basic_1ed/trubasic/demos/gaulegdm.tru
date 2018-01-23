@@ -1,0 +1,44 @@
+PROGRAM D4r9
+
+! Driver for routine gauleg
+
+LIBRARY "gauleg"
+DECLARE FUNCTION func             ! Defined below
+
+LET npoint = 10
+DIM x(0), w(0)
+MAT redim x(npoint), w(npoint)
+
+CLEAR
+LET x1 = 0
+LET x2 = 1
+LET x3 = 10
+
+CALL gauleg (x1, x2, x(), w(), npoint)
+
+PRINT " #      x(i)        w(i)"
+PRINT
+FOR i = 1 to npoint
+    PRINT using "##": i;
+    PRINT using "----#.######": x(i), w(i)
+NEXT i
+PRINT
+
+! Demonstrate the use of gauleg for an integral
+
+CALL gauleg (x1, x3, x(), w(), npoint)
+
+LET xx = 0
+FOR i = 1 to npoint
+    LET xx = xx + w(i) * func(x(i))
+NEXT i
+PRINT "Integral from gauleg:";
+PRINT using "----#.######": xx
+PRINT "        Actual value:";
+PRINT using "----#.######": 1 - (1+x3)*exp(-x3)
+
+END
+
+FUNCTION func (x)
+    LET func = x * exp(-x)
+END FUNCTION

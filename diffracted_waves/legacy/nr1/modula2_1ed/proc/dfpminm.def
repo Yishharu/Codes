@@ -1,0 +1,25 @@
+DEFINITION MODULE DFPMinM;
+
+  (* EXPORT QUALIFIED DFPMin; *)
+
+   FROM NRMath IMPORT VectorFunction;
+   FROM NRVect IMPORT Vector;
+
+   TYPE VectorVectorFunc = PROCEDURE(Vector, Vector);
+
+	PROCEDURE DFPMin(    p:    Vector;
+	                     ftol: REAL;
+                        fnc:  VectorFunction;
+                        dfnc: VectorVectorFunc;
+	                 VAR iter: INTEGER; VAR fret: REAL);
+   (*
+     Given a starting point P[n], the Broyden-Fletcher-Goldfarb-Shanno variant
+     of Davidon-Fletcher-Powell minimization is performed on a function
+     fnc, using its gradient as calculated by a routine dfnc.
+     The convergence requirement on the function value is input as ftol.
+     Returned quantities are P (the location of the minimum), iter (the number 
+     of iterations that were performed), and fret (the minimum value of the 
+     function). The routine LinMin is called to perform line minimizations.
+   *)
+
+END DFPMinM.

@@ -1,0 +1,37 @@
+EXTERNAL
+
+SUB sort (n, ra())
+
+    IF n <= 1 then EXIT SUB
+
+    LET l = int(n / 2) + 1
+    LET ir = n
+    DO
+       IF l > 1 then
+          LET l = l - 1
+          LET rra = ra(l)
+       ELSE
+          LET rra = ra(ir)
+          LET ra(ir) = ra(1)
+          LET ir = ir - 1
+          IF ir = 1 then
+             LET ra(1) = rra
+             EXIT SUB
+          END IF
+       END IF
+       LET i = l
+       LET j = l + l
+       DO while j <= ir
+          IF j < ir and ra(j) < ra(j + 1) then LET j = j + 1
+          IF rra < ra(j) then
+             LET ra(i) = ra(j)
+             LET i = j
+             LET j = j + j
+          ELSE
+             LET j = ir + 1
+          END IF
+       LOOP
+       LET ra(i) = rra
+    LOOP
+
+END SUB

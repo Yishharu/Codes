@@ -1,0 +1,37 @@
+EXTERNAL
+
+SUB qromo (dum, a, b, ss, pick$)
+
+    LIBRARY "midinf", "midsql", "midsqu", "midpnt", "polint"
+
+    LET eps = .00003
+    LET jmax = 14
+    LET jmaxp = jmax + 1
+    LET k = 5
+
+    DIM s(0), h(0), stemp(0), htemp(0)
+    MAT redim s(jmaxp), h(jmaxp)
+    MAT redim stemp(jmaxp), htemp(jmaxp)
+
+    LET h(1) = 1
+    FOR j = 1 to jmax
+        IF pick$ = "midpnt" then CALL midpnt (dum, a, b, s(j), j)
+        IF pick$ = "midinf" then CALL midinf (dum, a, b, s(j), j)
+        IF pick$ = "midsql" then CALL midsql (dum, a, b, s(j), j)
+        IF pick$ = "midsqu" then CALL midsqu (dum, a, b, s(j), j)
+        IF j >= k then
+           FOR l = 1 to k
+               LET htemp(l) = h(j-k+l)
+               LET stemp(l) = s(j-k+l)
+           NEXT l
+
+           CALL polint (h(), s(), k, 0, ss, dss)
+
+           IF abs(dss) < eps * abs(ss) then EXIT SUB
+        END IF
+        LET s(j + 1) = s(j)
+        LET h(j + 1) = h(j) / 9
+    NEXT j
+    PRINT "too many steps."
+
+END SUB

@@ -1,0 +1,25 @@
+DEFINITION MODULE SVD;
+
+   (* EXPORT QUALIFIED SVBKSB, SVDCMP; *)
+
+   FROM NRMatr IMPORT Matrix;
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE SVBKSB(U: Matrix; W: Vector; V: Matrix; B, X: Vector); 
+   (*
+     Solves A X = b for a vector X, where A is specified by the arrays 
+     U[m, n], W[n], V[n, n] as returned by SVDCMP. B[m] is the input 
+     right-hand side.  X[n] is the output solution vector.  No input 
+     quantities are destroyed, so the routine may be called sequentially 
+     with different B's.
+   *)
+
+   PROCEDURE SVDCMP(A: Matrix; W: Vector; V: Matrix); 
+   (*
+     Given a matrix A[m, n], this routine computes its singular value 
+     decomposition, A=U W V^T.  The matrix U replaces A on output. The 
+     diagonal matrix of singular values W is output as a vector W[n].  
+     The matrix V (not the transpose V^T) is output as V[n, n].
+   *)
+
+END SVD.

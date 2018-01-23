@@ -1,0 +1,64 @@
+PROGRAM D17r2
+
+! Driver for routine adi
+!
+! (A special double-precision version of Tridag is NOT needed.
+
+LIBRARY "adi"
+
+LET jmax = 11
+
+DIM a(0,0), b(0,0), c(0,0), d(0,0)
+MAT redim a(jmax, jmax), b(jmax, jmax), c(jmax, jmax), d(jmax, jmax)
+DIM e(0,0), f(0,0), g(0,0), u(0,0)
+MAT redim e(jmax, jmax), f(jmax, jmax), g(jmax, jmax), u(jmax, jmax)
+
+CLEAR
+FOR i = 1 to jmax
+    FOR j = 1 to jmax
+        LET a(i, j) = -1
+        LET b(i, j) = 2
+        LET c(i, j) = -1
+        LET d(i, j) = -1
+        LET e(i, j) = 2
+        LET f(i, j) = -1
+        LET g(i, j) = 0
+        LET u(i, j) = 0
+    NEXT j
+NEXT i
+LET mid = int(jmax / 2) + 1
+LET g(mid, mid) = 2
+LET alpha = 2 * (1 - cos(pi / jmax))
+LET beta = 2 * (1 - cos((jmax - 1) * pi / jmax))
+LET alim = log(4 * jmax / pi)
+LET k = 0
+DO
+   LET k = k + 1
+LOOP while 2^k < alim
+
+LET eps = .0001
+
+CALL adi (a(,), b(,), c(,), d(,), e(,), f(,), g(,), u(,), jmax, k, alpha, beta, eps)
+
+PRINT "Adi solution:"
+FOR i = 1 to jmax
+    FOR j = 1 to jmax
+        PRINT using "---#.##": u(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+PRINT "Test that solution satisfies Difference Eqns:"
+FOR i = 2 to jmax - 1
+    FOR j = 2 to jmax - 1
+        LET dum = -4 * u(i, j)
+        LET g(i, j) = dum + u(i + 1, j) + u(i - 1, j) + u(i, j - 1) + u(i, j + 1)
+    NEXT j
+    PRINT "       ";
+    FOR j = 2 to jmax - 1
+        PRINT using "---#.##": g(i, j);
+    NEXT j
+    PRINT
+NEXT i
+
+END

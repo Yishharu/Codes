@@ -1,0 +1,63 @@
+PROGRAM D2r5
+
+! Driver for routine mprove
+
+LIBRARY "ludcmp", "lubksb", "mprove", "ran3"
+DECLARE FUNCTION ran3
+
+LET n = 5
+LET np = 5
+DIM a(0,0), indx(0), b(0), x(0), aa(0,0)
+MAT redim a(np, np), indx(n), b(n), x(n), aa(np, np)
+
+CLEAR
+FOR j = 1 to np
+    FOR i = 1 to np
+        READ a(i, j)
+    NEXT i
+NEXT j
+DATA 1.0, 2.0, 1.0, 4.0, 5.0
+DATA 2.0, 3.0, 1.0, 5.0, 1.0
+DATA 3.0, 4.0, 1.0, 1.0, 2.0
+DATA 4.0, 5.0, 1.0, 2.0, 3.0
+DATA 5.0, 1.0, 1.0, 3.0, 4.0
+
+MAT READ b
+DATA 1.0, 1.0, 1.0, 1.0, 1.0
+
+MAT x = b                         ! Preserve matrix a and vector b.
+MAT aa = a
+
+CALL ludcmp (aa(,), n, np, indx(), d)
+CALL lubksb (aa(,), n, np, indx(), x())
+
+PRINT "Solution vector for the equations:"
+FOR i = 1 to n
+    PRINT using "----#.######": x(i);
+NEXT i
+PRINT
+PRINT
+
+! Now phoney up X and let mprove fit it
+
+LET idum = -13
+FOR iq = 1 to n
+    LET x(iq) = x(iq) * (1 + .2 * ran3(idum))
+NEXT iq
+PRINT "Solution vector with noise added:"
+FOR i = 1 to n
+    PRINT using "----#.######": x(i);
+NEXT i
+PRINT
+PRINT
+
+CALL mprove (a(,), aa(,), n, np, indx(), b(), x())
+
+PRINT "Solution vector recovered by mprove:"
+FOR i = 1 to n
+    PRINT using "----#.######": x(i);
+NEXT i
+PRINT
+PRINT
+
+END

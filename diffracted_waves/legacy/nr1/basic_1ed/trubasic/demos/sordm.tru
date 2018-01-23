@@ -1,0 +1,48 @@
+PROGRAM D17r1
+
+! Driver for routine sor
+
+LIBRARY "sor"
+
+LET jmax = 11
+DIM a(0,0), b(0,0), c(0,0), d(0,0), e(0,0), f(0,0), u(0,0)
+MAT redim a(jmax, jmax), b(jmax, jmax), c(jmax, jmax), d(jmax, jmax)
+MAT redim e(jmax, jmax), f(jmax, jmax), u(jmax, jmax)
+
+CLEAR
+MAT a = con
+MAT b = con
+MAT c = con
+MAT d = con
+MAT e = (-4)*con
+MAT f = zer
+MAT u = zer
+
+LET midl = int(jmax / 2) + 1
+LET f(midl, midl) = 2
+LET rjac = cos(pi / jmax)
+
+CALL sor (a(,), b(,), c(,), d(,), e(,), f(,), u(,), jmax, rjac)
+
+PRINT "Sor Solution:"
+FOR i = 1 to jmax
+    FOR j = 1 to jmax
+        PRINT using "--#.##": u(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+PRINT "Test that solution satisfies difference eqns:"
+FOR i = 2 to jmax - 1
+    FOR j = 2 to jmax - 1
+        LET dum = 4 * u(i, j)
+        LET f(i, j) = u(i + 1, j) + u(i - 1, j) + u(i, j + 1) + u(i, j - 1) - dum
+    NEXT j
+    PRINT "      ";
+    FOR j = 2 to jmax - 1
+        PRINT using "--#.##": f(i, j);
+    NEXT j
+    PRINT
+NEXT i
+
+END

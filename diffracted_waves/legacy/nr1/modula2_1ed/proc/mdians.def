@@ -1,0 +1,19 @@
+DEFINITION MODULE Mdians;
+
+   (* EXPORT QUALIFIED Mdian1, Mdian2; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Mdian1(X: Vector; VAR xmed: REAL); 
+   (*
+     Given an array X[0, n-1], returns its median value xmed.  The array X 
+     is modified and returned sorted into ascending order.
+   *)
+
+   PROCEDURE Mdian2(X: Vector; VAR xmed: REAL); 
+   (*
+     Given an array X[0, n-1], returns its median value xmed.  The array X 
+     is not modified, and is accessed sequentially in each consecutive pass.
+   *)
+
+END Mdians.

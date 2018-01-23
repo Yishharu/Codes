@@ -1,0 +1,84 @@
+DEFINITION MODULE LLSs;
+
+   (* EXPORT QUALIFIED LFit, CovSrt, FLeg, FPoly, SVDFit, SVDVar; *)
+
+   FROM NRVect IMPORT Vector;
+   FROM NRMatr IMPORT Matrix;
+   FROM NRIVect IMPORT IVector;
+
+   TYPE Function = PROCEDURE (REAL, Vector);
+
+   PROCEDURE LFit(    X, Y, SIG, A: Vector; 
+                      LISTA: IVector; 
+                      mfit:  INTEGER;
+                      COVAR: Matrix; 
+                      funcs: Function;
+                  VAR chisq: REAL); 
+   (*
+     Given a set of points X[0, ndata-1], Y[0, ndata-1] with individual 
+     standard deviations given by SIG[0, ndata-1], use chi^2 minimization to 
+     determine mfit of the coefficients A[0, ma-1] of a function that depends 
+     linearly on A, [y = (sum(i)) Aii x AFUNCi(x)]. The array LISTA[0, ma-1] 
+     renumbers the parameters 
+     so that the first mfit elements correspond to the parameters actually 
+     being determined; the remaining ma-mfit elements are held fixed at their 
+     input values. The program returns values for the ma fit parameters 
+     A, chi ^2= chsiq, and the elements [mfit, mfit] of
+     the covariance matrix COVAR[ma, ma]. 
+     The user supplies a routine FUNCS(x,afunc,ma) that returns 
+     the ma basis functions evaluated at x=x in the array AFUNC[0, ma-1].
+   *)
+
+   PROCEDURE CovSrt(COVAR: Matrix; ma: INTEGER; LISTA: IVector; mfit: INTEGER); 
+   (*
+     Given the covariance matrix COVAR[ma, ma] of a fit for mfit of
+     ma total parameters, and their ordering LISTA[0, ma-1], repack the
+     covariance matrix to the true order of the parameters. Elements
+     associated with fixed parameters will be zero.
+   *)
+
+   PROCEDURE FLeg(x: REAL; PL: Vector); 
+   (*
+     Fitting routine for an expansion with NL Legendre polynomials
+     PL, evaluated using the recurrence relation as in section 4.5.
+   *)
+
+   PROCEDURE FPoly(x: REAL; P: Vector); 
+   (*
+     Fitting routine for a polynomial of degree NP-1, with
+     coefficients in the array P[0, np-1].
+   *)
+
+   PROCEDURE SVDFit(    X, Y, SIG, A: Vector; 
+                        U, V: Matrix; 
+                        W: Vector; 
+                        func: Function;
+                    VAR chisq: REAL); 
+   (*
+     Given a set of points X[0, ndata-1], Y[0, ndata-1] with individual 
+     standard deviations given by
+     SIG[0, ndata-1], use chi ^2 minimization to determine 
+     the coefficients A[0, ma-1] of the fitting function 
+     y= sumiaiimesAFUNCi(x).
+     Here we solve the fitting equations using singular 
+     value decomposition of the ndata by ma matrix, as in section 2.9. 
+     On input, arrays U[ndata, ma], V[ma, ma], and W[0, ma-1]
+     provide workspace;
+     on output they define the 
+     singular value decomposition, and can be used to obtain the covariance 
+     matrix. The 
+     program returns values for the ma fit parameters A, and chi ^2, 
+     chisq. The user supplies a routine FUNCS(x,AFUNC,MA) that 
+     returns the ma basis functions evaluated at x=x in
+     the array AFUNC[0, ma-1].
+   *)
+
+   PROCEDURE SVDVar(V: Matrix; W: Vector; CVM: Matrix); 
+   (*
+     To evaluate the covariance matrix CVM[ma, ma] of the fit for ma 
+     parameters obtained by SVDFit, call this routine with matrices V[ma, ma],
+     W[0, ma-1] 
+     as returned from SVDFit.
+   *)
+
+END LLSs.

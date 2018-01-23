@@ -1,0 +1,35 @@
+DECLARE SUB SNCNDN (UU!, EMMC!, SN!, CN!, DN!)
+
+'PROGRAM D6R30
+'Driver for routine SNCNDN
+CLS
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "Jacobian Elliptic Function"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT TEXT$
+PRINT "  Mc       U       Actual            SN          SN^2+CN^2  ";
+PRINT "(Mc)*(SN^2)+DN^2"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  EM = VAL(MID$(DUM$, 1, 6))
+  UU = VAL(MID$(DUM$, 7, 6))
+  VALUE = VAL(MID$(DUM$, 13))
+  EMMC = 1! - EM
+  CALL SNCNDN(UU, EMMC, SN, CN, DN)
+  RESUL1 = SN * SN + CN * CN
+  RESUL2 = EM * SN * SN + DN * DN
+  PRINT USING "##.##"; EMMC;
+  PRINT USING "#####.##"; UU;
+  PRINT "    ";
+  PRINT USING "#.#####^^^^"; VALUE;
+  PRINT "     ";
+  PRINT USING "#.#####^^^^"; SN;
+  PRINT USING "#######.#####"; RESUL1;
+  PRINT USING "########.#####"; RESUL2
+NEXT I
+CLOSE #1
+END
+

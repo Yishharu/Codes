@@ -1,0 +1,62 @@
+PROGRAM d2r4(input,output,dfile);
+(* driver for routine TRIDAG *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+CONST
+   np = 20;
+TYPE
+   RealArrayNP = ARRAY [1..np] OF real;
+VAR
+   k,n: integer;
+   diag,superd,subd,rhs,u: RealArrayNP;
+   dfile: text;
+
+(*$I TRIDAG.PAS *)
+
+BEGIN
+   NROpen(dfile,'matrx2.dat');
+   WHILE true DO BEGIN
+      readln(dfile);
+      readln(dfile);
+      readln(dfile,n);
+      readln(dfile);
+      FOR k := 1 TO n-1 DO read(dfile,diag[k]);
+      readln(dfile,diag[n]);
+      readln(dfile);
+      FOR k := 1 TO n-2 DO read(dfile,superd[k]);
+      readln(dfile,superd[n-1]);
+      readln(dfile);
+      FOR k := 2 TO n-1 DO read(dfile,subd[k]);
+      readln(dfile,subd[n]);
+      readln(dfile);
+      FOR k := 1 TO n-1 DO read(dfile,rhs[k]);
+      readln(dfile,rhs[n]);
+(* carry out solution *)
+      tridag(subd,diag,superd,rhs,u,n);
+      writeln('the solution vector is:');
+      FOR k := 1 TO n-1 DO write(u[k]:12:6);
+      writeln(u[n]:12:6);
+(* test solution *)
+      writeln('(matrix)*(sol''n vector) should be:');
+      FOR k := 1 TO n-1 DO write(rhs[k]:12:6);
+      writeln(rhs[n]:12:6);
+      writeln('actual result is:');
+      FOR k := 1 TO n DO
+         IF k = 1 THEN
+            rhs[k] := diag[1]*u[1]+superd[1]*u[2]
+         ELSE IF k = n THEN
+            rhs[k] := subd[n]*u[n-1]+diag[n]*u[n]
+         ELSE
+            rhs[k] := subd[k]*u[k-1]+diag[k]*u[k]+superd[k]*u[k+1];
+      FOR k := 1 TO n-1 DO write(rhs[k]:12:6);
+      writeln(rhs[n]:12:6);
+      writeln('***********************************');
+      IF eof(dfile) THEN GOTO 99;
+      writeln('press RETURN for next problem:');
+      readln
+   END;
+99:
+   close(dfile)
+END.

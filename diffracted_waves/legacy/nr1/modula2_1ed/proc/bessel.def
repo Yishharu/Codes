@@ -1,0 +1,37 @@
+DEFINITION MODULE Bessel;
+
+   (* EXPORT QUALIFIED BessJ0, BessY0, BessJ1, BessY1, BessJ, BessY; *)
+       
+   PROCEDURE BessJ0(x: REAL): REAL; 
+   (*
+     Returns the Bessel function J0(x) for any real x.
+   *)
+
+   PROCEDURE BessY0(x: REAL): REAL; 
+   (*
+     Returns the Bessel function Y0(x) for positive x.
+   *)
+
+   PROCEDURE BessJ1(x: REAL): REAL; 
+   (*
+     Returns the Bessel function J1(x) for any real x.
+   *)
+
+   PROCEDURE BessY1(x: REAL): REAL; 
+   (*
+     Returns the Bessel function Y1(x) for positive x.
+   *)
+
+   PROCEDURE BessJ(n: INTEGER; x: REAL): REAL; 
+   (*
+     Returns the Bessel function Jn(x) for any real x
+     and ngteq 2.
+   *)
+
+   PROCEDURE BessY(n: INTEGER; x: REAL): REAL; 
+   (*
+     Returns the Bessel function Yn(x) for positive x
+     and ngteq 2.
+   *)
+
+END Bessel.

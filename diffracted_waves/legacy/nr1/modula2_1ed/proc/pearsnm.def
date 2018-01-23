@@ -1,0 +1,17 @@
+DEFINITION MODULE PearsnM;
+
+   (* EXPORT QUALIFIED Pearsn; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Pearsn(    X, Y: Vector; 
+                    VAR r, prob, z: REAL); 
+   (*
+     Given two arrays X[0, n-1] and Y[0, n-1], this routine computes their 
+     correlation coefficient r (returned as r), the significance level at 
+     which the null hypothesis of zero correlation is disproved (prob whose 
+     small value indicates a significant correlation), and Fisher's z 
+     (returned as z), whose value can be used in further statistical tests as
+     described above.
+   *)
+END PearsnM.

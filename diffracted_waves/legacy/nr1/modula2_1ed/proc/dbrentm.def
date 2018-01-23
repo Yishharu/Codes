@@ -1,0 +1,21 @@
+DEFINITION MODULE DBrentM;
+
+(* EXPORT QUALIFIED DBrent; *)
+
+   FROM NRMath IMPORT RealFunction;
+
+   PROCEDURE DBrent(    ax, bx, cx: REAL;
+                        func, dfunc: RealFunction;
+                        tol:         REAL; 
+                    VAR xmin: REAL): REAL; 
+   (*
+     Given a function func and its derivative function dfunc, and given a 
+     bracketing triplet of abscissas ax, bx, cx [such that bx is between ax
+     and cx, and func(bx) is less than both func(ax) and func(cx)],
+     this routine isolates the minimum to a fractional precision of about
+     tol using a modification of Brent's method that uses derivatives.  
+     The abscissa of the minimum is returned as xmin, and the minimum function
+     value is the returned function value.
+   *)
+
+END DBrentM.

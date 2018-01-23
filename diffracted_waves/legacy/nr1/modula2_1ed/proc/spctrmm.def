@@ -1,0 +1,18 @@
+DEFINITION MODULE SpctrmM;
+
+   (* EXPORT QUALIFIED Spctrm; *)
+
+   FROM NRVect IMPORT Vector;
+   FROM NRIO   IMPORT File;
+
+   PROCEDURE Spctrm(P: Vector; m, k: INTEGER; ovrlap: BOOLEAN; file: File); 
+   (*
+     Reads data from the text file file (which has been reset in the
+     calling program) and returns as P[J] the data's power (mean
+     square amplitude) at frequency (J-1)/(2*m) cycles per gridpoint,
+     for J=1,2,...,m, based on (2*K+1)*m data points (if ovrlap is set TRUE)
+     or 4*K*m data points (if ovrlap is set FALSE). The number of segments 
+     of the data is 2*K in both cases: the routine calls FOUR1 K-times, each 
+     call with 2 partitions each of 2*m real data points.
+   *)
+END SpctrmM.

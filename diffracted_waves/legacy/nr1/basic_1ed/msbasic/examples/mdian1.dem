@@ -1,0 +1,25 @@
+DECLARE SUB MDIAN1 (X!(), N!, XMED!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D13R2
+'Driver for routine MDIAN1
+CLS
+NPTS = 50
+DIM DATQ(NPTS)
+IDUM& = -5
+FOR I = 1 TO NPTS
+  DATQ(I) = GASDEV(IDUM&)
+NEXT I
+CALL MDIAN1(DATQ(), NPTS, XMED)
+PRINT "Gaussian distrib., zero mean, unit variance"
+PRINT
+PRINT "Median of data set is";
+PRINT USING "#####.######"; XMED
+PRINT
+PRINT "Sorted data"
+FOR I = 1 TO 50
+  PRINT USING "#####.######"; DATQ(I);
+  IF I MOD 5 = 0 THEN PRINT
+NEXT I
+END
+

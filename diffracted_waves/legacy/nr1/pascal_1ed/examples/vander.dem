@@ -1,0 +1,40 @@
+PROGRAM d2r6(input,output);
+(* driver for routine VANDER *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 5;
+TYPE
+   DoubleArrayNP = ARRAY [1..n] OF double;
+VAR
+   i,j: integer;
+   sum: double;
+   q,term,w,x: DoubleArrayNP;
+
+(*$I VANDER.PAS *)
+
+BEGIN
+   x[1] := 1.0; x[2] := 1.5; x[3] := 2.0; x[4] := 2.5; x[5] := 3.0;
+   q[1] := 1.0; q[2] := 1.5; q[3] := 2.0; q[4] := 2.5; q[5] := 3.0;
+   vander(x,w,q,n);
+   writeln('Solution vector:');
+   FOR i := 1 TO n DO writeln('w[':7,i:1,'] := ',w[i]:12);
+   writeln;
+   writeln('Test of solution vector:');
+   writeln('mtrx*sol''n':14,'original':11);
+   sum := 0.0;
+   FOR i := 1 TO n DO BEGIN
+      term[i] := w[i];
+      sum := sum+w[i]
+   END;
+   writeln(sum:12:4,q[1]:12:4);
+   FOR i := 2 TO n DO BEGIN
+      sum := 0.0;
+      FOR j := 1 TO n DO BEGIN
+         term[j] := term[j]*x[j];
+         sum := sum+term[j]
+      END;
+      writeln(sum:12:4,q[i]:12:4)
+   END
+END.

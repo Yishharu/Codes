@@ -1,0 +1,17 @@
+DEFINITION MODULE ElmHesM;
+
+   (* EXPORT QUALIFIED ElmHes; *)
+
+   FROM NRMatr IMPORT Matrix;
+
+   PROCEDURE ElmHes(VAR A: Matrix); 
+   (*
+     Reduction to Hessenberg form by the elimination method.
+     The real, nonsymmetric matrix A[n, n] is replaced by an
+     upper Hessenberg matrix with identical eigenvalues.  Recommended, but
+     not required, is that this routine be preceded by Balanc.
+     On output, the Hessenberg matrix is in elements a[i,j] with
+     i<=j+1.  Elements with i>j+1 are to be thought
+     of as zero, but are returned with random values.
+   *)
+END ElmHesM.

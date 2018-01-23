@@ -1,0 +1,46 @@
+PROGRAM D8r10
+
+! Driver for routine eclass
+
+LIBRARY "eclass"
+
+LET n = 15
+LET m = 11
+DIM lista(0), listb(0), nf(0), nflag(0), nsav(0)
+MAT redim lista(m), listb(m), nf(n), nflag(n), nsav(n)
+
+CLEAR
+MAT READ lista
+DATA 1, 1, 5, 2, 6, 2, 7, 11, 3, 4, 12
+
+MAT READ listb
+DATA 5, 9, 13, 6, 10, 14, 3, 7, 15, 8, 4
+
+CALL eclass (nf(), n, lista(), listb(), m)
+
+MAT nflag = con
+PRINT "Numbers from 1-15 divided according to"
+PRINT "their value modulo 4:"
+PRINT
+LET lclas = 0
+FOR i = 1 to n
+    LET nclass = nf(i)
+    IF nflag(nclass) <> 0 then
+       LET nflag(nclass) = 0
+       LET lclas = lclas + 1
+       LET k = 0
+       FOR j = i to n
+           IF nf(j) = nf(i) then
+              LET k = k + 1
+              LET nsav(k) = j
+           END IF
+       NEXT j
+       PRINT "Class"; lclas; ":  ";
+       FOR j = 1 to k
+           PRINT using "###": nsav(j);
+       NEXT j
+       PRINT
+    END IF
+NEXT i
+
+END

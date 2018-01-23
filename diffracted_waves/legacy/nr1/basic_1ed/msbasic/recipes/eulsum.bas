@@ -1,0 +1,23 @@
+SUB EULSUM (SUM, TERM, JTERM, WKSP()) STATIC
+IF JTERM = 1 THEN
+  NTERM = 1
+  WKSP(1) = TERM
+  SUM = .5 * TERM
+ELSE
+  TMP = WKSP(1)
+  WKSP(1) = TERM
+  FOR J = 1 TO NTERM - 1
+    DUM = WKSP(J + 1)
+    WKSP(J + 1) = .5 * (WKSP(J) + TMP)
+    TMP = DUM
+  NEXT J
+  WKSP(NTERM + 1) = .5 * (WKSP(NTERM) + TMP)
+  IF ABS(WKSP(NTERM + 1)) <= ABS(WKSP(NTERM)) THEN
+    SUM = SUM + .5 * WKSP(NTERM + 1)
+    NTERM = NTERM + 1
+  ELSE
+    SUM = SUM + WKSP(NTERM + 1)
+  END IF
+END IF
+END SUB
+

@@ -1,0 +1,78 @@
+EXTERNAL
+
+FUNCTION zbrent (dum, x1, x2, tol)
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    LET itmax = 100
+    LET eps = 3e-8
+    LET a = x1
+    LET b = x2
+    LET fa = func(a)
+    LET fb = func(b)
+    IF fb * fa > 0 then
+       PRINT "Root must be bracketed for zbrent."
+       EXIT FUNCTION
+    END IF
+
+    LET fc = fb
+    FOR iter = 1 to itmax
+        IF fb * fc > 0 then
+           LET c = a
+           LET fc = fa
+           LET d = b - a
+           LET e = d
+        END IF
+        IF abs(fc) < abs(fb) then
+           LET a = b
+           LET b = c
+           LET c = a
+           LET fa = fb
+           LET fb = fc
+           LET fc = fa
+        END IF
+        LET tol1 = 2 * eps * abs(b) + .5 * tol
+        LET xm = .5 * (c - b)
+        IF abs(xm) <= tol1 or fb = 0 then
+           LET zbrent = b
+           EXIT FUNCTION          ! Normal exit
+        END IF
+
+        IF abs(e) >= tol1 and abs(fa) > abs(fb) then
+           LET s = fb / fa
+           IF a = c then
+              LET p = 2 * xm * s
+              LET q = 1 - s
+           ELSE
+              LET q = fa / fc
+              LET r = fb / fc
+              LET p = s * (2 * xm * q * (q - r) - (b - a) * (r - 1))
+              LET q = (q - 1) * (r - 1) * (s - 1)
+           END IF
+           IF p > 0 then LET q = -q
+           LET p = abs(p)
+           IF 2 * p < min(3 * xm * q - abs(tol1 * q), abs(e * q)) then
+              LET e = d
+              LET d = p / q
+           ELSE
+              LET d = xm
+              LET e = d
+           END IF
+        ELSE
+           LET d = xm
+           LET e = d
+        END IF
+
+        LET a = b
+        LET fa = fb
+        IF abs(d) > tol1 then
+           LET b = b + d
+        ELSE
+           LET b = b + abs(tol1) * sgn(xm)
+        END IF
+        LET fb = func(b)
+    NEXT iter
+    PRINT "Zbrent exceeding maximum iterations."
+    LET zbrent = b
+
+END FUNCTION

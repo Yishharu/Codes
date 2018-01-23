@@ -1,0 +1,47 @@
+DEFINITION MODULE LaguQ;
+
+   (* EXPORT QUALIFIED Laguer, Qroot, Zroots; *)
+
+   FROM NRComp IMPORT Complex, CVector;
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Laguer(    A: CVector; 
+                        m: INTEGER;
+                    VAR x: Complex; 
+                        eps: REAL; 
+                        polish: BOOLEAN); 
+   (*
+     Given the degree m, the desired fractional accuracy eps, and the m+1 
+     complex coefficients A[0, m] of the polynomial 
+     [sum ((i=0)to(m)) a[i]x^(i)], and given a complex value x, 
+     this routine improves x by Laguerre's method until it converges
+     to a root of the given polynomial. For normal use polish should be 
+     input as FALSE.  When polish is input a TRUE, the routine ignores eps 
+     and instead attempts to improve x (assumed to be a good initial guess)
+     to the achievable roundoff limit.
+   *)
+
+   PROCEDURE Qroot(    p: Vector; 
+                   VAR b, c: REAL; 
+                       eps: REAL); 
+   (*
+     Given n coefficients P[0, n-1] of a polynomial of degree n-1, and trial
+     values for the coefficients of a quadratic factor x*x+b*x+c, improve the
+     solution until the coefficients b,c change by less than eps.
+     The routine  POLDIV (section 5.3) is used.
+   *)
+
+   PROCEDURE Zroots(A:      CVector;
+                    m:      INTEGER;
+                    ROOTS:  CVector; 
+                    polish: BOOLEAN); 
+   (*
+     Given the polynomial [sum ((i=0)to(m)) a[i]x^(i)] of degree m,
+     with m+1 complex coefficients A[0, m], this routine successively calls 
+     Laguer and finds all m complex roots, returned in the first m elements of 
+     ROOTS[0, {m}] The logical variable polish should be input as TRUE if 
+     polishing (also by Laguerre's method) is desired, FALSE if the roots will 
+     be subsequently polished by other means.
+   *)
+
+END LaguQ.

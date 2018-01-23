@@ -1,0 +1,36 @@
+PROGRAM D3r2
+
+! Driver for routine ratint
+
+LIBRARY "ratint"
+
+DEF fnf (z) = z * exp(-z) / ((z - 1) ^ 2 + epssq)
+
+LET npt = 6
+DIM x(0), y(0)
+MAT redim x(npt), y(npt)
+
+CLEAR
+LET epssq = 1
+FOR i = 1 to npt
+    LET x(i) = i * 2 / npt
+    LET y(i) = fnf(x(i))
+NEXT i
+PRINT "Diagonal rational function interpolation"
+PRINT
+PRINT "    x      interp.      accuracy      actual"
+FOR i = 1 to 10
+    LET xx = .2 * i
+
+    CALL ratint (x(), y(), npt, xx, yy, dyy)
+
+    LET yexp = fnf(xx)
+    PRINT using "###.##": xx;
+    PRINT using "----#.######": yy;
+    PRINT "     ";
+    PRINT using "#.####^^^^": dyy;
+    PRINT using "----#.######": yexp
+NEXT i
+PRINT
+
+END

@@ -1,0 +1,65 @@
+PROGRAM D8r4
+
+! Driver for routine sort2
+
+LIBRARY "sort2"
+
+DIM a(100), b(100)
+
+CLEAR
+OPEN #1: name "tarray.dat", access input
+FOR i = 1 to 10
+    LINE INPUT #1: dum$
+    FOR j = 1 to 10
+        LET a(10 * (i - 1) + j) = val(dum$[6*j-5:6*j])
+    NEXT j
+NEXT i
+CLOSE #1
+
+! Generate b-array
+
+FOR i = 1 to 100
+    LET b(i) = i
+NEXT i
+
+! Sort a and mix b
+
+CALL sort2 (100, a(), b())
+
+PRINT "After sorting A and mixing B, array A is:"
+FOR i = 1 to 10
+    FOR j = 1 to 10
+        PRINT using "###.##": a(10 * (i - 1) + j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT "...and array B is:"
+FOR i = 1 to 10
+    FOR j = 1 to 10
+        PRINT using "###.##": b(10 * (i - 1) + j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT "press Enter to continue..."
+LINE INPUT dum$
+
+! Sort b and mix a
+
+CALL sort2 (100, b(), a())
+
+PRINT "After sorting B and mixing A, array A is:"
+FOR i = 1 to 10
+    FOR j = 1 to 10
+        PRINT using "###.##": a(10 * (i - 1) + j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT "...and array B is:"
+FOR i = 1 to 10
+    FOR j = 1 to 10
+        PRINT using "###.##": b(10 * (i - 1) + j);
+    NEXT j
+    PRINT
+NEXT i
+
+END

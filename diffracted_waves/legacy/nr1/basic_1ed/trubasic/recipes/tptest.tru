@@ -1,0 +1,21 @@
+EXTERNAL
+
+SUB tptest (data1(), data2(), n, t, prob)
+
+    LIBRARY "avevar", "betai"
+    DECLARE FUNCTION betai
+
+    CALL avevar (data1(), n, ave1, var1)
+    CALL avevar (data2(), n, ave2, var2)
+
+    LET cov = 0
+    FOR j = 1 to n
+        LET cov = cov + (data1(j) - ave1) * (data2(j) - ave2)
+    NEXT j
+    LET df = n - 1
+    LET cov = cov / df
+    LET sd = sqr((var1 + var2 - 2 * cov) / n)
+    LET t = (ave1 - ave2) / sd
+    LET prob = betai(.5 * df, .5, df / (df + t ^ 2))
+
+END SUB

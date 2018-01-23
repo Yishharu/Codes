@@ -1,0 +1,17 @@
+EXTERNAL
+
+SUB piksr2 (n, arr(), brr())
+
+    FOR j = 2 to n
+        LET a = arr(j)
+        LET b = brr(j)
+        FOR i = j - 1 to 1 step -1
+            IF arr(i) <= a then EXIT FOR
+            LET arr(i + 1) = arr(i)
+            LET brr(i + 1) = brr(i)
+        NEXT i
+        LET arr(i + 1) = a
+        LET brr(i + 1) = b
+    NEXT j
+
+END SUB

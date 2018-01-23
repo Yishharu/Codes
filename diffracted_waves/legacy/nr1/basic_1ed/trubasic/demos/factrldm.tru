@@ -1,0 +1,38 @@
+PROGRAM D6r2
+
+! Driver for routine factrl
+
+LIBRARY "factrl"
+DECLARE FUNCTION factrl
+
+CLEAR
+OPEN #1: name "fncval.dat", access input
+DO
+   LINE INPUT #1: text$
+LOOP while text$ <> "N-factorial"
+
+LINE INPUT #1: nval$
+LET nval = val(nval$[1:3])
+PRINT text$
+PRINT "    n                Actual            factrl(n)"
+FOR i = 1 to nval
+    LINE INPUT #1: dum$
+    LET n = val(dum$[1:2])
+    LET actual = val(dum$[8:1000])
+    IF actual < 1e+10 then
+       PRINT using "#####": n;
+       PRINT "        ";
+       PRINT using "############.": actual;
+       PRINT "        ";
+       PRINT using "############.": factrl(n)
+    ELSE
+       PRINT using "#####": n;
+       PRINT "        ";
+       PRINT using "#.#######^^^^": actual;
+       PRINT "        ";
+       PRINT using "#.#######^^^^": factrl(n)
+    END IF
+NEXT i
+CLOSE #1
+
+END

@@ -1,0 +1,16 @@
+DEFINITION MODULE MomentM;
+
+   (* EXPORT QUALIFIED Moment; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Moment(    DATA: Vector; 
+                        n:    INTEGER;
+                    VAR ave, adev, sdev: REAL; 
+                    VAR svar, skew, curt: REAL); 
+   (*
+     Given an array DATA[0, n-1], this routine returns its mean ave, 
+     average deviation adev, standard deviation sdev, variance var, 
+     skewness skew, and kurtosis curt.
+   *)
+END MomentM.

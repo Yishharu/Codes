@@ -1,0 +1,37 @@
+PROGRAM d12r8(input,output,dfile);
+(* driver for routine SPCTRM *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   m = 16;
+   m4 = 64;   (* m4=4*m *)
+TYPE
+   RealArrayMP = ARRAY [1..m] OF real;
+   RealArray4tM = ARRAY [1..m4] OF real;
+   RealArrayNN2 = RealArray4tM;
+VAR
+   j,k: integer;
+   ovrlap: boolean;
+   p,q: RealArrayMP;
+   dfile: text;
+
+(*$I FOUR1.PAS *)
+
+(*$I SPCTRM.PAS *)
+
+BEGIN
+   NROpen(dfile,'spctrl.dat');
+   k := 8;
+   ovrlap := true;
+   spctrm(p,m,k,ovrlap);
+   close(dfile);
+   NROpen(dfile,'spctrl.dat');
+   k := 16;
+   ovrlap := false;
+   spctrm(q,m,k,ovrlap);
+   close(dfile);
+   writeln('Spectrum of data in file SPCTRL.DAT');
+   writeln(' ':13,'overlapped ',' ':5,'non-overlapped');
+   FOR j := 1 TO m DO writeln(j:6,' ':5,p[j]:13,' ':5,q[j]:13)
+END.

@@ -1,0 +1,64 @@
+MODULE bsstep
+
+    SHARE imax, nuse, one, shrink, grow, nseq(0)      ! STATIC
+
+    LET imax = 11
+    LET nuse = 7
+    LET one = 1
+    LET shrink = .95
+    LET grow = 1.2
+
+    MAT redim nseq(imax)
+    MAT READ nseq
+    DATA 2, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96
+
+    SUB bsstep (y(), dydx(), nv, xx, htry, eps, yscal(), hdid, hnext, dum)
+
+        LIBRARY "mmid", "rzextr"
+
+        DIM yerr(0), ysav(0), dysav(0), yseq(0)
+        MAT redim yerr(nv), ysav(nv), dysav(nv), yseq(nv)
+
+        LET h = htry
+        LET xsav = xx
+        FOR i = 1 to nv
+            LET ysav(i) = y(i)
+            LET dysav(i) = dydx(i)
+        NEXT i
+        DO
+           FOR i = 1 to imax
+
+               CALL mmid (ysav(), dysav(), nv, xsav, h, nseq(i), yseq(), dum)
+
+               LET xest = (h / nseq(i))^2
+
+               CALL rzextr (i, xest, yseq(), y(), yerr(), nv, nuse)
+
+               IF i > 3 then
+                  LET errmax = 0
+                  FOR j = 1 to nv
+                      LET errmax = max(abs(yerr(j) / yscal(j)), errmax)
+                  NEXT j
+                  LET errmax = errmax / eps
+                  IF errmax < one then
+                     LET xx = xx + h
+                     LET hdid = h
+                     IF i = nuse then
+                        LET hnext = h * shrink
+                     ELSEIF i = nuse - 1 then
+                        LET hnext = h * grow
+                     ELSE
+                        LET hnext = (h * nseq(nuse - 1)) / nseq(i)
+                     END IF
+                     EXIT SUB     ! Normal exit
+
+                  END IF
+               END IF
+           NEXT i
+           LET h = .25 * h / 2^((imax - nuse) / 2)
+        LOOP until xx + h = xx
+        PRINT "Step size underflow."
+
+    END SUB
+
+END MODULE

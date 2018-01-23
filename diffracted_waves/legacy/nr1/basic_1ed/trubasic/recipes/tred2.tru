@@ -1,0 +1,90 @@
+EXTERNAL
+
+SUB tred2 (a(,), n, np, d(), e())
+
+    FOR i = n to 2 step -1
+        LET l = i - 1
+        LET h = 0
+        LET scale = 0
+        IF l > 1 then
+           FOR k = 1 to l
+               LET scale = scale + abs(a(i, k))
+           NEXT k
+           IF scale = 0 then
+              LET e(i) = a(i, l)
+           ELSE
+              FOR k = 1 to l
+                  LET a(i, k) = a(i, k) / scale
+                  LET h = h + a(i, k)^2
+              NEXT k
+              LET f = a(i, l)
+              LET g = -sqr(h) * sgn(f)
+              LET e(i) = scale * g
+              LET h = h - f * g
+              LET a(i, l) = f - g
+              LET f = 0
+              FOR j = 1 to l
+                  ! omit following line if finding only eigenvalues
+                  LET a(j, i) = a(i, j) / h
+                  LET g = 0
+                  FOR k = 1 to j
+                      LET g = g + a(j, k) * a(i, k)
+                  NEXT k
+                  FOR k = j + 1 to l
+                      LET g = g + a(k, j) * a(i, k)
+                  NEXT k
+                  LET e(j) = g / h
+                  LET f = f + e(j) * a(i, j)
+              NEXT j
+              LET hh = f / (h + h)
+              FOR j = 1 to l
+                  LET f = a(i, j)
+                  LET g = e(j) - hh * f
+                  LET e(j) = g
+                  FOR k = 1 to j
+                      LET a(j, k) = a(j, k) - f * e(k) - g * a(i, k)
+                  NEXT k
+              NEXT j
+           END IF
+        ELSE
+           LET e(i) = a(i, l)
+        END IF
+        LET d(i) = h
+    NEXT i
+
+    ! omit following line if finding only eigenvalues
+
+    LET d(1) = 0
+    LET e(1) = 0
+    FOR i = 1 to n
+        ! delete lines from here ...
+        LET l = i - 1
+        IF d(i) <> 0 then
+           FOR j = 1 to l
+               LET g = 0
+               FOR k = 1 to l
+                   LET g = g + a(i, k) * a(k, j)
+               NEXT k
+               FOR k = 1 to l
+                   LET a(k, j) = a(k, j) - g * a(k, i)
+               NEXT k
+           NEXT j
+        END IF
+
+        ! ... to here when finding only eigenvalues.
+
+        LET d(i) = a(i, i)
+
+        ! also delete lines from here ...
+
+        LET a(i, i) = 1
+        FOR j = 1 to l
+            LET a(i, j) = 0
+            LET a(j, i) = 0
+        NEXT j
+
+        ! ... to here when finding only eigenvalues.
+
+    NEXT i
+
+END SUB

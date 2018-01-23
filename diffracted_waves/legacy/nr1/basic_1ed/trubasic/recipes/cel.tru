@@ -1,0 +1,52 @@
+EXTERNAL
+
+FUNCTION cel (qqc, pp, aa, bb)
+
+    LET ca = .0003
+    LET pio2 = pi/2
+
+    IF qqc = 0 then
+       PRINT "failure in cel"
+       EXIT FUNCTION
+    END IF
+
+    LET qc = abs(qqc)
+    LET a = aa
+    LET b = bb
+    LET p = pp
+    LET e = qc
+    LET em = 1
+    IF p > 0 then
+       LET p = sqr(p)
+       LET b = b / p
+    ELSE
+       LET f = qc * qc
+       LET q = 1 - f
+       LET g = 1 - p
+       LET f = f - p
+       LET q = q * (b - a * p)
+       LET p = sqr(f / g)
+       LET a = (a - b) / g
+       LET b = -q / (g * g * p) + a * p
+    END IF
+
+    DO
+       LET f = a
+       LET a = a + b / p
+       LET g = e / p
+       LET b = b + f * g
+       LET b = b + b
+       LET p = g + p
+       LET g = em
+       LET em = qc + em
+       IF abs(g - qc) > g * ca then
+          LET qc = sqr(e)
+          LET qc = qc + qc
+          LET e = qc * em
+       ELSE
+          EXIT DO
+       END IF
+    LOOP
+    LET cel = pio2 * (b + a * em) / (em * (em + p))
+
+END FUNCTION

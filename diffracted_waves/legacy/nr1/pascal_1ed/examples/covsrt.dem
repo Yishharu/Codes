@@ -1,0 +1,77 @@
+PROGRAM d14r3(input,output);
+(* driver for routine COVSRT *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   ma = 10;
+   mfit = 5;
+TYPE
+   RealArrayMAbyMA = ARRAY [1..ma,1..ma] OF real;
+   IntegerArrayMFIT = ARRAY [1..mfit] OF integer;
+VAR
+   i,j: integer;
+   covar: RealArrayMAbyMA;
+   lista: IntegerArrayMFIT;
+
+(*$I COVSRT.PAS *)
+
+BEGIN
+   FOR i := 1 TO ma DO BEGIN
+      FOR j := 1 TO ma DO BEGIN
+         covar[i,j] := 0.0;
+         IF (i <= 5) AND (j <= 5) THEN covar[i,j] := i+j-1
+      END
+   END;
+   writeln;
+   writeln('original matrix');
+   FOR i := 1 TO ma DO BEGIN
+      FOR j := 1 TO ma DO write(covar[i,j]:4:1);
+      writeln
+   END;
+   writeln(' press RETURN to continue...');
+   readln;
+(* test 1 - spread by 2 *)
+   writeln;
+   writeln('test #1 - spread by two');
+   FOR i := 1 TO mfit DO lista[i] := 2*i;
+   covsrt(covar,ma,lista,mfit);
+   FOR i := 1 TO ma DO BEGIN
+      FOR j := 1 TO ma DO write(covar[i,j]:4:1);
+      writeln
+   END;
+   writeln(' press RETURN to continue...');
+   readln;
+(* test 2 - reverse *)
+   writeln;
+   writeln('test #2 - reverse');
+   FOR i := 1 TO ma DO BEGIN
+      FOR j := 1 TO ma DO BEGIN
+         covar[i,j] := 0.0;
+         IF (i <= 5) AND (j <= 5) THEN covar[i,j] := i+j-1
+      END
+   END;
+   FOR i := 1 TO mfit DO lista[i] := mfit+1-i;
+   covsrt(covar,ma,lista,mfit);
+   FOR i := 1 TO ma DO BEGIN
+      FOR j := 1 TO ma DO write(covar[i,j]:4:1);
+      writeln
+   END;
+   writeln(' press RETURN to continue...');
+   readln;
+(* test 3 - spread and reverse *)
+   writeln;
+   writeln('test #3 - spread and reverse');
+   FOR i := 1 TO ma DO BEGIN
+      FOR j := 1 TO ma DO BEGIN
+         covar[i,j] := 0.0;
+         IF (i <= 5) AND (j <= 5) THEN covar[i,j] := i+j-1
+      END
+   END;
+   FOR i := 1 TO mfit DO lista[i] := ma+2-2*i;
+   covsrt(covar,ma,lista,mfit);
+   FOR i := 1 TO ma DO BEGIN
+      FOR j := 1 TO ma DO write(covar[i,j]:4:1);
+      writeln
+   END
+END.

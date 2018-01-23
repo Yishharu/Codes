@@ -1,0 +1,27 @@
+MODULE factln
+
+    SHARE a(100)
+
+    MAT a = (-1)*CON
+
+    FUNCTION factln (n)
+
+        LIBRARY "gammln"
+
+        DECLARE FUNCTION gammln
+
+        IF n < 0 then
+           PRINT "negative factorial"
+           EXIT FUNCTION
+        END IF
+
+        IF n <= 99 then
+           IF a(n + 1) < 0 then LET a(n + 1) = gammln(n + 1)
+           LET factln = a(n + 1)
+        ELSE
+           LET factln = gammln(n + 1)
+        END IF
+
+    END FUNCTION
+
+END MODULE

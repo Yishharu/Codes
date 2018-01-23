@@ -1,0 +1,19 @@
+EXTERNAL
+
+SUB chsone (bins(), ebins(), nbins, knstrn, df, chsq, prob)
+
+    LIBRARY "gammq"
+    DECLARE FUNCTION gammq
+
+    LET df = nbins - 1 - knstrn
+    LET chsq = 0
+    FOR j = 1 to nbins
+        IF ebins(j) <= 0 then
+           PRINT "Bad expected number"
+           EXIT SUB
+        END IF
+        LET chsq = chsq + (bins(j) - ebins(j))^2 / ebins(j)
+    NEXT j
+    LET prob = gammq(.5 * df, .5 * chsq)
+
+END SUB

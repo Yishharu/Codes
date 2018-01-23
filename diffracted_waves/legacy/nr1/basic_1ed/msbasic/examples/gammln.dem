@@ -1,0 +1,31 @@
+DECLARE FUNCTION GAMMLN! (X!)
+
+'PROGRAM D6R1
+'Driver for routine GAMMLN
+CLS
+PI = 3.1415926#
+OPEN "FNCVAL.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, TEXT$
+LOOP WHILE TEXT$ <> "Gamma Function"
+LINE INPUT #1, NVAL$
+NVAL = VAL(NVAL$)
+PRINT "Log of gamma function:"
+PRINT "         X            Actual           GAMMLN(X)"
+FOR I = 1 TO NVAL
+  LINE INPUT #1, DUM$
+  X = VAL(MID$(DUM$, 1, 4))
+  ACTUAL = VAL(MID$(DUM$, 8))
+  IF X > 0! THEN
+    IF X >= 1! THEN
+      CALC = GAMMLN(X)
+    ELSE
+      CALC = GAMMLN(X + 1!) - LOG(X)
+    END IF
+    PRINT USING "########.##"; X;
+    PRINT USING "###########.######"; LOG(ACTUAL); CALC
+  END IF
+NEXT I
+CLOSE #1
+END
+

@@ -1,0 +1,117 @@
+PROGRAM D11r1
+
+! Driver for routine jacobi
+
+LIBRARY "jacobi"
+
+LET np = 10
+LET nmat = 3
+DIM d(0), v(0,0), r(0), e(0,0), num(0)
+MAT redim d(np), v(np, np), r(np), e(np, np), num(nmat)
+DIM a(3, 3), b(5, 5), c(10, 10)
+
+MAT READ num
+DATA 3, 5, 10
+
+FOR j = 1 to 3
+    FOR i = 1 to 3
+        READ a(i, j)
+    NEXT i
+NEXT j
+DATA 1.0, 2.0, 3.0, 2.0, 2.0, 3.0, 3.0, 3.0, 3.0
+
+FOR j = 1 to 5
+    FOR i = 1 to 5
+        READ b(i, j)
+    NEXT i
+NEXT j
+DATA -2.0, -1.0, 0.0, 1.0, 2.0
+DATA -1.0, -1.0, 0.0, 1.0, 2.0
+DATA  0.0,  0.0, 0.0, 1.0, 2.0
+DATA  1.0,  1.0, 1.0, 1.0, 2.0
+DATA  2.0,  2.0, 2.0, 2.0, 2.0
+
+FOR j = 1 to 10
+    FOR i = 1 to 10
+        READ c(i, j)
+    NEXT i
+NEXT j
+DATA  1.0,  4.0,  3.0,  2.0, 1.0, 0.0, -1.0, -2.0, -3.0, -4.0
+DATA  4.0,  2.0,  4.0,  3.0, 2.0, 1.0,  0.0, -1.0, -2.0, -3.0
+DATA  3.0,  4.0,  3.0,  4.0, 3.0, 2.0,  1.0,  0.0, -1.0, -2.0
+DATA  2.0,  3.0,  4.0,  4.0, 4.0, 3.0,  2.0,  1.0,  0.0, -1.0
+DATA  1.0,  2.0,  3.0,  4.0, 5.0, 4.0,  3.0,  2.0,  1.0,  0.0
+DATA  0.0,  1.0,  2.0,  3.0, 4.0, 6.0,  4.0,  3.0,  2.0,  1.0
+DATA -1.0,  0.0,  1.0,  2.0, 3.0, 4.0,  7.0,  4.0,  3.0,  2.0
+DATA -2.0, -1.0,  0.0,  1.0, 2.0, 3.0,  4.0,  8.0,  4.0,  3.0
+DATA -3.0, -2.0, -1.0,  0.0, 1.0, 2.0,  3.0,  4.0,  9.0,  4.0
+DATA -4.0, -3.0, -2.0, -1.0, 0.0, 1.0,  2.0,  3.0,  4.0, 10.0
+
+CLEAR
+FOR i = 1 to nmat
+    IF i = 1 then
+       MAT e = a
+    ELSEIF i = 2 then
+       MAT e = b
+    ELSEIF i = 3 then
+       MAT e = c
+    END IF
+
+    CALL jacobi (e(,), num(i), np, d(), v(,), nrot)
+
+    PRINT "Matrix number", i
+    PRINT "Number of Jacobi rotations:", nrot
+    PRINT
+    PRINT "Eigenvalues:"
+    FOR j = 1 to num(i)
+        PRINT using "----#.######": d(j)
+    NEXT j
+    PRINT
+    PRINT "Eigenvectors:"
+    FOR j = 1 to num(i)
+        PRINT "Number"; j
+        FOR k = 1 to num(i)
+            PRINT using "----#.######": v(k, j);
+            IF mod(k, 5) = 0 or k = num(i) then PRINT
+        NEXT k
+    NEXT j
+    PRINT
+
+    PRINT "Eigenvector test"
+    PRINT
+    FOR j = 1 to num(i)
+        FOR l = 1 to num(i)
+            LET r(l) = 0
+            FOR k = 1 to num(i)
+                IF k > l then
+                   LET kk = l
+                   LET ll = k
+                ELSE
+                   LET kk = k
+                   LET ll = l
+                END IF
+                IF i = 1 then
+                   LET r(l) = r(l) + a(ll, kk) * v(k, j)
+                ELSEIF i = 2 then
+                   LET r(l) = r(l) + b(ll, kk) * v(k, j)
+                ELSEIF i = 3 then
+                   LET r(l) = r(l) + c(ll, kk) * v(k, j)
+                END IF
+            NEXT k
+        NEXT l
+        PRINT "Vector number", j
+        PRINT
+        PRINT "     vector     mtrx*vec.    ratio"
+        FOR l = 1 to num(i)
+            LET ratio = r(l) / v(l, j)
+            PRINT using "----#.######": v(l, j), r(l), ratio
+        NEXT l
+        PRINT
+    NEXT j
+
+    PRINT "press Enter to continue..."
+    LINE INPUT dum$
+    PRINT
+NEXT i
+
+END

@@ -1,0 +1,58 @@
+DECLARE SUB REALFT (DATQ!(), N!, ISIGN!)
+
+'PROGRAM D12R3
+'Driver for routine REALFT
+CLS
+EPS = .001
+NP = 32
+WIDTQ = 50!
+PI = 3.14159
+DIM DATQ(NP), SIZE(NP)
+N = NP / 2
+DO
+  PRINT "Period of sinusoid in channels (2-"; NP; "; OR 0 TO STOP)"
+  INPUT PER
+  IF PER <= 0! THEN EXIT DO
+  FOR I = 1 TO NP
+    DATQ(I) = COS(2! * PI * (I - 1) / PER)
+  NEXT I
+  CALL REALFT(DATQ(), N, 1)
+  SIZE(1) = DATQ(1)
+  BIG = SIZE(1)
+  FOR I = 2 TO N
+    SIZE(I) = SQR(DATQ(2 * I - 1) ^ 2 + DATQ(2 * I) ^ 2)
+    IF I = 1 THEN SIZE(I) = DATQ(I)
+    IF SIZE(I) > BIG THEN BIG = SIZE(I)
+  NEXT I
+  SCAL = WIDTQ / BIG
+  FOR I = 1 TO N
+    NLIM = INT(SCAL * SIZE(I) + EPS)
+    PRINT USING "####"; I;
+    PRINT " ";
+    FOR J = 1 TO NLIM + 1
+      PRINT "*";
+    NEXT J
+    PRINT
+  NEXT I
+  PRINT "press continue ..."
+  LINE INPUT DUM$
+  CALL REALFT(DATQ(), N, -1)
+  BIG = -1E+10
+  SMALL = 1E+10
+  FOR I = 1 TO NP
+    IF DATQ(I) < SMALL THEN SMALL = DATQ(I)
+    IF DATQ(I) > BIG THEN BIG = DATQ(I)
+  NEXT I
+  SCAL = WIDTQ / (BIG - SMALL)
+  FOR I = 1 TO NP
+    NLIM = INT(SCAL * (DATQ(I) - SMALL) + EPS)
+    PRINT USING "####"; I;
+    PRINT " ";
+    FOR J = 1 TO NLIM + 1
+      PRINT "*";
+    NEXT J
+    PRINT
+  NEXT I
+LOOP
+END
+

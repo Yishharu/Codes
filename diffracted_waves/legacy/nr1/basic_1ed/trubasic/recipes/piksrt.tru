@@ -1,0 +1,14 @@
+EXTERNAL
+
+SUB piksrt (n, arr())
+
+    FOR j = 2 to n
+        LET a = arr(j)
+        FOR i = j - 1 to 1 step -1
+            IF arr(i) <= a then EXIT FOR
+            LET arr(i + 1) = arr(i)
+        NEXT i
+        LET arr(i + 1) = a
+    NEXT j
+
+END SUB

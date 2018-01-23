@@ -1,0 +1,44 @@
+DECLARE SUB SMOOFT (Y!(), N!, PTS!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D13R20
+'Driver for routine SMOOFT
+CLS
+MMAX = 1024
+N = 100
+HASH = .05
+SCALE = 100!
+PTS = 10!
+DIM Y(MMAX), TEXT$(64)
+IDUM& = -7
+FOR I = 1 TO N
+  Y(I) = 3! * I / N * EXP(-3! * I / N)
+  Y(I) = Y(I) + HASH * GASDEV(IDUM&)
+NEXT I
+FOR K = 1 TO 3
+  NSTP = INT(N / 20)
+  PRINT " Data:       Graph:"
+  FOR I = 1 TO N STEP NSTP
+    FOR J = 1 TO 64
+      TEXT$(J) = " "
+    NEXT J
+    IBAR = SCALE * Y(I)
+    FOR J = 1 TO 64
+      IF J <= IBAR THEN TEXT$(J) = "*"
+    NEXT J
+    PRINT USING "##.######"; Y(I);
+    PRINT "    ";
+    FOR J = 1 TO 64
+      PRINT TEXT$(J);
+    NEXT J
+    PRINT
+  NEXT I
+  PRINT
+  PRINT "press RETURN to smooth ...";
+  LINE INPUT DUM$
+  PRINT
+  PRINT
+  CALL SMOOFT(Y(), N, PTS)
+NEXT K
+END
+

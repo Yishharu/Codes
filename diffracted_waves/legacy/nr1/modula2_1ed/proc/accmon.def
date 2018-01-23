@@ -1,0 +1,51 @@
+DEFINITION MODULE AccMon;
+
+(* EXPORT QUALIFIED RKQC, ODEInt; *)
+
+   FROM NRMath IMPORT DerivFunction;
+   FROM NRVect IMPORT Vector;
+   FROM NRMatr IMPORT Matrix;
+
+   PROCEDURE RKQC(    Y, DYDX: Vector; 
+                  VAR x: REAL; 
+                      htry, eps: REAL; 
+                      YSCAL: Vector; 
+                      derivs: DerivFunction;
+                  VAR hdid, hnext: REAL); 
+   (*
+     Fifth-order Runge-Kutta step with monitoring of local
+     truncation error to ensure accuracy and adjust stepsize.
+     Input are the dependent variable vector Y[0, n-1]
+     and its derivative DYDX[0, n-1] at the starting
+     value of the independent variable x.  Also input
+     are the stepsize to be attempted htry, the required accuracy eps,
+     and the vector YSCAL[0, n-1] against which the error is scaled.  On
+     output, Y and x are replaced by their new values, hdid
+     is the stepsize which was actually accomplished, and hnext is
+     the estimated next stepsize.  derivs is a user-supplied routine
+     that computes the right-hand side derivatives.
+   *)
+
+   PROCEDURE ODEInt(    YSTART: Vector; 
+                        x1, x2, eps, h1, hmin: REAL; 
+                        derivs: DerivFunction;
+                        OdeintDxsav: REAL;
+                        OdeintKmax: INTEGER;
+                        ODEIntXp: Vector;
+                        ODEIntYp: Matrix;
+                    VAR OdeintKount: INTEGER;
+                    VAR nok, nbad: INTEGER); 
+   (*
+     Runge-Kutta driver with adaptive stepsize control.
+     Integrate from x1 to x2 with accuracy eps, using 
+     starting values YSTART[0, n-1] and storing intermediate results in global
+     variables.  h1 should be set as a guessed first
+     stepsize, hmin as the minimum allowed stepsize (can be zero).
+     On output nok and nbad are the number of good and bad (but retried
+     and fixed) steps taken, and YSTART is replaced by values at the
+     end of the integration interval.
+     derivs is the user-supplied routine for calculating the right-hand 
+     side derivative, while RKQC is the name of the stepper routine to be used.
+   *)
+
+END AccMon.

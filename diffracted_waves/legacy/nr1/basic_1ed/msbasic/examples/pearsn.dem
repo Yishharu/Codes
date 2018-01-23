@@ -1,0 +1,38 @@
+DECLARE SUB PEARSN (X!(), Y!(), N!, R!, PROB!, Z!)
+
+'PROGRAM D13R15
+'Driver for routine PEARSN
+CLS
+DIM DOSE(10), SPORE(10)
+FOR I = 1 TO 10
+  READ DOSE(I)
+NEXT I
+DATA 56.1,64.1,70.0,66.6,82.,91.3,90.,99.7,115.3,110.
+FOR I = 1 TO 10
+  READ SPORE(I)
+NEXT I
+DATA 0.11,0.4,0.37,0.48,0.75,0.66,0.71,1.2,1.01,0.95
+PRINT "Effect of Gamma Rays on Man-in-the-Moon Marigolds"
+PRINT "Count Rate (cpm)           Pollen Index"
+FOR I = 1 TO 10
+  PRINT USING "#######.##"; DOSE(I);
+  PRINT "               ";
+  PRINT USING "#######.##"; SPORE(I)
+NEXT I
+PRINT
+CALL PEARSN(DOSE(), SPORE(), 10, R, PROB, Z)
+PRINT "                      PEARSN         Expected"
+PRINT "Corr. Coeff.        ";
+PRINT USING ".######^^^^"; R;
+PRINT "     ";
+PRINT USING ".######^^^^"; .906959
+PRINT "Probability         ";
+PRINT USING ".######^^^^"; PROB;
+PRINT "     ";
+PRINT USING ".######^^^^"; 2.9265E-04
+PRINT "Fisher's Z          ";
+PRINT USING ".######^^^^"; Z;
+PRINT "     ";
+PRINT USING ".######^^^^"; 1.51011
+END
+

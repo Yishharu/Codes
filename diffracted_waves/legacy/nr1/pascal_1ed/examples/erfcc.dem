@@ -1,0 +1,28 @@
+PROGRAM d6r12(input,output,dfile);
+(* driver for routine erfcc *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   StrArray14 = string[14];
+VAR
+   i,nval: integer;
+   x,val: real;
+   txt: StrArray14;
+   dfile: text;
+
+(*$I ERFCC.PAS *)
+
+BEGIN
+   NROpen(dfile,'fncval.dat');
+   REPEAT readln(dfile,txt) UNTIL txt = 'Error Function';
+   readln(dfile,nval);
+   writeln('complementary error function');
+   writeln('x':5,'actual':12,'erfcc(x)':13);
+   FOR i := 1 TO nval DO BEGIN
+      readln(dfile,x,val);
+      val := 1.0-val;
+      writeln(x:6:2,val:12:7,erfcc(x):12:7)
+   END;
+   close(dfile)
+END.

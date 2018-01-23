@@ -1,0 +1,67 @@
+EXTERNAL
+
+SUB ludcmp (a(,), n, np, indx(), d)
+
+    DIM vv(0)
+    MAT redim vv(n)
+
+    LET tiny = 1e-20
+
+    LET d = 1
+    FOR i = 1 to n
+        LET aamax = 0
+        FOR j = 1 to n
+            IF abs(a(i, j)) > aamax then LET aamax = abs(a(i, j))
+        NEXT j
+        IF aamax = 0 then
+           PRINT "Singular matrix."
+           EXIT SUB
+        END IF
+
+        LET vv(i) = 1 / aamax
+    NEXT i
+
+    FOR j = 1 to n
+        FOR i = 1 to j - 1
+            LET sum = a(i, j)
+            FOR k = 1 to i - 1
+                LET sum = sum - a(i, k) * a(k, j)
+            NEXT k
+            LET a(i, j) = sum
+        NEXT i
+
+        LET aamax = 0
+        FOR i = j to n
+            LET sum = a(i, j)
+            FOR k = 1 to j - 1
+                LET sum = sum - a(i, k) * a(k, j)
+            NEXT k
+            LET a(i, j) = sum
+            LET dum = vv(i) * abs(sum)
+            IF dum >= aamax then
+               LET imax = i
+               LET aamax = dum
+            END IF
+        NEXT i
+
+        IF j <> imax then
+           FOR k = 1 to n
+               LET dum = a(imax, k)
+               LET a(imax, k) = a(j, k)
+               LET a(j, k) = dum
+           NEXT k
+           LET d = -d
+           LET vv(imax) = vv(j)
+        END IF
+
+        LET indx(j) = imax
+        IF a(j, j) = 0 then LET a(j, j) = tiny
+        IF j <> n then
+           LET dum = 1 / a(j, j)
+           FOR i = j + 1 to n
+               LET a(i, j) = a(i, j) * dum
+           NEXT i
+        END IF
+    NEXT j
+
+END SUB

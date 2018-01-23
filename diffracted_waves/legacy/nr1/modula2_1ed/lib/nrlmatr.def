@@ -1,0 +1,80 @@
+DEFINITION MODULE NRLMatr;
+
+  (* EXPORT QUALIFIED LMatrix, PtrToLLine, PtrToLLines, NilLMatrix, EmptyLMatrix,
+                      CreateLMatrix, DisposeLMatrix, DimensionsOfLMatrix,
+                      LMatrixPtr, GetLMatrixAttr, SetElement, GetElement; *)
+
+   FROM NRSystem IMPORT LongReal;
+
+   CONST
+      MaxNM = 1000;
+   TYPE
+      LMatrix;
+      PtrToLLine  = POINTER TO ARRAY [0..MaxNM-1] OF LongReal;
+      PtrToLLines = POINTER TO ARRAY [0..MaxNM-1] OF PtrToLLine;
+   VAR
+      NilLMatrix: LMatrix;
+
+   PROCEDURE EmptyLMatrix(n, m: INTEGER): LMatrix;
+
+      (* 
+       * It creates a new matrix of long real numbers with line number n and column 
+       * number m if n, m > 0. Otherwise it returns NilLMatrix;
+       * The elements in the matrix are undefined.
+       *)
+
+   PROCEDURE CreateLMatrix(    n, 
+                               m: INTEGER;
+                           VAR matrix: LMatrix;
+                           VAR lines: PtrToLLines);
+      (* 
+       * It creates a new matrix with n lines and m columns, if n, m > 0.  
+       * It returns the reference variable "matrix" and a pointer to the lines
+       * of the matrix. If n = 0 and m = 0, then matrix = NilLMatrix, lines = NIL.
+       * The elements in the matrix are undefined.
+       *)
+
+   PROCEDURE DisposeLMatrix(VAR matrix: LMatrix);
+
+      (*
+       * The input "matrix" is deallocated. 
+       * Output: "matrix"=NilLMatrix.
+       * Use this procedure only for matrices created before!
+       *)
+
+   PROCEDURE DimensionsOfLMatrix(    matrix: LMatrix;
+                                 VAR n, m:   INTEGER);
+
+      (* 
+       * It returns the number of lines and columns of matrix.
+       *)
+
+   PROCEDURE LMatrixPtr(matrix: LMatrix): PtrToLLines;
+
+      (* 
+       * This procedure returns a pointer to the lines of matrix.
+       *)
+
+   PROCEDURE GetLMatrixAttr(    matrix: LMatrix;
+                            VAR n, m:   INTEGER;
+                            VAR lines:  PtrToLLines);
+      (* 
+       * n, m: The number of lines and columns of matrix;
+       * lines: Pointer to the lines of the matrix.
+       *)
+
+   PROCEDURE SetElement(matrix: LMatrix;
+                        i, j:   INTEGER;
+                        number: LongReal);
+      (* 
+       * Sets the element with index i, j of the matrix to number.
+       *)
+
+   PROCEDURE GetElement(    matrix: LMatrix;
+                            i, j:   INTEGER;
+                        VAR number: LongReal);
+      (* 
+       * Gets the element with index i, j of the matrix in the variable number.
+       *)
+
+END NRLMatr.

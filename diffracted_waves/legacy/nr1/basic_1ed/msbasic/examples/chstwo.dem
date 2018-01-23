@@ -1,0 +1,34 @@
+DECLARE SUB CHSTWO (BINS1!(), BINS2!(), NBINS!, KNSTRN!, DF!, CHSQ!, PROB!)
+DECLARE FUNCTION EXPDEV! (IDUM&)
+
+'PROGRAM D13R9
+'Driver for routine CHSTWO
+CLS
+NBINS = 10
+NPTS = 2000
+DIM BINS1(NBINS), BINS2(NBINS)
+IDUM& = -17
+FOR J = 1 TO NBINS
+  BINS1(J) = 0!
+  BINS2(J) = 0!
+NEXT J
+FOR I = 1 TO NPTS
+  X = EXPDEV(IDUM&)
+  IBIN = INT(X * NBINS / 3!) + 1
+  IF IBIN <= NBINS THEN BINS1(IBIN) = BINS1(IBIN) + 1!
+  X = EXPDEV(IDUM&)
+  IBIN = INT(X * NBINS / 3!) + 1
+  IF IBIN <= NBINS THEN BINS2(IBIN) = BINS2(IBIN) + 1!
+NEXT I
+CALL CHSTWO(BINS1(), BINS2(), NBINS, -1, DF, CHSQ, PROB)
+PRINT "        Dataset 1      Dataset 2"
+FOR I = 1 TO NBINS
+  PRINT USING "############.##"; BINS1(I); BINS2(I)
+NEXT I
+PRINT
+PRINT "        Chi-squared:   ";
+PRINT USING ".####^^^^"; CHSQ
+PRINT "        Probability:   ";
+PRINT USING ".####^^^^"; PROB
+END
+

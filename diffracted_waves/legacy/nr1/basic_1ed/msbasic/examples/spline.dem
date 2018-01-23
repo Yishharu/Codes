@@ -1,0 +1,27 @@
+DECLARE SUB SPLINE (X!(), Y!(), N!, YP1!, YPN!, Y2!())
+
+'PROGRAM D3R3
+'Driver for routine SPLINE
+CLS
+N = 20
+PI = 3.141593
+DIM X(N), Y(N), Y2(N)
+PRINT "Second-derivatives for sin(x) from 0 to PI"
+'Generate array for interpolation
+FOR I = 1 TO 20
+  X(I) = I * PI / N
+  Y(I) = SIN(X(I))
+NEXT I
+'Calculate 2nd derivative with SPLINE
+YP1 = COS(X(1))
+YPN = COS(X(N))
+CALL SPLINE(X(), Y(), N, YP1, YPN, Y2())
+'Test result
+PRINT "                 spline          actual"
+PRINT "    angle      2nd deriv       2nd deriv"
+FOR I = 1 TO N
+  PRINT USING "#####.##"; X(I);
+  PRINT USING "#########.######"; Y2(I), -SIN(X(I))
+NEXT I
+END
+

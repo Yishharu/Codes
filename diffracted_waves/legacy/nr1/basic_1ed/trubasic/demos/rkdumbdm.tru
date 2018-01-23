@@ -1,0 +1,42 @@
+PROGRAM D15r2
+
+! Driver for routine rkdumb
+
+LIBRARY "rkdumb", "bessj0", "bessj1", "bessj"
+DECLARE FUNCTION bessj0, bessj1, bessj
+
+DECLARE PUBLIC xx(), y(,)         ! COMMON in rkdumb
+MAT Redim xx(200), y(10, 200)     ! Establish max dimensions here
+
+LET nvar = 4
+DIM vstart(0)
+MAT redim vstart(nvar)
+
+CLEAR
+LET nstep = 150
+LET x1 = 1
+LET vstart(1) = bessj0(x1)
+LET vstart(2) = bessj1(x1)
+LET vstart(3) = bessj(2, x1)
+LET vstart(4) = bessj(3, x1)
+LET x2 = 20
+
+CALL rkdumb (vstart(), nvar, x1, x2, nstep, dum)
+
+PRINT "       x       Integrated    Bessj3"
+PRINT
+FOR i = 1 to int(nstep / 10)
+    LET j = 10 * i
+    PRINT using "----#.####": xx(j);
+    PRINT "  ";
+    PRINT using "----#.######": y(4, j), bessj(3, xx(j))
+NEXT i
+
+END
+
+SUB derivs (x, y(), dydx())
+    LET dydx(1) = -y(2)
+    LET dydx(2) = y(1) - (1 / x) * y(2)
+    LET dydx(3) = y(2) - (2 / x) * y(3)
+    LET dydx(4) = y(3) - (3 / x) * y(4)
+END SUB

@@ -1,0 +1,89 @@
+MODULE quad3d
+
+    DECLARE FUNCTION func, y1, y2, z1, z2   ! Supplied by the user    
+
+    PUBLIC x, y, z                ! Fortran COMMON
+
+    SHARE xpt(5), wgt(5)
+
+    MAT READ xpt
+    DATA .1488743389,.4333953941,.6794095682,.8650633666,.9739065285
+
+    MAT READ wgt
+    DATA .2955242247,.2692667193,.2190863625,.1494513491,.0666713443
+
+    SUB quad3d (x1, x2, ss)
+
+        CALL qgausx (dum, x1, x2, ss)
+
+    END SUB
+
+    SUB qgausx (dum, a, b, ss)    ! Code similar to qgaus
+
+        DECLARE FUNCTION h
+
+        LET xm = .5 * (b + a)
+        LET xr = .5 * (b - a)
+        LET ss = 0
+        FOR j = 1 to 5
+            LET dx = xr * xpt(j)
+            LET ss = ss + wgt(j) * (h(xm + dx) + h(xm - dx))
+        NEXT j
+        LET ss = xr * ss
+
+    END SUB
+
+    FUNCTION h (xx)
+
+        LET x = xx
+        CALL qgausy (dum, y1(x), y2(x), ss)
+        LET h = ss
+
+    END FUNCTION
+
+    SUB qgausy (dum, a, b, ss)    ! Code similar to qgaus
+
+        DECLARE FUNCTION g
+
+        LET xm = .5 * (b + a)
+        LET xr = .5 * (b - a)
+        LET ss = 0
+        FOR j = 1 to 5
+            LET dx = xr * xpt(j)
+            LET ss = ss + wgt(j) * (g(xm + dx) + g(xm - dx))
+        NEXT j
+        LET ss = xr * ss
+
+    END SUB
+
+    FUNCTION g (yy)
+
+        LET y = yy
+        CALL qgausz (dum, z1(x, y), z2(x, y), ss)
+        LET g = ss
+
+    END FUNCTION
+
+    SUB qgausz (dum, a, b, ss)    ! Code similar to qgaus
+
+        DECLARE FUNCTION f
+
+        LET xm = .5 * (b + a)
+        LET xr = .5 * (b - a)
+        LET ss = 0
+        FOR j = 1 to 5
+            LET dx = xr * xpt(j)
+            LET ss = ss + wgt(j) * (f(xm + dx) + f(xm - dx))
+        NEXT j
+        LET ss = xr * ss
+
+    END SUB
+
+    FUNCTION f (zz)
+
+        LET z = zz
+        LET f = func(x, y, z)
+
+    END FUNCTION
+
+END MODULE

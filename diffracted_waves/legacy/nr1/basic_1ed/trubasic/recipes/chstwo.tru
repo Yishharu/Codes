@@ -1,0 +1,19 @@
+EXTERNAL
+
+SUB chstwo (bins1(), bins2(), nbins, knstrn, df, chsq, prob)
+
+    LIBRARY "gammq"
+    DECLARE FUNCTION gammq
+
+    LET df = nbins - 1 - knstrn
+    LET chsq = 0
+    FOR j = 1 to nbins
+        IF bins1(j) = 0 and bins2(j) = 0 then
+           LET df = df - 1
+        ELSE
+           LET chsq = chsq + (bins1(j) - bins2(j))^2 / (bins1(j) + bins2(j))
+        END IF
+    NEXT j
+    LET prob = gammq(.5 * df, .5 * chsq)
+
+END SUB

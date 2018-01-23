@@ -1,0 +1,38 @@
+EXTERNAL
+
+SUB gcf (gammcf, a, x, gln)
+
+    LIBRARY "gammln"
+    DECLARE FUNCTION gammln
+
+    LET itmax = 100
+    LET eps = .0000003
+    LET gln = gammln(a)
+    LET gold = 0
+    LET a0 = 1
+    LET a1 = x
+    LET b0 = 0
+    LET b1 = 1
+    LET fac = 1
+    FOR n = 1 to itmax
+        LET an = n
+        LET ana = an - a
+        LET a0 = (a1 + a0 * ana) * fac
+        LET b0 = (b1 + b0 * ana) * fac
+        LET anf = an * fac
+        LET a1 = x * a0 + anf * a1
+        LET b1 = x * b0 + anf * b1
+        IF a1 <> 0 then
+           LET fac = 1 / a1
+           LET g = b1 * fac
+           IF abs((g - gold) / g) < eps then
+              LET gammcf = exp(-x + a * log(x) - gln) * g
+              EXIT SUB
+           END IF
+
+           LET gold = g
+        END IF
+    NEXT n
+    PRINT "a too large, itmax too small"
+
+END SUB

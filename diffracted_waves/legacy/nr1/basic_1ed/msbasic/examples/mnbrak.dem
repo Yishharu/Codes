@@ -1,0 +1,23 @@
+DECLARE FUNCTION FUNC! (U!)
+DECLARE SUB MNBRAK (AX!, BX!, CX!, FA!, FB!, FC!, DUM!)
+DECLARE FUNCTION BESSJ0! (X!)
+
+'PROGRAM D10R1
+'Driver for routine MNBRAK
+CLS
+FOR I = 1 TO 10
+  AX = I * .5
+  BX = (I + 1!) * .5
+  CALL MNBRAK(AX, BX, CX, FA, FB, FC, DUM)
+  PRINT "           A           B           C"
+  PRINT "  X";
+  PRINT USING "#####.######"; AX; BX; CX
+  PRINT "  F";
+  PRINT USING "#####.######"; FA; FB; FC
+NEXT I
+END
+
+FUNCTION FUNC (U)
+FUNC = BESSJ0(U)
+END FUNCTION
+

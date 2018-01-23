@@ -1,0 +1,45 @@
+DECLARE SUB ECLASS (NF!(), N!, LISTA!(), LISTB!(), M!)
+
+'PROGRAM D8R10
+'Driver for routine ECLASS
+CLS
+N = 15
+M = 11
+DIM LISTA(M), LISTB(M), NF(N), NFLAG(N), NSAV(N)
+FOR I = 1 TO M
+  READ LISTA(I)
+NEXT I
+DATA 1,1,5,2,6,2,7,11,3,4,12
+FOR I = 1 TO M
+  READ LISTB(I)
+NEXT I
+DATA 5,9,13,6,10,14,3,7,15,8,4
+CALL ECLASS(NF(), N, LISTA(), LISTB(), M)
+FOR I = 1 TO N
+  NFLAG(I) = 1
+NEXT I
+PRINT "Numbers from 1-15 divided according to"
+PRINT "their value modulo 4:"
+PRINT
+LCLAS = 0
+FOR I = 1 TO N
+  NCLASS = NF(I)
+  IF NFLAG(NCLASS) <> 0 THEN
+    NFLAG(NCLASS) = 0
+    LCLAS = LCLAS + 1
+    K = 0
+    FOR J = I TO N
+      IF NF(J) = NF(I) THEN
+        K = K + 1
+        NSAV(K) = J
+      END IF
+    NEXT J
+    PRINT "Class"; LCLAS; ":  ";
+    FOR J = 1 TO K
+      PRINT USING "###"; NSAV(J);
+    NEXT J
+    PRINT
+  END IF
+NEXT I
+END
+

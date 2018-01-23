@@ -1,0 +1,34 @@
+DEFINITION MODULE ChebAppr;
+
+   (* EXPORT QUALIFIED ChebFt, ChebEv; *)
+
+   FROM NRMath IMPORT RealFunction;
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE ChebFt(func: RealFunction;
+                    a, b: REAL; 
+                    C:    Vector); 
+   (*
+     Chebyshev fit: Given a function func, lower and upper
+     limits of the interval [a, b], and a maximum degree n, this
+     routine computes the n coefficients C[0, n-1] such that
+     func(x) is approximately equal to [(sum(k=1)to(n)) CkT(k-1)(y)] - c1/2,
+     where y and x are related by (5.6.10). This routine
+     is to be used with moderately large n (e.g. 30 or 50), the array of
+     C's subsequently to be truncated at the smaller value m such
+     that Cm+1 and subsequent elements are negligible.
+   *)
+
+   PROCEDURE ChebEv(a, b: REAL; 
+                    C:   Vector; 
+                    x:   REAL): REAL; 
+   (*
+     Chebyshev evaluation: All arguments are input. 
+     C[0, n-1] is an array whose first m elements contain Chebyshev
+     coefficients produced by ChebFt (which must have been called with 
+     the same a and b).
+     The Chebyshev polynomial is evaluated at a point y determined from 
+     x, a, and b, and the result is returned as the function value.
+   *)
+
+END ChebAppr.

@@ -1,0 +1,14 @@
+DEFINITION MODULE BalancM;
+
+  (* EXPORT QUALIFIED Balanc; *)
+
+   FROM NRMatr IMPORT Matrix;
+
+   PROCEDURE Balanc(VAR A: Matrix); 
+   (*
+     Given a matrix A[n, n], this routine replaces it by
+     a balanced matrix with identical eigenvalues. A symmetric matrix
+     is already balanced and is unaffected by this procedure.
+   *)
+
+END BalancM.

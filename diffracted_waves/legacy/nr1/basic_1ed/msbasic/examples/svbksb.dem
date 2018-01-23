@@ -1,0 +1,86 @@
+DECLARE SUB SVDCMP (A!(), M!, N!, MP!, NP!, W!(), V!())
+DECLARE SUB SVBKSB (U!(), W!(), V!(), M!, N!, MP!, NP!, B!(), X!())
+
+'PROGRAM D2R8
+'Driver for routine SVBKSB, which calls routine SVDCMP
+CLS
+NP = 20
+DIM A(NP, NP), B(NP, NP), U(NP, NP), W(NP)
+DIM V(NP, NP), C(NP), X(NP)
+OPEN "MATRX1.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, DUM$
+  IF (DUM$ = "END") THEN EXIT DO
+  LINE INPUT #1, DUM$
+  LINE INPUT #1, DUM$
+  N = VAL(MID$(DUM$, 1, 2))
+  M = VAL(MID$(DUM$, 3, 2))
+  LINE INPUT #1, DUM$
+  FOR K = 1 TO N
+    LINE INPUT #1, DUM$
+    FOR L = 1 TO N
+      A(K, L) = VAL(MID$(DUM$, 4 * L - 3, 4))
+    NEXT L
+  NEXT K
+  LINE INPUT #1, DUM$
+  FOR L = 1 TO M
+    LINE INPUT #1, DUM$
+    FOR K = 1 TO N
+      B(K, L) = VAL(MID$(DUM$, 4 * K - 3, 4))
+    NEXT K
+  NEXT L
+  'Copy A into U
+  FOR K = 1 TO N
+    FOR L = 1 TO N
+      U(K, L) = A(K, L)
+    NEXT L
+  NEXT K
+  'Decompose matrix A
+  CALL SVDCMP(U(), N, N, NP, NP, W(), V())
+  'Find maximum singular value
+  WMAX = 0!
+  FOR K = 1 TO N
+    IF W(K) > WMAX THEN WMAX = W(K)
+  NEXT K
+  'Define "small"
+  WMIN = WMAX * (.000001)
+  'Zero the "small" singular values
+  FOR K = 1 TO N
+    IF W(K) < WMIN THEN W(K) = 0!
+  NEXT K
+  'Backsubstitute for each right-hand side vector
+  FOR L = 1 TO M
+    PRINT "Vector number "; L
+    FOR K = 1 TO N
+      C(K) = B(K, L)
+    NEXT K
+    CALL SVBKSB(U(), W(), V(), N, N, NP, NP, C(), X())
+    PRINT "    Solution vector is:"
+    FOR K = 1 TO N
+      PRINT USING "#####.######"; X(K);
+    NEXT K
+    PRINT
+    PRINT "    Original right-hand side vector:"
+    FOR K = 1 TO N
+      PRINT USING "#####.######"; C(K);
+    NEXT K
+    PRINT
+    PRINT "    Result of (matrix)*(sol'n vector):"
+    FOR K = 1 TO N
+      C(K) = 0!
+      FOR J = 1 TO N
+        C(K) = C(K) + A(K, J) * X(J)
+      NEXT J
+    NEXT K
+    FOR K = 1 TO N
+      PRINT USING "#####.######"; C(K);
+    NEXT K
+    PRINT
+  NEXT L
+  PRINT "***********************************"
+  PRINT "Press RETURN for next problem"
+  LINE INPUT DUM$
+LOOP
+CLOSE #1
+END
+

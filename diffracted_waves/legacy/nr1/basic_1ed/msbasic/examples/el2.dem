@@ -1,0 +1,30 @@
+DECLARE FUNCTION FUNC! (PHI!)
+DECLARE FUNCTION RAN3! (IDUM&)
+DECLARE FUNCTION EL2! (X!, AKC!, A!, B!)
+DECLARE SUB QSIMP (DUM!, A!, B!, S!)
+
+'PROGRAM D6R28
+'Driver for routine EL2
+CLS
+PRINT "General Elliptic Integral of Second Kind"
+PRINT "      x        kc         a         b        EL2    Integral"
+IDUM& = -55
+AGO = 0!
+FOR I = 1 TO 20
+  AKC = 5! * RAN3(IDUM&)
+  A = 10! * RAN3(IDUM&)
+  B = 10! * RAN3(IDUM&)
+  X = 10! * RAN3(IDUM&)
+  ASTOP = ATN(X)
+  CALL QSIMP(DUM, AGO, ASTOP, S)
+  PRINT USING "###.######"; X; AKC; A; B; EL2(X, AKC, A, B); S
+NEXT I
+END
+
+FUNCTION FUNC (PHI)
+SHARED AKC, A, B
+TN = TAN(PHI)
+TSQ = TN * TN
+FUNC = (A + B * TSQ) / SQR((1! + TSQ) * (1! + AKC * AKC * TSQ))
+END FUNCTION
+

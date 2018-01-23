@@ -1,0 +1,19 @@
+MODULE f1dim
+
+    PUBLIC ncom, pcom(50), xicom(50)   ! Labelled COMMON /F1COM/
+
+    FUNCTION f1dim (x)
+
+        DECLARE FUNCTION func2    ! Supplied by the user
+
+        DIM xt(0)
+        MAT redim xt(ncom)
+
+        FOR j = 1 to ncom
+            LET xt(j) = pcom(j) + x * xicom(j)
+        NEXT j
+        LET f1dim = func2(xt(), ncom)
+
+    END FUNCTION
+
+END MODULE

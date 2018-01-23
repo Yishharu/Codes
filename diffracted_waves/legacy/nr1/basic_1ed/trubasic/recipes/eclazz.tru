@@ -1,0 +1,19 @@
+EXTERNAL
+
+SUB eclazz (nf(), n, dum)
+
+    DECLARE FUNCTION equiv        ! Supplied by the user
+
+    LET nf(1) = 1
+    FOR jj = 2 to n
+        LET nf(jj) = jj
+        FOR kk = 1 to jj - 1
+            LET nf(kk) = nf(nf(kk))
+            IF equiv(jj, kk)=-1 then LET nf(nf(nf(kk))) = jj
+        NEXT kk
+    NEXT jj
+    FOR jj = 1 to n
+        LET nf(jj) = nf(nf(jj))
+    NEXT jj
+
+END SUB

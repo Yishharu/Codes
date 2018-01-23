@@ -1,0 +1,41 @@
+PROGRAM D2r7
+
+! Driver for routine toeplz
+
+LIBRARY "toeplz"
+
+LET n = 5
+LET n2 = 2 * n
+DIM x(0), y(0), r(0)
+MAT redim x(n), y(n), r(n2)
+
+CLEAR
+FOR i = 1 to n
+    LET y(i) = .1 * i
+NEXT i
+FOR i = 1 to 2 * n - 1
+    LET r(i) = sqr(i)
+NEXT i
+
+CALL toeplz (r(), x(), y(), n)
+
+PRINT "Solution vector:"
+FOR i = 1 to n
+    PRINT "    x(";
+    PRINT using "#": i;
+    PRINT ") =  ";
+    PRINT using "#.######^^^^": x(i)
+NEXT i
+PRINT
+PRINT "Test of solution:"
+PRINT "    mtrx*soln    original"
+FOR i = 1 to n
+    LET sum = 0
+    FOR j = 1 to n
+        LET sum = sum + r(n + i - j) * x(j)
+    NEXT j
+    PRINT using "------#.####": sum, y(i)
+NEXT i
+PRINT
+
+END

@@ -1,0 +1,78 @@
+EXTERNAL
+
+SUB anneal (x(), y(), iorder(), ncity)
+
+    LIBRARY "link", "ran3", "irbit1"
+    DECLARE FUNCTION alen, ran3, irbit1
+
+    ! The function alen and the subroutines revcst, revers,
+    ! trncst, trnspt, and metrop are in the file "link"
+
+    DIM n(6)
+
+    LET nover = 100 * ncity
+    LET nlimit = 10 * ncity
+    LET tfactr = .9
+    LET path = 0
+    LET t = .5
+    FOR i = 1 to ncity - 1
+        LET i1 = iorder(i)
+        LET i2 = iorder(i + 1)
+        LET path = path + alen (x(i1), x(i2), y(i1), y(i2))
+    NEXT i
+    LET i1 = iorder(ncity)
+    LET i2 = iorder(1)
+    LET path = path + alen (x(i1), x(i2), y(i1), y(i2))
+    LET idum = -1
+    LET iseed = 111
+    FOR j = 1 to 100
+        LET nsucc = 0
+        FOR k = 1 to nover
+            DO
+               LET n(1) = 1 + int(ncity * ran3(idum))
+               LET n(2) = 1 + int((ncity - 1) * ran3(idum))
+               IF n(2) >= n(1) then LET n(2) = n(2) + 1
+               LET nn = 1 + mod(n(1) - n(2) + ncity - 1, ncity)
+            LOOP while nn < 3
+
+            LET idec = irbit1(iseed)
+            IF idec = 0 then
+               LET n(3) = n(2) + int(abs(nn - 2) * ran3(idum)) + 1
+               LET n(3) = 1 + mod(n(3) - 1, ncity)
+
+               CALL trncst (x(), y(), iorder(), ncity, n(), de)
+               CALL metrop (de, t, ans)
+
+               IF ans=-1 then
+                  LET nsucc = nsucc + 1
+                  LET path = path + de
+
+                  CALL trnspt (iorder(), ncity, n())
+
+               END IF
+            ELSE
+
+               CALL revcst (x(), y(), iorder(), ncity, n(), de)
+               CALL metrop (de, t, ans)
+
+               IF ans=-1 then
+                  LET nsucc = nsucc + 1
+                  LET path = path + de
+
+                  CALL revers (iorder(), ncity, n())
+
+               END IF
+            END IF
+            IF nsucc >= nlimit then EXIT FOR
+        NEXT k
+        PRINT
+        PRINT "t =";
+        PRINT using "####.######": t;
+        PRINT "   Path length =";
+        PRINT using "####.######": path
+        PRINT "Successful moves: "; nsucc
+        LET t = t * tfactr
+        IF nsucc = 0 then EXIT SUB
+    NEXT j
+
+END SUB

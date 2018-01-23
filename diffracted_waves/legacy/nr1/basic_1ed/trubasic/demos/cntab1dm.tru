@@ -1,0 +1,61 @@
+PROGRAM D13r13
+
+! Driver for routine cntab1
+! Contingency table data in file table.dat
+
+LIBRARY "cntab1"
+
+LET ndat = 9
+LET nmon = 12
+DIM fate$(0), mon$(0), nmbr(0,0)
+MAT redim fate$(ndat), mon$(nmon), nmbr(ndat, nmon)
+
+CLEAR
+OPEN #1: name "table.dat", access input
+LINE INPUT #1: dum$
+LINE INPUT #1: title$
+LINE INPUT #1: dum$
+LET text$ = dum$[1:15]
+FOR i = 1 to 12
+    LET mon$(i) = dum$[5*i+11 : 5*i+15]
+NEXT i
+LINE INPUT #1: dum$
+FOR i = 1 to ndat
+    LINE INPUT #1: dum$
+    LET fate$(i) = dum$[1:15]
+    FOR j = 1 to 12
+        LET nmbr(i, j) = val(dum$[5*j+11 : 5*j+15])
+    NEXT j
+NEXT i
+CLOSE #1
+
+PRINT title$
+PRINT
+PRINT "               ";
+FOR i = 1 to 12
+    PRINT mon$(i);
+NEXT i
+PRINT
+FOR i = 1 to ndat
+    PRINT fate$(i);
+    FOR j = 1 to 12
+        PRINT using "#####": nmbr(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+
+CALL cntab1 (nmbr(,), ndat, nmon, chisq, df, prob, cramrv, ccc)
+
+PRINT "Chi-squared             ";
+PRINT using "###########.##": chisq
+PRINT "Degrees of freedom      ";
+PRINT using "###########.##": df
+PRINT "Probability             ";
+PRINT using "#########.####": prob
+PRINT "Cramer-v                ";
+PRINT using "#########.####": cramrv
+PRINT "Contingency coeff.      ";
+PRINT using "#########.####": ccc
+
+END

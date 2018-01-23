@@ -1,0 +1,105 @@
+MODULE link
+
+    LIBRARY "ran3"
+    DECLARE FUNCTION alen, ran3
+
+    FUNCTION alen (x1, x2, y1, y2)
+
+        LET alen = sqr((x2 - x1)^2 + (y2 - y1)^2)
+
+    END FUNCTION
+
+    SUB revcst (x(), y(), iorder(), ncity, n(), de)
+
+        DIM xx(4), yy(4)
+
+        LET n(3) = 1 + mod(n(1) + ncity - 2, ncity)
+        LET n(4) = 1 + mod(n(2), ncity)
+        FOR j = 1 to 4
+            LET ii = iorder(n(j))
+            LET xx(j) = x(ii)
+            LET yy(j) = y(ii)
+        NEXT j
+        LET de = -alen(xx(1), xx(3), yy(1), yy(3))
+        LET de = de - alen(xx(2), xx(4), yy(2), yy(4))
+        LET de = de + alen(xx(1), xx(4), yy(1), yy(4))
+        LET de = de + alen(xx(2), xx(3), yy(2), yy(3))
+
+    END SUB
+
+    SUB revers (iorder(), ncity, n())
+
+        LET nn = (1 + mod(n(2) - n(1) + ncity, ncity)) / 2
+        FOR j = 1 to nn
+            LET k = 1 + mod(n(1) + j - 2, ncity)
+            LET l = 1 + mod(n(2) - j + ncity, ncity)
+            LET itmp = iorder(k)
+            LET iorder(k) = iorder(l)
+            LET iorder(l) = itmp
+        NEXT j
+
+    END SUB
+
+    SUB trncst (x(), y(), iorder(), ncity, n(), de)
+
+        DIM xx(6), yy(6)
+
+        LET n(4) = 1 + mod(n(3), ncity)
+        LET n(5) = 1 + mod(n(1) + ncity - 2, ncity)
+        LET n(6) = 1 + mod(n(2), ncity)
+        FOR j = 1 to 6
+            LET ii = iorder(n(j))
+            LET xx(j) = x(ii)
+            LET yy(j) = y(ii)
+        NEXT j
+        LET de = -alen(xx(2), xx(6), yy(2), yy(6))
+        LET de = de - alen(xx(1), xx(5), yy(1), yy(5))
+        LET de = de - alen(xx(3), xx(4), yy(3), yy(4))
+        LET de = de + alen(xx(1), xx(3), yy(1), yy(3))
+        LET de = de + alen(xx(2), xx(4), yy(2), yy(4))
+        LET de = de + alen(xx(5), xx(6), yy(5), yy(6))
+
+    END SUB
+
+    SUB trnspt (iorder(), ncity, n())
+
+        DIM jorder(0)
+        MAT redim jorder(ncity)
+
+        LET m1 = 1 + mod(n(2) - n(1) + ncity, ncity)
+        LET m2 = 1 + mod(n(5) - n(4) + ncity, ncity)
+        LET m3 = 1 + mod(n(3) - n(6) + ncity, ncity)
+        LET nn = 1
+        FOR j = 1 to m1
+            LET jj = 1 + mod(j + n(1) - 2, ncity)
+            LET jorder(nn) = iorder(jj)
+            LET nn = nn + 1
+        NEXT j
+        FOR j = 1 to m2
+            LET jj = 1 + mod(j + n(4) - 2, ncity)
+            LET jorder(nn) = iorder(jj)
+            LET nn = nn + 1
+        NEXT j
+        FOR j = 1 to m3
+            LET jj = 1 + mod(j + n(6) - 2, ncity)
+            LET jorder(nn) = iorder(jj)
+            LET nn = nn + 1
+        NEXT j
+        FOR j = 1 to ncity
+            LET iorder(j) = jorder(j)
+        NEXT j
+
+    END SUB
+
+    SUB metrop (de, t, ans)
+
+        LET jdum = 1
+        IF (de < 0) or (ran3(jdum) < exp(-de / t)) then
+           LET ans = -1
+        ELSE
+           LET ans = 0
+        END IF
+
+    END SUB
+
+END MODULE

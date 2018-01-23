@@ -1,0 +1,62 @@
+PROGRAM d5r2(input,output);
+(* driver for routine DDPOLY *)
+(* polynomial (x-1)**5 *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   nc = 6;
+   nd = 5;   (* nd=nc-1 *)
+   np = 20;
+TYPE
+   CharArray15 = PACKED ARRAY [1..15] OF char;
+   IntegerArrayNC = ARRAY [1..nc] OF real;
+   IntegerArrayND = ARRAY [1..nd] OF real;
+   RealArrayNDbyNP = ARRAY [1..nd,1..np] OF real;
+   RealArray33 = ARRAY [1..33] OF real;
+VAR
+   i,j: integer;
+   x: real;
+   c: IntegerArrayNC;
+   pd: IntegerArrayND;
+   d: RealArrayNDbyNP;
+   a: ARRAY [1..nd] OF CharArray15;
+   FactrlNtop: integer;
+   FactrlA: RealArray33;
+
+FUNCTION power(x: real; n: integer): real;
+BEGIN
+   IF n = 0 THEN power := 1.0 ELSE power := x*power(x,n-1)
+END;
+
+(*$I GAMMLN.PAS *)
+
+(*$I FACTRL.PAS *)
+
+(*$I DDPOLY.PAS *)
+
+BEGIN
+   FactrlNtop := 0;
+   FactrlA[1] := 1.0;
+   a[1] := 'polynomial:    '; a[2] := 'first deriv:   ';
+   a[3] := 'second deriv:  '; a[4] := 'third deriv:   ';
+   a[5] := 'fourth deriv:  ';
+   c[1] := -1.0; c[2] := 5.0; c[3] := -10.0;
+   c[4] := 10.0; c[5] := -5.0; c[6] := 1.0;
+   FOR i := 1 TO np DO BEGIN
+      x := 0.1*i;
+      ddpoly(c,nc,x,pd,nc-1);
+      FOR j := 1 TO nc-1 DO d[j,i] := pd[j]
+   END;
+   FOR i := 1 TO nc-1 DO BEGIN
+      writeln(' ':7,a[i]);
+      writeln('x':12,'DDPOLY':17,'actual':15);
+      FOR j := 1 TO np DO BEGIN
+         x := 0.1*j;
+         writeln(x:15:6,d[i,j]:15:6,
+           (factrl(nc-1)/factrl(nc-i))*power(x-1.0,nc-i):15:6)
+      END;
+      writeln('press ENTER to continue...');
+      readln
+   END
+END.

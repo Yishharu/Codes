@@ -1,0 +1,33 @@
+DECLARE SUB CHSONE (BINS!(), EBINS!(), NBINS!, KNSTRN!, DF!, CHSQ!, PROB!)
+DECLARE FUNCTION EXPDEV! (IDUM&)
+
+'PROGRAM D13R8
+'Driver for routine CHSONE
+CLS
+NBINS = 10
+NPTS = 2000
+DIM BINS(NBINS), EBINS(NBINS)
+IDUM& = -15
+FOR J = 1 TO NBINS
+  BINS(J) = 0!
+NEXT J
+FOR I = 1 TO NPTS
+  X = EXPDEV(IDUM&)
+  IBIN = INT(X * NBINS / 3!) + 1
+  IF IBIN <= NBINS THEN BINS(IBIN) = BINS(IBIN) + 1!
+NEXT I
+FOR I = 1 TO NBINS
+  EBINS(I) = 3! * NPTS / NBINS * EXP(-3! * (I - .5) / NBINS)
+NEXT I
+CALL CHSONE(BINS(), EBINS(), NBINS, -1, DF, CHSQ, PROB)
+PRINT "        Expected       Observed"
+FOR I = 1 TO NBINS
+  PRINT USING "############.##"; EBINS(I); BINS(I)
+NEXT I
+PRINT
+PRINT "       Chi-squared:   ";
+PRINT USING ".####^^^^"; CHSQ
+PRINT "       Probability:   ";
+PRINT USING ".####^^^^"; PROB
+END
+

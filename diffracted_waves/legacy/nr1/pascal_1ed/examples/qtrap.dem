@@ -1,0 +1,37 @@
+PROGRAM d4r2(input,output);
+(* driver for routine QTRAP *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   pio2 = 1.5707963;
+VAR
+   TrapzdIt: integer;
+   a,b,s: real;
+
+FUNCTION func(x: real): real;
+(* Test function *)
+BEGIN
+   func := sqr(x)*(sqr(x)-2.0)*sin(x)
+END;
+
+FUNCTION fint(x: real): real;
+(* Integral of test function *)
+BEGIN
+   fint := 4.0*x*(sqr(x)-7.0)*sin(x)-
+         (sqr(sqr(x))-14.0*sqr(x)+28.0)*cos(x);
+END;
+
+(*$I TRAPZD.PAS *)
+
+(*$I QTRAP.PAS *)
+
+BEGIN
+   a := 0.0;
+   b := pio2;
+   writeln('Integral of func computed with QTRAP');
+   writeln;
+   writeln('Actual value of integral is',fint(b)-fint(a):12:6);
+   qtrap(a,b,s);
+   writeln('Result from routine QTRAP is',s:12:6);
+END.

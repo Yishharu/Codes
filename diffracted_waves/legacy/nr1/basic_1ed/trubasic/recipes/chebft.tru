@@ -1,0 +1,25 @@
+EXTERNAL
+
+SUB chebft (a, b, c(), n, dum)
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    DIM f(0)
+    MAT redim f(n)
+
+    LET bma = .5 * (b - a)
+    LET bpa = .5 * (b + a)
+    FOR k = 1 to n
+        LET y = cos(pi * (k - .5) / n)
+        LET f(k) = func(y * bma + bpa)
+    NEXT k
+    LET fac = 2 / n
+    FOR j = 1 to n
+        LET sum = 0
+        FOR k = 1 to n
+            LET sum = sum + f(k) * cos((pi * (j - 1)) * ((k - .5) / n))
+        NEXT k
+        LET c(j) = fac * sum
+    NEXT j
+
+END SUB

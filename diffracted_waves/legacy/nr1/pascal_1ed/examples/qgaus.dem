@@ -1,0 +1,32 @@
+PROGRAM d4r7(input,output);
+(* driver for routine QGAUS *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   x1 = 0.0;
+   x2 = 5.0;
+   nval = 10;
+VAR
+   dx,ss,x: real;
+   i: integer;
+
+FUNCTION func(x: real): real;
+BEGIN
+   func := x*exp(-x)
+END;
+
+(*$I QGAUS.PAS *)
+
+BEGIN
+   dx := (x2-x1)/nval;
+   writeln;
+   writeln('0.0 to','qgaus':10,'expected':13);
+   writeln;
+   FOR i := 1 TO nval DO BEGIN
+      x := x1+i*dx;
+      qgaus(x1,x,ss);
+      writeln(x:5:2,ss:12:6,(-(1.0+x)*exp(-x)
+         +(1.0+x1)*exp(-x1)):12:6)
+   END
+END.

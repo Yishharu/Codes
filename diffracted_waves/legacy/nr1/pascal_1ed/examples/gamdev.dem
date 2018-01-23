@@ -1,0 +1,56 @@
+PROGRAM d7r7 (input,output);
+(* driver for routine GAMDEV *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+CONST
+   n = 20;
+   npts = 1000;
+   iscal = 200;
+   llen = 50;
+TYPE
+   CharArray50 = ARRAY [1..50] OF char;
+   RealArray21 = ARRAY [0..20] OF real;
+   RealArray55 = ARRAY [1..55] OF real;
+VAR
+   i,ia,idum,j,k,klim: integer;
+   words: CharArray50;
+   dist: RealArray21;
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+
+(*$I RAN3.PAS *)
+
+(*$I GAMDEV.PAS *)
+
+BEGIN
+   idum := -13;
+   WHILE true DO BEGIN
+      FOR j := 0 TO 20 DO dist[j] := 0.0;
+      REPEAT
+         writeln('Select order of Gamma distribution (n=1..20), -1 to end --');
+         readln(ia);
+      UNTIL ia <= 20;
+      IF ia < 0 THEN GOTO 99;
+      FOR i := 1 TO npts DO BEGIN
+         j := trunc(gamdev(ia,idum));
+         IF (j >= 0) AND (j <= 20) THEN dist[j] := dist[j]+1
+      END;
+      writeln;
+      writeln('gamma-distribution deviate, order ',
+         ia:2,' of ',npts:6,' points');
+      writeln('x':6,'p(x)':7,'graph:':9);
+      FOR j := 0 TO 19 DO BEGIN
+         dist[j] := dist[j]/npts;
+         FOR k := 1 TO 50 DO words[k] := ' ';
+         klim := trunc(iscal*dist[j]);
+         IF klim > llen THEN klim := llen;
+         FOR k := 1 TO klim DO words[k] := '*';
+         write(j:6,dist[j]:8:4,'  ');
+         FOR k := 1 TO klim DO write(words[k]);
+         writeln
+      END
+   END;
+99:
+END.

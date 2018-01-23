@@ -1,0 +1,84 @@
+EXTERNAL
+
+SUB spctrm (p(), m, k, ovrlap, w1(), w2())
+
+    LIBRARY "four1"
+
+    DECLARE FUNCTION input$       ! Defined in the driver
+
+    FUNCTION window (j)
+
+        LET window = 1 - abs(((j - 1) - facm) * facp)
+        ! LET window = 1
+        ! LET window = 1 - (((j - 1) * facm) * facp)^2
+
+    END FUNCTION
+
+    LET mm = m + m
+    LET m4 = mm + mm
+    LET m44 = m4 + 4
+    LET m43 = m4 + 3
+    LET den = 0
+    LET facm = m - .5
+    LET facp = 1 / (m + .5)
+    LET sumw = 0
+    FOR j = 1 to mm
+        LET sumw = sumw + window(j)^2
+    NEXT j
+    FOR j = 1 to m
+        LET p(j) = 0
+    NEXT j
+    IF ovrlap=-1 then
+       FOR j = 1 to m
+           LET w2(j) = val(input$(12, 1))
+           IF mod(j, 4) = 0 then LET dum$ = input$(2, 1)
+       NEXT j
+    END IF
+
+    LET jn = 0
+    FOR kk = 1 to k
+        FOR joff = -1 to 0
+            IF ovrlap=-1 then
+               FOR j = 1 to m
+                   LET w1(joff + j + j) = w2(j)
+               NEXT j
+               FOR j = 1 to m
+                   LET w2(j) = val(input$(12, 1))
+                   IF mod(j, 4) = 0 then LET dum$ = input$(2, 1)
+               NEXT j
+               LET joffn = joff + mm
+               FOR j = 1 to m
+                   LET w1(joffn + j + j) = w2(j)
+               NEXT j
+            ELSE
+               FOR j = joff + 2 to m4 step 2
+                   LET w1(j) = val(input$(12, 1))
+                   LET jn = jn + 1
+                   IF mod(jn, 4) = 0 then LET dum$ = input$(2, 1)
+               NEXT j
+            END IF
+        NEXT joff
+
+        FOR j = 1 to mm
+            LET j2 = j + j
+            LET w = window(j)
+            LET w1(j2) = w1(j2) * w
+            LET w1(j2 - 1) = w1(j2 - 1) * w
+        NEXT j
+
+        CALL four1 (w1(), mm, 1)
+
+        LET p(1) = p(1) + w1(1)^2 + w1(2)^2
+        FOR j = 2 to m
+            LET j2 = j + j
+            LET p(j) = p(j) + w1(j2)^2 + w1(j2 - 1)^2 + w1(m44 - j2)^2
+            LET p(j) = p(j) + w1(m43 - j2)^2
+        NEXT j
+        LET den = den + sumw
+    NEXT kk
+    LET den = m4 * den
+    FOR j = 1 to m
+        LET p(j) = p(j) / den
+    NEXT j
+
+END SUB

@@ -1,0 +1,69 @@
+PROGRAM D10r9
+
+! Driver for routine frprmn
+
+LIBRARY "frprmn"
+
+LET ndim = 3
+DIM p(0)
+MAT redim p(ndim)
+
+CLEAR
+LET ftol = .000001
+LET pio2 = pi/2
+PRINT "Program finds the minimum of a function"
+PRINT "with different trial starting vectors."
+PRINT "True minimum is (0.5, 0.5, 0.5)"
+PRINT
+
+FOR k = 0 to 4
+    LET angl = pio2 * k / 4
+    LET p(1) = 2 * cos(angl)
+    LET p(2) = 2 * sin(angl)
+    LET p(3) = 0
+    PRINT "Starting vector: (";
+    PRINT using "#.####": p(1);
+    PRINT ", ";
+    PRINT using "#.####": p(2);
+    PRINT ", ";
+    PRINT using "#.####": p(3);
+    PRINT ")"
+
+    CALL frprmn (p(), ndim, ftol, iter, fret)
+
+    PRINT "Iterations:"; iter
+    PRINT "Solution vector: (";
+    PRINT using "#.####": p(1);
+    PRINT ", ";
+    PRINT using "#.####": p(2);
+    PRINT ", ";
+    PRINT using "#.####": p(3);
+    PRINT ")"
+    PRINT "Func. value at solution   ";
+    PRINT using "-#.######^^^^": fret
+    PRINT
+NEXT k
+
+END
+
+! These routines are used by the routine frprmn
+
+SUB dfunc (x(), df())
+    LIBRARY "bessj0", "bessj1"
+    DECLARE FUNCTION bessj0, bessj1
+    LET df(1) = bessj1(x(1) - .5) * bessj0(x(2) - .5) * bessj0(x(3) - .5)
+    LET df(2) = bessj0(x(1) - .5) * bessj1(x(2) - .5) * bessj0(x(3) - .5)
+    LET df(3) = bessj0(x(1) - .5) * bessj0(x(2) - .5) * bessj1(x(3) - .5)
+END SUB
+
+FUNCTION func (x)
+    LIBRARY "f1dim"
+    DECLARE FUNCTION f1dim
+    LET func = f1dim(x)
+END FUNCTION
+
+FUNCTION func2 (x(), n)
+    LIBRARY "bessj0"
+    DECLARE FUNCTION bessj0
+    LET func2 = 1 - bessj0(x(1)-.5) * bessj0(x(2)-.5) * bessj0(x(3)-.5)
+END FUNCTION

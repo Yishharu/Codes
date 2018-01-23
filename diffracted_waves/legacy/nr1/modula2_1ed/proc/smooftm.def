@@ -1,0 +1,16 @@
+DEFINITION MODULE SmooFTM;
+
+   (* EXPORT QUALIFIED SmooFT; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE SmooFT(Y: Vector; 
+                    n: INTEGER;
+                    pts: REAL); 
+   (*
+     Smooths an array Y of n data points, with a window whose full width is 
+     of order pts neighboring points, a user supplied value. Y is modified. 
+     Y should be dimensioned at least of length [1, MP], where MP >= integral 
+     power of two >= n+2*pts.
+   *)
+END SmooFTM.

@@ -1,0 +1,55 @@
+PROGRAM d12r12(input,output);
+(* driver for routine PREDIC *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npts = 300;
+   npoles = 10;
+   npolp1 = 11;   (* npolp1 = npoles+1 *)
+   nfut = 20;
+   pi = 3.1415926;
+TYPE
+   RealArrayNP = ARRAY [1..npts] OF real;
+   RealArrayNDATA = RealArrayNP;
+   RealArrayMP = ARRAY [1..npoles] OF real;
+   RealArrayNPOLES = RealArrayMP;
+   RealArrayNFUT = ARRAY [1..nfut] OF real;      
+   Complex = RECORD
+                r,i: real
+             END;
+   ComplexArrayMp1 = ARRAY [1..npolp1] OF Complex;
+VAR
+   i: integer;
+   dum: real;
+   d: RealArrayMP;
+   data: RealArrayNP;
+   future: RealArrayNFUT;
+
+FUNCTION f(n,npts: integer): real;
+CONST
+   pi = 3.1415926;
+BEGIN
+   f := exp(-1.0*n/npts)*sin(2.0*pi*n/50.0)
+      +exp(-2.0*n/npts)*sin(2.2*pi*n/50.0)
+END;
+
+(*$I LAGUER.PAS *)
+
+(*$I ZROOTS.PAS *)
+
+(*$I MEMCOF.PAS *)
+
+(*$I FIXRTS.PAS *)
+
+(*$I PREDIC.PAS *)
+   
+BEGIN
+   FOR i := 1 TO npts DO data[i] := f(i,npts);
+   memcof(data,npts,npoles,dum,d);
+   fixrts(d,npoles);
+   predic(data,npts,d,npoles,future,nfut);
+   writeln('I':6,'Actual':11,'PREDIC':12);
+   FOR i := 1 TO nfut DO
+      writeln(i:6,f(i+npts,npts):12:6,future[i]:12:6)
+END.

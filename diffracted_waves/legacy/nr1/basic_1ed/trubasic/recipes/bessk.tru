@@ -1,0 +1,23 @@
+EXTERNAL
+
+FUNCTION bessk (n, x)
+
+    LIBRARY "bessk0", "bessk1"
+    DECLARE FUNCTION bessk0, bessk1
+
+    IF n < 2 then
+       PRINT "Bad argument n in bessk"
+       EXIT FUNCTION
+    END IF
+
+    LET tox = 2 / x
+    LET bkm = bessk0(x)
+    LET bk = bessk1(x)
+    FOR j = 1 to n - 1
+        LET bkp = bkm + j * tox * bk
+        LET bkm = bk
+        LET bk = bkp
+    NEXT j
+    LET bessk = bk
+
+END FUNCTION

@@ -1,0 +1,31 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE SUB ZBRAC (DUM!, X1!, X2!, SUCCES%)
+DECLARE FUNCTION BESSJ0! (X!)
+
+'PROGRAM D9R2
+'Driver for routine ZBRAC
+CLS
+PRINT "  Bracketing values:        Function values:"
+PRINT
+PRINT "    X1        X2            BESSJ0(X1)  BESSJ0(X2)"
+PRINT
+FOR I = 1 TO 10
+  X1 = I
+  X2 = X1 + 1!
+  CALL ZBRAC(DUM, X1, X2, SUCCES%)
+  IF SUCCES% THEN
+    PRINT USING "####.##"; X1;
+    PRINT "   ";
+    PRINT USING "####.##"; X2;
+    PRINT "            ";
+    PRINT USING "#.######"; BESSJ0(X1);
+    PRINT "    ";
+    PRINT USING "#.######"; BESSJ0(X2)
+  END IF
+NEXT I
+END
+
+FUNCTION FUNC (X)
+FUNC = BESSJ0(X)
+END FUNCTION
+

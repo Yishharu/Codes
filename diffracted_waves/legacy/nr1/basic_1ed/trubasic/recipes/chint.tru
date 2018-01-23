@@ -1,0 +1,17 @@
+EXTERNAL
+
+SUB chint (a, b, c(), cint(), n)
+
+    LET const = .25 * (b - a)
+    LET sum = 0
+    LET fac = 1
+    FOR j = 2 to n - 1
+        LET cint(j) = const * (c(j - 1) - c(j + 1)) / (j - 1)
+        LET sum = sum + fac * cint(j)
+        LET fac = -fac
+    NEXT j
+    LET cint(n) = const * c(n - 1) / (n - 1)
+    LET sum = sum + fac * cint(n)
+    LET cint(1) = 2 * sum
+
+END SUB

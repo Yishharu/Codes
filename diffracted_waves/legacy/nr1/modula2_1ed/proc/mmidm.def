@@ -1,0 +1,23 @@
+DEFINITION MODULE MMidM;
+
+   (* EXPORT QUALIFIED MMid; *)
+
+   FROM NRMath IMPORT DerivFunction;
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE MMid(Y, DYDX: Vector; 
+                  xs, htot: REAL; 
+                  nstep: INTEGER; 
+                  derivs: DerivFunction;
+                  YOUT: Vector); 
+   (*
+     Modified midpoint step.  At xs, input the dependent variable vector
+     Y[0, n-1] and its derivative vector DYDX[0, n-1]. Also input is htot, 
+     the total step to be made, and nstep, the number of substeps to be used.
+     The output is returned as YOUT[0, n-1], which need not be a distinct 
+     array from Y; if it is distinct, however, then Y and DYDX are returned
+     undamaged. derivs is the user-supplied routine for calculating the
+     right-hand side derivative.
+   *)
+
+END MMidM.

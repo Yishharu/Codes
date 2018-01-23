@@ -1,0 +1,44 @@
+DECLARE FUNCTION FUNC! (X!)
+DECLARE SUB CHEBFT (A!, B!, C!(), N!, DUM!)
+DECLARE SUB CHINT (A!, B!, C!(), CINQ!(), N!)
+DECLARE FUNCTION FINT! (X!)
+DECLARE FUNCTION CHEBEV! (A!, B!, DUM!, MVAL!, X!)
+COMMON SHARED C()
+
+'PROGRAM D5R6
+'Driver for routine CHINT
+CLS
+NVAL = 40
+PIO2 = 1.5707963#
+DIM C(NVAL), CINQ(NVAL)
+A = -PIO2
+B = PIO2
+CALL CHEBFT(A, B, C(), NVAL, DUM)
+'Test integral
+DO
+  PRINT "How many terms in Chebyshev evaluation?"
+  PRINT "Enter n between 6 and"; STR$(NVAL); ". Enter n=0 to end."
+  LINE INPUT MVAL$
+  MVAL = VAL(MVAL$)
+  IF MVAL <= 0 OR MVAL > NVAL THEN EXIT DO
+  CALL CHINT(A, B, C(), CINQ(), MVAL)
+  FOR I = 1 TO NVAL
+    C(I) = CINQ(I)
+  NEXT I
+  PRINT "        X        Actual    Cheby. Integ."
+  FOR I = -8 TO 8
+    X = I * PIO2 / 10!
+    PRINT USING "#####.######"; X; FINT(X) - FINT(-PIO2); CHEBEV(A, B, DUM, MVAL, X)
+  NEXT I
+LOOP
+END
+
+FUNCTION FINT (X)
+'Integral of FUNC
+FINT = 4! * X * (X ^ 2 - 7!) * SIN(X) - (X ^ 4 - 14! * X ^ 2 + 28!) * COS(X)
+END FUNCTION
+
+FUNCTION FUNC (X)
+FUNC = (X ^ 2) * (X ^ 2 - 2!) * SIN(X)
+END FUNCTION
+

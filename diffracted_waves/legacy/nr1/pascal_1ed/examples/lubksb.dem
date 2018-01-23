@@ -1,0 +1,70 @@
+PROGRAM d2r3(input,output,dfile);
+(* driver for routine LUBKSB *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+CONST
+   np = 20;
+TYPE
+   RealArrayNPbyNP = ARRAY [1..np,1..np] OF real;
+   RealArrayNP = ARRAY [1..np] OF real;
+   IntegerArrayNP = ARRAY [1..np] OF integer;
+VAR
+   j,k,l,m,n: integer;
+   p: real;
+   a,b,c: RealArrayNPbyNP;
+   indx: IntegerArrayNP;
+   x: RealArrayNP;
+   dfile: text;
+
+(*$I LUDCMP.PAS *)
+
+(*$I LUBKSB.PAS *)
+
+BEGIN
+   NROpen(dfile,'matrx1.dat');
+   WHILE true DO BEGIN
+      readln(dfile);
+      readln(dfile);
+      readln(dfile,n,m);
+      readln(dfile);
+      FOR k := 1 TO n DO BEGIN
+         FOR l := 1 TO n-1 DO read(dfile,a[k,l]);
+         readln(dfile,a[k,n])
+      END;
+      readln(dfile);
+      FOR l := 1 TO m DO BEGIN
+         FOR k := 1 TO n-1 DO read(dfile,b[k,l]);
+         readln(dfile,b[n,l])
+      END;
+(* save matrix a for later testing *)
+      FOR l := 1 TO n DO
+         FOR k := 1 TO n DO c[k,l] := a[k,l];
+(* do lu decomposition *)
+      ludcmp(c,n,indx,p);
+(* solve equations for each right-hand vector *)
+      FOR k := 1 TO m DO BEGIN
+         FOR l := 1 TO n DO x[l] := b[l,k];
+         lubksb(c,n,indx,x);
+(* test results with original matrix *)
+         writeln('right-hand side vector:');
+         FOR l := 1 TO n-1 DO write(b[l,k]:12:6);
+         writeln(b[n,k]:12:6); 
+         writeln('result of matrix applied to sol''n vector');
+         FOR l := 1 TO n DO BEGIN
+            b[l,k] := 0.0;
+            FOR j := 1 TO n DO
+               b[l,k] := b[l,k]+a[l,j]*x[j]
+         END;
+         FOR l := 1 TO n-1 DO write(b[l,k]:12:6);
+         writeln(b[n,k]:12:6);
+         writeln('***********************************')
+      END;
+      IF eof(dfile) THEN GOTO 99;
+      writeln('press RETURN for next problem:');
+      readln
+   END;
+99:
+   close(dfile)
+END.

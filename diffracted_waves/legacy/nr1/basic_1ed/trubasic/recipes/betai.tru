@@ -1,0 +1,25 @@
+EXTERNAL
+
+FUNCTION betai (a, b, x)
+
+    LIBRARY "gammln", "betacf"
+    DECLARE FUNCTION gammln, betacf
+
+    IF x < 0 or x > 1 then
+       PRINT "Bad argument x in betai"
+       EXIT FUNCTION
+    END IF
+
+    IF x = 0 or x = 1 then
+       LET bt = 0
+    ELSE
+       LET bt = exp(gammln(a + b) - gammln(a) - gammln(b) + a * log(x) + b * log(1 - x))
+    END IF
+
+    IF x < (a + 1) / (a + b + 2) then
+       LET betai = bt * betacf(a, b, x) / a
+    ELSE
+       LET betai = 1 - bt * betacf(b, a, 1 - x) / b
+    END IF
+
+END FUNCTION

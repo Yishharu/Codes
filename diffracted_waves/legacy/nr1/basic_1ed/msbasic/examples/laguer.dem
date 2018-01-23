@@ -1,0 +1,51 @@
+DECLARE SUB LAGUER (A!(), M!, X!(), EPS!, POLISH%)
+DECLARE FUNCTION CABS! (R!, I!)
+
+'PROGRAM D9R10
+'Driver for routine LAGUER
+CLS
+M = 4
+MP1 = M + 1
+NTRY = 21
+EPS = .000001
+DIM A(2, MP1), Y(2, NTRY), X(2)
+FOR J = 1 TO MP1
+  FOR I = 1 TO 2
+    READ A(I, J)
+  NEXT I
+NEXT J
+DATA 0.0,2.0,0.0,0.0,-1.0,-2.0,0.0,0.0,1.0,0.0
+PRINT "Roots of polynomial x^4-(1+2i)*x^2+2i"
+PRINT
+PRINT "              Real         Complex"
+PRINT
+N = 0
+POLISH% = 0
+FOR I = 1 TO NTRY
+  X(1) = (I - 11!) / 10!
+  X(2) = (I - 11!) / 10!
+  CALL LAGUER(A(), M, X(), EPS, POLISH%)
+  IF N = 0 THEN
+    N = 1
+    Y(1, 1) = X(1)
+    Y(2, 1) = X(2)
+    PRINT USING "#####"; N;
+    PRINT USING "########.######"; X(1); X(2)
+  ELSE
+    IFLAG = 0
+    FOR J = 1 TO N
+      IF CABS(X(1) - Y(1, J), X(2) - Y(2, J)) <= EPS * CABS(X(1), X(2)) THEN
+        IFLAG = 1
+      END IF
+    NEXT J
+    IF IFLAG = 0 THEN
+      N = N + 1
+      Y(1, N) = X(1)
+      Y(2, N) = X(2)
+      PRINT USING "#####"; N;
+      PRINT USING "########.######"; X(1); X(2)
+    END IF
+  END IF
+NEXT I
+END
+

@@ -1,0 +1,47 @@
+DECLARE FUNCTION POIDEV! (XM!, IDUM&)
+
+'PROGRAM D7R8
+'Driver for routine POIDEV
+CLS
+N = 20
+NPTS = 10000
+ISCAL = 200
+LLEN = 50
+DIM DIST(21), TEXT$(50)
+IDUM& = -13
+DO
+  DO
+    FOR J = 1 TO 21
+      DIST(J) = 0!
+    NEXT J
+    PRINT "Mean of Poisson distrib. (x=0 to 20); neg. to end"
+    INPUT XM
+    IF XM < 0! THEN END
+  LOOP WHILE XM > 20!
+  FOR I = 1 TO NPTS
+    J = INT(POIDEV(XM, IDUM&)) + 1
+    IF J >= 1 AND J <= 21 THEN DIST(J) = DIST(J) + 1
+  NEXT I
+  PRINT "Poisson-distributed deviate; mean"; XM; "of"; NPTS; "points"
+  PRINT "    x       p(x)     graph:"
+  FOR J = 1 TO 20
+    DIST(J) = DIST(J) / NPTS
+    FOR K = 1 TO 50
+      TEXT$(K) = " "
+    NEXT K
+    KLIM = INT(ISCAL * DIST(J))
+    IF KLIM > LLEN THEN KLIM = LLEN
+    FOR K = 1 TO KLIM
+      TEXT$(K) = "*"
+    NEXT K
+    PRINT USING "####.##"; CSNG(J);
+    PRINT USING "#####.####"; DIST(J);
+    PRINT "    ";
+    FOR K = 1 TO 50
+      PRINT TEXT$(K);
+    NEXT K
+    PRINT
+  NEXT J
+LOOP
+END
+

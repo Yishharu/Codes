@@ -1,0 +1,29 @@
+EXTERNAL
+
+SUB tridag (a(), b(), c(), r(), u(), n)
+
+    DIM gam(0)
+    MAT redim gam(n)
+
+    IF b(1) = 0 then
+       PRINT "Abnormal exit"
+       EXIT SUB
+    END IF
+
+    LET bet = b(1)
+    LET u(1) = r(1) / bet
+    FOR j = 2 to n
+        LET gam(j) = c(j - 1) / bet
+        LET bet = b(j) - a(j) * gam(j)
+        IF bet = 0 then
+           PRINT "Abnormal exit"
+           EXIT SUB
+        END IF
+        LET u(j) = (r(j) - a(j) * u(j - 1)) / bet
+    NEXT j
+
+    FOR j = n - 1 to 1 step -1
+        LET u(j) = u(j) - gam(j + 1) * u(j + 1)
+    NEXT j
+
+END SUB

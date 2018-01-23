@@ -1,0 +1,39 @@
+EXTERNAL
+
+SUB moment (data(), n, ave, adev, sdev, var, skew, curt)
+
+    IF n <= 1 then
+       PRINT "n must be at least 2"
+       EXIT SUB
+    END IF
+
+    LET s = 0
+    FOR j = 1 to n
+        LET s = s + data(j)
+    NEXT j
+    LET ave = s / n
+    LET adev = 0
+    LET var = 0
+    LET skew = 0
+    LET curt = 0
+    FOR j = 1 to n
+        LET s = data(j) - ave
+        LET adev = adev + abs(s)
+        LET p = s * s
+        LET var = var + p
+        LET p = p * s
+        LET skew = skew + p
+        LET p = p * s
+        LET curt = curt + p
+    NEXT j
+    LET adev = adev / n
+    LET var = var / (n - 1)
+    LET sdev = sqr(var)
+    IF var <> 0 then
+       LET skew = skew / (n * sdev^3)
+       LET curt = curt / (n * var^2) - 3
+    ELSE
+       PRINT "no skew or kurtosis when zero variance"
+    END IF
+
+END SUB

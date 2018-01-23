@@ -1,0 +1,43 @@
+PROGRAM d3r10(input,output,infile);
+(* driver for routine BCUCOF *)
+
+(*$I MODFILE.PAS *)
+
+TYPE
+   RealArray4 = ARRAY [1..4] OF real;
+   RealArray4by4  = ARRAY [1..4,1..4] OF real;
+   RealArray16by16 = ARRAY [1..16,1..16] OF real;
+VAR
+   infile: text;
+   d1,d2,ee,x1x2: real;
+   i,j: integer;
+   y,y1,y2,y12,x1,x2: RealArray4;
+   c: RealArray4by4;
+   BcucofWt: RealArray16by16;
+   BcucofFlag: boolean;
+
+(*$I BCUCOF.PAS *)
+
+BEGIN
+   BcucofFlag := true;
+   x1[1] := 0.0; x1[2] := 2.0; x1[3] := 2.0; x1[4] := 0.0;
+   x2[1] := 0.0; x2[2] := 0.0; x2[3] := 2.0; x2[4] := 2.0;
+   d1 := x1[2]-x1[1];
+   d2 := x2[4]-x2[1];
+   FOR i := 1 TO 4 DO BEGIN
+      x1x2 := x1[i]*x2[i];
+      ee := exp(-x1x2);
+      y[i] := x1x2*ee;
+      y1[i] := x2[i]*(1.0-x1x2)*ee;
+      y2[i] := x1[i]*(1.0-x1x2)*ee;
+      y12[i] := (1.0-3.0*x1x2+sqr(x1x2))*ee
+   END;
+   bcucof(y,y1,y2,y12,d1,d2,c);
+   writeln;
+   writeln('Coefficients for bicubic interpolation:');
+   writeln;
+   FOR i := 1 TO 4 DO BEGIN
+      FOR j := 1 TO 4 DO write(c[i,j]:12:6);
+      writeln
+   END
+END.

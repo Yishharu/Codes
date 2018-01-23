@@ -1,0 +1,85 @@
+DECLARE SUB GAUSSJ (A!(), N!, NP!, B!(), M!, MP!)
+
+'PROGRAM D2R1
+'Driver program for subroutine GAUSSJ
+'Reads Matrices from file MATRX1.DAT and feeds them to GAUSSJ
+CLS
+NP = 20
+DIM A(NP, NP), B(NP, NP), AI(NP, NP), X(NP, NP)
+DIM U(NP, NP), T(NP, NP)
+OPEN "MATRX1.DAT" FOR INPUT AS #1
+DO
+  LINE INPUT #1, DUM$
+  IF DUM$ = "END" THEN CLOSE #1: END
+  LINE INPUT #1, DUM$
+  LINE INPUT #1, DUM$
+  N = VAL(MID$(DUM$, 1, 2))
+  M = VAL(MID$(DUM$, 3, 2))
+  LINE INPUT #1, DUM$
+  FOR K = 1 TO N
+    LINE INPUT #1, DUM$
+    FOR L = 1 TO N
+      A(K, L) = VAL(MID$(DUM$, 4 * L - 3, 4))
+    NEXT L
+  NEXT K
+  LINE INPUT #1, DUM$
+  FOR L = 1 TO M
+    LINE INPUT #1, DUM$
+    FOR K = 1 TO N
+      B(K, L) = VAL(MID$(DUM$, 4 * K - 3, 4))
+    NEXT K
+  NEXT L
+  'Save Matrices for later testing of results
+  FOR L = 1 TO N
+    FOR K = 1 TO N
+      AI(K, L) = A(K, L)
+    NEXT K
+    FOR K = 1 TO M
+      X(L, K) = B(L, K)
+    NEXT K
+  NEXT L
+  'Invert Matrix
+  PRINT
+  CALL GAUSSJ(AI(), N, NP, X(), M, NP)
+  PRINT "Inverse of Matrix A : "
+  FOR K = 1 TO N
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; AI(K, L);
+    NEXT L
+    PRINT
+  NEXT K
+  'Test Results
+  'Check Inverse
+  PRINT "A times A-inverse (compare with unit matrix)"
+  FOR K = 1 TO N
+    FOR L = 1 TO N
+      U(K, L) = 0!
+      FOR J = 1 TO N
+        U(K, L) = U(K, L) + A(K, J) * AI(J, L)
+      NEXT J
+    NEXT L
+    FOR L = 1 TO N
+      PRINT USING "#####.######"; U(K, L);
+    NEXT L
+    PRINT
+  NEXT K
+  'Check Vector Solutions
+  PRINT "Check the following vectors for equality:"
+  PRINT "          Original   Matrix*Sol'n"
+  FOR L = 1 TO M
+    PRINT "Vector "; STR$(L); ":"
+    FOR K = 1 TO N
+      T(K, L) = 0!
+      FOR J = 1 TO N
+        T(K, L) = T(K, L) + A(K, J) * X(J, L)
+      NEXT J
+      PRINT "       ";
+      PRINT USING "#####.######"; B(K, L); T(K, L)
+    NEXT K
+  NEXT L
+  PRINT "***********************************"
+  PRINT "Press RETURN for next problem:";
+  LINE INPUT DUM$
+LOOP
+END
+

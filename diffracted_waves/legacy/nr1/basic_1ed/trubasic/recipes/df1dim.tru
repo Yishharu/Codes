@@ -1,0 +1,26 @@
+MODULE df1dim
+
+    PUBLIC ncom, pcom(50), xicom(50)   ! Labelled COMMOM /F1COM/
+
+    FUNCTION df1dim (x)
+
+        ! The subroutine dfunc is supplied by the user
+
+        DIM xt(0), df(0)
+        MAT redim xt(ncom), df(ncom)
+
+        FOR j = 1 to ncom
+            LET xt(j) = pcom(j) + x * xicom(j)
+        NEXT j
+
+        CALL dfunc (xt(), df())
+
+        LET df1 = 0
+        FOR j = 1 to ncom
+            LET df1 = df1 + df(j) * xicom(j)
+        NEXT j
+        LET df1dim = df1
+
+    END FUNCTION
+
+END MODULE

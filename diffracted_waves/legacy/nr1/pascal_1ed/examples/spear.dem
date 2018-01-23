@@ -1,0 +1,78 @@
+PROGRAM d13r16(input,output,dfile);
+(* driver for routine SPEAR *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   ndat = 20;
+   nmon = 12;
+   n = ndat;
+TYPE
+   StrArray64 = string[64];
+   StrArray15 = string[15];
+   StrArray4 = string[4];
+   RealArrayNDATbyNMON = ARRAY [1..ndat,1..nmon] OF real;
+   RealArrayNP = ARRAY [1..n] OF real;
+VAR
+   d,probd,probrs,rs,zd: real;
+   i,j: integer;
+   ave,data1,data2,zlat: RealArrayNP;
+   rays: RealArrayNDATbyNMON;
+   city: ARRAY [1..ndat] OF StrArray15;
+   mon: ARRAY [1..nmon] OF StrArray4;
+   txt: StrArray64;
+   dfile: text;
+
+(*$I SORT2.PAS *)
+
+(*$I ERFCC.PAS *)
+
+(*$I GAMMLN.PAS *)
+
+(*$I BETACF.PAS *)
+
+(*$I BETAI.PAS *)
+
+(*$I SPEAR.PAS *)
+
+BEGIN
+   NROpen(dfile,'table2.dat');
+   readln(dfile);
+   readln(dfile,txt);
+   read(dfile,city[1]);
+   FOR i := 1 TO nmon DO read(dfile,mon[i]);
+   readln(dfile);
+   readln(dfile);
+   FOR i := 1 TO ndat DO BEGIN
+      read(dfile,city[i]);
+      FOR j := 1 TO nmon DO read(dfile,rays[i,j]);
+      read(dfile,ave[i]);
+      read(dfile,zlat[i]);
+      readln(dfile)
+   END;
+   close(dfile);
+   writeln(txt);
+   write(' ':15);
+   FOR i := 1 TO 12 DO write(mon[i]:4);
+   writeln;
+   FOR i := 1 TO ndat DO BEGIN
+      write(city[i]:15);
+      FOR j := 1 TO 12 DO write(round(rays[i,j]):4);
+      writeln
+   END;
+(* check temperature correlations between different months *)
+   writeln;
+   writeln('Are sunny summer places also sunny winter places?');
+   writeln('Check correlation of sampled U.S. solar radiation');
+   writeln('(july with other months)');
+   writeln;
+   writeln('month','d':9,'st. dev.':14,'probd':11,
+         'spearman-r':15,'probrs':10);
+   FOR i := 1 TO ndat DO data1[i] := rays[i,1];
+   FOR j := 1 TO 12 DO BEGIN
+      FOR i := 1 TO ndat DO data2[i] := rays[i,j];
+      spear(data1,data2,ndat,d,zd,probd,rs,probrs);
+      writeln(mon[j],d:12:2,zd:12:6,probd:12:6,
+            rs:13:6,probrs:12:6)
+   END
+END.

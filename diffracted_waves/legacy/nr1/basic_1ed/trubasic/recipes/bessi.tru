@@ -1,0 +1,40 @@
+EXTERNAL
+
+FUNCTION bessi (n, x)
+
+    LIBRARY "bessi0"
+    DECLARE FUNCTION bessi0
+
+    LET iacc = 40
+    LET bigno = 1e+10
+    LET bigni = 1e-10
+
+    IF n < 2 then
+       PRINT "bad argument n in bessi"
+       EXIT FUNCTION
+    END IF
+
+    IF x = 0 then
+       LET bessi = 0
+    ELSE
+       LET tox = 2 / abs(x)
+       LET bip = 0
+       LET bi = 1
+       LET besi = 0
+       LET m = 2 * (n + int(sqr(iacc * n)))
+       FOR j = m to 1 step -1
+           LET bim = bip + j * tox * bi
+           LET bip = bi
+           LET bi = bim
+           IF abs(bi) > bigno then
+              LET besi = besi * bigni
+              LET bi = bi * bigni
+              LET bip = bip * bigni
+           END IF
+           IF j = n then LET besi = bip
+       NEXT j
+       LET dum = besi * bessi0(x) / bi
+       IF x < 0 and mod(n,2) = 1 then LET bessi = -dum else LET bessi = dum
+    END IF
+
+END FUNCTION

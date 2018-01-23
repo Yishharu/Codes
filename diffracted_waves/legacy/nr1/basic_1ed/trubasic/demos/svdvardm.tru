@@ -1,0 +1,71 @@
+PROGRAM D14r5
+
+! Driver for routine svdvar
+
+LIBRARY "svdvar"
+
+LET mp = 6
+LET ma = 3
+LET ncvm = ma
+DIM v(0,0), w(0), cvm(0,0), tru(0,0)
+MAT redim v(mp, mp), w(mp), cvm(ncvm, ncvm), tru(ma, ma)
+
+CLEAR
+MAT READ w
+DATA 0.0, 1.0, 2.0, 3.0, 4.0, 5.0
+
+FOR j = 1 to mp
+    FOR i = 1 to mp
+        READ v(i, j)
+    NEXT i
+NEXT j
+DATA 1.0, 2.0, 3.0, 4.0, 5.0, 6.0
+DATA 1.0, 2.0, 3.0, 4.0, 5.0, 6.0
+DATA 1.0, 2.0, 3.0, 4.0, 5.0, 6.0
+DATA 1.0, 2.0, 3.0, 4.0, 5.0, 6.0
+DATA 1.0, 2.0, 3.0, 4.0, 5.0, 6.0
+DATA 1.0, 2.0, 3.0, 4.0, 5.0, 6.0
+
+FOR j = 1 to ma
+    FOR i = 1 to ma
+        READ tru(i, j)
+    NEXT i
+NEXT j
+DATA 1.25, 2.5,  3.75
+DATA 2.5,  5.0,  7.5
+DATA 3.75, 7.5, 11.25
+
+PRINT "Matrix v"
+FOR i = 1 to mp
+    FOR j = 1 to mp
+        PRINT using "----#.######": v(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+PRINT "Vector w"
+FOR i = 1 to mp
+    PRINT using "----#.######": w(i);
+NEXT i
+PRINT
+
+CALL svdvar (v(,), ma, mp, w(), cvm(,), ncvm)
+
+PRINT
+PRINT "Covariance matrix from svdvar"
+FOR i = 1 to ma
+    FOR j = 1 to ma
+        PRINT using "----#.######": cvm(i, j);
+    NEXT j
+    PRINT
+NEXT i
+PRINT
+PRINT "Expected covariance matrix"
+FOR i = 1 to ma
+    FOR j = 1 to ma
+        PRINT using "----#.######": tru(i, j);
+    NEXT j
+    PRINT
+NEXT i
+
+END

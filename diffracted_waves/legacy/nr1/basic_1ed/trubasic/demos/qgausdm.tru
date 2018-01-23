@@ -1,0 +1,28 @@
+PROGRAM D4r8
+
+! Driver for routine qgaus
+
+LIBRARY "qgaus"
+
+CLEAR
+LET x1 = 0
+LET x2 = 5
+LET nval = 10
+LET dx = (x2 - x1) / nval
+PRINT "0.0 to    qgaus      expected"
+PRINT
+FOR i = 1 to nval
+    LET x = x1 + i * dx
+
+    CALL qgaus (dum, x1, x, ss)
+
+    PRINT using "##.##": x;
+    PRINT using "#####.######": ss;
+    PRINT using "#####.######": -(1 + x) * exp(-x) + (1 + x1) * exp(-x1)
+NEXT i
+
+END
+
+FUNCTION func (x)
+    LET func = x * exp(-x)
+END FUNCTION

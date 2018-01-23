@@ -1,0 +1,34 @@
+DECLARE SUB FTEST (DATA1!(), N1!, DATA2!(), N2!, F!, PROB!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+
+'PROGRAM D13R7
+'Driver for routine FTEST
+CLS
+NPTS = 1000
+MPTS = 500
+EPS = .01
+NVAL = 10
+DIM DATA1(NPTS), DATA2(MPTS), DATA3(MPTS)
+'Generate two Gaussian distributions with
+'different variances
+IDUM& = -13
+FOR J = 1 TO NPTS
+  DATA1(J) = GASDEV(IDUM&)
+NEXT J
+FOR J = 1 TO MPTS
+  DATA2(J) = GASDEV(IDUM&)
+NEXT J
+PRINT "   Variance 1 =   1.00"
+PRINT "   Variance 2      Ratio      Probability"
+FOR I = 1 TO NVAL + 1
+  VAR = 1! + (I - 1) * EPS
+  FACTOR = SQR(VAR)
+  FOR J = 1 TO MPTS
+    DATA3(J) = FACTOR * DATA2(J)
+  NEXT J
+  CALL FTEST(DATA1(), NPTS, DATA3(), MPTS, F, PROB)
+  PRINT USING "######.####"; VAR;
+  PRINT USING "#########.####"; F; PROB
+NEXT I
+END
+

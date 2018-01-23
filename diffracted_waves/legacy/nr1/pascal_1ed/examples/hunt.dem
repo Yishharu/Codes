@@ -1,0 +1,38 @@
+PROGRAM d3r6 (input,output);
+(* driver for routine HUNT *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 100;
+TYPE
+   RealArrayNP = ARRAY [1..n] OF real;
+VAR
+   i,j,ji: integer;
+   x: real;
+   xx: RealArrayNP;
+
+(*$I HUNT.PAS *)
+
+BEGIN
+(* create array to be searched *)
+   FOR i := 1 TO n DO xx[i] := exp(i/20.0)-74.0;
+   writeln('  result of:',' ':3,'j := 0 indicates x too small');
+   writeln(' ':15,'j := 100 indicates x too large');
+   writeln('locate:':12,'guess':8,'j':4,'xx(j)':11,'xx(j+1)':13);
+(* do test *)
+   FOR i := 1 TO 19 DO BEGIN
+      x := -100.0+200.0*i/20.0;
+(* trial parameter *)
+      ji := 5*i;
+      j := ji;
+(* begin search *)
+      hunt(xx,n,x,j);
+      IF (j < n) AND (j > 0) THEN
+         writeln(x:12:5,ji:6,j:6,xx[j]:12:6,xx[j+1]:12:6)
+      ELSE IF j = n THEN
+         writeln(x:12:5,ji:6,j:6,xx[j]:12:6,'   upper lim')
+      ELSE
+         writeln(x:12:5,ji:6,j:6,'   lower lim',xx[j+1]:12:6)
+   END
+END.

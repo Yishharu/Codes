@@ -1,0 +1,24 @@
+EXTERNAL
+
+SUB zbrak (dum, x1, x2, n, xb1(), xb2(), nb)
+
+    DECLARE FUNCTION func         ! Supplied by the user
+
+    LET nbb = nb
+    LET nb = 0
+    LET x = x1
+    LET dx = (x2 - x1) / n
+    LET fp = func(x)
+    FOR i = 1 to n
+        LET x = x + dx
+        LET fc = func(x)
+        IF fc * fp < 0 then
+           LET nb = nb + 1
+           LET xb1(nb) = x - dx
+           LET xb2(nb) = x
+        END IF
+        LET fp = fc
+        IF nbb = nb then EXIT SUB
+    NEXT i
+
+END SUB

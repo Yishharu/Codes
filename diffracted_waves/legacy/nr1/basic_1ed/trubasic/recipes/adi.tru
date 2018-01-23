@@ -1,0 +1,111 @@
+EXTERNAL
+
+SUB adi (a(,), b(,), c(,), d(,), e(,), f(,), g(,), u(,), jmax, k, alpha, beta, eps)
+
+    LIBRARY "tridag"
+
+    LET jj = 50
+    LET kk = 6
+    LET nrr = 32
+    LET maxits = 100
+    LET zero = 0
+    LET two = 2
+    LET half = .5
+
+    DIM aa(0), bb(0), cc(0), rr(0), uu(0), psi(0,0)
+    MAT redim aa(jj), bb(jj), cc(jj), rr(jj), uu(jj), psi(jj, jj)
+    DIM alph(0), bet(0), r(0), s(0,0)
+    MAT redim alph(kk), bet(kk), r(nrr), s(nrr, kk)
+
+    IF jmax > jj then
+       PRINT "Increase jj"
+       EXIT SUB
+    END IF
+    IF k > kk - 1 then
+       PRINT "Increase kk"
+       EXIT SUB
+    END IF
+
+    LET k1 = k + 1
+    LET nr = 2^k
+    LET alph(1) = alpha
+    LET bet(1) = beta
+    FOR j = 1 to k
+        LET alph(j + 1) = sqr(alph(j) * bet(j))
+        LET bet(j + 1) = half * (alph(j) + bet(j))
+    NEXT j
+    LET s(1, 1) = sqr(alph(k1) * bet(k1))
+    FOR j = 1 to k
+        LET ab = alph(k1 - j) * bet(k1 - j)
+        FOR n = 1 to 2^(j - 1)
+            LET disc = sqr(s(n, j)^2 - ab)
+            LET s(2 * n, j + 1) = s(n, j) + disc
+            LET s(2 * n - 1, j + 1) = ab / s(2 * n, j + 1)
+        NEXT n
+    NEXT j
+    FOR n = 1 to nr
+        LET r(n) = s(n, k1)
+    NEXT n
+    LET anormg = zero
+    FOR j = 2 to jmax - 1
+        FOR l = 2 to jmax - 1
+            LET anormg = anormg + abs(g(j, l))
+            LET dum = -d(j, l) * u(j, l - 1)
+            LET psi(j, l) = dum + (r(1) - e(j, l)) * u(j, l) - f(j, l) * u(j, l + 1)
+        NEXT l
+    NEXT j
+
+    LET nits = maxits / nr
+    FOR kits = 1 to nits
+        FOR n = 1 to nr
+            IF n = nr then
+               LET next = 1
+            ELSE
+               LET next = n + 1
+            END IF
+            LET rfact = r(n) + r(next)
+            FOR l = 2 to jmax - 1
+                FOR j = 2 to jmax - 1
+                    LET aa(j - 1) = a(j, l)
+                    LET bb(j - 1) = b(j, l) + r(n)
+                    LET cc(j - 1) = c(j, l)
+                    LET rr(j - 1) = psi(j, l) - g(j, l)
+                NEXT j
+
+                CALL tridag (aa(), bb(), cc(), rr(), uu(), jmax - 2)
+
+                FOR j = 2 to jmax - 1
+                    LET psi(j, l) = -psi(j, l) + two * r(n) * uu(j - 1)
+                NEXT j
+            NEXT l
+            FOR j = 2 to jmax - 1
+                FOR l = 2 to jmax - 1
+                    LET aa(l - 1) = d(j, l)
+                    LET bb(l - 1) = e(j, l) + r(n)
+                    LET cc(l - 1) = f(j, l)
+                    LET rr(l - 1) = psi(j, l)
+                NEXT l
+
+                CALL tridag (aa(), bb(), cc(), rr(), uu(), jmax - 2)
+
+                FOR l = 2 to jmax - 1
+                    LET u(j, l) = uu(l - 1)
+                    LET psi(j, l) = -psi(j, l) + rfact * uu(l - 1)
+                NEXT l
+            NEXT j
+        NEXT n
+        LET anorm = zero
+        FOR j = 2 to jmax - 1
+            FOR l = 2 to jmax - 1
+                LET resid = a(j, l) * u(j - 1, l) + (b(j, l) + e(j, l)) * u(j, l)
+                LET resid = resid + c(j, l) * u(j + 1, l) + d(j, l) * u(j, l - 1)
+                LET resid = resid + f(j, l) * u(j, l + 1) + g(j, l)
+                LET anorm = anorm + abs(resid)
+            NEXT l
+        NEXT j
+        IF anorm < eps * anormg then EXIT SUB
+
+    NEXT kits
+    PRINT "maxits exceeded"
+
+END SUB

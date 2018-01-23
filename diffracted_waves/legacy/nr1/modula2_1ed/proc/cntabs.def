@@ -1,0 +1,34 @@
+DEFINITION MODULE CnTabs;
+
+   (* EXPORT QUALIFIED CnTab1, CnTab2; *)
+
+   FROM NRIMatr IMPORT IMatrix;
+
+   PROCEDURE CnTab1(    NN: IMatrix;
+                    VAR chisq, df, prob: REAL; 
+                    VAR cramrv, ccc: REAL); 
+   (*
+     Given a two-dimensional contingency table in the form of
+     integer array NN[ni, nj], this routine returns the chi-square
+     chisq, the number of degrees of freedom df, the significance
+     level prob (small values indicating a significant association),
+     and two measures of association, Cramer's V (cramrv)
+     and the contingency coefficient C (ccc).
+   *)
+
+   PROCEDURE CnTab2(    NN: IMatrix; 
+                    VAR h, hx, hy, hygx, hxgy: REAL; 
+                    VAR uygx, uxgy, uxy: REAL); 
+
+   (*
+     Given a two-dimensional contingency table in the form of
+     an integer array NN(I,J), where I labels the x variable and
+     ranges from 0 to ni-1, J labels the y variable and ranges from 0 to 
+     nj-1, this routine returns the entropy h of the whole table, the 
+     entropy hx of the x distribution, the entropy hy of the y distribution, 
+     the entropy hygx of y given x, the entropy hxgy of x given y,
+     the dependency uygx of y on x (eq. 13.6.15), the dependency
+     uxgy of x on y (eq. 13.6.16), and the symmetrical dependency
+     uxy (eq. 13.6.17).
+   *)
+END CnTabs.

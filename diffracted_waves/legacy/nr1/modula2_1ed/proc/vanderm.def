@@ -1,0 +1,14 @@
+DEFINITION MODULE VanderM;
+
+   (* EXPORT QUALIFIED Vander; *)
+
+   FROM NRLVect IMPORT LVector;
+
+   PROCEDURE Vander(X, W, Q: LVector); 
+   (*
+     Solves the Vandermonde linear system [(sum (i=1) to (n)) xi^(k-1)wi = qk]; 
+     (k=1,...,n). Input consists of the vectors X[n] and Q[n]; the vector W[n] 
+     is output. Double precision is a good idea for this routine.
+   *)
+
+END VanderM.

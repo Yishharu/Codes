@@ -1,0 +1,26 @@
+EXTERNAL
+
+SUB crank (n, w(), s)
+
+    LET s = 0
+    LET j = 1
+    DO while j < n
+       IF w(j + 1) <> w(j) then
+          LET w(j) = j
+          LET j = j + 1
+       ELSE
+          FOR jt = j + 1 to n
+              IF w(jt) <> w(j) then EXIT FOR
+          NEXT jt
+          LET rank = .5 * (j + jt - 1)
+          FOR ji = j to jt - 1
+              LET w(ji) = rank
+          NEXT ji
+          LET t = jt - j
+          LET s = s + t^3 - t
+          LET j = jt
+       END IF
+    LOOP
+    IF j = n then LET w(n) = n
+
+END SUB

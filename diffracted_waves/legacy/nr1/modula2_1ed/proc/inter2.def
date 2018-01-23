@@ -1,0 +1,70 @@
+DEFINITION MODULE Inter2;
+
+   (* EXPORT QUALIFIED BCuCof, BCuInt, PolIn2, Splie2, Splin2; *)
+
+   FROM NRMatr IMPORT Matrix;
+   FROM NRVect IMPORT Vector;
+
+   TYPE
+      RealArray4 = ARRAY [0..3] OF REAL;
+      RealArray4by4 = ARRAY [0..3],[0..3] OF REAL;
+
+   PROCEDURE BCuCof(    y, y1, y2, y12: RealArray4; 
+                        d1, d2:         REAL; 
+                    VAR c:              RealArray4by4); 
+   (*
+     Given arrays y[4], y1[4], y2[4], and y12[4], containing the function, 
+     gradients, and cross derivative at the four grid points of a rectangular 
+     grid cell (numbered counterclockwise from the lower left), and given d1 
+     and d2, the length of the grid cell in the 1- and 2-directions, this 
+     routine returns the table c[4, 4] that is used by BCuInt for bicubic 
+     interpolation.
+   *)
+
+   PROCEDURE BCuInt(    y, y1, y2, y12:             RealArray4; 
+                        x1l, x1u, x2l, x2u, x1, x2: REAL; 
+                    VAR ansy, ansy1, ansy2:         REAL); 
+   (*
+     Bicubic interpolation within a grid square. Input quantities are 
+     y, y1, y2, y12 (as described in BCuCof); x1l and x1u, the lower and 
+     upper coordinates of the grid square in the 1-direction; x2l and x2u 
+     likewise for the 2-direction; and x1,x2, the coordinates of the desired 
+     point for the interpolation.
+     The interpolated function value is returned as ansy, and the interpolated
+     gradient values as ansy1 and ansy2. This routine calls BCuCof.
+   *)
+
+   PROCEDURE PolIn2(    X1A, X2A: Vector; 
+                        YA:       Matrix; 
+                        x1, x2:   REAL; 
+                    VAR y, dy:    REAL); 
+   (*
+     Given arrays X1A[0, m-1] and X2A[0, n-1] of independent variables, and a
+     submatrix of function values YA[m, n], tabulated at the grid points defined
+     by X1A and X2A; and given values x1 and x2 of the independent variables;
+     this routine returns an interpolated function value y, and
+     an accuracy indication dy (based only on the interpolation in the x1 
+     direction, however).
+   *)
+
+   PROCEDURE Splie2(X1A, X2A: Vector; 
+                    YA, Y2A:  Matrix); 
+   (*
+     Given the tabulated independent variables X1A[0, m-1] and X2A[0, n-1],
+     and a tabulated function YA[m, n], this routine constructs one-dimensional 
+     natural cubic splines of the rows of YA and returns the second-derivatives 
+     in the array Y2A[m, n].
+   *)
+
+   PROCEDURE Splin2(    X1A, X2A: Vector; 
+                        YA, Y2A:  Matrix; 
+                        x1, x2:   REAL; 
+                    VAR y:        REAL); 
+   (*
+     Given X1A, X2A, YA, m, n as described in SPLIE2 and Y2A as produced 
+     by that routine; and given a desired interpolating point x1, x2; 
+     this routine returns an interpolated function value y by bicubic 
+     spline interpolation.
+   *)
+
+END Inter2.

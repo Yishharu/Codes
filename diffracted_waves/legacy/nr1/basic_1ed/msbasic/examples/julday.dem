@@ -1,0 +1,42 @@
+DECLARE FUNCTION JULDAY& (IM!, ID!, IY!)
+
+'PROGRAM D1R2
+'Driver for JULDAY
+CLS
+DIM NAMQ$(12)
+FOR I = 1 TO 12
+  READ NAMQ$(I)
+NEXT I
+DATA "January","February","March","April","May","June","July","August"
+DATA "September","October","November","December"
+OPEN "DATES.DAT" FOR INPUT AS #1
+LINE INPUT #1, DUM$
+LINE INPUT #1, DUM$
+N = VAL(DUM$)
+PRINT "Month         Day  Year   Julian Day    Event"
+PRINT
+FOR I = 1 TO N
+  LINE INPUT #1, DUM$
+  IM = VAL(MID$(DUM$, 1, 2))
+  ID = VAL(MID$(DUM$, 3, 3))
+  IY = VAL(MID$(DUM$, 6, 5))
+  TXT$ = MID$(DUM$, 11)
+  PRINT NAMQ$(IM),
+  PRINT USING "###"; ID;
+  PRINT USING "######"; IY,
+  PRINT USING "###########"; JULDAY&(IM, ID, IY);
+  PRINT "     "; TXT$
+NEXT I
+CLOSE #1
+PRINT
+PRINT "Month,Day,Year (e.g. 1,13,1905)"
+PRINT
+FOR I = 1 TO 20
+  PRINT "MM,DD,YYYY"
+  INPUT IM, ID, IY
+  IF IM < 0 THEN EXIT FOR
+  PRINT "Julian Day: "; JULDAY&(IM, ID, IY)
+  PRINT
+NEXT I
+END
+

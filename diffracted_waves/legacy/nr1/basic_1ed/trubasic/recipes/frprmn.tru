@@ -1,0 +1,55 @@
+EXTERNAL
+
+SUB frprmn (p(), n, ftol, iter, fret)
+
+    LIBRARY "linmin"
+    DECLARE FUNCTION func2        ! Supplied by the user
+
+    DIM g(0), h(0), xi(0)
+    MAT redim g(n), h(n), xi(n)
+
+    LET itmax = 200
+    LET eps = 1e-10
+
+    LET fp = func2 (p(), n)
+
+    CALL dfunc (p(), xi())        ! Supplied by the user
+
+    FOR j = 1 to n
+        LET g(j) = -xi(j)
+        LET h(j) = g(j)
+        LET xi(j) = h(j)
+    NEXT j
+
+    FOR its = 1 to itmax
+        LET iter = its
+
+        CALL linmin (p(), xi(), n, fret)
+
+        IF 2 * abs(fret - fp) <= ftol * (abs(fret) + abs(fp) + eps) then EXIT SUB
+
+        LET fp = func2 (p(), n)
+        CALL dfunc (p(), xi())
+
+        LET gg = 0
+        LET dgg = 0
+        FOR j = 1 to n
+            LET gg = gg + g(j) ^ 2
+            ! For Fletcher-Reeves use
+            ! LET dgg = dgg + xi(j) ^ 2
+            ! For Polak-Ribiere use
+            LET dgg = dgg + (xi(j) + g(j)) * xi(j)
+        NEXT j
+
+        IF gg = 0 then EXIT SUB
+
+        LET gam = dgg / gg
+        FOR j = 1 to n
+            LET g(j) = -xi(j)
+            LET h(j) = g(j) + gam * h(j)
+            LET xi(j) = h(j)
+        NEXT j
+    NEXT its
+    PRINT "Frpr maximum iterations exceeded"
+
+END SUB

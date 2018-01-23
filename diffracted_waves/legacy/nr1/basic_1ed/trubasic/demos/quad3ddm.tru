@@ -1,0 +1,53 @@
+PROGRAM D4r10
+
+! Driver for routine quad3d
+
+LIBRARY "quad3d"
+
+DECLARE PUBLIC xmax
+
+CLEAR
+LET nval = 10
+PRINT "Integral of r^2 over a spherical volume"
+PRINT
+PRINT "   radius   quad3d    actual"
+FOR i = 1 to nval
+    LET xmax = .1 * i
+    LET xmin = -xmax
+
+    CALL quad3d (xmin, xmax, s)
+
+    PRINT using "#####.##": xmax;
+    PRINT using "#####.####": s;
+    PRINT using "#####.####": 4 * pi * (xmax ^ 5) / 5
+NEXT i
+
+END
+
+MODULE UserFuns
+
+    PUBLIC xmax
+
+    FUNCTION func (x, y, z)
+        LET func = x^2 + y^2 + z^2
+    END FUNCTION
+
+    ! Following are the limit functions for y and z.
+
+    FUNCTION y1 (x)
+        LET y1 = -sqr(abs(xmax ^ 2 - x ^ 2))
+    END FUNCTION
+
+    FUNCTION y2 (x)
+        LET y2 = sqr(abs(xmax ^ 2 - x ^ 2))
+    END FUNCTION
+
+    FUNCTION z1 (x, y)
+        LET z1 = -sqr(abs(xmax ^ 2 - x ^ 2 - y ^ 2))
+    END FUNCTION
+
+    FUNCTION z2 (x, y)
+        LET z2 = sqr(abs(xmax ^ 2 - x ^ 2 - y ^ 2))
+    END FUNCTION
+
+END MODULE

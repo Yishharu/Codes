@@ -1,0 +1,17 @@
+DEFINITION MODULE Four1M;
+
+   (* EXPORT QUALIFIED Four1; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Four1(DATA:  Vector; nn, isign: INTEGER); 
+   (*
+     Replaces DATA by its discrete Fourier transform, if isign
+     is input as 1; or replaces DATA by nn times its inverse
+     discrete Fourier transform, if isign is input as -1.  DATA is
+     a complex array of length nn, input as a real array
+     DATA[0, 2*nn-1]. nn MUST be an integer power of 2 (this is not 
+     checked for!).
+   *)
+
+END Four1M.

@@ -1,0 +1,42 @@
+PROGRAM d13r0(input,output);
+(* driver for routine MOMENT *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   pi = 3.14159265;
+   npts = 5000;
+   nbin = 100;
+   nppnb = 5100;   (* nppnb=npts+nbin *)
+TYPE
+   RealArrayNP = ARRAY [1..nppnb] OF real;
+VAR
+   adev,ave,curt,sdev,skew: real;
+   vrnce,x: real;
+   i,j,k,nlim: integer;
+   data: RealArrayNP;
+
+(*$I MOMENT.PAS *)
+
+BEGIN
+   i := 1;
+   FOR j := 1 TO nbin DO BEGIN
+      x := pi*j/nbin;
+      nlim := round(sin(x)*pi/2.0*npts/nbin);
+      FOR k := 1 TO nlim DO BEGIN
+         data[i] := x;
+         i := i+1
+      END
+   END;
+   writeln('moments of a sinusoidal distribution');
+   writeln;
+   moment(data,i-1,ave,adev,sdev,vrnce,skew,curt);
+   writeln('calculated':39,'expected':11);
+   writeln;
+   writeln('Mean :',' ':19,ave:12:4,pi/2.0:12:4);
+   writeln('Average Deviation :',' ':6,adev:12:4,(pi/2.0)-1.0:12:4);
+   writeln('Standard Deviation :',' ':5,sdev:12:4,0.683667:12:4);
+   writeln('Variance :',' ':15,vrnce:12:4,0.467401:12:4);
+   writeln('Skewness :',' ':15,skew:12:4,0.0:12:4);
+   writeln('Kurtosis :',' ':15,curt:12:4,-0.806249:12:4)
+END.

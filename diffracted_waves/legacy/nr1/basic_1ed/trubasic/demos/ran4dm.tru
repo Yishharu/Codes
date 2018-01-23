@@ -1,0 +1,41 @@
+PROGRAM D7r12
+
+! Driver for routine ran4
+
+LIBRARY "ran4", "avevar"
+DECLARE FUNCTION ran4
+
+CLEAR
+LET npt = 50
+DIM y(0)
+MAT redim y(npt)
+
+LET idum = -123
+LET ave = 0
+PRINT "First 10 random numbers with idum = "; idum
+PRINT
+PRINT "   #       ran4"
+FOR j = 1 to 10
+    PRINT using "####": j;
+    PRINT using "#####.######": ran4(idum)
+NEXT j
+PRINT
+
+PRINT "Average and variance of next"; npt
+PRINT
+FOR j = 1 to npt
+    LET y(j) = ran4(idum)
+NEXT j
+
+CALL avevar (y(), npt, ave, var)
+
+PRINT using "Average:  #####.####": ave
+PRINT using "Variance: #####.####": var
+PRINT
+PRINT
+PRINT "Expected result for an infinite sample:"
+PRINT
+PRINT "Average:     0.5000"
+PRINT "Variance:    0.0833"
+
+END

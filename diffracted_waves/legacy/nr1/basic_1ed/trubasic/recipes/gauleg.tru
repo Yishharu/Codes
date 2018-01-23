@@ -1,0 +1,29 @@
+EXTERNAL
+
+SUB gauleg (x1, x2, x(), w(), n)
+
+    LET eps = 3e-14
+    LET m = int((n + 1) / 2)
+    LET xm = .5 * (x2 + x1)
+    LET xl = .5 * (x2 - x1)
+    FOR i = 1 to m
+        LET z = cos(pi * (i - .25) / (n + .5))
+        DO
+           LET p1 = 1
+           LET p2 = 0
+           FOR j = 1 to n
+               LET p3 = p2
+               LET p2 = p1
+               LET p1 = ((2 * j - 1) * z * p2 - (j - 1) * p3) / j
+           NEXT j
+           LET pp = n * (z * p1 - p2) / (z * z - 1)
+           LET z1 = z
+           LET z = z1 - p1 / pp
+        LOOP while abs(z - z1) > eps
+        LET x(i) = xm - xl * z
+        LET x(n + 1 - i) = xm + xl * z
+        LET w(i) = 2 * xl / ((1 - z * z) * pp * pp)
+        LET w(n + 1 - i) = w(i)
+    NEXT i
+
+END SUB

@@ -1,0 +1,37 @@
+PROGRAM D3r3
+
+! Driver for routine spline
+
+LIBRARY "spline"
+
+LET n = 20
+DIM x(0), y(0), y2(0)
+MAT redim x(n), y(n), y2(n)
+
+CLEAR
+PRINT "Second-derivatives for sin(x) from 0 to pi"
+
+! Generate array for interpolation
+
+FOR i = 1 to 20
+    LET x(i) = i * pi / n
+    LET y(i) = sin(x(i))
+NEXT i
+
+! Calculate 2nd derivative with spline
+
+LET yp1 = cos(x(1))
+LET ypn = cos(x(n))
+
+CALL spline (x(), y(), n, yp1, ypn, y2())
+
+! Test result
+
+PRINT "                 Spline          Actual"
+PRINT "    Angle      2nd deriv       2nd deriv"
+FOR i = 1 to n
+    PRINT using "----#.##": x(i);
+    PRINT using "--------#.######": y2(i), -sin(x(i))
+NEXT i
+
+END

@@ -1,0 +1,33 @@
+EXTERNAL
+
+SUB flmoon (n, nph, jd, frac)
+
+    ! Can use OPTION ANGLE DEGREES and get rid the RAD conversion.
+
+    LET rad = .017453293
+
+    LET c = n + nph / 4
+    LET t = c / 1236.85
+    LET t2 = t^2
+    LET as = 359.2242 + 29.105356 * c
+    LET am = 306.0253 + 385.816918 * c + .01073 * t2
+    LET jd = 2415020 + 28 * n + 7 * nph
+    LET xtra = .75933 + 1.53058868 * c + (.0001178 - 1.55e-07 * t) * t2
+    IF nph = 0 or nph = 2 then
+       LET xtra = xtra + (.1734 - .000393 * t) * sin(rad * as) - .4068 * sin(rad * am)
+    ELSEIF nph = 1 or nph = 3 then
+       LET xtra = xtra + (.1721 - .0004 * t) * sin(rad * as) - .628 * sin(rad * am)
+    ELSE
+       PRINT "nph is unknown."
+       EXIT SUB
+    END IF
+
+    IF xtra >= 0 then
+       LET i = int(xtra)
+    ELSE
+       LET i = int(xtra - 1)
+    END IF
+    LET jd = jd + i
+    LET frac = xtra - i
+
+END SUB

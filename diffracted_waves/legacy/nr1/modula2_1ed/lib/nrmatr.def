@@ -1,0 +1,78 @@
+DEFINITION MODULE NRMatr;
+
+  (* EXPORT QUALIFIED Matrix, PtrToLine, PtrToLines, NilMatrix, EmptyMatrix,
+                      EmptyMatrix, CreateMatrix, DisposeMatrix, DimensionsOfMatrix,
+                      MatrixPtr, GetMatrixAttr, SetElement, GetElement; *)
+
+   CONST
+      MaxNM = 1000;
+   TYPE
+      Matrix;
+      PtrToLine  = POINTER TO ARRAY [0..MaxNM-1] OF REAL;
+      PtrToLines = POINTER TO ARRAY [0..MaxNM-1] OF PtrToLine;
+   VAR
+      NilMatrix: Matrix;
+
+   PROCEDURE EmptyMatrix(n, m: INTEGER): Matrix;
+
+      (* 
+       * It creates a new matrix of real numbers with line number n and column 
+       * number m if n, m > 0. Otherwise it returns NilMatrix.
+       * The elements in the matrix are undefined.
+       *)
+
+   PROCEDURE CreateMatrix(    n, 
+                              m: INTEGER;
+                          VAR matrix: Matrix;
+                          VAR lines: PtrToLines);
+      (* 
+       * It creates a new matrix with n lines and m columns, if n, m > 0.  
+       * It returns the reference variable "matrix" and a pointer to the lines
+       * of the matrix. If n = 0 and m = 0, then matrix = NilMatrix, lines = NIL.
+       * The elements in the matrix are undefined.
+       *)
+
+   PROCEDURE DisposeMatrix(VAR matrix: Matrix);
+
+      (*
+       * The input "matrix" is deallocated. 
+       * Output: "matrix"=NilMatrix.
+       * Use this procedure only for matrices created before!
+       *)
+
+   PROCEDURE DimensionsOfMatrix(    matrix: Matrix;
+                                VAR n, m:   INTEGER);
+
+      (* 
+       * It returns the number of lines and columns of matrix.
+       *)
+
+   PROCEDURE MatrixPtr(matrix: Matrix): PtrToLines;
+
+      (* 
+       * This procedure returns a pointer to the lines of matrix.
+       *)
+
+   PROCEDURE GetMatrixAttr(    matrix: Matrix;
+                           VAR n, m:   INTEGER;
+                           VAR lines:  PtrToLines);
+      (* 
+       * n, m: The number of lines and columns of matrix;
+       * lines: Pointer to the lines of the matrix.
+       *)
+
+   PROCEDURE SetElement(matrix: Matrix;
+                        i, j:   INTEGER;
+                        number: REAL);
+      (* 
+       * Sets the element with index i, j of the matrix to number.
+       *)
+
+   PROCEDURE GetElement(    matrix: Matrix;
+                            i, j:   INTEGER;
+                        VAR number: REAL);
+      (* 
+       * Gets the element with index i, j of the matrix in the variable number.
+       *)
+
+END NRMatr.

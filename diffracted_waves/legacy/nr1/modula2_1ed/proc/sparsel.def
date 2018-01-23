@@ -1,0 +1,27 @@
+DEFINITION MODULE SparseL;
+
+   (* EXPORT QUALIFIED Sparse; *)
+
+   FROM NRVect IMPORT Vector;
+
+   TYPE Subroutine = PROCEDURE(Vector, Vector);
+
+   PROCEDURE Sparse(    B,
+                        X:   Vector; 
+                    VAR rsq: REAL;
+                        aSub, aTSub: Subroutine); 
+   (*
+     Solves the linear system Ax = b for the vector X[0, n-1] given the 
+     right-hand vector B[0, n-1], and given two functions, aSub(xIn, xOut) 
+     and aTSub(xIn, xOut), which respectively calculate Ax and A^Tx for x
+     given as their first arguments, returning the result in their second 
+     arguments. These subroutines should take every advantage of the sparseness 
+     of the matrix Abf.  On input, X[n] should be set to a first guess
+     of the desired solution (all zero components is fine).  On output,
+     X is the solution vector, and rsq is the sum of the squares
+     of the components of the residual vector Ax-b. If this is not small, 
+     then the matrix is numerically singular and the solution represents
+     a least-squares best approximation.
+   *)
+
+END SparseL.

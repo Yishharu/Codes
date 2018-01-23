@@ -1,0 +1,41 @@
+DECLARE SUB DDPOLY (C!(), NC!, X!, PD!(), ND!)
+DECLARE FUNCTION FACTRL! (X!)
+
+'PROGRAM D5R2
+'Driver for routine DDPOLY
+'Polynomial (X-1)^5
+CLS
+NC = 6
+NCM1 = 5
+NP = 20
+DIM C(NC), PD(NCM1), D(NCM1, NP)
+DIM A$(NCM1)
+FOR I = 1 TO NCM1
+  READ A$(I)
+NEXT I
+DATA "polynomial:","first deriv:","second deriv:","third deriv:"
+DATA "fourth deriv:"
+FOR I = 1 TO NC
+  READ C(I)
+NEXT I
+DATA -1.0,5.0,-10.0,10.0,-5.0,1.0
+FOR I = 1 TO NP
+  X = .1 * I
+  CALL DDPOLY(C(), NC, X, PD(), NC - 1)
+  FOR J = 1 TO NC - 1
+    D(J, I) = PD(J)
+  NEXT J
+NEXT I
+FOR I = 1 TO NC - 1
+  PRINT "     "; A$(I)
+  PRINT "           X           DDPOLY         actual"
+  FOR J = 1 TO NP
+    X = .1 * J
+    PRINT USING "########.######"; X; D(I, J);
+    PRINT USING "########.######"; FACTRL(NC - 1) / FACTRL(NC - I) * (X - 1!) ^ (NC - I)
+  NEXT J
+  PRINT "press ENTER to continue..."
+  LINE INPUT DUM$
+NEXT I
+END
+

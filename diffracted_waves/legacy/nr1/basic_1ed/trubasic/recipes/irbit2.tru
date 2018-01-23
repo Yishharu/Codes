@@ -1,0 +1,41 @@
+MODULE irbit2
+
+    LIBRARY "funlib"
+
+    DECLARE FUNCTION and, or, xor, nott
+
+    SHARE ib1, ib3, ib5, ib14, mask, iff, iseed
+
+    ! I have changed the bits to correspond to Sprott
+
+    LET ib1 = 1
+    LET ib3 = 4
+    LET ib5 = 16
+    LET ib14 = 8192
+    LET mask = ib1 + ib3 + ib5
+    LET iff = 0
+
+    FUNCTION irbit2 (iiseed)
+
+        ! The argument iiseed is the seed only on the first use.
+        ! On subsequent use, the shared iseed is used.
+
+        IF iff = 0 then
+           LET iff = 1
+           LET iseed = iiseed
+        END IF
+
+        IF and(iseed, ib14) <> 0 then
+           LET iseed = xor(iseed, mask)
+           IF iseed > 2^14 then LET iseed = iseed - 2^14
+           LET iseed = or(2*iseed, ib1)
+           LET irbit2 = 1
+        ELSE
+           IF iseed > 2^14 then LET iseed = iseed - 2^14
+           LET iseed = and(2*iseed, nott(ib1))
+           LET irbit2 = 0
+        END IF
+
+    END FUNCTION
+
+END MODULE

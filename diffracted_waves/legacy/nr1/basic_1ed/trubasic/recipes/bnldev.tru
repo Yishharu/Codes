@@ -1,0 +1,65 @@
+MODULE bnldev
+
+    ! The following quantities are computed and preserved
+    ! between calls.
+
+    SHARE en, nold, oldg, pold, pc, plog, pclog
+
+    LET nold, pold = -1           ! Recompute constants with new n or p
+
+    FUNCTION bnldev (pp, n, idum)
+
+        LIBRARY "gammln", "ran1"
+
+        DECLARE FUNCTION gammln, ran1
+
+        IF pp <= .5 then
+           LET p = pp
+        ELSE
+           LET p = 1 - pp
+        END IF
+        LET am = n * p
+        IF n < 25 then
+           LET bnl = 0
+           FOR j = 1 to n
+               IF ran1(idum) < p then LET bnl = bnl + 1
+           NEXT j
+        ELSEIF am < 1 then
+           LET g = exp(-am)
+           LET t = 1
+           FOR j = 0 to n
+               LET t = t * ran1(idum)
+               IF t < g then EXIT FOR
+           NEXT j
+           IF t >= g then LET j = n
+           LET bnl = j
+        ELSE
+           IF n <> nold then
+              LET en = n
+              LET oldg = gammln(en + 1)
+              LET nold = n
+           END IF
+           IF p <> pold then
+              LET pc = 1 - p
+              LET plog = log(p)
+              LET pclog = log(pc)
+              LET pold = p
+           END IF
+           LET sq = sqr(2 * am * pc)
+           DO
+              DO
+                 LET y = tan(pi * ran1(idum))
+                 LET em = sq * y + am
+              LOOP while em < 0 or em >= en + 1
+              LET em = int(em)
+              LET t = en - em
+              LET t = exp(oldg - gammln(em + 1) - gammln(t + 1) + em * plog + t * pclog)
+              LET t = 1.2 * sq * (1 + y ^ 2) * t
+           LOOP while ran1(idum) > t
+           LET bnl = em
+        END IF
+        IF p <> pp then LET bnldev = n - bnl else LET bnldev = bnl
+
+    END FUNCTION
+
+END MODULE

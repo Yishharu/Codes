@@ -1,0 +1,37 @@
+PROGRAM d4r5(input,output);
+(* driver for routine MIDPNT *)
+
+(*$I MODFILE.PAS *)
+   
+CONST
+   nmax = 10;
+VAR
+   a,b,s: real;
+   i,MidpntIt: integer;
+
+FUNCTION func(x: real): real;
+(* Function for testing integration *)
+BEGIN
+   func := 1.0/sqrt(x)
+END;
+
+FUNCTION fint(x: real): real;
+(* Integral of 'func' *)
+BEGIN
+   fint := 2.0*sqrt(x)
+END;
+
+(*$I MIDPNT.PAS *)
+
+BEGIN
+   a := 0.0;
+   b := 1.0;
+   writeln;
+   writeln('Integral of func computed with MIDPNT');
+   writeln('Actual value of integral is',(fint(b)-fint(a)):7:4);
+   writeln('n':6,'Approx. integral':29);
+   FOR i := 1 TO nmax DO BEGIN
+      midpnt(a,b,s,i);
+      writeln(i:6,s:24:6)
+   END
+END.

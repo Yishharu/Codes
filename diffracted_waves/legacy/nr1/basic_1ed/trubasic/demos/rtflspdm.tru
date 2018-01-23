@@ -1,0 +1,42 @@
+PROGRAM D9r5
+
+! Driver for routine rtflsp
+
+LIBRARY "rtflsp", "zbrak", "bessj0"
+DECLARE FUNCTION rtflsp, bessj0
+
+LET nbmax = 20
+DIM xb1(0), xb2(0)
+MAT redim xb1(nbmax), xb2(nbmax)
+
+CLEAR
+LET n = 100
+LET x1 = 1
+LET x2 = 50
+LET nb = nbmax
+
+CALL zbrak (dum, x1, x2, n, xb1(), xb2(), nb)
+
+PRINT "Roots of bessj0:"
+PRINT
+PRINT "                 x           f(x)"
+PRINT
+FOR i = 1 to nb
+    LET xacc = .000001 * (xb1(i) + xb2(i)) / 2
+
+    LET root = rtflsp (dum, xb1(i), xb2(i), xacc)
+
+    PRINT "Root";
+    PRINT using "###": i;
+    PRINT using "------#.######": root;
+    PRINT "       ";
+    PRINT using "#.####^^^^": bessj0(root)
+NEXT i
+
+END
+
+FUNCTION func (x)
+    LIBRARY "bessj0"
+    DECLARE FUNCTION bessj0
+    LET func = bessj0(x)
+END FUNCTION

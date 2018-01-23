@@ -1,0 +1,37 @@
+MODULE midsql
+
+    SHARE it, s                   ! STATIC, must be preserved between calls
+
+    SUB midsql (dum, aa, bb, s, n)
+
+        DECLARE FUNCTION func, sql     ! func is supplied by the user
+
+        LET b = sqr(bb - aa)
+        LET a = 0
+        IF n = 1 then
+           LET s = (b - a) * sql(.5 * (a + b), aa)
+           LET it = 1
+        ELSE
+           LET tnm = it
+           LET del = (b - a) / (3 * tnm)
+           LET ddel = del + del
+           LET x = a + .5 * del
+           LET sum = 0
+           FOR j = 1 to it
+               LET sum = sum + sql(x, aa)
+               LET x = x + ddel
+               LET sum = sum + sql(x, aa)
+               LET x = x + del
+           NEXT j
+           LET s = (s + (b - a) * sum / tnm) / 3
+           LET it = 3 * it
+        END IF
+
+        FUNCTION sql (x, aa)
+            DECLARE FUNCTION func
+            LET sql = 2 * x * func(aa + x ^ 2)
+        END FUNCTION
+
+    END SUB
+
+END MODULE

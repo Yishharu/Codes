@@ -1,0 +1,34 @@
+DECLARE FUNCTION IRBIT2! (ISEED!)
+
+'PROGRAM D7R11
+'Driver for routine IRBIT2
+'Calculate distribution of runs of zeros
+CLS
+NBIN = 15
+NTRIES = 10000
+DIM DELAQ(NBIN)
+ISEED = 111
+FOR I = 1 TO NBIN
+  DELAQ(I) = 0!
+NEXT I
+IPTS = 0
+FOR I = 1 TO NTRIES
+  IF IRBIT2(ISEED) = 1 THEN
+    IPTS = IPTS + 1
+    IFLG = 0
+    FOR J = 1 TO NBIN
+      IF IRBIT2(ISEED) = 1 AND IFLG = 0 THEN
+        IFLG = 1
+        DELAQ(J) = DELAQ(J) + 1!
+      END IF
+    NEXT J
+  END IF
+NEXT I
+PRINT "Distribution of runs of N zeros"
+PRINT "     N        Probability         Expected"
+FOR N = 1 TO NBIN
+  PRINT USING "######"; N - 1;
+  PRINT USING "###########.######"; DELAQ(N) / IPTS; 1 / 2! ^ N
+NEXT N
+END
+

@@ -1,0 +1,181 @@
+DEFINITION MODULE NRComp;
+
+  (* EXPORT QUALIFIED Complex, CVector, PtrToComplexes, NilComplex, NilCVector,
+                      EqualComplex, NewCVector, EmptyCVector, CreateCVector,
+                      DisposeCVector, LengthOfCVector, CVectorPtr, GetCVectorAttr,
+                      GetCVectorValues, SetElement, GetElement, InsertElement,
+                      DeleteElement, SetCVector, 
+                      DuplicateCVector, CopyCVector; *)
+
+   CONST
+      MaxCVectorLength = 2000;
+   TYPE
+      Complex = RECORD
+                   r, i: REAL;
+                END;
+      CVector;
+      PtrToComplexes = POINTER TO ARRAY [0..MaxCVectorLength-1] OF Complex;
+   VAR 
+      NilComplex: Complex;
+      NilCVector: CVector;
+
+   PROCEDURE EqualComplex(a, b: Complex): BOOLEAN;
+
+      (*
+       * This procedure returns TRUE, if a.r = b.r and a.i = b.i.
+       * Otherwise it returns FALSE;
+       *)
+
+   PROCEDURE NewCVector(values: ARRAY OF Complex): CVector;
+
+      (* 
+       * This procedure creates a new vector from the numbers of "values".
+       * Possible structures of "values":
+       *   1. ARRAY OF Complex, where every element of the array is a real 
+       *      number.
+       *   2. ARRAY OF Complex, where the numbers are followed by NilReal.
+       *      The role of NilComplex is the same as the role of "0C" in
+       *      the Modula-2 strings.
+       *)
+
+   PROCEDURE EmptyCVector(length: INTEGER): CVector;
+
+      (* 
+       * It creates a new vector with length "length", if
+       * length > 0. Otherwise it returns NilCVector;
+       * The elements in vector are undefined.
+       *)
+
+   PROCEDURE CreateCVector(    n:      INTEGER;
+                           VAR vector: CVector;
+                           VAR complexes:  PtrToComplexes);
+
+      (* 
+       * It creates a new vector with length n, if n > 0.  
+       * It returns the reference variable "vector" and a pointer to the elements
+       * of the vector in "complexes". If n = 0: vector = NilCVector, complexes = NIL.
+       * The elements in vector are undefined.
+       *)
+
+   PROCEDURE DisposeCVector(VAR vector: CVector (* in/out *));
+
+      (*
+       * The input "vector" is deallocated. 
+       * Output: "vector"=NilCVector;
+       * Use this procedure only for vectors created before!
+       *)
+
+   PROCEDURE LengthOfCVector(vector: CVector): INTEGER;
+
+      (* 
+       * It returns the number of elements of vector.
+       *)
+
+   PROCEDURE CVectorPtr(vector: CVector): PtrToComplexes;
+
+      (* 
+       * This procedure returns a pointer to an array of complexes, 
+       * where the numbers from vector can be found. This array is 
+       * defined for the indices: [0..LengthOfCVector(vector)-1].
+       *)
+
+   PROCEDURE GetCVectorAttr(    vector: CVector;
+                           VAR length: INTEGER;
+                           VAR values: PtrToComplexes);
+
+      (* 
+       * length: The length of the vector;
+       * values: Pointer to an array of complexes, where the numbers from 
+       *         vector can be found. This array is defined for the 
+       *         indices: [0..length-1].
+       *)
+
+   PROCEDURE GetCVectorValues(    vector: CVector;
+                             VAR length: INTEGER;
+                             VAR values: ARRAY OF Complex);
+
+      (* 
+       * length: The length of the vector;
+       * values: The numbers in vector. If there is enough place in
+       *         values, then the numbers are followed by NilComplex.
+       * If vector = NilCVector then length := 0, values[0] := NilComplex.
+       *)
+
+   PROCEDURE SetElement(vector: CVector;
+                        ix:     INTEGER;
+                        number: Complex);
+
+      (* 
+       * Sets the element with index ix to number. 
+       * 0 <= ix <= LengthOfCVector(vector)-1.
+       * If ix > LengthOfCVector(vector)-1 -> no change in vector.
+       *)
+
+   PROCEDURE GetElement(    vector: CVector;
+                            ix:     INTEGER;
+                        VAR number: Complex);
+
+      (* 
+       * number := the element with index ix in vector. 
+       * 0 <= ix <= LengthOfCVector(vector)-1.
+       * If ix > LengthOfCVector(vector)-1 -> number := NilComplex.
+       *)
+
+   PROCEDURE InsertElement(VAR vector:  CVector; (* in/out *)
+                               i:       INTEGER;
+                               valueIn: Complex);
+
+      (* 
+       * A new vector will be created from the values of vector
+       * and valueIn. The index of valueIn in the new vector is i.
+       * 0 <= i <= (length of input vector).
+       *)
+
+   PROCEDURE DeleteElement(VAR vector: CVector; (* in/out *)
+                               i:      INTEGER);
+
+      (* 
+       * The value with index i will be deleted from vector. 
+       * The values of vector will be rearranged.
+       * 0 <= i <= (length of input vector - 1).
+       *)
+
+   PROCEDURE SetCVector(source, dest: CVector);
+
+      (* 
+       * If (source # NilCVector) AND (dest # NilCVector) AND
+       *    (LengthOfCVector(source) = (LengthOfCVector(dest)) THEN
+       *   values of dest := values of source
+       * else error.
+       *)
+
+   PROCEDURE DuplicateCVector(    source: CVector;
+                             VAR dest:   CVector);
+      (* 
+       * This procedure creates a new vector in dest, and copies
+       * the numbers from source into dest. 
+       *)
+
+   PROCEDURE CopyCVector(    source: CVector;
+                            n:      INTEGER;
+                        VAR dest:   CVector);
+      (* 
+       * This procedure creates a new vector in dest, and copies
+       * the n elements of source into dest, if 1 <= n <= length(source).
+       *    n = 0: dest = NilCVector.
+       *    n > length(source): dest is the duplicate of source. 
+       *)
+
+   (*
+    * Remarks:
+    *    The following procedures allocate memory for a vector:
+    *       - NewCVector
+    *       - CreateCVector
+    *       - DuplicateCVector
+    *       - CopyCVector
+    *
+    *    The following procedures deallocate memory:
+    *       - DisposeCVector
+    *)
+
+END NRComp.

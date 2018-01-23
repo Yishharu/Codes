@@ -1,0 +1,21 @@
+DEFINITION MODULE PolCoffs;
+
+   (* EXPORT QUALIFIED PolCoe, PolCof; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE PolCoe(X, Y, COF: Vector); 
+   (*
+     Given vectors X[0, n-1] and Y[0, n-1] containing a tabulated function
+     yi = f(xi), this routine returns a vector of coefficients COF[0, n-1], 
+     such that yi = (sum (j) COFj xi(^j-1))
+   *)
+
+   PROCEDURE PolCof(XA, YA, COF: Vector); 
+   (*
+     Given vectors XA[0, n-1] and YA[0, n-1] containing a tabulated function
+     YAi = f(XAi), this routine returns a vector of coefficients COF[0, n-1], 
+     such that YAi = (sum (j) COFj XAi^(j-1))
+   *)
+
+END PolCoffs.

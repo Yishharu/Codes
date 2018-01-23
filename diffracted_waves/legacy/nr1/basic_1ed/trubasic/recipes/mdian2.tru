@@ -1,0 +1,72 @@
+EXTERNAL
+
+SUB mdian2 (x(), n, xmed)
+
+    LET big = 1e+30
+    LET afac = 1.5
+    LET amp = 1.5
+
+    LET a = .5 * (x(1) + x(n))
+    LET eps = abs(x(n) - x(1))
+    LET ap = big
+    LET am = -big
+    DO
+       LET sum = 0
+       LET sumx = 0
+       LET np = 0
+       LET nm = 0
+       LET xp = big
+       LET xm = -big
+       FOR j = 1 to n
+           LET xx = x(j)
+           IF xx <> a then
+              IF xx > a then
+                 LET np = np + 1
+                 IF xx < xp then LET xp = xx
+              ELSEIF xx < a then
+                 LET nm = nm + 1
+                 IF xx > xm then LET xm = xx
+              END IF
+              LET dum = 1 / (eps + abs(xx - a))
+              LET sum = sum + dum
+              LET sumx = sumx + xx * dum
+           END IF
+       NEXT j
+
+       IF np - nm >= 2 then
+          LET am = a
+          LET dum = max(sumx / sum - a, 0)
+          LET aa = xp + dum * amp
+          IF aa > ap then LET aa = .5 * (a + ap)
+          LET eps = afac * abs(aa - a)
+          LET a = aa
+       ELSEIF nm - np >= 2 then
+          LET ap = a
+          LET dum = min(sumx / sum - a, 0)
+          LET aa = xm + dum * amp
+          IF aa < am then LET aa = .5 * (a + am)
+          LET eps = afac * abs(aa - a)
+          LET a = aa
+       ELSE
+          IF mod(n, 2) = 0 then
+             IF np = nm then
+                LET xmed = .5 * (xp + xm)
+             ELSEIF np > nm then
+                LET xmed = .5 * (a + xp)
+             ELSE
+                LET xmed = .5 * (xm + a)
+             END IF
+          ELSE
+             IF np = nm then
+                LET xmed = a
+             ELSEIF np > nm then
+                LET xmed = xp
+             ELSE
+                LET xmed = xm
+             END IF
+          END IF
+          EXIT DO
+       END IF
+    LOOP
+
+END SUB

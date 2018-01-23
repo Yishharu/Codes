@@ -1,0 +1,80 @@
+PROGRAM d2r9 (input,output,dfile);
+(* driver for routine SVDCMP *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+CONST
+   np = 20;
+   mp = 20;
+TYPE
+   RealArrayNP = ARRAY [1..np] OF real;
+   RealArrayMPbyNP = ARRAY [1..mp,1..np] OF real;
+   RealArrayNPbyNP = ARRAY [1..np,1..np] OF real;
+VAR
+   j,k,l,m,n: integer;
+   a,u: RealArrayMPbyNP;
+   v: RealArrayNPbyNP;
+   w: RealArrayNP;
+   dfile: text;
+
+(*$I SVDCMP.PAS *)
+
+BEGIN
+(* read input matrices *)
+   NROpen(dfile,'matrx3.dat');
+   WHILE true DO BEGIN
+      readln(dfile);
+      readln(dfile);
+      readln(dfile,m,n);
+      readln(dfile);
+(* copy original matrix into u *)
+      FOR k := 1 TO m DO BEGIN
+         FOR l := 1 TO n DO BEGIN
+            read(dfile,a[k,l]);
+            u[k,l] := a[k,l]
+         END;
+         readln(dfile)
+      END;
+(* perform decomposition *)
+      svdcmp(u,m,n,w,v);
+(* write results *)
+      writeln('Decomposition matrices:');
+      writeln('Matrix u');
+      FOR k := 1 TO m DO BEGIN
+         FOR l := 1 TO n DO write(u[k,l]:12:6);
+         writeln
+      END;
+      writeln('Diagonal of matrix w');
+      FOR k := 1 TO n DO write(w[k]:12:6);
+      writeln;
+      writeln('Matrix v-transpose');
+      FOR k := 1 TO n DO BEGIN
+         FOR l := 1 TO n DO write(v[l,k]:12:6);
+         writeln
+      END;
+      writeln;
+      writeln('Check product against original matrix:');
+      writeln('Original matrix:');
+      FOR k := 1 TO m DO BEGIN
+         FOR l := 1 TO n DO write(a[k,l]:12:6);
+         writeln
+      END;
+      writeln('Product u*w*(v-transpose):');
+      FOR k := 1 TO m DO BEGIN
+         FOR l := 1 TO n DO BEGIN
+            a[k,l] := 0.0;
+            FOR j := 1 TO n DO
+               a[k,l] := a[k,l]+u[k,j]*w[j]*v[l,j]
+         END;
+         FOR l := 1 TO n-1 DO write(a[k,l]:12:6);
+         writeln(a[k,n]:12:6);
+      END;
+      writeln('***********************************');
+      IF eof(dfile) THEN GOTO 99;
+      writeln('press RETURN for next problem');
+      readln
+   END;
+99:
+   close(dfile)
+END.

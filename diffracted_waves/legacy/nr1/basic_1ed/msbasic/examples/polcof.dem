@@ -1,0 +1,51 @@
+DECLARE SUB POLCOF (XA!(), YA!(), N!, COF!())
+
+'PROGRAM D3R8
+'Driver for routine POLCOF
+CLS
+NP = 5
+PI = 3.141593
+DIM XA(NP), YA(NP), COEFF(NP)
+FOR NFUNC = 1 TO 2
+  IF NFUNC = 1 THEN
+    PRINT "Sine function from 0 to PI"
+    FOR I = 1 TO NP
+      XA(I) = I * PI / NP
+      YA(I) = SIN(XA(I))
+    NEXT I
+  ELSEIF NFUNC = 2 THEN
+    PRINT "Exponential function from 0 to 1"
+    FOR I = 1 TO NP
+      XA(I) = 1! * I / NP
+      YA(I) = EXP(XA(I))
+    NEXT I
+  ELSE
+    STOP
+  END IF
+  CALL POLCOF(XA(), YA(), NP, COEFF())
+  PRINT "    coefficients"
+  FOR I = 1 TO NP
+    PRINT USING "#####.######"; COEFF(I);
+  NEXT I
+  PRINT
+  PRINT "        x         f(x)     polynomial"
+  FOR I = 1 TO 10
+    IF NFUNC = 1 THEN
+      X = (-.05 + I / 10!) * PI
+      F = SIN(X)
+    ELSEIF NFUNC = 2 THEN
+      X = -.05 + I / 10!
+      F = EXP(X)
+    END IF
+    SUM = COEFF(NP)
+    FOR J = NP - 1 TO 1 STEP -1
+      SUM = COEFF(J) + SUM * X
+    NEXT J
+    PRINT USING "#####.######"; X; F; SUM
+  NEXT I
+  PRINT "***********************************"
+  PRINT "Press RETURN"
+  LINE INPUT DUM$
+NEXT NFUNC
+END
+

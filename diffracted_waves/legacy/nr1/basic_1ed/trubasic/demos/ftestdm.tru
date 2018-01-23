@@ -1,0 +1,42 @@
+PROGRAM D13r7
+
+! Driver for routine ftest
+
+LIBRARY "ftest", "gasdev"
+DECLARE FUNCTION gasdev
+
+LET npts = 1000
+LET mpts = 500
+DIM data1(0), data2(0), data3(0)
+MAT redim data1(npts), data2(mpts), data3(mpts)
+
+! Generate two gaussian distributions with
+! different variances
+
+CLEAR
+LET eps = .01
+LET nval = 10
+LET idum = -13
+FOR j = 1 to npts
+    LET data1(j) = gasdev(idum)
+NEXT j
+FOR j = 1 to mpts
+    LET data2(j) = gasdev(idum)
+NEXT j
+
+PRINT "   Variance 1 =   1.00"
+PRINT "   Variance 2      Ratio      Probability"
+FOR i = 1 to nval + 1
+    LET var = 1 + (i - 1) * eps
+    LET factor = sqr(var)
+    FOR j = 1 to mpts
+        LET data3(j) = factor * data2(j)
+    NEXT j
+
+    CALL ftest (data1(), npts, data3(), mpts, f, prob)
+
+    PRINT using "######.####": var;
+    PRINT using "#########.####": f, prob
+NEXT i
+
+END

@@ -1,0 +1,14 @@
+DEFINITION MODULE ToeplzM;
+
+   (* EXPORT QUALIFIED Toeplz; *)
+
+   FROM NRVect IMPORT Vector;
+
+   PROCEDURE Toeplz(R, X, Y: Vector); 
+   (*
+     Solves the Toeplitz system [(sum (j=1) to (n)) R(n+i-j)xj = yi]; (i=1,...,n).  
+     The Toeplitz matrix need not be symmetric. Y[n] and R[2*n-1] are input arrays.
+     X[n] is the output array.
+   *)
+
+END ToeplzM.

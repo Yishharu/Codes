@@ -1,0 +1,40 @@
+PROGRAM D9r3
+
+! Driver for routine zbrak
+
+LIBRARY "zbrak", "bessj0"
+DECLARE FUNCTION bessj0
+
+LET nbmax = 20
+DIM xb1(0), xb2(0)
+MAT redim xb1(nbmax), xb2(nbmax)
+
+CLEAR
+LET n = 100
+LET x1 = 1
+LET x2 = 50
+LET nb = nbmax
+
+CALL zbrak (dum, x1, x2, n, xb1(), xb2(), nb)
+
+PRINT "Brackets for roots of bessj0:"
+PRINT
+PRINT
+PRINT "               lower     upper          f(lower)  f(upper)"
+PRINT
+FOR i = 1 to nb
+    PRINT "Root";
+    PRINT using "###": i;
+    PRINT using "--------#.####": xb1(i);
+    PRINT using "----#.####": xb2(i);
+    PRINT using "----------#.####": bessj0(xb1(i));
+    PRINT using "----#.####": bessj0(xb2(i))
+NEXT i
+
+END
+
+FUNCTION func (x)
+    LIBRARY "bessj0"
+    DECLARE FUNCTION bessj0
+    LET func = bessj0(x)
+END FUNCTION

@@ -1,0 +1,26 @@
+EXTERNAL
+
+SUB mprove (a(,), alud(,), n, np, indx(), b(), x())
+
+    ! Note: all computation is automatically double precison.
+
+    LIBRARY "lubksb"
+
+    DIM r(0)
+    MAT redim r(n)
+
+    FOR i = 1 to n
+        LET sdp = -b(i)
+        FOR j = 1 to n
+            LET sdp = sdp + a(i, j) * x(j)
+        NEXT j
+        LET r(i) = sdp
+    NEXT i
+
+    CALL lubksb (alud(,), n, np, indx(), r())
+
+    FOR i = 1 to n
+        LET x(i) = x(i) - r(i)
+    NEXT i
+
+END SUB

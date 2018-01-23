@@ -1,0 +1,30 @@
+MODULE rofunc
+
+    PUBLIC npt, x(0), y(0), arr(0), aa, abdev    ! COMMON
+
+    FUNCTION rofunc (b)
+
+        LIBRARY "sort"
+
+        LET n1 = npt + 1
+        LET nml = int(n1 / 2)
+        LET nmh = n1 - nml
+        FOR j = 1 to npt
+            LET arr(j) = y(j) - b * x(j)
+        NEXT j
+
+        CALL sort (npt, arr())
+
+        LET aa = .5 * (arr(nml) + arr(nmh))
+        LET sum = 0
+        LET abdev = 0
+        FOR j = 1 to npt
+            LET d = y(j) - (b * x(j) + aa)
+            LET abdev = abdev + abs(d)
+            LET sum = sum + x(j) * sgn(d)
+        NEXT j
+        LET rofunc = sum
+
+    END FUNCTION
+
+END MODULE

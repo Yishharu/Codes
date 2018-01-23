@@ -1,0 +1,36 @@
+EXTERNAL
+
+SUB simp2 (a(,), m, n, mp, np, l2(), nl2, ip, kp, q1)
+
+    LET eps = .000001
+    LET ip = 0
+
+    FOR i = 1 to nl2
+        IF a(l2(i) + 1, kp + 1) < -eps then EXIT FOR
+    NEXT i
+    IF i > nl2 then
+       PRINT "No possible pivots."
+       EXIT SUB
+    END IF
+
+    LET q1 = -a(l2(i) + 1, 1) / a(l2(i) + 1, kp + 1)
+    LET ip = l2(i)
+    FOR i = i + 1 to nl2
+        LET ii = l2(i)
+        IF a(ii + 1, kp + 1) < -eps then
+           LET q = -a(ii + 1, 1) / a(ii + 1, kp + 1)
+           IF q < q1 then
+              LET ip = ii
+              LET q1 = q
+           ELSEIF q = q1 then
+              FOR k = 1 to n
+                  LET qp = -a(ip + 1, k + 1) / a(ip + 1, kp + 1)
+                  LET q0 = -a(ii + 1, k + 1) / a(ii + 1, kp + 1)
+                  IF q0 <> qp then EXIT FOR
+              NEXT k
+              IF q0 < qp then LET ip = ii
+           END IF
+        END IF
+    NEXT i
+
+END SUB

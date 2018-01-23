@@ -1,0 +1,44 @@
+DECLARE SUB HUNT (XX!(), N!, X!, JLO!)
+
+'PROGRAM D3R6
+'Driver for routine HUNT
+CLS
+N = 100
+DIM XX(N)
+'Create array to be searched
+FOR I = 1 TO N
+  XX(I) = EXP(I / 20!) - 74!
+NEXT I
+PRINT "Result of:    j=0 indicates x too small"
+PRINT "            j=100 indicates x too large"
+PRINT "     locate:   guess   j      xx(j)     xx(j+1)"
+'Do test
+FOR I = 1 TO 19
+  X = -100! + 200! * I / 20!
+  'Trial parameter
+  JI = 5 * I
+  J = JI
+  'Begin search
+  CALL HUNT(XX(), N, X, J)
+  IF J = 0 THEN
+    PRINT USING "#####.######"; X;
+    PRINT USING "######"; JI;
+    PRINT USING "######"; J;
+    PRINT "   lower lim";
+    PRINT USING "#####.######"; XX(J + 1)
+  ELSEIF J = N THEN
+    PRINT USING "#####.######"; X;
+    PRINT USING "######"; JI;
+    PRINT USING "######"; J;
+    PRINT USING "#####.######"; XX(J);
+    PRINT "   upper lim"
+  ELSE
+    PRINT USING "#####.######"; X;
+    PRINT USING "######"; JI;
+    PRINT USING "######"; J;
+    PRINT USING "#####.######"; XX(J);
+    PRINT USING "#####.######"; XX(J + 1)
+  END IF
+NEXT I
+END
+

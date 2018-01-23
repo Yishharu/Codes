@@ -1,0 +1,42 @@
+DECLARE SUB VANDER (X!(), W!(), Q!(), N!)
+
+'PROGRAM D2R6
+'Driver for routine VANDER
+CLS
+N = 5
+DIM X(N), Q(N), W(N), TERM(N)
+FOR I = 1 TO N
+  READ X(I)
+NEXT I
+DATA 1.0,1.5,2.0,2.5,3.0
+FOR I = 1 TO N
+  READ Q(I)
+NEXT I
+DATA 1.0,1.5,2.0,2.5,3.0
+CALL VANDER(X(), W(), Q(), N)
+PRINT "Solution vector:"
+FOR I = 1 TO N
+  PRINT "    W(";
+  PRINT USING "#"; I;
+  PRINT ") = ";
+  PRINT USING "#.######^^^^"; W(I)
+NEXT I
+PRINT
+PRINT "Test of solution vector:"
+PRINT "    mtrx*sol'n   original"
+SUM = 0!
+FOR I = 1 TO N
+  TERM(I) = W(I)
+  SUM = SUM + W(I)
+NEXT I
+PRINT USING "#######.####"; SUM; Q(1)
+FOR I = 2 TO N
+  SUM = 0!
+  FOR J = 1 TO N
+    TERM(J) = TERM(J) * X(J)
+    SUM = SUM + TERM(J)
+  NEXT J
+  PRINT USING "#######.####"; SUM; Q(I)
+NEXT I
+END
+

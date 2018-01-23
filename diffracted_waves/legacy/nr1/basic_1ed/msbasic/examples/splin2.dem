@@ -1,0 +1,33 @@
+DECLARE SUB SPLIE2 (X1A!(), X2A!(), YA!(), M!, N!, Y2A!())
+DECLARE SUB SPLIN2 (X1A!(), X2A!(), YA!(), Y2A!(), M!, N!, X1!, X2!, Y!)
+
+'PROGRAM D3R13
+'Driver for routine SPLIN2
+CLS
+M = 10
+N = 10
+DIM X1(M), X2(N), Y(M, N), Y2(M, N)
+FOR I = 1 TO M
+  X1(I) = .2 * I
+NEXT I
+FOR I = 1 TO N
+  X2(I) = .2 * I
+NEXT I
+FOR I = 1 TO M
+  FOR J = 1 TO N
+    X1X2 = X1(I) * X2(J)
+    Y(I, J) = X1X2 * EXP(-X1X2)
+  NEXT J
+NEXT I
+CALL SPLIE2(X1(), X2(), Y(), M, N, Y2())
+PRINT "       x1          x2        splin2      actual"
+FOR I = 1 TO 10
+  XX1 = .1 * I
+  XX2 = XX1 ^ 2
+  CALL SPLIN2(X1(), X2(), Y(), Y2(), M, N, XX1, XX2, F)
+  X1X2 = XX1 * XX2
+  FF = X1X2 * EXP(-X1X2)
+  PRINT USING "#####.######"; XX1; XX2; F; FF
+NEXT I
+END
+

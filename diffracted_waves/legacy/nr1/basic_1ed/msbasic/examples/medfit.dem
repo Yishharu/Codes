@@ -1,0 +1,48 @@
+DECLARE SUB MEDFIT (XD!(), YD!(), NDATA!, A!, B!, ABDEVD!)
+DECLARE SUB FIT (X!(), Y!(), NDATA!, SIG!(), MWT!, A!, B!, SIGA!, SIGB!, CHI2!, Q!)
+DECLARE FUNCTION GASDEV! (IDUM&)
+COMMON NPT, X(), Y(), ARR(), AA, ABDEV
+
+'PROGRAM D14R10
+'Driver for routine MEDFIT
+CLS
+NPT = 100
+SPREAD = .1
+DIM XD(NPT), YD(NPT), SIG(NPT)
+DIM X(NPT), Y(NPT), ARR(NPT)
+IDUM& = -1984
+FOR I = 1 TO NPT
+  XD(I) = .1 * I
+  YD(I) = -2! * XD(I) + 1! + SPREAD * GASDEV(IDUM&)
+  SIG(I) = SPREAD
+NEXT I
+MWT = 1
+CALL FIT(XD(), YD(), NPT, SIG(), MWT, A, B, SIGA, SIGB, CHI2, Q)
+PRINT "According to routine FIT the result is:"
+PRINT "   A = ";
+PRINT USING "###.####"; A;
+PRINT "   Uncertainty: ";
+PRINT USING "###.####"; SIGA
+PRINT "   B = ";
+PRINT USING "###.####"; B;
+PRINT "   Uncertainty: ";
+PRINT USING "###.####"; SIGB
+PRINT "   Chi-squared: ";
+PRINT USING "###.####"; CHI2;
+PRINT " for"; NPT; "points"
+PRINT "   Goodness-of-fit: ";
+PRINT USING "###.####"; Q
+PRINT
+PRINT "According to routine MEDFIT the result is:"
+CALL MEDFIT(XD(), YD(), NPT, A, B, ABDEVD)
+PRINT "   A = ";
+PRINT USING "###.####"; A
+PRINT "   B = ";
+PRINT USING "###.####"; B
+PRINT "   Absolute deviation (per data point): ";
+PRINT USING "###.####"; ABDEVD
+PRINT "   (note: Gaussian spread is";
+PRINT USING "###.####"; SPREAD;
+PRINT ")"
+END
+

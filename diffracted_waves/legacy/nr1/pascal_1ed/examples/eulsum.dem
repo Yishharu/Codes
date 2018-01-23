@@ -1,0 +1,41 @@
+PROGRAM d5r1(input,output);
+(* driver for routine EULSUM *)
+
+(*$I MODFILE.PAS *)
+
+LABEL 99;
+CONST
+   nval = 40;
+TYPE
+   RealArrayNVAL = ARRAY [1..nval] OF real;
+VAR
+   i,j,mval,EulsumNterm: integer;
+   sum,term,x,xpower: real;
+   EulsumWksp: RealArrayNVAL;
+
+(*$I EULSUM.PAS *)
+
+BEGIN
+(* evaluate ln(1+x) := x-x^2/2+x^3/3-x^4/4 ... FOR -1<x<1 *)
+   WHILE true DO BEGIN
+      writeln;
+      writeln('How many terms in polynomial?');
+      writeln('Enter n between 1 and ',nval:2,'. (n := 0 to END)');
+      readln(mval);
+      writeln;
+      IF (mval <= 0) OR (mval > nval) THEN GOTO 99;
+      writeln('x':9,'actual':14,'polynomial':14);
+      FOR i := -8 TO 8 DO BEGIN
+         x := i/10.0;
+         sum := 0.0;
+         xpower := -1;
+         FOR j := 1 TO mval DO BEGIN
+            xpower := -x*xpower;
+            term := xpower/j;
+            eulsum(sum,term,j)
+         END;
+         writeln(x:12:6,ln(1.0+x):12:6,sum:12:6)
+      END
+   END;
+99:
+END.

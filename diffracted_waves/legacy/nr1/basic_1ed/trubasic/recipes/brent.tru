@@ -1,0 +1,87 @@
+EXTERNAL
+
+SUB brent (ax, bx, cx, dum, tol, brent, xmin)
+
+    ! The original function brent is converted to a subroutine
+    ! to permit it to return two values: brent and xmin
+
+    ! The function func must be prepared by the user
+
+    DECLARE FUNCTION func
+
+    LET itmax = 100
+    LET cgold = .381966
+    LET zeps = 1e-10
+    LET a = min(cx, ax)
+    LET b = max(ax, cx)
+    LET v = bx
+    LET w = v
+    LET x = v
+    LET e = 0
+    LET fx = func(x)
+    LET fv = fx
+    LET fw = fx
+
+    FOR iter = 1 to itmax
+        LET xm = .5 * (a + b)
+        LET tol1 = tol * abs(x) + zeps
+        LET tol2 = 2 * tol1
+        IF abs(x - xm) <= tol2 - .5 * (b - a) then EXIT FOR
+        IF abs(e) > tol1 then
+           LET r = (x - w) * (fx - fv)
+           LET q = (x - v) * (fx - fw)
+           LET p = (x - v) * q - (x - w) * r
+           LET q = 2 * (q - r)
+           IF q > 0 then LET p = -p
+           LET q = abs(q)
+           LET etemp = e
+           LET e = d
+           LET dum = abs(.5 * q * etemp)
+           IF abs(p) < dum and p > q * (a - x) and p < q * (b - x) then
+              LET d = p / q
+              LET u = x + d
+              IF u - a < tol2 or b - u < tol2 then LET d = abs(tol1) * sgn(xm - x)
+           ELSE
+              IF x >= xm then LET e = a - x else LET e = b - x
+              LET d = cgold * e
+           END IF
+        ELSE
+           IF x >= xm then LET e = a - x else LET e = b - x
+           LET d = cgold * e
+        END IF
+
+        IF abs(d) >= tol1 then
+           LET u = x + d
+        ELSE
+           LET u = x + abs(tol1) * sgn(d)
+        END IF
+        LET fu = func(u)
+        IF fu <= fx then
+           IF u >= x then LET a = x else LET b = x
+           LET v = w
+           LET fv = fw
+           LET w = x
+           LET fw = fx
+           LET x = u
+           LET fx = fu
+        ELSE
+           IF u < x then LET a = u else LET b = u
+           IF fu <= fw or w = x then
+              LET v = w
+              LET fv = fw
+              LET w = u
+              LET fw = fu
+           ELSEIF fu <= fv or v = x or v = w then
+              LET v = u
+              LET fv = fu
+           END IF
+        END IF
+    NEXT iter
+    IF iter > itmax then
+       PRINT "brent exceed maximum iterations."
+    ELSE
+       LET xmin = x
+       LET brent = fx
+    END IF
+
+END SUB

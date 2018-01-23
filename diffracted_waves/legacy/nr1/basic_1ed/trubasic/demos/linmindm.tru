@@ -1,0 +1,51 @@
+PROGRAM D10r7
+
+! Driver for routine linmin
+
+LIBRARY "linmin"
+
+LET ndim = 3
+DIM p(0), xi(0)
+MAT redim p(ndim), xi(ndim)
+
+CLEAR
+LET pio2 = pi/2
+PRINT "Minimum of a 3-d quadratic centered"
+PRINT "at (1.0, 1.0, 1.0). minimum is found"
+PRINT "along a series of radials."
+PRINT
+PRINT "        x           y           z       minimum"
+PRINT
+FOR i = 0 to 10
+    LET x = pio2 * i / 10
+    LET sr2 = sqr(2)
+    LET xi(1) = sr2 * cos(x)
+    LET xi(2) = sr2 * sin(x)
+    LET xi(3) = 1
+    LET p(1) = 0
+    LET p(2) = 0
+    LET p(3) = 0
+
+    CALL linmin (p(), xi(), ndim, fret)
+
+    FOR j = 1 to 3
+        PRINT using "----#.######": p(j);
+    NEXT j
+    PRINT using "----#.######": fret
+NEXT i
+
+END
+
+FUNCTION func (x)
+    LIBRARY "f1dim"
+    DECLARE FUNCTION f1dim
+    LET func = f1dim(x)
+END FUNCTION
+
+FUNCTION func2 (x(), n)
+    LET f = 0
+    LET f = f + (x(1) - 1)^2
+    LET f = f + (x(2) - 1)^2
+    LET f = f + (x(3) - 1)^2
+    LET func2 = f
+END FUNCTION

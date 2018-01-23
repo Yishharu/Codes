@@ -1,0 +1,48 @@
+PROGRAM D5r6
+
+! Driver for routine chint
+
+LIBRARY "chebft", "chint", "chebev"
+DECLARE FUNCTION chebev, fint     ! fint defined below
+
+LET nval = 40
+DIM c(0), cint(0)
+MAT redim c(nval), cint(nval)
+
+CLEAR
+LET pio2 = pi/2
+LET a = -pio2
+LET b = pio2
+
+CALL chebft (a, b, c(), nval, dum)
+
+! Test integral
+
+DO
+   PRINT "How many terms in Chebyshev evaluation?"
+   PRINT "Enter n between 6 and "; str$(nval); ". Enter n=0 to end."
+   LINE INPUT mval$
+   LET mval = val(mval$)
+
+   IF mval <= 0 or mval > nval then EXIT DO
+
+   CALL chint (a, b, c(), cint(), mval)
+
+   MAT c = cint
+   PRINT "        x        actual    cheby. integ."
+   FOR i = -8 to 8
+       LET x = i * pio2 / 10
+       PRINT using "----#.######": x, fint(x) - fint(-pio2), chebev(a, b, c(), dum, mval, x)
+   NEXT i
+LOOP
+
+END
+
+FUNCTION fint (x)
+    ! Integral of func
+    LET fint = 4 * x * (x ^ 2 - 7) * sin(x) - (x ^ 4 - 14 * x ^ 2 + 28) * cos(x)
+END FUNCTION
+
+FUNCTION func (x)
+    LET func = (x ^ 2) * (x ^ 2 - 2) * sin(x)
+END FUNCTION

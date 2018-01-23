@@ -1,0 +1,39 @@
+DECLARE SUB BCUINT (Y!(), Y1!(), Y2!(), Y12!(), X1L!, X1U!, X2L!, X2U!, X1!, X2!, ANSY!, ANSY1!, ANSY2!)
+
+'PROGRAM D3R11
+'Driver for routine BCUINT
+CLS
+DIM Y(4), Y1(4), Y2(4), Y12(4), XX(4), YY(4)
+FOR I = 1 TO 4
+  READ XX(I)
+NEXT I
+DATA 0.0,2.0,2.0,0.0
+FOR I = 1 TO 4
+  READ YY(I)
+NEXT I
+DATA 0.0,0.0,2.0,2.0
+X1L = XX(1)
+X1U = XX(2)
+X2L = YY(1)
+X2U = YY(4)
+FOR I = 1 TO 4
+  XXYY = XX(I) * YY(I)
+  Y(I) = XXYY ^ 2
+  Y1(I) = 2! * YY(I) * XXYY
+  Y2(I) = 2! * XX(I) * XXYY
+  Y12(I) = 4! * XXYY
+NEXT I
+PRINT "    X1      X2      Y     EXPECT    Y1    EXPECT    Y2    EXPECT"
+PRINT
+FOR I = 1 TO 10
+  X1 = .2 * I
+  X2 = X1
+  CALL BCUINT(Y(), Y1(), Y2(), Y12(), X1L, X1U, X2L, X2U, X1, X2, ANSY, ANSY1, ANSY2)
+  X1X2 = X1 * X2
+  EY = X1X2 ^ 2
+  EY1 = 2! * X2 * X1X2
+  EY2 = 2! * X1 * X1X2
+  PRINT USING "###.####"; X1; X2; ANSY; EY; ANSY1; EY1; ANSY2; EY2
+NEXT I
+END
+

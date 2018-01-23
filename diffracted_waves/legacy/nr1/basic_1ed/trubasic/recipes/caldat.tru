@@ -1,0 +1,28 @@
+EXTERNAL
+
+SUB caldat (julian, mm, id, iyyy)
+
+    FUNCTION fint(x)        ! The Fortran INT function
+        LET fint = truncate(x,0)
+    END FUNCTION
+
+    LET igreg = 2299161
+
+    IF julian >= igreg then
+       LET jalpha = fint(((julian - 1867216) - .25) / 36524.25)
+       LET ja = julian + 1 + jalpha - fint(.25 * jalpha)
+    ELSE
+       LET ja = julian
+    END IF
+    LET jb = ja + 1524
+    LET jc = fint(6680 + ((jb - 2439870) - 122.1) / 365.25)
+    LET jd = 365 * jc + fint(.25 * jc)
+    LET je = fint((jb - jd) / 30.6001)
+    LET id = jb - jd - fint(30.6001 * je)
+    LET mm = je - 1
+    IF mm > 12 then LET mm = mm - 12
+    LET iyyy = jc - 4715
+    IF mm > 2 then LET iyyy = iyyy - 1
+    IF iyyy <= 0 then LET iyyy = iyyy - 1
+
+END SUB

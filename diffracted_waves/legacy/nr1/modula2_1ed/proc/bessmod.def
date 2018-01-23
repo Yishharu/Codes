@@ -1,0 +1,37 @@
+DEFINITION MODULE BessMod;
+
+ (* EXPORT QUALIFIED BessI0, BessK0, BessI1, BessK1, BessI, BessK; *)
+
+   PROCEDURE BessI0(x: REAL): REAL; 
+   (*
+     Returns the modified Bessel function I0(x) for any real x.
+   *)
+
+   PROCEDURE BessK0(x: REAL): REAL; 
+   (*
+     Returns the modified Bessel function K0(x) for positive real x.
+   *)
+
+   PROCEDURE BessI1(x: REAL): REAL; 
+   (*
+     Returns the modified Bessel function I1(x) for any real x.
+   *)
+
+   PROCEDURE BessK1(x: REAL): REAL; 
+   (*
+     Returns the modified Bessel function K1(x) for positive real x.
+   *)
+
+   PROCEDURE BessI(n: INTEGER; x: REAL): REAL; 
+   (*
+     Returns the modified Bessel function In(x) for any real
+     x and n >= 2.
+   *)
+
+   PROCEDURE BessK(n: INTEGER; x: REAL): REAL; 
+   (*
+     Returns the modified Bessel function Kn(x) for positive
+     x and n >= 2.
+   *)
+
+END BessMod.

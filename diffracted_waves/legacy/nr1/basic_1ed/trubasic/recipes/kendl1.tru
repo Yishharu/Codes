@@ -1,0 +1,35 @@
+EXTERNAL
+
+SUB kendl1 (data1(), data2(), n, tau, z, prob)
+
+    LIBRARY "erfcc"
+    DECLARE FUNCTION erfcc
+
+    LET n1 = 0
+    LET n2 = 0
+    LET is = 0
+    FOR j = 1 to n - 1
+        FOR k = j + 1 to n
+            LET a1 = data1(j) - data1(k)
+            LET a2 = data2(j) - data2(k)
+            LET aa = a1 * a2
+            IF aa <> 0 then
+               LET n1 = n1 + 1
+               LET n2 = n2 + 1
+               IF aa > 0 then
+                  LET is = is + 1
+               ELSE
+                  LET is = is - 1
+               END IF
+            ELSE
+               IF a1 <> 0 then LET n1 = n1 + 1
+               IF a2 <> 0 then LET n2 = n2 + 1
+            END IF
+        NEXT k
+    NEXT j
+    LET tau = is / sqr(n1 * n2)
+    LET var = (4 * n + 10) / (9 * n * (n - 1))
+    LET z = tau / sqr(var)
+    LET prob = erfcc(abs(z) / 1.4142136)
+
+END SUB

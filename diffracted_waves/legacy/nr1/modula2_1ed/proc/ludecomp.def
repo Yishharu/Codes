@@ -1,0 +1,34 @@
+DEFINITION MODULE LUDecomp;
+
+   (* EXPORT QUALIFIED LUDCMP, LUBKSB; *)
+
+   FROM NRMatr  IMPORT Matrix;
+   FROM NRIVect IMPORT IVector;
+   FROM NRVect  IMPORT Vector;
+
+   PROCEDURE LUDCMP(A: Matrix; INDX: IVector; VAR d: REAL); 
+   (*
+     Given an n times n matrix A[n, n], this routine replaces it by 
+     the LU decomposition of a rowwise permutation of itself. A is input. 
+     A is output, arranged as in equation (2.3.14) above; INDX[0, n-1] 
+     is an output vector which records the row permutation effected by 
+     the partial pivoting; d is output as (+-) 1 depending on whether the 
+     number of row interchanges was even or odd, respectively.  This routine 
+     is used in combination with LUBKSB to solve linear equations or invert 
+     a matrix.
+   *)
+
+   PROCEDURE LUBKSB(A: Matrix; INDX: IVector; B: Vector); 
+   (*
+     Solves the set of n linear equations A x = b.  Here A[n, n] is input,
+     not as the matrix A but rather as its LU decomposition, determined
+     by the routine LUDCMP. INDX[0, n-1] is input as the permutation vector 
+     returned by LUDCMP. B[0, n-1] is input as the right-hand side vector B, 
+     and returns with the solution vector x.  A and INDX are not modified by 
+     this routine and can be left in place for successive calls with different 
+     right-hand sides B.  This routine takes into account the possibility that B 
+     will begin with many zero elements, so it is efficient for use in matrix 
+     inversion.
+   *)
+
+END LUDecomp.

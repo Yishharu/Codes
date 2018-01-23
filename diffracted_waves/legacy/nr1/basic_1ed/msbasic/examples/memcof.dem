@@ -1,0 +1,28 @@
+DECLARE SUB MEMCOF (DATQ!(), N!, M!, PM!, COF!(), WK1!(), WK2!(), WKM!())
+
+'PROGRAM D12R9
+'Driver for routine MEMCOF
+CLS
+N = 1000
+M = 10
+DIM DATQ(N), COF(M), WK1(N), WK2(N), WKM(M)
+OPEN "SPCTRL.DAT" FOR INPUT AS #1
+FOR I = 1 TO N
+  DATQ(I) = VAL(INPUT$(12, #1))
+  IF I MOD 4 = 0 THEN DUM$ = INPUT$(2, #1)
+NEXT I
+CLOSE #1
+CALL MEMCOF(DATQ(), N, M, PM, COF(), WK1(), WK2(), WKM())
+PRINT "Coeff. for spectral estim. of SPCTRL.DAT"
+PRINT
+FOR I = 1 TO M
+  PRINT "a[";
+  PRINT USING "##"; I;
+  PRINT "] =";
+  PRINT USING "#####.######"; COF(I)
+NEXT I
+PRINT
+PRINT "a0 =";
+PRINT USING "#####.######"; PM
+END
+

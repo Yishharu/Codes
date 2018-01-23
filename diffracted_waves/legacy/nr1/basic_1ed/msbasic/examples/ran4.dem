@@ -1,0 +1,34 @@
+DECLARE FUNCTION RAN4! (IDUM&)
+DECLARE SUB AVEVAR (Y!(), N!, AVE!, VAR!)
+
+'PROGRAM D7R12
+'Driver for routine RAN4
+CLS
+NPT = 50
+DIM Y(NPT)
+IDUM& = -123
+AVE = 0!
+PRINT "First 10 random numbers with IDUM = "; IDUM&
+PRINT
+PRINT "   #       RAN4"
+FOR J = 1 TO 10
+  PRINT USING "####"; J;
+  PRINT USING "#####.######"; RAN4(IDUM&)
+NEXT J
+PRINT
+PRINT "Average and Variance of next"; NPT
+PRINT
+FOR J = 1 TO NPT
+  Y(J) = RAN4(IDUM&)
+NEXT J
+CALL AVEVAR(Y(), NPT, AVE, VAR)
+PRINT "Average: "; USING "#####.####"; AVE
+PRINT "Variance:"; USING "#####.####"; VAR
+PRINT
+PRINT
+PRINT "Expected Result for an Infinite Sample:"
+PRINT
+PRINT "Average:     0.5000"
+PRINT "Variance:    0.0833"
+END
+

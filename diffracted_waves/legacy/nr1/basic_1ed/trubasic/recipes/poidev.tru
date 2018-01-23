@@ -1,0 +1,44 @@
+MODULE poidev
+
+    SHARE oldm, g, alxm, sq       ! Constants based on the parameter xm
+
+    LET oldm = -1                 ! Recompute constants with new xm
+
+    FUNCTION poidev (xm, idum)
+
+        LIBRARY "ran1", "gammln"
+        DECLARE FUNCTION ran1, gammln
+
+        IF xm < 12 then
+           IF xm <> oldm then
+              LET oldm = xm
+              LET g = exp(-xm)
+           END IF
+           LET em = -1
+           LET t = 1
+           DO
+              LET em = em + 1
+              LET t = t * ran1(idum)
+           LOOP while t > g
+        ELSE
+           IF xm <> oldm then
+              LET oldm = xm
+              LET sq = sqr(2 * xm)
+              LET alxm = log(xm)
+              LET g = xm * alxm - gammln(xm + 1)
+           END IF
+           DO
+              DO
+                 LET y = tan(pi * ran1(idum))
+                 LET em = sq * y + xm
+              LOOP while em < 0
+              LET em = int(em)
+              LET dum = em * alxm - gammln(em + 1) - g
+              LET t = .9 * (1 + y^2) * exp(dum)
+           LOOP while ran1(idum) > t
+        END IF
+        LET poidev = em
+
+    END FUNCTION
+
+END MODULE

@@ -1,0 +1,28 @@
+DEFINITION MODULE ConjGrad;
+
+  (* EXPORT QUALIFIED FRPRMn, DF1Dim; *)
+
+   FROM NRMath IMPORT VectorFunction;
+   FROM NRVect IMPORT Vector;
+
+   TYPE VectorVectorFunc = PROCEDURE(Vector, Vector);
+
+   PROCEDURE FRPRMn(    P:    Vector;      
+                        ftol: REAL; 
+                        fnc:  VectorFunction;
+                        dfnc: VectorVectorFunc;
+                    VAR iter: INTEGER; VAR fret: REAL); 
+   (*
+     Given a starting point P[n], Fletcher-Reeves-Polak-Ribiere minimization 
+     is performed on a function fnc, using its gradient as calculated by a 
+     routine dfnc. The convergence tolerance on the function value is input 
+     as frol. Returned quantities are P (the location of the minimum), iter
+     (the number of iterations that were performed), and fret (the minimum 
+     value of the function).  The routine LinMin is called to perform line 
+     minimizations.
+   *)
+
+   PROCEDURE DF1Dim(x: REAL; LinminPcom, LinminXcom: Vector;
+                    dfnc: VectorVectorFunc): REAL; 
+
+END ConjGrad.

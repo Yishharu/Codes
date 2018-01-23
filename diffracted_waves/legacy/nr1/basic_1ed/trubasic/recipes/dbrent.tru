@@ -1,0 +1,122 @@
+EXTERNAL
+
+SUB dbrent (ax, bx, cx, dum1, dum2, tol, dbrent, xmin)
+
+    ! The function dbrent has been converted to a subroutine
+    ! to permit it to return two values: dbrent and xmin.
+
+    DECLARE FUNCTION func, df     ! Supplied by the user
+
+    LET itmax = 100
+    LET zeps = 1e-10
+    LET a = min(ax, cx)
+    LET b = max(ax, cx)
+    LET v = bx
+    LET w = v
+    LET x = v
+    LET e = 0
+    LET fx = func(x)
+    LET fv = fx
+    LET fw = fx
+    LET dx = df(x)
+    LET dv = dx
+    LET dw = dx
+    FOR iter = 1 to itmax
+        LET xm = .5 * (a + b)
+        LET tol1 = tol * abs(x) + zeps
+        LET tol2 = 2 * tol1
+        IF abs(x - xm) <= tol2 - .5 * (b - a) then EXIT FOR
+
+        IF abs(e) > tol1 then
+           LET d1 = 2 * (b - a)
+           LET d2 = d1
+           IF dw <> dx then LET d1 = (w - x) * dx / (dx - dw)
+           IF dv <> dx then LET d2 = (v - x) * dx / (dx - dv)
+           LET u1 = x + d1
+           LET u2 = x + d2
+           IF ((a - u1) * (u1 - b) > 0) and (dx * d1 <= 0) then
+              LET ok1 = -1
+           ELSE
+              LET ok1 = 0
+           END IF
+           IF ((a - u2) * (u2 - b) > 0) and (dx * d2 <= 0) then
+              LET ok2 = -1
+           ELSE
+              LET ok2 = 0
+           END IF
+
+           LET olde = e
+           LET e = d
+           IF ok1=-1 or ok2=-1 then
+              IF ok1=-1 and ok2=-1 then
+                 IF abs(d1) < abs(d2) then
+                    LET d = d1
+                 ELSE
+                    LET d = d2
+                 END IF
+              ELSEIF ok1=-1 then
+                 LET d = d1
+              ELSE
+                 LET d = d2
+              END IF
+              IF abs(d) <= abs(.5 * olde) then
+                 IF dx >= 0 then LET e = a - x else LET e = b - x
+                 LET d = .5 * e
+              ELSE
+                 LET u = x + d
+                 IF u - a < tol2 or b - u < tol2 then LET d = abs(tol1) * sgn(xm - x)
+              END IF
+           ELSE
+              IF dx >= 0 then LET e = a - x else LET e = b - x
+              LET d = .5 * e
+           END IF
+        ELSE
+           IF dx >= 0 then LET e = a - x else LET e = b - x
+           LET d = .5 * e
+        END IF
+
+        IF abs(d) >= tol1 then
+           LET u = x + d
+           LET fu = func(u)
+        ELSE
+           LET u = x + abs(tol1) * sgn(d)
+           LET fu = func(u)
+           IF fu > fx then EXIT FOR
+        END IF
+
+        LET du = df(u)
+        IF fu <= fx then
+           IF u >= x then LET a = x else LET b = x
+           LET v = w
+           LET fv = fw
+           LET dv = dw
+           LET w = x
+           LET fw = fx
+           LET dw = dx
+           LET x = u
+           LET fx = fu
+           LET dx = du
+        ELSE
+           IF u < x then LET a = u else LET b = u
+           IF fu <= fw or w = x then
+              LET v = w
+              LET fv = fw
+              LET dv = dw
+              LET w = u
+              LET fw = fu
+              LET dw = du
+           ELSEIF fu <= fv or v = x or v = w then
+              LET v = u
+              LET fv = fu
+              LET dv = du
+           END IF
+        END IF
+    NEXT iter
+    IF iter > itmax then
+       PRINT "dbrent exceeded maximum iterations."
+    ELSE
+       LET xmin = x
+       LET dbrent = fx
+    END IF
+
+END SUB

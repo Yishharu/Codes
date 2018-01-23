@@ -1,0 +1,48 @@
+PROGRAM d17r1(input,output);
+(* driver for routine SOR *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   jmax = 11;
+   pi = 3.1415926;
+TYPE
+   DoubleArrayJMAXbyJMAX = ARRAY [1..jmax,1..jmax] OF double;
+VAR
+   i,j,midl: integer;
+   rjac: double;
+   a,b,c,d,e,f,u: DoubleArrayJMAXbyJMAX;
+
+(*$I SOR.PAS *)
+
+BEGIN
+   FOR i := 1 TO jmax DO
+      FOR j := 1 TO jmax DO BEGIN
+         a[i,j] := 1.0;
+         b[i,j] := 1.0;
+         c[i,j] := 1.0;
+         d[i,j] := 1.0;
+         e[i,j] := -4.0;
+         f[i,j] := 0.0;
+         u[i,j] := 0.0
+      END;
+   midl := (jmax DIV 2)+1;
+   f[midl,midl] := 2.0;
+   rjac := cos(pi/jmax);
+   sor(a,b,c,d,e,f,u,jmax,rjac);
+   writeln('SOR Solution:');
+   FOR i := 1 TO jmax DO BEGIN
+      FOR j := 1 TO jmax DO write(u[i,j]:7:2);
+      writeln
+   END;
+   writeln;
+   writeln('Test that solution satisfies difference eqns:');
+   FOR i := 2 TO jmax-1 DO BEGIN
+      FOR j := 2 TO jmax-1 DO
+         f[i,j] := u[i+1,j]+u[i-1,j]+u[i,j+1]
+            +u[i,j-1]-4.0*u[i,j];
+      write(' ':7);
+      FOR j := 2 TO jmax-1 DO write(f[i,j]:7:2);
+      writeln
+   END
+END.

@@ -1,0 +1,72 @@
+PROGRAM D11r5
+
+! Driver for routine balanc
+
+LIBRARY "balanc"
+
+CLEAR
+LET np = 5
+
+DIM a(0,0), r(0), c(0)
+MAT redim a(np, np), r(np), c(np)
+
+FOR j = 1 to np
+    FOR i = 1 to np
+        READ a(i, j)
+    NEXT i
+NEXT j
+DATA 1.0,   1.0, 1.0,   1.0, 1.0
+DATA 100.0, 1.0, 100.0, 1.0, 100.0
+DATA 1.0,   1.0, 1.0,   1.0, 1.0
+DATA 100.0, 1.0, 100.0, 1.0, 100.0
+DATA 1.0,   1.0, 1.0,   1.0, 1.0
+
+! Print norms
+
+FOR i = 1 to np
+    LET r(i) = 0
+    LET c(i) = 0
+    FOR j = 1 to np
+        LET r(i) = r(i) + abs(a(i, j))
+        LET c(i) = c(i) + abs(a(j, i))
+    NEXT j
+NEXT i
+PRINT "Rows:"
+FOR i = 1 to np
+    PRINT using "########.######": r(i);
+NEXT i
+PRINT
+PRINT "Columns:"
+FOR i = 1 to np
+    PRINT using "########.######": c(i);
+NEXT i
+PRINT
+
+PRINT
+PRINT "***** Balancing Matrix *****"
+PRINT
+
+CALL balanc (a(,), np, np)
+
+! Print norms
+
+FOR i = 1 to np
+    LET r(i) = 0
+    LET c(i) = 0
+    FOR j = 1 to np
+        LET r(i) = r(i) + abs(a(i, j))
+        LET c(i) = c(i) + abs(a(j, i))
+    NEXT j
+NEXT i
+PRINT "Rows:"
+FOR i = 1 to np
+    PRINT using "########.######": r(i);
+NEXT i
+PRINT
+PRINT "Columns:"
+FOR i = 1 to np
+    PRINT using "########.######": c(i);
+NEXT i
+PRINT
+
+END

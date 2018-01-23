@@ -1,0 +1,77 @@
+PROGRAM D10R13
+
+! Driver for Anneal
+
+LIBRARY "anneal", "ran3"
+DECLARE FUNCTION ran3
+
+LET ncity = 10
+DIM x(0), y(0), iorder(0)
+MAT redim x(ncity), y(ncity), iorder(ncity)
+
+! Create points of sale
+
+CLEAR
+LET idum = -111
+FOR i = 1 to ncity
+    LET x(i) = ran3(idum)
+    LET y(i) = ran3(idum)
+    LET iorder(i) = i
+NEXT i
+
+CALL anneal (x(), y(), iorder(), ncity)
+
+PRINT "*** System Frozen ***"
+PRINT "Final path:"
+PRINT " city      x         y"
+FOR i = 1 to ncity
+    LET ii = iorder(i)
+    PRINT using "####": ii;
+    PRINT using "#####.####": x(ii), y(ii)
+NEXT i
+
+PRINT "Press Enter to view map.";
+LINE INPUT key$
+
+DEF d(x1,y1,x2,y2) = sqr((x2-x1)^2 + (y2-y1)^2)
+
+OPEN #1: screen 0, .5, .25, 1
+SET WINDOW 0, 1, 0, 1
+OPEN #2: screen .5, 1, .25, 1
+SET WINDOW 0, 1, 0, 1
+OPEN #3: screen 0, .5, 0, .25
+OPEN #4: screen .5, 1, 0, .25
+
+WINDOW #1
+CLEAR
+BOX LINES 0, 1, 0, 1
+LET distance1 = 0
+FOR i = 1 to 10
+    PLOT x(i),y(i);
+    LET ii = i+1
+    IF ii > 10 then LET ii = 1
+    LET distance1 = distance1 + d(x(i),y(i),x(ii),y(ii))
+NEXT i
+PLOT x(1),y(1)
+WINDOW #3
+PRINT "Original order"
+PRINT "Distance ="; distance1
+
+WINDOW #2
+CLEAR
+BOX LINES 0, 1, 0, 1
+LET distance2 = 0
+FOR i = 1 to 10
+    LET j = iorder(i)
+    PLOT x(j),y(j);
+    LET ii = i+1
+    IF ii > 10 then LET ii = 1
+    LET jj = iorder(ii)
+    LET distance2 = distance2 + d(x(j),y(j),x(jj),y(jj))
+NEXT i
+PLOT x(iorder(1)),y(iorder(1))
+WINDOW #4
+PRINT "Optimal order"
+PRINT "Distance ="; distance2
+
+END

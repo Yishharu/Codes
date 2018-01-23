@@ -1,0 +1,63 @@
+PROGRAM d14r5(input,output);
+(* driver for routine SVDVAR *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   np = 6;
+   ma = 3;
+   ncvm = ma;
+TYPE
+   RealArrayNPbyNP = ARRAY [1..np,1..np] OF real;
+   RealArrayNP = ARRAY [1..np] OF real;
+   RealArrayMAbyMA = ARRAY [1..ma,1..ma] OF real;
+VAR
+   i,j: integer;
+   v: RealArrayNPbyNP;
+   w: RealArrayNP;
+   cvm,tru: RealArrayMAbyMA;
+
+(*$I SVDVAR.PAS *)
+
+BEGIN
+   w[1] := 0.0; w[2] := 1.0; w[3] := 2.0;
+   w[4] := 3.0; w[5] := 4.0; w[6] := 5.0;
+   v[1,1] := 1.0; v[1,2] := 1.0; v[1,3] := 1.0;
+   v[1,4] := 1.0; v[1,5] := 1.0; v[1,6] := 1.0;
+   v[2,1] := 2.0; v[2,2] := 2.0; v[2,3] := 2.0;
+   v[2,4] := 2.0; v[2,5] := 2.0; v[2,6] := 2.0;
+   v[3,1] := 3.0; v[3,2] := 3.0; v[3,3] := 3.0;
+   v[3,4] := 3.0; v[3,5] := 3.0; v[3,6] := 3.0;
+   v[4,1] := 4.0; v[4,2] := 4.0; v[4,3] := 4.0;
+   v[4,4] := 4.0; v[4,5] := 4.0; v[4,6] := 4.0;
+   v[5,1] := 5.0; v[5,2] := 5.0; v[5,3] := 5.0;
+   v[5,4] := 5.0; v[5,5] := 5.0; v[5,6] := 5.0;
+   v[6,1] := 6.0; v[6,2] := 6.0; v[6,3] := 6.0;
+   v[6,4] := 6.0; v[6,5] := 6.0; v[6,6] := 6.0;
+   tru[1,1] := 1.25; tru[1,2] := 2.5; tru[1,3] := 3.75;
+   tru[2,1] := 2.5; tru[2,2] := 5.0; tru[2,3] := 7.5;
+   tru[3,1] := 3.75; tru[3,2] := 7.5; tru[3,3] := 11.25;
+   writeln;
+   writeln('matrix v');
+   FOR i := 1 TO np DO BEGIN
+      FOR j := 1 TO np DO write(v[i,j]:12:6);
+      writeln
+   END;
+   writeln;
+   writeln('vector w');
+   FOR i := 1 TO np DO write(w[i]:12:6);
+   writeln;
+   svdvar(v,ma,w,cvm);
+   writeln;
+   writeln('covariance matrix from svdvar');
+   FOR i := 1 TO ma DO BEGIN
+      FOR j := 1 TO ma DO write(cvm[i,j]:12:6);
+      writeln
+   END;
+   writeln;
+   writeln('expected covariance matrix');
+   FOR i := 1 TO ma DO BEGIN
+      FOR j := 1 TO ma DO write(tru[i,j]:12:6);
+      writeln
+   END
+END.

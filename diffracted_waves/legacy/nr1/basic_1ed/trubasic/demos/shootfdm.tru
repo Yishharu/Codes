@@ -1,0 +1,96 @@
+PROGRAM D16r2
+
+! Driver for routine shootf
+
+LIBRARY "shootf"
+
+DECLARE PUBLIC c2, m, factr, dx   ! COMMON with the subroutines below
+
+LET nvar = 3
+LET n1 = 2
+LET n2 = 1
+DIM v1(0), delv1(0), v2(0), delv2(0), dv1(0), dv2(0), f(0)
+MAT redim v1(n2), delv1(n2), v2(n1), delv2(n1), dv1(n2), dv2(n1), f(nvar)
+
+CLEAR
+LET eps = .000001
+LET dxx = .0001
+LET delta = .001
+
+DO
+   PRINT "Input m, n, c-squared (999 to stop)"
+   INPUT m, n, c2
+   IF c2 = 999 then EXIT DO
+   IF n >= m and m >= 0 then EXIT DO
+   PRINT "Improper arguments"
+LOOP
+
+IF c2 <> 999 then
+   LET factr = 1
+   IF m <> 0 then
+      LET q1 = n
+      FOR i = 1 to m
+          LET factr = -.5 * factr * (n + i) * (q1 / i)
+          LET q1 = q1 - 1
+      NEXT i
+   END IF
+   LET dx = dxx
+   LET v1(1) = n * (n + 1) - m * (m + 1) + c2 / 2
+   IF mod(n - m, 2) = 0 then
+      LET v2(1) = factr
+   ELSE
+      LET v2(1) = -factr
+   END IF
+   LET v2(2) = v1(1) + 1
+   LET delv1(1) = delta * v1(1)
+   LET delv2(1) = delta * factr
+   LET delv2(2) = delv1(1)
+   LET h1 = .1
+   LET hmin = 0
+   LET x1 = -1 + dx
+   LET x2 = 1 - dx
+   LET xf = 0
+   PRINT "                  mu(-1)              y(1-dx)             mu(+1)"
+   DO
+   
+      CALL shootf (nvar, v1(), v2(), delv1(), delv2(), n1, n2, x1, x2, xf, eps, h1, hmin, f(), dv1(), dv2())
+   
+      PRINT
+      PRINT "   v ";
+      PRINT using "------------#.######": v1(1), v2(1), v2(2)
+      PRINT "   dv";
+      PRINT using "------------#.######": dv1(1), dv2(1), dv2(2)
+   LOOP while abs(dv1(1)) > abs(eps * v1(1))
+END IF
+
+END
+
+MODULE subs
+
+    PUBLIC c2, m, factr, dx       ! COMMON
+
+    SUB derivs (x, y(), dydx())   ! Used by the subroutine odeint
+        LET dydx(1) = y(2)
+        LET dydx(3) = 0
+        LET dydx(2) = (2 * x * (m + 1) * y(2) - (y(3) - c2 * x * x) * y(1)) / (1 - x * x)
+    END SUB
+
+    SUB load1 (x1, v1(), y())     ! Used by the subroutine shootf
+        LET y(3) = v1(1)
+        LET y(2) = -(y(3) - c2) * factr / 2 / (m + 1)
+        LET y(1) = factr + y(2) * dx
+    END SUB
+
+    SUB load2 (x2, v2(), y())     ! Used by the subroutine shootf
+        LET y(3) = v2(2)
+        LET y(1) = v2(1)
+        LET y(2) = (y(3) - c2) * y(1) / 2 / (m + 1)
+    END SUB
+
+    SUB score (xf, y(), f())      ! Used by the subroutine shootf
+        FOR i = 1 to 3
+            LET f(i) = y(i)
+        NEXT i
+    END SUB
+
+END MODULE

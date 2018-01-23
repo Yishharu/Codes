@@ -1,0 +1,64 @@
+DECLARE SUB SORT2 (NDAT!, DATQ!(), ORDER!())
+DECLARE SUB CRANK (NDAT!, DATQ!(), S!)
+
+'PROGRAM D13R17
+'Driver for routine CRANK
+CLS
+NDAT = 20
+NMON = 12
+DIM DATQ(NDAT), RAYS(NDAT, NMON)
+DIM ORDER(NDAT), AVE(NDAT), ZLAT(NDAT)
+DIM CITY$(NDAT), MON$(NMON)
+OPEN "TABLE2.DAT" FOR INPUT AS #1
+LINE INPUT #1, DUM$
+LINE INPUT #1, TITLE$
+LINE INPUT #1, DUM$
+TEXT$ = LEFT$(DUM$, 15)
+FOR I = 1 TO 12
+  MON$(I) = MID$(DUM$, 4 * I + 12, 4)
+NEXT I
+LINE INPUT #1, DUM$
+FOR I = 1 TO NDAT
+  LINE INPUT #1, DUM$
+  CITY$(I) = LEFT$(DUM$, 15)
+  FOR J = 1 TO 12
+    RAYS(I, J) = VAL(MID$(DUM$, 4 * J + 12, 4))
+  NEXT J
+  AVE(I) = VAL(MID$(DUM$, 66, 5))
+  ZLAT(I) = VAL(MID$(DUM$, 71, 5))
+NEXT I
+CLOSE #1
+PRINT TITLE$
+PRINT "               ";
+FOR I = 1 TO 12
+  PRINT MON$(I);
+NEXT I
+PRINT
+FOR I = 1 TO NDAT
+  PRINT CITY$(I);
+  FOR J = 1 TO 12
+    PRINT USING "####"; CINT(RAYS(I, J));
+  NEXT J
+  PRINT
+NEXT I
+'Replace solar flux in each column by rank order
+DO
+  INPUT "Number of month (1-12)"; MONTH
+  IF MONTH = 0 THEN EXIT DO
+  MONTH = (MONTH + 5) MOD 12 + 1
+  FOR I = 1 TO NDAT
+    DATQ(I) = RAYS(I, MONTH)
+    ORDER(I) = I
+  NEXT I
+  CALL SORT2(NDAT, DATQ(), ORDER())
+  CALL CRANK(NDAT, DATQ(), S)
+  PRINT "Month of"; MON$(MONTH)
+  PRINT "City                   Rank     Solar Flux   Latitude"
+  FOR I = 1 TO NDAT
+    NN = CINT(ORDER(I))
+    PRINT CITY$(NN);
+    PRINT USING "##########.#"; DATQ(I); RAYS(NN, MONTH); ZLAT(NN)
+  NEXT I
+LOOP
+END
+

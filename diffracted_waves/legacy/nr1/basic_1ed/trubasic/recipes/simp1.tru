@@ -1,0 +1,19 @@
+EXTERNAL
+
+SUB simp1 (a(,), mp, np, mm, ll(), nll, iabf, kp, bmax)
+
+    LET kp = ll(1)
+    LET bmax = a(mm + 1, kp + 1)
+    FOR k = 2 to nll
+        IF iabf = 0 then
+           LET test = a(mm + 1, ll(k) + 1) - bmax
+        ELSE
+           LET test = abs(a(mm + 1, ll(k) + 1)) - abs(bmax)
+        END IF
+        IF test > 0 then
+           LET bmax = a(mm + 1, ll(k) + 1)
+           LET kp = ll(k)
+        END IF
+    NEXT k
+
+END SUB

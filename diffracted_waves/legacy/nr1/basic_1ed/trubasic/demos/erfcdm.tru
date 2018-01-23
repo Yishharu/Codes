@@ -1,0 +1,28 @@
+PROGRAM D6r11
+
+! Driver for routine erfc
+
+LIBRARY "erfc"
+DECLARE FUNCTION erfc
+
+CLEAR
+OPEN #1: name "fncval.dat", access input
+DO
+   LINE INPUT #1: text$
+LOOP while text$ <> "Error Function"
+
+LINE INPUT #1: nval$
+LET nval = val(nval$[1:3])
+PRINT "Complementary error function"
+PRINT "   x      Actual     erfc(x)"
+FOR i = 1 to nval
+    LINE INPUT #1: dum$
+    LET x = val(dum$[1:6])
+    LET value = val(dum$[7:1000])
+    LET value = 1 - value
+    PRINT using "##.##": x;
+    PRINT using "####.#######": value, erfc(x)
+NEXT i
+CLOSE #1
+
+END

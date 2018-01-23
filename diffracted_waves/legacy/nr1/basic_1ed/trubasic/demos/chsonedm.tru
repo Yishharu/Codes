@@ -1,0 +1,37 @@
+PROGRAM D13r8
+
+! Driver for routine chsone
+
+LIBRARY "chsone", "expdev"
+DECLARE FUNCTION expdev
+
+LET nbins = 10
+DIM bins(0), ebins(0)
+MAT redim bins(nbins), ebins(nbins)
+
+CLEAR
+LET npts = 2000
+LET idum = -15
+MAT bins = zer
+FOR i = 1 to npts
+    LET x = expdev(idum)
+    LET ibin = int(x * nbins / 3) + 1
+    IF ibin <= nbins then LET bins(ibin) = bins(ibin) + 1
+NEXT i
+FOR i = 1 to nbins
+    LET ebins(i) = 3 * npts / nbins * exp(-3 * (i - .5) / nbins)
+NEXT i
+
+CALL chsone (bins(), ebins(), nbins, -1, df, chsq, prob)
+
+PRINT "        Expected       Observed"
+FOR i = 1 to nbins
+    PRINT using "     #######.##": ebins(i), bins(i)
+NEXT i
+PRINT
+PRINT "       chi-squared:   ";
+PRINT using ".####^^^^": chsq
+PRINT "       probability:   ";
+PRINT using ".####^^^^": prob
+
+END

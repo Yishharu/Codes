@@ -1,0 +1,56 @@
+PROGRAM d13r7(input,output);
+(* driver for routine FTEST *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npts = 1000;
+   mpts = 500;
+   eps = 0.04;
+   nval = 10;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayN12 = ARRAY [1..npts] OF real;   (* max of npts and mpts *)
+   RealArrayNP = RealArrayN12;
+VAR
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   GasdevIset: integer;
+   GasdevGset: real;
+   f,factor,prob,vrnce: real;
+   i,idum,j: integer;
+   data1,data2: RealArrayN12;
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+(*$I GAMMLN.PAS *)
+
+(*$I BETACF.PAS *)
+
+(*$I BETAI.PAS *)
+
+(*$I AVEVAR.PAS *)
+
+(*$I FTEST.PAS *)
+
+BEGIN
+(* generate two gaussian distributions with 
+different variances *)
+   GasdevIset := 0;
+   idum := -144;
+   writeln;
+   writeln('Variance 1 = ':16,1.0:5:2);
+   writeln('Variance 2':13,'Ratio':11,'Probability':16);
+   FOR i := 1 TO nval+1 DO BEGIN
+      FOR j := 1 TO npts DO
+         data1[j] := gasdev(idum);
+      vrnce := 1.0+(i-1)*eps;
+      factor := sqrt(vrnce);
+      FOR j := 1 TO mpts DO
+         data2[j] := factor*gasdev(idum);
+      ftest(data1,npts,data2,mpts,f,prob);
+      writeln(vrnce:11:4,f:13:4,prob:13:4)
+   END
+END.

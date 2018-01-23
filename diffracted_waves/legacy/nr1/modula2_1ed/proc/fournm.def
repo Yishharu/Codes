@@ -1,0 +1,24 @@
+DEFINITION MODULE FourNM;
+
+  (* EXPORT QUALIFIED FourN; *)
+
+   FROM NRVect  IMPORT Vector;
+   FROM NRIVect IMPORT IVector;
+
+   PROCEDURE FourN(Data: Vector; NN: IVector; isign: INTEGER); 
+   (*
+     Replaces DATA by its NDIM-dimensional discrete Fourier
+     transform, if isign is input as 1.  NN[0, NDIM-1] is an integer array
+     containing the lengths of each dimension (number of complex values),
+     which MUST all be powers of 2. DATA is a real array of length twice 
+     the product of these lengths, in which the data are stored as in a 
+     multidimensional complex array: real and imaginary parts of each element 
+     are in consecutive locations, and the rightmost index of the array 
+     increases most rapidly as one proceeds along DATA. For a two-dimensional 
+     array, this is equivalent to storing the array by rows.
+     If isign is input as -1, DATA is replaced by its inverse
+     transform times the product of the lengths of
+     all dimensions.
+   *)
+
+END FourNM.

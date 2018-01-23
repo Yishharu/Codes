@@ -1,0 +1,58 @@
+PROGRAM d12r2(input,output);
+(* driver for routine TWOFFT *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 32;
+   n2 = 64;   (* n2=2*n *)
+   per = 8;
+   pi = 3.1415926;
+TYPE
+   RealArrayNP = ARRAY [1..n] OF real;
+   RealArray2tN = ARRAY [1..n2] OF real;
+   RealArrayNN2 = RealArray2tN;
+VAR
+   i,isign: integer;
+   data1,data2: RealArrayNP;
+   fft1,fft2: RealArray2tN;
+
+PROCEDURE prntft(data: RealArrayNN2; nn: integer);
+VAR
+   ii,mm,n: integer;
+BEGIN
+   writeln('n':4,'real(n)':13,'imag.(n)':13,'real(N-n)':12,'imag.(N-n)':13);
+   writeln(0:4,data[1]:14:6,data[2]:12:6,data[1]:12:6,data[2]:12:6);
+   mm := nn DIV 2;
+   FOR ii := 1 TO mm DO BEGIN
+      n := 2*ii+1;
+      writeln(((n-1) DIV 2):4,data[n]:14:6,data[n+1]:12:6,
+         data[2*nn+2-n]:12:6,data[2*nn+3-n]:12:6)
+   END;
+   writeln(' press return to continue ...');
+   readln
+END;
+
+(*$I FOUR1.PAS *)
+
+(*$I TWOFFT.PAS *)
+
+BEGIN
+   FOR i := 1 TO n DO BEGIN
+      data1[i] := round(cos(i*2.0*pi/per));
+      data2[i] := round(sin(i*2.0*pi/per));
+   END;
+   twofft(data1,data2,fft1,fft2,n);
+   writeln('fourier transform of first function:');
+   prntft(fft1,n);
+   writeln('fourier transform of second function:');
+   prntft(fft2,n);
+(* invert transform *)
+   isign := -1;
+   four1(fft1,n,isign);
+   writeln('inverted transform  =  first function:');
+   prntft(fft1,n);
+   four1(fft2,n,isign);
+   writeln('inverted transform  =  second function:');
+   prntft(fft2,n)
+END.

@@ -1,0 +1,71 @@
+PROGRAM d13r6(input,output);
+(* driver for routine TPTEST *)
+(* compare two correlated distributions vs. two *)
+(* uncorrelated distributions *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   npts = 500;
+   eps = 0.01;
+   nshft = 10;
+   anoise = 0.3;
+TYPE
+   RealArray55 = ARRAY [1..55] OF real;
+   RealArrayNP = ARRAY [1..npts] OF real;
+VAR
+   GasdevIset: integer;
+   GasdevGset: real;
+   Ran3Inext,Ran3Inextp: integer;
+   Ran3Ma: RealArray55;
+   ave1,ave2,ave3,gauss: real;
+   offset,prob1,prob2,shift,t1,t2: real;
+   var1,var2,var3: real;
+   i,idum,j: integer;
+   data1,data2,data3: RealArrayNP;
+
+(*$I RAN3.PAS *)
+
+(*$I GASDEV.PAS *)
+
+(*$I GAMMLN.PAS *)
+
+(*$I BETACF.PAS *)
+
+(*$I BETAI.PAS *)
+
+(*$I AVEVAR.PAS *)
+
+(*$I TPTEST.PAS *)
+
+BEGIN
+   GasdevIset := 0;
+   idum := -5;
+   writeln('Correlated:':29,'Uncorrelated:':30);
+   writeln('Shift':7,'t':11,'Probability':17,'t':11,'Probability':17);
+   offset := (nshft DIV 2)*eps;
+   FOR j := 1 TO npts DO BEGIN
+      gauss := gasdev(idum);
+      data1[j] := gauss;
+      data2[j] := gauss+anoise*gasdev(idum);
+      data3[j] := gasdev(idum)+anoise*gasdev(idum)
+   END;
+   avevar(data1,npts,ave1,var1);
+   avevar(data2,npts,ave2,var2);
+   avevar(data3,npts,ave3,var3);
+   FOR j := 1 TO npts DO BEGIN
+      data1[j] := data1[j]-ave1+offset;
+      data2[j] := data2[j]-ave2;
+      data3[j] := data3[j]-ave3
+   END;
+   FOR i := 1 TO nshft DO BEGIN
+      shift := i*eps;
+      FOR j := 1 TO npts DO BEGIN
+         data2[j] := data2[j]+eps;
+         data3[j] := data3[j]+eps
+      END;
+      tptest(data1,data2,npts,t1,prob1);
+      tptest(data1,data3,npts,t2,prob2);
+      writeln(shift:6:2,t1:14:4,prob1:12:4,t2:16:4,prob2:12:4)
+   END
+END.

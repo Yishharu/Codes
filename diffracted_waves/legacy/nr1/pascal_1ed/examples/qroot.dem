@@ -1,0 +1,53 @@
+PROGRAM d9r12(input,output);
+(* driver for routine QROOT *)
+
+(*$I MODFILE.PAS *)
+
+CONST
+   n = 7;
+   nv = 3;
+   eps = 1.0e-6;
+   ntry = 10;
+   tiny = 1.0e-5;
+TYPE
+   RealArrayNP = ARRAY [1..n] OF real;
+   RealArrayNV = ARRAY [1..nv] OF real;
+   RealArrayNTRY = ARRAY [1..ntry] OF real;
+VAR
+   i,j,nflag,nroot: integer;
+   p: RealArrayNP;
+   b,c: RealArrayNTRY;
+
+(*$I POLDIV.PAS *)
+
+(*$I QROOT.PAS *)
+
+BEGIN
+   p[1] := 10.0; p[2] := -18.0; p[3] := 25.0; p[4] := -24.0;
+   p[5] := 16.0; p[6] := -6.0; p[7] := 1.0;
+   writeln;
+   writeln('P(x) := x^6-6x^5+16x^4-24x^3+25x^2-18x+10');
+   writeln('Quadratic factors x^2+bx+c');
+   writeln;
+   writeln('factor':6,'b':10,'c':12);
+   writeln;
+   nroot := 0;
+   FOR i := 1 TO ntry DO BEGIN
+      c[i] := 0.5*i;
+      b[i] := -0.5*i;
+      qroot(p,n,b[i],c[i],eps);
+      IF nroot = 0 THEN BEGIN
+         writeln(nroot:4,'   ',b[i]:12:6,c[i]:12:6);
+         nroot := 1
+      END ELSE BEGIN
+         nflag := 0;
+         FOR j := 1 TO nroot DO
+            IF (abs(b[i]-b[j]) < tiny)
+               AND (abs(c[i]-c[j]) < tiny) THEN nflag := 1;
+         IF nflag = 0 THEN BEGIN
+            writeln(nroot:4,'   ',b[i]:12:6,c[i]:12:6);
+            nroot := nroot+1
+         END
+      END
+   END
+END.

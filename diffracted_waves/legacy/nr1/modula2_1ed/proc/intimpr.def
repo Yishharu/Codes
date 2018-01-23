@@ -1,0 +1,76 @@
+DEFINITION MODULE IntImpr;
+
+  (* EXPORT QUALIFIED MidPnt, QRomo, MidInf, MidSql, MidSqu, MidExp; *)
+
+   FROM NRMath IMPORT RealFunction;
+
+   PROCEDURE MidPnt(   func: RealFunction;
+                       a, b: REAL; 
+                   VAR s:    REAL; 
+                       n:    INTEGER); 
+   (*
+     This routine computes the n'th stage of refinement of an extended 
+     midpoint rule. func is the function to be integrated between 
+     limits a and b.  When called with n=1, the routine returns the crudest 
+     estimate of (int (a, b) f(x) dx.  Subsequent calls with n=2,3,... (in that
+     sequential order) will improve the accuracy by adding (2/3) x 3^(n-1)
+     additional interior points.
+   *)
+
+   PROCEDURE QRomo(    func: RealFunction;
+                       a, b: REAL; 
+                   VAR ss:   REAL); 
+   (*
+     Romberg integration on an open interval. Returns as ss the integral 
+     of the function func from a to b, using any specified integrating routine,
+     and Romberg's method.  Normally the integrator will be an open formula, not
+     evaluating the function at the endpoints. It is assumed to triple the number 
+     of steps on each call, and to have an error series containing only even 
+     powers of the number of steps.  The integration routines MidPnt, MidInf, 
+     MidSql, and MidSqu, are possible choices at the point indicated below.
+   *)
+
+   PROCEDURE MidInf(    func:   RealFunction;
+                        aa, bb: REAL; 
+                    VAR s:      REAL; 
+                        n:      INTEGER); 
+   (*
+     This routine is an exact replacement for MidPnt, i.e. returns the 
+     n^th stage of refinement of the integral of func from aa to bb, except
+	  that the function is evaluated at evenly spaced points in 1/x rather
+	  than in x.  This allows the upper limit bb to be as large and positive
+	  as the computer allows, or the lower limit aa to be as large and
+	  negative, but not both. aa and bb must have the same sign.   
+   *)
+
+   PROCEDURE MidSql(    func:   RealFunction;
+                        aa, bb: REAL; 
+                    VAR s:      REAL; 
+                        n:      INTEGER); 
+   (*
+     This routine is an exact replacement for MidPnt, except that it allows 
+     for an inverse square-root singularity in the integrand at the lower 
+     limit aa.
+   *)
+
+   PROCEDURE MidSqu(    func:   RealFunction;
+                        aa, bb: REAL; 
+                    VAR s:      REAL; 
+                        n:      INTEGER); 
+   (*
+     This routine is an exact replacement for MidPnt, except that it allows 
+     for an inverse square-root singularity in the integrand at the lower 
+     limit bb.
+   *)
+
+   PROCEDURE MidExp(    func:   RealFunction;
+                        aa, bb: REAL; 
+                    VAR s:      REAL; 
+                        n:      INTEGER); 
+   (*
+     This routine is an exact replacement for MidPnt, except that bb is 
+     assumed to be infinite (value passed not usually used.) It is assumed 
+     that the function func decreases exponentially rapidly at inifinity.
+   *)
+
+END IntImpr.
