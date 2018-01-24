@@ -16,7 +16,8 @@ SRCS =  bessj0.f90 \
 	bessj.f90 \
 	bessy.f90 \
 	nr.f90 \
-	main.f90
+	global.f90 \
+	Umpy.f90
 
 
 OBJS =  $(LOBJ)nrtype.o \
@@ -28,7 +29,8 @@ OBJS =  $(LOBJ)nrtype.o \
 	$(LOBJ)bessy1.o \
 	$(LOBJ)bessj.o \
 	$(LOBJ)bessy.o \
-	$(LOBJ)main.o
+	$(LOBJ)global.o \
+	$(LOBJ)Umpy.o
 
 
 MODS =  $(MOD)nrtype.mod \
@@ -36,17 +38,17 @@ MODS =  $(MOD)nrtype.mod \
 	$(MOD)nr.mod
 
 
-all:	main
+all:	Umpy
 
 
-main: $(BIN)main $(OBJS)
-$(BIN)main: $(OBJS) $(LOBJ)main.o
+Umpy: $(BIN)Umpy $(OBJS)
+$(BIN)Umpy: $(OBJS) $(LOBJ)Umpy.o
 	$(F95) $(FFLAGS) $(OBJS) -l lapack \
-	-o $(BIN)main
+	-o $(BIN)Umpy
 
-$(LOBJ)main.o: main.f90
-	$(F95) -c $(FFLAGS) main.f90
-	$(MV) main.o $(LOBJ)
+$(LOBJ)Umpy.o: Umpy.f90
+	$(F95) -c $(FFLAGS) Umpy.f90
+	$(MV) Umpy.o $(LOBJ)
 
 $(OBJS): $(SRCS)
 	$(F95) $(FFLAGS) -c $(SRCS)

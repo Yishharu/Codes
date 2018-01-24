@@ -5,7 +5,7 @@ PROGRAM Umpy
  ! IMPLICIT NONE
   REAL :: r,omega,phi
   COMPLEX(SPC), external :: disp
-  COMPLEX(SPC), external :: USUM
+  REAL, external :: USUM
   print *,'r='
   READ(*,*) r
   print *,'omega='
@@ -31,7 +31,8 @@ FUNCTION USUM(r,omega,phi)
   USE nrtype
   INTEGER :: i,N
   REAL :: r,omega,phi
-  COMPLEX(SPC) :: USUM, SUM
+  COMPLEX(SPC) :: SUM
+  REAL :: USUM
   COMPLEX(SPC), external :: disp
   
   N = 20
@@ -39,7 +40,7 @@ FUNCTION USUM(r,omega,phi)
   DO i = 0, N
      SUM = SUM + disp(r,omega,i)*exp((0,1)*omega*phi)
   END DO
-  USUM = SUM
+  USUM = abs(SUM)
 END FUNCTION USUM
 
 
