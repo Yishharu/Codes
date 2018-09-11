@@ -5,9 +5,17 @@
 	INTEGER(I4B), INTENT(IN) :: n
 	REAL(SP), INTENT(IN) :: x
 	REAL(SP) :: bessy_s
-	INTEGER(I4B) :: j
+	INTEGER(I4B) :: j,an
 	REAL(SP) :: by,bym,byp,tox
-	call assert(n >= 2, x > 0.0, 'bessy_s args')
+ !	call assert(n >= 2, x > 0.0, 'bessy_s args')
+        an=abs(n)
+        
+        if (an == 0) then
+           bessy_s=bessy0(x)
+        else if (an == 1) then
+           bessy_s=bessy1(x)
+        else if (an > 1) then
+           
 	tox=2.0_sp/x
 	by=bessy1(x)
 	bym=bessy0(x)
@@ -16,7 +24,12 @@
 		bym=by
 		by=byp
 	end do
-	bessy_s=by
+        bessy_s=by
+        end if
+
+
+        if (n < 0 .and. mod(an,2) == 1) bessy_s=-bessy_s
+        
 	END FUNCTION bessy_s
 
 

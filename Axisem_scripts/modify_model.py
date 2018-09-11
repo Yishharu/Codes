@@ -1,18 +1,18 @@
 #!/usr/bin python3
 import fileinput
 
-f = open('ULVZ5km.txt','w') # new model
+f = open('ULVZ20km_40%vp.txt','w') # new model
 
-search_radius = ['3485000.','3480000.']
+search_radius = ['3500000.','3495000.','3490000.','3485000.','3480000.']
 #search_radius = ['3482000.','3480000']
 count = 0
 
 rho_var = 1 + 0.1
-vpv_var = 1 - 0.1
+vpv_var = 1 - 0.4
 vsv_var = 1 - 0.2
 qka_var = 1
 qmu_var = 1
-vph_var = 1 - 0.1
+vph_var = 1 - 0.4
 vsh_var = 1 - 0.2
 eta_var = 1
 

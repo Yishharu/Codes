@@ -1,10 +1,9 @@
 PROGRAM Umpy
-
+  !IMPLICIT NONE
   USE global
   USE nrtype
- ! IMPLICIT NONE
   REAL :: r,omega,phi
-  COMPLEX(SPC), external :: disp
+  COMPLEX(SPC), external :: disp_s
   REAL, external :: USUM
   print *,'r='
   READ(*,*) r
@@ -14,7 +13,8 @@ PROGRAM Umpy
   read(*,*) phi
   !y = bessj0_v(x)
   print *,'SUM of U is:  '
-  WRITE(*,*) USUM(r,omega,phi)
+  N = 40
+  WRITE(*,*) USUM(r,omega,phi,N)
 END PROGRAM Umpy
 
 !SUBROUTINE cal(x,ans)
@@ -26,25 +26,51 @@ END PROGRAM Umpy
 !    ans = bessj0_s(x)
 !END SUBROUTINE cal
 
-FUNCTION USUM(r,omega,phi)
+FUNCTION USUM(r,omega,phi,N)
+  !IMPLICIT NONE
   USE global
   USE nrtype
-  INTEGER :: i,N
+  INTEGER :: m,N
   REAL :: r,omega,phi
   COMPLEX(SPC) :: SUM
   REAL :: USUM
-  COMPLEX(SPC), external :: disp
+  COMPLEX(SPC), external :: disp_s
   
-  N = 20
-  SUM = (0,0)
-  DO i = 0, N
-     SUM = SUM + disp(r,omega,i)*exp((0,1)*omega*phi)
+  SUM = 0
+  DO m = -N, N
+     SUM = SUM + disp_s(r,omega,m)*exp((0,1)*m*phi)!disp_s(r,omega,m)*exp((0,1)*m*phi)
   END DO
   USUM = abs(SUM)
 END FUNCTION USUM
 
+!FUNCTION USUM_V(r,omega,phi)
+!  USE global
+!  USE nrtype
+!  REAL, INTENT(IN) :: omega
+!  REAL, DIMENSION(:,:), INTENT(IN) :: r,phi
+!  COMPLEX(SPC), DIMENSION(size(r,dim=1),size(r,dim=2)) :: SUM
+!  REAL, DIMENSION(size(r,dim=1),size(r,dim=2)) :: USUM_V
+!  COMPLEX(SPC), external :: disp_s
+!  INTEGER :: i,j,m,N
+  
+!  N = 20
 
-FUNCTION disp(r,omega,m)
+! SUM(:,:) = (0,0)
+  
+!  Do i = 1, size(r,dim=1)
+!     Do j = 1, size(r,dim=2)
+!        DO m = 0, N
+!           SUM(i,j) = SUM(i,j) + disp_s(r(i,j),omega,m)*exp((0,1)*omega*phi(i,j))
+!        END DO
+!        USUM_V(a,b) = abs(SUM(a,b))
+!     END DO
+!  END DO
+  
+!END FUNCTION USUM_V
+
+
+FUNCTION disp_s(r,omega,m)
+ ! IMPLICIT NONE  
   USE global
 !  USE bessel_function
   USE nrtype; USE nrutil, ONLY : poly
@@ -53,73 +79,59 @@ FUNCTION disp(r,omega,m)
   REAL(SP), INTENT(IN) :: r
   REAL(SP), INTENT(IN) :: omega
   INTEGER(I4B), INTENT(IN) :: m
-  COMPLEX(SPC) :: disp
-  COMPLEX(SPC), external :: hankel1
+  COMPLEX(SPC) :: disp_s
+  COMPLEX(SPC), external :: hankel1_s,hankel2_s
 
-  IF (m == 0) THEN
-     IF (rs>r .AND. r>a) THEN
-        disp = bbeta/(4*mu*omega)*(bessj0(omega*rs/bbeta)-(0,1)*bessy0(omega*rs/bbeta))*bessy0(omega*r/bbeta)
-     ELSE IF (r>rs) THEN
-        disp = bbeta/(4*mu*omega)*bessy0(omega*rs/bbeta)*hankel1(0,omega*r/bbeta)
-     ELSE
-        disp = (0,0)
-     END IF
-  ELSE IF (m == 1) THEN
-      IF (rs>r .AND. r>a) THEN
-        disp = bbeta/(4*mu*omega)*(bessj1(omega*rs/bbeta)-(0,1)*bessy1(omega*rs/bbeta))*bessy1(omega*r/bbeta)
-     ELSE IF (r>rs) THEN
-        disp = bbeta/(4*mu*omega)*bessy1(omega*rs/bbeta)*hankel1(1,omega*r/bbeta)
-     ELSE
-        disp = (0,0)
-     END IF
-  ELSE
-     IF (rs>r .AND. r>a) THEN
-        disp = bbeta/(4*mu*omega)*(bessj(m,omega*rs/bbeta)-(0,1)*bessy(m,omega*rs/bbeta))*bessy(m,omega*r/bbeta)
-     ELSE IF (r>rs) THEN
-        disp = bbeta/(4*mu*omega)*bessy(m,omega*rs/bbeta)*hankel1(m,omega*r/bbeta)
-     END IF
-  END IF
 
-END FUNCTION disp
+     IF (rs>r .AND. r>a) THEN
+        disp_s = 1./(16*mu)*(0,1)*hankel1_s(m,omega*rs/bbeta)*(2*hankel2_s(m,omega*r/bbeta)+&
+             &omega*a*hankel1_s(m,omega*r/bbeta)*(hankel2_s(m+1,omega*a/bbeta)-hankel2_s(m-1,omega*r/bbeta))/&
+             &(omega*a*hankel1_s(m-1,omega*a/bbeta)-m*bbeta*hankel1_s(m,omega*a/bbeta)))
+
+     ELSE IF (r>=rs) THEN
+        disp_s = -1/(16*mu)*(0,1)*a*omega*hankel1_s(m,omega*r/bbeta)*((-hankel1_s(m-1,a*omega/bbeta)+hankel1_s(m+1,a*omega/bbeta))&
+             &*hankel2_s(m,rs*omega/bbeta)+hankel1_s(m,rs*omega/bbeta)*(hankel2_s(m-1,a*omega/bbeta)-hankel2_s(m+1,a*omega/bbeta)))&
+             &/(a*omega*hankel1_s(m-1,omega*a/bbeta)-m*bbeta*hankel1_s(m,a*omega/bbeta))
+        
+     ELSE IF (r<=a) THEN
+        disp_s = 0
+        
+     END IF
+
+   
+
+END FUNCTION disp_s
 
 
 
  
-  FUNCTION hankel1(n,x)
+  FUNCTION hankel1_s(n,x)
 !    USE bessel_function
     USE nrtype;
     USE nr, ONLY : bessj, bessy, bessj0, bessj1, bessy0, bessy1
    
     IMPLICIT NONE
     INTEGER(I4B), INTENT(IN) :: n
+    INTEGER :: sign,k
     REAL(SP), INTENT(IN) :: x
-    COMPLEX(SPC) :: hankel1
+    COMPLEX(SPC) :: hankel1_s
 
-    IF (n == 0) THEN
-       hankel1=bessj0(x)+(0,1)*bessy0(x)
-    ELSE IF (n ==1) THEN
-       hankel1=bessj1(x)+(0,1)*bessy1(x)
-    ELSE
-       hankel1=bessj(n,x)+(0,1)*bessy(n,x)
-    END IF
-  END FUNCTION hankel1
+    hankel1_s=bessj(n,x)+(0,1)*bessy(n,x)
+    
+  END FUNCTION hankel1_s
 
-  FUNCTION hankel2(n,x)
+  FUNCTION hankel2_s(n,x)
 !    USE bessel_function
     USE nrtype;
     USE nr, ONLY : bessj, bessy, bessj0, bessj1, bessy0, bessy1
     IMPLICIT NONE
     INTEGER(I4B), INTENT(IN) :: n
+    INTEGER :: sign,k
     REAL(SP), INTENT(IN) :: x
-    COMPLEX(SPC) :: hankel2
+    COMPLEX(SPC) :: hankel2_s
 
-    IF (n == 0) THEN
-       hankel2=bessj0(x)-(0,1)*bessy0(x)
-    ELSE IF (n == 1) THEN
-       hankel2=bessj1(x)-(0,1)*bessy1(x)
-    ELSE
-       hankel2=bessj(n,x)-(0,1)*bessy(n,x)
-    END IF
+
+    hankel2_s=bessj(k,x)-(0,1)*bessy(n,x)
     
-
-  END FUNCTION hankel2
+    
+  END FUNCTION hankel2_s

@@ -17,9 +17,10 @@ from obspy import UTCDateTime
 
 matplotlib.rcParams.update({'font.size':18}) # Sets fontsize in figure
 
-EQ = '20100320'
+EQ = '20170110'
 # station = '/TA.732A'
 save_path = '/raid3/zl382/Data/MATLAB/' #'raid3/zl382/Data/MATLAB/' # '/home/zl382/Documents/MATLAB/'
+ref_phase = ['SKKS','SKS']
 
 
 plot_row = 1
@@ -80,15 +81,28 @@ for s in range(0,len(sname),1):
             ax0=plt.subplot(plot_row, plot_column, i+1)
         else:
             plt.subplot(plot_row, plot_column, i+1)
-
-        phase = phases[i]
+            
         component = components[i]
+        phase = sio.loadmat(save_path + s_name + '_' + component + '.mat')['phase'][0].strip()#phases[i]
 
         Sdifftime = seis[0].stats['traveltimes'][phase] # find time of phase              
         # Cut window around phase on selected component       
         tr = seis.select(channel=component)[0]
         w0 = np.argmin(np.abs(tr.times()+tshift-Sdifftime+100))
         w1 = np.argmin(np.abs(tr.times()+tshift-Sdifftime-190))
+        
+        for x in range (0,len(ref_phase)):
+            if  seis[0].stats.traveltimes[ref_phase[x]]!=None:
+                ref_phase_name = ref_phase[x]
+                ref_phase_time = seis[0].stats.traveltimes[ref_phase[x]]
+                
+        if (ref_phase_time == None) or (phase == 'Pdiff'):
+            ref_phase_name = 'None'
+            w0 = np.argmin(np.abs(tr.times()+tshift-Sdifftime+80))
+        else:
+            w0 = np.argmin(np.abs(tr.times()+tshift-ref_phase_time+20))
+        w1 = np.argmin(np.abs(tr.times()+tshift-Sdifftime-60))
+        
     
     #              # Copy trace
     #              tr1=tr.copy()
@@ -121,20 +135,31 @@ for s in range(0,len(sname),1):
         
         plt.pcolor(tr.times()[w0:w1]+tshift-Sdifftime,T_toplot,toplot,cmap='Greys')
         plt.ylim([-1,max(T_toplot)])
-        plt.xlim([-20,90])
+        if (phase == 'S') or (phase == 'Sdiff'):
+            plt.xlim([seis[0].stats.traveltimes['SKS']-Sdifftime-20,60])
+        else:
+            plt.xlim([-80,60])
         #if i == 2 or i==3:
-        plt.xlabel('Time around ' +phase + ' (s)', fontsize=12)
+        plt.xlabel('Time around ' +phase + ' (s), Ref phase: '+ref_phase_name, fontsize=10)
         if i==0:
+            plt.xlim(-50,60)
+            plt.xlabel('Time around ' +phase + ' (s), Ref phase: '+'SKKS', fontsize=10)
             plt.ylabel(r'Centre Period (s)',fontsize=17)
     
         plt.title(events[i],fontsize=14)
-        plt.plot([0, 0],[min(T_toplot), max(T_toplot)],'--k')
-        plt.gca().tick_params(labelsize=12)
+        plt.plot([0, 0],[min(T_toplot), max(T_toplot)],'--k')  # Mark the Sdiff Phase
+        if (phase == 'S') or (phase == 'Sdiff'):
+            if (seis[0].stats.traveltimes['SKS']):
+                plt.plot([seis[0].stats.traveltimes['SKS']-Sdifftime, seis[0].stats.traveltimes['SKS']-Sdifftime],[min(T_toplot), max(T_toplot)],'-.k')  # Mark the Ref Phase
+            if (seis[0].stats.traveltimes['SKKS']):
+                plt.plot([seis[0].stats.traveltimes['SKKS']-Sdifftime, seis[0].stats.traveltimes['SKKS']-Sdifftime],[min(T_toplot), max(T_toplot)],':k')  # Mark the Ref Phase
+        
+        plt.gca().tick_params(labelsize=10)
     #    plt.yscale('log')/home/zl382/Codes/Scripts_for_Zhi/
     
     plt.suptitle('EQ  ' + EQ + ' Station  '+ s_name+'  ', fontsize=19) 
-    plt.text(120,28,' Distance = ' + '%.2f' %seis[0].stats['dist'] + '\nAzimuth = ' + '%.2f' %seis[0].stats['az'], verticalalignment='top',horizontalalignment='right',fontsize=9)
-    filename =  '/home/zl382/Pictures/Fan_plot/' + s_name + '_D'+'%.1f' %seis[0].stats['dist']+'_A'+'%2.1f' %seis[0].stats['az']+'_.png'    
-    plt.savefig(filename)     
+    plt.text(45,28,' Distance = ' + '%.2f' %seis[0].stats['dist'] + '\nAzimuth = ' + '%.2f' %seis[0].stats['az'], verticalalignment='top',horizontalalignment='right',fontsize=9)
+    filename =  '/home/zl382/Pictures/fan_image/20170110/' + s_name + '_D'+'%.1f' %seis[0].stats['dist']+'_A'+'%2.1f' %seis[0].stats['az']+'_.png'    
+    plt.savefig(filename,format='png') #,dpi=300)     
     plt.close('all')
 #    plt.show()

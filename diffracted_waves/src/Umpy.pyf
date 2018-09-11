@@ -3,15 +3,16 @@
 
 python module Umpy ! in 
     interface  ! in :Umpy
-        function usum(r,omega,phi) ! in :Umpy:Umpy.f90
+        function usum(r,omega,phi,n) ! in :Umpy:Umpy.f90
             use nrtype
             use global
             real intent(in) :: r
             real intent(in) :: omega
             real intent(in) :: phi
+            integer intent(in) :: n
             real intent(out) :: usum
         end function usum
-      end interface 
+     end interface 
 end python module Umpy
 
 ! This file was auto-generated with f2py (version:2).

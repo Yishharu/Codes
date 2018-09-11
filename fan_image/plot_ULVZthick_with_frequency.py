@@ -29,7 +29,7 @@ distance = 106
 # Set filename for figure
 filename = 'Plots/Sdiff_T_B1.png'
 # Set models to plot
-events=['OUT_REF_1s_mtp500kmPICKLES','OUT_ULVZ20km_1s_mtp500kmPICKLES','OUT_ULVZ5km_1s_mtp500kmPICKLES']
+events=['OUT_REF_1s_mtp500kmPICKLES','OUT_UL,'OUT_ULVZ5km_1s_mtp500kmPICKLES']
 # Set model titles
 titles = ['a. No ULVZ','b. 20 km ULVZ',  'c. 5 km ULVZ']
 # Set center frequencies for the Fan

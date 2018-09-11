@@ -1,0 +1,64 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy.special as spf
+
+a=3480.
+rs=6271.
+omega = 6.208
+bbeta=5.8118
+mu=206.8166
+N = 30# sum order
+n = 100 # Angular meshgrid
+step = 10000 # Radius step
+
+
+def um(r,m):
+    a=3480.
+    rs=6271.
+    omega = 15.28
+    bbeta=5.8118
+    mu=206.8166
+    
+    if r < a:
+        um = 0
+        return um
+    
+    elif a <= r and r < rs:
+        um = 2*spf.hankel2e(m,omega*r/bbeta)+1*spf.hankel1e(m,omega*r/bbeta)
+        return um
+    
+    elif rs <= r:
+        um =  2*spf.hankel1e(m,omega*r/bbeta)
+        return um
+
+
+def usum(r,phi,N):
+    SUM = 0
+    for m in range(-N, N+1):
+        SUM = SUM + um(r,m)*np.exp(1j*m*phi) 
+    usum = abs(SUM)
+    return usum
+
+theta = np.linspace(0,2*np.pi,n)
+rho = np.linspace(a,4*a,n)
+R,Th = np.meshgrid(rho,theta)
+
+X = R*np.cos(Th)
+Y = R*np.sin(Th)
+U = np.zeros(np.shape(X))
+
+
+for N in range(0,500,3): #sum order
+    for i in range(0,np.size(rho)):
+        print('i=',i)
+        for j in range(0,np.size(theta)):
+           # r = np.sqrt(x[i]**2+y[j]**2)           # theta = np.arctan(y[j]/x[i])
+            U[i,j] = usum(R[i,j],Th[i,j],N)
+
+            
+    plt.contourf(X,Y,U)
+    plt.show()
+
+
+plt.colorbar()
+plt.show()

@@ -1,4 +1,7 @@
-#
+#/usr/bin/python3
+# Usage: python3 plot_map.py [event] [phase]
+# Example: python3 plot_map.py 20100320 Sdiff
+
 import sys
 sys.path.append('/raid2/sc845/Python/lib/python/mpl_toolkits/')
 sys.path.append('/raid2/sc845/Python/lib/python/')
@@ -32,7 +35,7 @@ for i in range(2,len(sys.argv)):
 
 piercedepth=2600.
 
-dir='Data/'+event+'/'
+dir='/raid3/zl382/Data/'+event+'/'
 seislist = sorted(glob.glob(dir+'/*PICKLE')) 
 
 
@@ -172,6 +175,6 @@ for i in listslow:
 
 
 plt.title('Event ' + str(event) + '\nPierce points at ' + str(piercedepth) + ' km depth')
-#plt.savefig('Plots/'+event+'/'+event+'_map_Vpcluster.png')
+plt.savefig('/home/zl382/Pictures/Pierce_Point_Maps/'+event+'_map_Vpcluster.png')
 
 plt.show()

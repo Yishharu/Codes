@@ -6,10 +6,17 @@
 	REAL(SP), INTENT(IN) :: x
 	REAL(SP) :: bessj_s
 	INTEGER(I4B), PARAMETER :: IACC=40,IEXP=maxexponent(x)/2
-	INTEGER(I4B) :: j,jsum,m
+	INTEGER(I4B) :: j,jsum,m,an
 	REAL(SP) :: ax,bj,bjm,bjp,summ,tox
-	call assert(n >= 2, 'bessj_s args')
-	ax=abs(x)
+	! call assert(n >= 2, 'bessj_s args')
+        ax=abs(x)
+        an=abs(n)
+        if (an == 0) then
+           bessj_s=bessj0(ax)
+        else if (an == 1) then
+           bessj_s=bessj1(ax)
+        else if (an > 1) then
+           
 	if (ax*ax <= 8.0_sp*tiny(x)) then
 		bessj_s=0.0
 	else if (ax > real(n,sp)) then
@@ -46,8 +53,12 @@
 		end do
 		summ=2.0_sp*summ-bj
 		bessj_s=bessj_s/summ
-	end if
+        end if
+        end if
+
+
 	if (x < 0.0 .and. mod(n,2) == 1) bessj_s=-bessj_s
+        if (n < 0 .and. mod(an,2) == 1)  bessj_s=-bessj_s
 	END FUNCTION bessj_s
 
 	FUNCTION bessj_v(n,xx)
