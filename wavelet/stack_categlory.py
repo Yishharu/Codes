@@ -15,8 +15,8 @@ data_path = '/raid3/zl382/Data/' + event + '/'
 seislist = glob.glob(data_path + '*PICKLE')
 
 ## Frequencies for filter
-fmin = 1/30. #Hz
-fmax = 1/10.  #Hzseis
+fmin = 1/35. #Hz
+fmax = 5.  #Hzseis
 azim_min = 39
 azim_max = 61
 

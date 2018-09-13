@@ -15,20 +15,20 @@ irisclient=IRISClient("IRIS")
 
 
 # event parameters
-name = '20170110NEW'
-latitude = 4.4634
-longitude = 122.5750
-starttime = UTCDateTime("2017-01-10T06:00:00.000")
-endtime = UTCDateTime("2017-01-10T10:00:00.000")
+name = '20161225'
+latitude = -43.4053
+longitude = -79.9403
+starttime = UTCDateTime("2016-12-25T14:00:00.000")
+endtime = UTCDateTime("2016-12-25T14:23:00.000")
 maxrad = 5
 minmag = 6.8
-maxmag = 7.8
+maxmag = 8.0
 
 # Station paramaters
 distmin = 80
 distmax = 140
-azmin = 20  #True north azimuth
-azmax = 65
+azmin = 0  #True north azimuth
+azmax = 360
 lengthoftrace=60.*45.
 
 # define a filter band to prevent amplifying noise during the deconvolution

@@ -42,8 +42,8 @@ dist_range_2 = 110
 dist_range_3 = 120
 dist_range_4 = 140
 
-azim_min = 39
-azim_max = 61
+azim_min = 300
+azim_max = 360
 
 time_min = -20
 time_max = 70
@@ -53,7 +53,8 @@ norm_constant = 10
 real_component = 'BHT'
 syn_component = 'BXT_prem_a_10s'
 
-dir = '/raid3/zl382/Data/' + event + '/'
+dir = '/raid2/sc845/Lowermost/EastPacific/Data/20161225/'
+
 seislist = glob.glob(dir + '*PICKLE')
 azis=[]
 strange_trace = []
@@ -108,35 +109,24 @@ for s in range(0,len(seislist),1):
         plt.subplot(1,4,3)
     elif seis[0].stats['dist'] < dist_range_4:
         plt.subplot(1,4,4)
-    
        # Filter data
       # if seis[0].stats.traveltimes['Sdiff']!=None:
     seistoplot.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)    
     if syn:
         seissyn.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)    
           # Time shift to shift data to reference time
-        #  tshift=UTCDateTime(seis[0].stats['starttime']) - UTCDateTime(seis[0].stats['eventtime']) #UTCDateTime('2016-08-31T03:11:40.700')#seis[0].stats['endtime']  
-        
+        #  tshift=UTCDateTime(seis[0].stats['starttime']) - UTCDateTime(seis[0].stats['eventtime']) #UTCDateTime('2016-08-31T03:11:40.700')#seis[0].stats['endtime']       
     if real:
-            if seis[0].stats['az']>=20 and seis[0].stats['az']<=45:
-                plt.plot(seistoplot.timesarray-align_time, seistoplot.data / norm + np.round(seis[0].stats['az']),'cyan')
-                
-            elif seis[0].stats['az']>45 and seis[0].stats['az']<=50:
-                plt.plot(seistoplot.timesarray-align_time, seistoplot.data / norm + np.round(seis[0].stats['az']),'lime')
-            elif seis[0].stats['az']>50 and seis[0].stats['az']<=90:
-                plt.plot(seistoplot.timesarray-align_time, seistoplot.data / norm + np.round(seis[0].stats['az']),'orange')
-                
+      plt.plot(seistoplot.times(reftime=seistoplot.stats['eventtime'])-align_time, seistoplot.data/norm + np.round(seis[0].stats['az']),'k')          
        # plt.plot(seistoplot.timesarray-align_time, seistoplot.data / norm + np.round(seis[0].stats['az']),'k')
- 
-
     if syn:
-        plt.plot(seissyn.timesarray-align_time,seissyn.data / norm + np.round(seis[0].stats['az']),'r')        
+        plt.plot(seissyn.times(reftime=seistoplot.stats['eventtime'])-align_time,seissyn.data/norm + np.round(seis[0].stats['az']),'r')        
         
                
     plt.xlim([time_min,time_max])
           # Plot travel time predictions
     for k in seis[0].stats.traveltimes.keys():
-        if seis[0].stats.traveltimes[k]!=None and k!='S90' and k!='P90' and seis[0].stats.traveltimes[k]-align_time<time_max and seis[0].stats.traveltimes[k]-align_time>time_min:
+        if seis[0].stats.traveltimes[k]!=None and k == 'Sdiff': #seis[0].stats.traveltimes[k]!=None and k!='S90' and k!='P90' and seis[0].stats.traveltimes[k]-align_time<time_max and seis[0].stats.traveltimes[k]-align_time>time_min:
             plt.plot(seis[0].stats.traveltimes[k]-align_time, np.round(seis[0].stats['az']),'g',marker='o',markersize=4)
            # plt.text(seis[0].stats.traveltimes[k]-align_time, np.round(seis[0].stats['az']),k, fontsize = 8)
                      # plt.text(seis[0].stats.traveltimes[k]-seis[0].stats.traveltimes[phase],np.round(seis[0].stats['az'])-0.5, k)              
@@ -152,8 +142,8 @@ for s in range(0,len(seislist),1):
 #        #                print('Window difference: '+str( (test_window_hei-window_hei)/window_hei))
 #          gca().add_patch(patches.Rectangle((seistoplot.times[w0]-Sdifftime,np.round(seis[0].stats['az'])-window_hei),window_wid,2*window_hei,alpha = 0.2, color = 'red'))  # width height
             
-    w0_ref = np.argmin(np.abs(seistoplot.timesarray-align_time+10))        # arg of ref, adapative time window     
-    w1_ref = np.argmin(np.abs(seistoplot.timesarray-align_time-20))   
+    w0_ref = np.argmin(np.abs(seistoplot.times(reftime=seistoplot.stats['eventtime'])-align_time+10))        # arg of ref, adapative time window     
+    w1_ref = np.argmin(np.abs(seistoplot.times(reftime=seistoplot.stats['eventtime'])-align_time-20))   
     A0 = np.max(np.abs(hilbert(seistoplot.data[w0_ref:w1_ref])))/norm                
     #gca().add_patch(patches.Rectangle((seistoplot.timesarray[w0_ref]-align_time,np.round(seis[0].stats['az'])-A0),seistoplot.timesarray[w1_ref]-seistoplot.timesarray[w0_ref],2*A0,alpha = 0.4, color = 'red'))
     threshold = A0 #np.max(seistoplot.data/norm)

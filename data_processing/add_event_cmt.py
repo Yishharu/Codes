@@ -39,6 +39,7 @@ for s in range(0,len(seislist)):
         print(s)
         
         seis= read(seislist[s],format='PICKLE')
+        #seis.resample(10)
         #Event time
         time = UTCDateTime(srcdict['year'],srcdict['month'],srcdict['day'],srcdict['hour'],srcdict['min'],srcdict['sec'],1000*srcdict['msec'])
         for i in range(3):
