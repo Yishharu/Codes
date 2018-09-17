@@ -26,14 +26,15 @@ import sys
 event=sys.argv[1]
 #event = '20100320ALL'
 
-dir='/raid3/zl382/Data/'+event
+dir='/raid3/zl382/Data/'+event + '/'
 seislist=glob.glob(dir+'/*PICKLE')
 
-with open(dir +'/cmtsource.txt','r') as inf:
-    srcdict= eval(inf.read())
+cat = obspy.read_events(dir+'CMTSOLUTION')
+# with open(dir +'/cmtsource.txt','r') as inf:
+#     srcdict= eval(inf.read())
 
-f_sta = open(dir+'/STATIONS','w')  # write STATIONS file, SPECFEM-style
-f_rec = open(dir+'/receivers.dat','w')  # write receiver file
+f_sta = open(dir+'STATIONS','w')  # write STATIONS file, SPECFEM-style
+f_rec = open(dir+'receivers.dat','w')  # write receiver file
 count = 0
 for s in range(0,len(seislist)):
         print(s)
@@ -41,15 +42,15 @@ for s in range(0,len(seislist)):
         seis= read(seislist[s],format='PICKLE')
         #seis.resample(10)
         #Event time
-        time = UTCDateTime(srcdict['year'],srcdict['month'],srcdict['day'],srcdict['hour'],srcdict['min'],srcdict['sec'],1000*srcdict['msec'])
+        time = cat[0].origins[0].time
         for i in range(3):
             #Event location
-            seis[i].stats['evla']=srcdict['latitude']
-            seis[i].stats['evlo']=srcdict['longitude']
+            seis[i].stats['evla'] = cat[0].origins[0].latitude
+            seis[i].stats['evlo'] = cat[0].origins[0].longitude
             #Event depth
-            seis[i].stats['evdp']=srcdict['depth']
+            seis[i].stats['evdp'] = cat[0].origins[0].depth/1000.
             #Event time
-            seis[i].stats['eventtime']=time
+            seis[i].stats['eventtime'] = cat[0].origins[0].time
             seis[i].timesarray = seis[i].times(reftime=time)
         seis.write(seislist[s],format='PICKLE')
         # SPECFEM-style stations file with latitude, longitude and station name
@@ -63,7 +64,7 @@ for s in range(0,len(seislist)):
 f_sta.close()
 f_rec.close()
 
-with open(dir+'/receivers.dat','r+') as f:
+with open(dir+'receivers.dat','r+') as f:
     content = f.read()
     f.seek(0,0)
     f.write('{0}\n'.format(count) + content) 

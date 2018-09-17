@@ -32,20 +32,18 @@ db_iasp91_2s = instaseis.open_db("syngine://iasp91_2s")
 db_prem_a_2s = instaseis.open_db("syngine://prem_a_2s")
 db_prem_a_10s = instaseis.open_db("syngine://prem_a_10s")
 
-# Directory needs to contain a cmt source text file!!!
-with open(dr +'cmtsource.txt','r') as inf:
-    srcdict= eval(inf.read())
+# Directory needs to contain a CMTSOLUTION source text file!!!
+cat = obspy.read_events(dr+'CMTSOLUTION')
 
 # Read in source
-source = instaseis.Source(latitude=srcdict['latitude'], longitude=srcdict['longitude'], depth_in_m=srcdict['depth']*1.e3,
-                          m_rr = srcdict['Mrr'] / 1E7,
-                          m_tt = srcdict['Mtt']  / 1E7,
-                          m_pp = srcdict['Mpp'] / 1E7,
-                          m_rt = srcdict['Mrt']/ 1E7,
-                          m_rp = srcdict['Mrp']/ 1E7,
-                          m_tp = srcdict['Mtp'] / 1E7,
-                          origin_time=obspy.UTCDateTime(srcdict['year'],srcdict['month'],srcdict['day'],srcdict['hour'],srcdict['min'],srcdict['sec'],srcdict['msec']*1000))
-
+source = instaseis.Source(latitude=cat[0].origins[0].latitude, longitude=cat[0].origins[0].longitude, depth_in_m=cat[0].origins[0].depth,
+                          m_rr = cat[0].focal_mechanisms[0].moment_tensor.tensor.m_rr,
+                          m_tt = cat[0].focal_mechanisms[0].moment_tensor.tensor.m_tt,
+                          m_pp = cat[0].focal_mechanisms[0].moment_tensor.tensor.m_pp,
+                          m_rt = cat[0].focal_mechanisms[0].moment_tensor.tensor.m_rt,
+                          m_rp = cat[0].focal_mechanisms[0].moment_tensor.tensor.m_rp,
+                          m_tp = cat[0].focal_mechanisms[0].moment_tensor.tensor.m_tp,
+                          origin_time=cat[0].origins[0].time)
 print(source)
 # Read and loop through stationlist
 stalist = glob.glob(dr+'*PICKLE')

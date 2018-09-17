@@ -1,6 +1,6 @@
 #/usr/bin/python3
 # Usage: python3 data_processing.py [event]
-# Example: python3 data_processing 20100320
+# Example: python3 data_processing.py 20100320
 import obspy
 from obspy import read
 from obspy.core import Stream

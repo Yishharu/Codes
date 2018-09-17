@@ -15,7 +15,7 @@ irisclient=IRISClient("IRIS")
 
 
 # event parameters
-name = '20161225'
+name = sys.argv[1] #'20161225'
 latitude = -43.4053
 longitude = -79.9403
 starttime = UTCDateTime("2016-12-25T14:00:00.000")
