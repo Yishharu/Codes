@@ -38,43 +38,29 @@ fmin = 1/30. #Hz
 fmax = 1/10.  #Hzseis
 
 dist_range_1 = 90
-dist_range_2 = 110
+dist_range_2 = 100
 dist_range_3 = 120
 dist_range_4 = 140
 
-azim_min = 39
-azim_max = 61
+azim_min = 300
+azim_max = 360
 
-time_min = -20
-time_max = 70
+time_min = -40
+time_max = 100
 
 norm_constant = 10
 
 real_component = 'BHT'
-syn_component = 'BXT_prem_a_10s'
+syn_component = 'BXT'
 
 dir = '/raid3/zl382/Data/' + event + '/'
 seislist = glob.glob(dir + '*PICKLE')
 azis=[]
 strange_trace = []
 
-# PLot measured differential travel times by coloring the lines
-if color:
-   dtsta=[]
-   dtnw=[]
-   dtdt=[]
-   rd=open('traveltimes_xcorr_12_30s_20130715.dat','r')
-   for line in rd.readlines():
-    val=line.split()
-    dtsta.append(val[0])
-    dtnw.append(val[1])
-    dtdt.append(float(val[4]))
-    cNorm=colors.Normalize(vmin=-10,vmax=10)
-    scalarMap=cm.ScalarMappable(norm=cNorm,cmap=plt.get_cmap('jet'))
-
 # Loop through seismograms
 count = 0
-for s in range(0,len(seislist),1):
+for s in range(0,len(seislist),3):
    #try:
     seis = read(seislist[s],format='PICKLE') # read seismogram
     azis.append(seis[0].stats['az']) # list all azimuths
@@ -110,25 +96,12 @@ for s in range(0,len(seislist),1):
         plt.subplot(1,4,4)
     
        # Filter data
-      # if seis[0].stats.traveltimes['Sdiff']!=None:
     seistoplot.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)    
     if syn:
-        seissyn.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)    
-          # Time shift to shift data to reference time
-        #  tshift=UTCDateTime(seis[0].stats['starttime']) - UTCDateTime(seis[0].stats['eventtime']) #UTCDateTime('2016-08-31T03:11:40.700')#seis[0].stats['endtime']  
-        
-    if real:
-            if seis[0].stats['az']>=20 and seis[0].stats['az']<=45:
-                plt.plot(seistoplot.timesarray-align_time, seistoplot.data / norm + np.round(seis[0].stats['az']),'cyan')
-                
-            elif seis[0].stats['az']>45 and seis[0].stats['az']<=50:
-                plt.plot(seistoplot.timesarray-align_time, seistoplot.data / norm + np.round(seis[0].stats['az']),'lime')
-            elif seis[0].stats['az']>50 and seis[0].stats['az']<=90:
-                plt.plot(seistoplot.timesarray-align_time, seistoplot.data / norm + np.round(seis[0].stats['az']),'orange')
-                
-       # plt.plot(seistoplot.timesarray-align_time, seistoplot.data / norm + np.round(seis[0].stats['az']),'k')
- 
+        seissyn.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)   
 
+    if real:                
+       plt.plot(seistoplot.timesarray-align_time, seistoplot.data / norm + np.round(seis[0].stats['az']),'k')
     if syn:
         plt.plot(seissyn.timesarray-align_time,seissyn.data / norm + np.round(seis[0].stats['az']),'r')        
         
@@ -152,15 +125,15 @@ for s in range(0,len(seislist),1):
 #        #                print('Window difference: '+str( (test_window_hei-window_hei)/window_hei))
 #          gca().add_patch(patches.Rectangle((seistoplot.times[w0]-Sdifftime,np.round(seis[0].stats['az'])-window_hei),window_wid,2*window_hei,alpha = 0.2, color = 'red'))  # width height
             
-    w0_ref = np.argmin(np.abs(seistoplot.timesarray-align_time+10))        # arg of ref, adapative time window     
-    w1_ref = np.argmin(np.abs(seistoplot.timesarray-align_time-20))   
-    A0 = np.max(np.abs(hilbert(seistoplot.data[w0_ref:w1_ref])))/norm                
-    #gca().add_patch(patches.Rectangle((seistoplot.timesarray[w0_ref]-align_time,np.round(seis[0].stats['az'])-A0),seistoplot.timesarray[w1_ref]-seistoplot.timesarray[w0_ref],2*A0,alpha = 0.4, color = 'red'))
-    threshold = A0 #np.max(seistoplot.data/norm)
+    # w0_ref = np.argmin(np.abs(seistoplot.timesarray-align_time+10))        # arg of ref, adapative time window     
+    # w1_ref = np.argmin(np.abs(seistoplot.timesarray-align_time-20))   
+    # A0 = np.max(np.abs(seistoplot.data[w0_ref:w1_ref]))/norm                
+    # #gca().add_patch(patches.Rectangle((seistoplot.timesarray[w0_ref]-align_time,np.round(seis[0].stats['az'])-A0),seistoplot.timesarray[w1_ref]-seistoplot.timesarray[w0_ref],2*A0,alpha = 0.4, color = 'red'))
+    # threshold = A0 #np.max(seistoplot.data/norm)
     
-    print(threshold)
-    if ((threshold>0.5 or threshold<0.05)):# and seis[0].stats['dist']>100) or (threshold<0.1 and seis[0].stats['dist']<100):
-        strange_trace.append([s,seis[0].stats['az'],s_name,threshold])   
+    # print(threshold)
+    # if ((threshold>0.5 or threshold<0.05)):# and seis[0].stats['dist']>100) or (threshold<0.1 and seis[0].stats['dist']<100):
+    #     strange_trace.append([s,seis[0].stats['az'],s_name,threshold])   
         
     #plt.text(71,np.round(seis[0].stats['az'])+A0,s_name+' #'+str(s), fontsize = 8)
 # Put labels on graphs
@@ -195,7 +168,7 @@ plt.xlabel('time around predicted arrival (s)')
 if switch_yaxis:
    plt.gca().invert_yaxis()
 
-plt.suptitle('Waveform with Azimuth\n Event %s    Real data: %s , Syn Data: %s' % (event, real_component, syn_component))
+plt.suptitle('Waveform with Azimuth\n Event %s    Real data: %s , Syn Data: %s \n freq: %s s - %s s' % (event, real_component, syn_component, str(1/fmax), str(1/fmin)))
 
    
 # Save file and show plot

@@ -10,25 +10,28 @@ import obspy.geodetics.base
 import numpy as np
 import sys
 
+name = sys.argv[1] #'20161225'
+
+dir='/raid3/zl382/Data/'+name+'/'
+cat = obspy.read_events(dir+'CMTSOLUTION')
+
 # load IRIS client
 irisclient=IRISClient("IRIS")
 
-
 # event parameters
-name = sys.argv[1] #'20161225'
-latitude = -43.4053
-longitude = -79.9403
-starttime = UTCDateTime("2016-12-25T14:00:00.000")
-endtime = UTCDateTime("2016-12-25T14:23:00.000")
-maxrad = 5
-minmag = 6.8
-maxmag = 8.0
+latitude = cat[0].origins[0].latitude
+longitude = cat[0].origins[0].longitude
+starttime = cat[0].origins[0].time - 30
+endtime = cat[0].origins[0].time + 30
+minmag = cat[0].magnitudes[0].mag - 0.8
+maxmag = cat[0].magnitudes[0].mag + 0.8
+maxrad = 5.0
 
 # Station paramaters
-distmin = 80
-distmax = 140
-azmin = 0  #True north azimuth
-azmax = 360
+distmin = float(sys.argv[2])
+distmax = float(sys.argv[3])
+azmin = float(sys.argv[4])  #True north azimuth
+azmax = float(sys.argv[5])
 lengthoftrace=60.*45.
 
 # define a filter band to prevent amplifying noise during the deconvolution

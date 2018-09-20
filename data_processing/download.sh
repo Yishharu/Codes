@@ -1,15 +1,19 @@
 #!/bin/bash
-# Edit the event parameter in download_data_one_event.py, 
-# then go to CMT search find the CMTSOLUTION FORMAT, 
+# Goo to CMT search find the CMTSOLUTION FORMAT, 
 # copy that to the event directory, and run this script after that.
-event="20161225_test"
+event="20180910"
+distmin=70
+distmax=120
+azmin=0
+azmax=100
+#################################Edit Before This Line###############################
 STARTTIME_GLOBAL=$(date +%s)
-echo "This is OUTPUT file for downloading!" > OUTPUT
+echo "##################This is OUTPUT file for downloading!#################" > OUTPUT
 
 
 STARTTIME=$(date +%s)
-python3 -u download_data_one_event.py $event >> OUTPUT
-tail -1 output_download.txt &
+python3 -u download_data_one_event.py $event $distmin $distmax $azmin $azmax >> OUTPUT
+tail -1 OUTPUT &
 echo "Event $event Downloaded in $[$ENDTIME - $STARTTIME] s!"
 
 STARTTIME=$(date +%s)
@@ -33,7 +37,7 @@ ENDTIME=$(date +%s)
 echo "Pierce Points Added in $[$ENDTIME - $STARTTIME] s!"
 
 STARTTIME=$(date +%s)
-python3 -u add_synthetics_topickle_extra.py $event >> OUTPUT
+python3 -u add_synthetics_topickle.py $event >> OUTPUT
 ENDTIME=$(date +%s)
 echo "Synthetics Added in $[$ENDTIME - $STARTTIME] s!"
 

@@ -24,12 +24,13 @@ import sys
 
 
 # Input event name as first argument
-event=sys.argv[1]
+event = sys.argv[1]
 piercedepth = sys.argv[2]
 # Phases to get pierce depths for
 phase=[]
 for i in range(3,len(sys.argv)):
-    phase.append(sys.argv[i])
+   phase.append(sys.argv[i])
+
 
 # This code assumes the data is in a Data directory and in PICKLE format. Change here if different. 
 dir='/raid3/zl382/Data/'+event+'/'
@@ -50,7 +51,7 @@ for s in range(len(seislist)):
        slat =seis[0].stats['stla']
        slon =seis[0].stats['stlo']
        depth =  seis[0].stats['evdp']
-       test=['taup_pierce -mod prem -evt ' +str(elat)+ ' ' +str(elon) + ' -sta '+str(slat[-1]) + ' ' + str(slon[-1])+ ' -h '+str(depth) +'  -ph Sdiff -Pierce '+str(piercedepth)]
+       test=['taup_pierce -mod prem -evt ' +str(elat)+ ' ' +str(elon) + ' -sta '+str(slat) + ' ' + str(slon)+ ' -h '+str(depth) +'  -ph Sdiff -Pierce '+str(piercedepth)]
        print(test)
        out=subprocess.check_output(test,shell=True,universal_newlines=True)
 

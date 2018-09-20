@@ -20,17 +20,19 @@ if_prem_10s = False
 event = sys.argv[1]
 dr='/raid3/zl382/Data/'+event+'/'
 ###!!!! All previous synthetics can be removed from the PICKLE by this script
-cleansyn = input("Do you want all previous synethetics removed? (y/n) ")
-if cleansyn == 'y':
-    clean = True
-else:
-    clean = False
+# cleansyn = input("Do you want all previous synethetics removed? (y/n) ")
+# if cleansyn == 'y':
+#     clean = True
+# else:
+#     clean = False
+clean = True
     
     # Load database with Green Functions
 db  = instaseis.open_db("syngine://ak135f_2s")
 db_iasp91_2s = instaseis.open_db("syngine://iasp91_2s")
 db_prem_a_2s = instaseis.open_db("syngine://prem_a_2s")
 db_prem_a_10s = instaseis.open_db("syngine://prem_a_10s")
+# db_ak135f_2s = instaseis.open_db("syngine://ak135f_2s")
 
 # Directory needs to contain a CMTSOLUTION source text file!!!
 cat = obspy.read_events(dr+'CMTSOLUTION')
