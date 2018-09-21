@@ -25,11 +25,11 @@ import sys
 
 # Input event name as first argument
 event = sys.argv[1]
-piercedepth = sys.argv[2]
+piercedepth = float(sys.argv[2])
 # Phases to get pierce depths for
 phase=[]
 for i in range(3,len(sys.argv)):
-   phase.append(sys.argv[i])
+  phase.append(sys.argv[i])
 
 
 # This code assumes the data is in a Data directory and in PICKLE format. Change here if different. 

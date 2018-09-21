@@ -39,28 +39,28 @@ fmax = 1/10.  #Hzseis
 
 dist_range_1 = 90
 dist_range_2 = 100
-dist_range_3 = 120
-dist_range_4 = 140
+dist_range_3 = 110
+dist_range_4 = 120
 
-azim_min = 300
+azim_min = 320
 azim_max = 360
 
 time_min = -40
 time_max = 100
 
-norm_constant = 10
+norm_constant = 7
 
 real_component = 'BHT'
 syn_component = 'BXT'
 
-dir = '/raid3/zl382/Data/' + event + '/'
+dir = '/raid2/sc845/Lowermost/EastPacific/Data/20161225/'#'/raid3/zl382/Data/' + event + '/' 
 seislist = glob.glob(dir + '*PICKLE')
 azis=[]
 strange_trace = []
 
 # Loop through seismograms
 count = 0
-for s in range(0,len(seislist),3):
+for s in range(0,len(seislist),1):
    #try:
     seis = read(seislist[s],format='PICKLE') # read seismogram
     azis.append(seis[0].stats['az']) # list all azimuths
@@ -68,6 +68,7 @@ for s in range(0,len(seislist),3):
     seistoplot= seis.select(channel=real_component)[0]
     s_name = os.path.splitext(os.path.split(seislist[s])[1])[0]
     print(s_name +' '+ str(s)+' / '+str(len(seislist)) + ' of '+event)
+    #print('dist: '+ str(seis[0].stats['dist'])+ 'az: '+str(seis[0].stats['az']))
        # plot synthetics
     if syn:
         seissyn= seis.select(channel = syn_component)[0]
@@ -125,17 +126,17 @@ for s in range(0,len(seislist),3):
 #        #                print('Window difference: '+str( (test_window_hei-window_hei)/window_hei))
 #          gca().add_patch(patches.Rectangle((seistoplot.times[w0]-Sdifftime,np.round(seis[0].stats['az'])-window_hei),window_wid,2*window_hei,alpha = 0.2, color = 'red'))  # width height
             
-    # w0_ref = np.argmin(np.abs(seistoplot.timesarray-align_time+10))        # arg of ref, adapative time window     
-    # w1_ref = np.argmin(np.abs(seistoplot.timesarray-align_time-20))   
-    # A0 = np.max(np.abs(seistoplot.data[w0_ref:w1_ref]))/norm                
-    # #gca().add_patch(patches.Rectangle((seistoplot.timesarray[w0_ref]-align_time,np.round(seis[0].stats['az'])-A0),seistoplot.timesarray[w1_ref]-seistoplot.timesarray[w0_ref],2*A0,alpha = 0.4, color = 'red'))
-    # threshold = A0 #np.max(seistoplot.data/norm)
+    w0_ref = np.argmin(np.abs(seistoplot.timesarray-align_time+10))        # arg of ref, adapative time window     
+    w1_ref = np.argmin(np.abs(seistoplot.timesarray-align_time-20))   
+    A0 = np.max(np.abs(seistoplot.data[w0_ref:w1_ref]))/norm                
+    #gca().add_patch(patches.Rectangle((seistoplot.timesarray[w0_ref]-align_time,np.round(seis[0].stats['az'])-A0),seistoplot.timesarray[w1_ref]-seistoplot.timesarray[w0_ref],2*A0,alpha = 0.4, color = 'red'))
+    threshold = A0 #np.max(seistoplot.data/norm)
     
-    # print(threshold)
-    # if ((threshold>0.5 or threshold<0.05)):# and seis[0].stats['dist']>100) or (threshold<0.1 and seis[0].stats['dist']<100):
-    #     strange_trace.append([s,seis[0].stats['az'],s_name,threshold])   
+    print(threshold)
+    if ((threshold>5 or threshold<0.05)):# and seis[0].stats['dist']>100) or (threshold<0.1 and seis[0].stats['dist']<100):
+        strange_trace.append([s,seis[0].stats['az'],s_name,threshold])   
         
-    #plt.text(71,np.round(seis[0].stats['az'])+A0,s_name+' #'+str(s), fontsize = 8)
+    plt.text(71,np.round(seis[0].stats['az'])+A0,s_name+' #'+str(s), fontsize = 8)
 # Put labels on graphs
 print('!!!!!!!!!!!!!!!!!!!Stange Traces:----------------------->>>>>>')
 print(strange_trace)

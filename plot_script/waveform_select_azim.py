@@ -37,17 +37,17 @@ fmin = 1/30 #Hz
 fmax = 1/10  #Hzseis
 
 dist_range_1 = 90
-dist_range_2 = 110
-dist_range_3 = 120
-dist_range_4 = 140
+dist_range_2 = 100
+dist_range_3 = 110
+dist_range_4 = 120
 
-azim_min = 18
-azim_max = 60
+azim_min = 0
+azim_max = 70
 
-time_min = -30
+time_min = -50
 time_max = 70
 
-norm_constant = 10
+norm_constant = 7
 
 per_norm = False
 
@@ -75,7 +75,7 @@ if color:
 
 # Loop through seismograms
 count = 0
-for s in range(0,len(seislist),1):
+for s in range(90,len(seislist),1):
    #try:
     seis = read(seislist[s],format='PICKLE') # read seismogram
     azis.append(seis[0].stats['az']) # list all azimuths
@@ -138,13 +138,13 @@ for s in range(0,len(seislist),1):
 #        #                test_window_hei = np.max(np.abs(hilbert(seistoplot.data[test_w0:test_w1])))/norm
 #        #                print('Window difference: '+str( (test_window_hei-window_hei)/window_hei))
 #          gca().add_patch(patches.Rectangle((seistoplot.times[w0]-Sdifftime,np.round(seis[0].stats['az'])-window_hei),window_wid,2*window_hei,alpha = 0.2, color = 'red'))  # width height            
-    w0_ref = np.argmin(np.abs(seistoplot.timesarray-seis[0].stats['traveltimes'][phase]+40))        # arg of ref, adapative time window     
-    w1_ref = np.argmin(np.abs(seistoplot.timesarray-seis[0].stats['traveltimes'][phase]+25))   
+    w0_ref = np.argmin(np.abs(seistoplot.timesarray-seis[0].stats['traveltimes'][phase]+50))        # arg of ref, adapative time window     
+    w1_ref = np.argmin(np.abs(seistoplot.timesarray-seis[0].stats['traveltimes'][phase]+20))   
     A0 = np.max(np.abs(hilbert(seistoplot.data[w0_ref:w1_ref])))/norm                
     gca().add_patch(patches.Rectangle((seistoplot.timesarray[w0_ref]-Sdifftime,np.round(seis[0].stats['az'])-A0),seistoplot.timesarray[w1_ref]-seistoplot.timesarray[w0_ref],2*A0,alpha = 0.05, color = 'y'))
     threshold = A0 #np.max(seistoplot.data/norm)
     print('NORM VALUE: ' + str(norm)+ ' ; ' + 'threshold = ' + str(threshold))    
-    if ((threshold>1 or threshold<0.04) and seis[0].stats['dist']>90) or ((threshold>5 or threshold<0.05) and seis[0].stats['dist']<90):  #(threshold>5 or threshold<0.01):
+    if ((threshold>1s or threshold<0.01) and seis[0].stats['dist']>90) or ((threshold>1.55 or threshold<0.01) and seis[0].stats['dist']<90):  #(threshold>5 or threshold<0.01):
         strange_trace.append([s,s_name,seis[0].stats['az'],seis[0].stats['dist'],threshold])   
 # Put labels on graphs
 print('!!!!!!!!!!!!!!!!!!!Stange Traces:----------------------->>>>>>')
@@ -222,8 +222,8 @@ for trace in strange_trace:
     plt.show(block=False)
 
     likeness = ''
-    while (likeness != 'y' and likeness != 'n'):
-        likeness = input('Do you like the waveform (y/n)?')
+    while (likeness != 'y' and likeness != 'n' and likeness != 'r'):
+        likeness = input('Do you like the waveform (y/n/r)?')
         if (likeness == 'y'):
             like = True
             if (s >= len(seislist)):
@@ -233,7 +233,14 @@ for trace in strange_trace:
             shutil.move(seislist[s],dirdump)
             print('# ' + str(s)+' '+s_name+' successfully moved to dump!!')
             if (s >= len(seislist)):
-               print('This is the last waveform')           
+               print('This is the last waveform')  
+        elif (likeness == 'r'):
+            seis[0].data = - seis[0].data
+            seis.write(seislist[s],format='PICKLE')
+            print('# ' + str(s)+' '+s_name+' successfully reversed!!')
+            if (s >= len(seislist)):
+               print('This is the last waveform')   
+
     tr.set_visible(False)
     plt.draw()
  
