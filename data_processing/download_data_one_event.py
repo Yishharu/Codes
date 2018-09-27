@@ -107,6 +107,7 @@ for nw in inventory:
                 seis[0].stats['evdp']=evtdepth
                 seis[0].stats['stla']=sta.latitude
                 seis[0].stats['stlo']=sta.longitude
+                seis[0].stats['stelv']=sta.elevation
 
                 seis[0].stats['dist']=distdg
                 seis[0].stats['az']=az

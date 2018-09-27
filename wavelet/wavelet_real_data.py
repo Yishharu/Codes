@@ -26,8 +26,13 @@ if_norm = False
 f_min = 1.0/35.0
 f_max = 1.0
 
-time_min = -120
-time_max = 70
+time_min = -40
+time_max = 80
+
+dist_range_1 = 100
+dist_range_2 = 110
+dist_range_3 = 120
+dist_range_4 = 130
 
 #time_min_ref = -50
 #time_max_ref = 50
@@ -44,15 +49,21 @@ event = sys.argv[1]
 if if_norm:
     filefolder= '/home/zl382/Pictures/CWT/'+event+'_norm'
 else:
-    filefolder= '/home/zl382/Pictures/CWT/'+event
-if not os.path.exists(filefolder):
-    os.makedirs(filefolder) 
-    
+    filefolder= '/home/zl382/Pictures/CWT/'+event+''
+if not os.path.exists(filefolder+'/94_' +str(dist_range_1)):
+    os.makedirs(filefolder+'/94_' +str(dist_range_1)) 
+if not os.path.exists(filefolder+'/'+str(dist_range_1)+'_' +str(dist_range_2)):
+    os.makedirs(filefolder+'/'+str(dist_range_1)+'_' +str(dist_range_2))     
+if not os.path.exists(filefolder+'/'+str(dist_range_2)+'_' +str(dist_range_3)):
+    os.makedirs(filefolder+'/'+str(dist_range_2)+'_' +str(dist_range_3)) 
+if not os.path.exists(filefolder+'/'+str(dist_range_3)+'_' +str(dist_range_4)):
+    os.makedirs(filefolder+'/'+str(dist_range_3)+'_' +str(dist_range_4)) 
+
 dir = '/raid3/zl382/Data/' + event + '/'
 seislist = glob.glob(dir + '*PICKLE')
 count = 0
 for s in range(0,len(seislist),1):
-    plt.figure(figsize=(11,7))
+    plt.figure(figsize=(24,12))
     s_name = os.path.splitext(os.path.split(seislist[s])[1])[0]
     print(str(s)+'/' + str(len(seislist)))
     seisfile = seislist[s]
@@ -64,13 +75,13 @@ for s in range(0,len(seislist),1):
 #        count = count + 1
 #        print(str(s)+' resample break down!!!!!!!')
 #        continue    
-    if seis[0].stats['dist']<95 and seis[0].stats['dist']>120:
+    if seis[0].stats['dist']<94 or seis[0].stats['dist']>130:
         continue
     
     for i in range(len(components)):
         title = titles[i]
         phase = phases[i]
-        component = components[i]       
+        component = components[i] 
         # Initialize plot for each model
         if i == 0:
             ax=plt.subplot(1,3,i+1)
@@ -84,6 +95,9 @@ for s in range(0,len(seislist),1):
         if (Sdifftime == None) and (phase == 'Pdiff'):
             phase = 'P'
             Sdifftime = seis[0].stats['traveltimes'][phase]   
+
+        plt.axvline(x=0,linestyle='--',color='g')
+
         tr = seis.select(channel=component)[0]
 
         w0 = np.argmin(np.abs(tr.timesarray-Sdifftime-time_min))
@@ -120,19 +134,27 @@ for s in range(0,len(seislist),1):
         ax.set_yscale('log')
         ax.set_ylim(f_min, f_max)
           # ax.set_xlim([-40, 180])
-        plt.yticks([1/30, 1/20, 1/10, 1/5, 1/3, 1/2, 1], ['30', '20', '10', '5', '3', '2', '1'])
+        plt.yticks([1/30, 1/20, 1/15, 1/10, 1/5, 1/3, 1/2, 1], ['30', '20', '15', '10', '5', '3', '2', '1'])
         plt.xticks(fontsize=10)
         plt.title(titles[i],fontsize=16)
         ax2 = ax.twinx()
         ax2.plot(trf.timesarray[w0:w1]-Sdifftime, trf.data[w0:w1]/np.max(np.abs(trf.data[w0:w1])),'k')
-        ax2.set_ylim([-1,50])
+        ax2.set_ylim([-1,35])
         ax2.set_yticklabels([])
         plt.xlim([time_min,time_max])
+
     # set filename
-    filename =  filefolder +'/'+ s_name + '_D'+'%.1f' %seis[0].stats['dist']+'_A'+'%2.1f' %seis[0].stats['az']+'_.png' 
+    if seis[0].stats['dist'] < dist_range_1 and seis[0].stats['dist'] > 94:
+        subfolder =  filefolder +'/94_' +str(dist_range_1)
+    elif seis[0].stats['dist'] < dist_range_2 and seis[0].stats['dist'] > dist_range_1:
+        subfolder =  filefolder +'/'+str(dist_range_1)+'_' +str(dist_range_2)
+    elif seis[0].stats['dist'] < dist_range_3 and seis[0].stats['dist'] > dist_range_2:
+        subfolder =  filefolder +'/'+str(dist_range_2)+'_' +str(dist_range_3)
+    elif seis[0].stats['dist'] < dist_range_4 and seis[0].stats['dist'] > dist_range_3:
+        subfolder =  filefolder +'/'+str(dist_range_3)+'_' +str(dist_range_4)
+    else:
+        continue
+    filename =  subfolder +'/' + 'A'+'%.1f' %seis[0].stats['az']+'_D'+'%2.1f' %seis[0].stats['dist']+'_' +s_name+'.png'
     plt.savefig(filename,format='png')
     plt.close('all')
     print(filename)
-    
-           
-plt.show()

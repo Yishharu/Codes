@@ -19,16 +19,16 @@ import os.path
 event = sys.argv[1]
 # Plot Parameter
 real = True  # plot real data
-syn = True
+syn = False
 color = False # color by measured travel times
 per_norm = False
-norm_constant = 2
+norm_constant = 5
 
-time_min = -160
+time_min = -100
 time_max = 200
 
-dist_min = 60
-dist_max = 130
+dist_min = 80
+dist_max = 125
 
 ## Frequencies for filter
 fmin = 1/30  #Hz
@@ -93,7 +93,7 @@ for s in range(0,len(seislist),5):
 
     # Plot travel time predictions
     for k in seis[0].stats.traveltimes.keys():
-        if seis[0].stats.traveltimes[k] != None and k !='S90' and k !='P90':
+        if seis[0].stats.traveltimes[k] != None and k !='S90' and k !='P90' and seis[0].stats.traveltimes[k]-align_time<time_max and seis[0].stats.traveltimes[k]-align_time>time_min:
             plt.plot(seis[0].stats.traveltimes[k]-align_time, np.round(seis[0].stats['dist']),'g', marker ='o', markersize=4)
             plt.text(seis[0].stats.traveltimes[k]-align_time, np.round(seis[0].stats['dist']),k, fontsize = 8)
 
