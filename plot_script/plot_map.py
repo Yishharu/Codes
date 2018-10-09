@@ -67,7 +67,7 @@ for s in range(0,len(seislist),1):
        elat=seis[0].stats['evla']
        elon=seis[0].stats['evlo']
 
-   if seis[0].stats['dist']>90.:
+   if seis[0].stats['dist']>90. and seis[0].stats['dist']<110 and seis[0].stats['az']<30:
        slat.append(seis[0].stats['stla'])
        slon.append(seis[0].stats['stlo'])
        azi.append(seis[0].stats['az'])
@@ -110,7 +110,7 @@ lonmax= np.min((elon,np.min(slon)))+35.+360
 lonmin= np.max((elon,np.max(slon)))-15.
 print(latmin,latmax,lonmax,lonmin)
 
-m = Basemap(projection='ortho',lat_0=np.mean((latmin,latmax)),lon_0=np.mean((lonmin,lonmax)),resolution='i')
+m = Basemap(projection='ortho',lat_0=np.mean((latmin,latmax)),lon_0=-150,resolution='i')
 #m = Basemap(llcrnrlon=lonmin,llcrnrlat=latmin,urcrnrlon=lonmax,urcrnrlat=latmax,
 #                resolution='i',projection='merc',lon_0=27.,lat_0=46.7)
 clip_path = m.drawmapboundary()

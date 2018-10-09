@@ -1,19 +1,19 @@
 #!/bin/bash
 # Goo to CMT search find the CMTSOLUTION FORMAT, 
 # copy that to the event directory, and run this script after that.
-event="20180910"
-distmin=70
-distmax=120
-azmin=0
-azmax=100
+event="20180906"
+distmin=94
+distmax=130
+azmin=30
+azmax=90
 #################################Edit Before This Line###############################
 STARTTIME_GLOBAL=$(date +%s)
 echo "##################This is OUTPUT file for downloading!#################" > OUTPUT
 
-
 STARTTIME=$(date +%s)
 python3 -u download_data_one_event.py $event $distmin $distmax $azmin $azmax >> OUTPUT
 tail -1 OUTPUT &
+ENDTIME=$(date +%s)
 echo "Event $event Downloaded in $[$ENDTIME - $STARTTIME] s!"
 
 STARTTIME=$(date +%s)

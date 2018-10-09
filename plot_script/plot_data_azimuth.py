@@ -25,7 +25,7 @@ from scipy.signal import hilbert
 from pylab import *
 import matplotlib.patches as patches
 
-event = sys.argv[1]
+event = '20161225' #sys.argv[1]
 
 syn = False # Plot synthetics
 real = True # Plot real data
@@ -103,8 +103,16 @@ for s in range(0,len(seislist),1):
     plt.xlim([time_min,time_max])
           # Plot travel time predictions
     for k in seis[0].stats.traveltimes.keys():
-        if seis[0].stats.traveltimes[k]!=None and k!='S90' and k!='P90' and seis[0].stats.traveltimes[k]-align_time<time_max and seis[0].stats.traveltimes[k]-align_time>time_min:
-            plt.plot(seis[0].stats.traveltimes[k]-align_time, np.round(seis[0].stats['az']),'g',marker='o',markersize=4)
+        if seis[0].stats.traveltimes[k]!=None: #and k!='S90' and k!='P90' and seis[0].stats.traveltimes[k]-align_time<time_max and seis[0].stats.traveltimes[k]-align_time>time_min:
+            if k == 'Sdiff' or k == 'S':
+                plt.plot(seis[0].stats.traveltimes[k]-align_time, np.round(seis[0].stats['az']),'g',marker='o',markersize=4)
+                print('Sdiff: ' + str(seis[0].stats.traveltimes[k]-align_time))
+            elif k == 'pSdiff':
+                plt.plot(seis[0].stats.traveltimes[k]-align_time, np.round(seis[0].stats['az']),'r',marker='o',markersize=4)
+                print('pSdiff: ' + str(seis[0].stats.traveltimes[k]-align_time))
+            elif k == 'sSdiff':
+                plt.plot(seis[0].stats.traveltimes[k]-align_time, np.round(seis[0].stats['az']),'orange',marker='o',markersize=4)
+                print('sSdiff: ' + str(seis[0].stats.traveltimes[k]-align_time))
            # plt.text(seis[0].stats.traveltimes[k]-align_time, np.round(seis[0].stats['az']),k, fontsize = 8)
                      # plt.text(seis[0].stats.traveltimes[k]-seis[0].stats.traveltimes[phase],np.round(seis[0].stats['az'])-0.5, k)              
     timewindow = 3*20   
@@ -154,13 +162,24 @@ plt.ylim(azim_min,azim_max)
 plt.xlabel('time around predicted arrival (s)')
 if switch_yaxis:
    plt.gca().invert_yaxis()
-   
+
+cut_x = np.linspace(35,45,num = 11)
+cut_y = np.linspace(326,334, num=11)
+plt.plot(cut_x,cut_y, '--', color='blue')
+
 plt.subplot(1,4,4)
 plt.title(' Sdiff dist < %d' % dist_range_4)
 plt.ylim(azim_min,azim_max)
 plt.xlabel('time around predicted arrival (s)')
 if switch_yaxis:
    plt.gca().invert_yaxis()
+
+cut_x = np.linspace(20,26, num=11)
+cut_y = np.linspace(312,325, num=11)
+cut_x = np.append(cut_x,np.linspace(28,50,num = 11))
+cut_y = np.append(cut_y,np.linspace(326,337, num=11))
+plt.plot(cut_x,cut_y, '--', color='blue')
+
 
 plt.suptitle('Waveform with Azimuth\n Event %s    Real data: %s , Syn Data: %s \n freq: %s s - %s s' % (event, real_component, syn_component, str(1/fmax), str(1/fmin)))
  

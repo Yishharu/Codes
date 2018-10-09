@@ -7,10 +7,11 @@ import matplotlib.pyplot as plt
 import os.path
 import time
 import obspy.geodetics.base
+from obspy.geodetics import kilometers2degrees
 import numpy as np
 import sys
 
-name = sys.argv[1] #'20161225'
+name = sys.argv[1] 
 
 dir='/raid3/zl382/Data/'+name+'/'
 cat = obspy.read_events(dir+'CMTSOLUTION')
@@ -87,7 +88,7 @@ for nw in inventory:
     
         seis=[]
         distm, az, baz = obspy.geodetics.base.gps2dist_azimuth(evtlatitude, evtlongitude,sta.latitude, sta.longitude)
-        distdg = distm/(6371.e3*np.pi/180.)
+        distdg = kilometers2degrees(distm/1.0e3)
         print(distdg,az)
         # select data depending on distance and azimuths
         if distdg> distmin and distdg <distmax and az>azmin and az < azmax:
