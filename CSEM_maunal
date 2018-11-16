@@ -1,0 +1,13 @@
+/CSEM: make very_clean
+/CSEM: make
+
+/CSEM/src/l_mail: vi models_sub.f90
+
+find case('ULVZ')
+
+phi_0: center location of ULVZ
+theta_0: colatitude of ULVZ 
+
+receiver.dat
+
+run sub_run.sh
