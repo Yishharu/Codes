@@ -1,6 +1,7 @@
 /CSEM: make very_clean
 /CSEM: make
 
+# Edit the model
 /CSEM/src/l_mail: vi models_sub.f90
 
 find case('ULVZ')
