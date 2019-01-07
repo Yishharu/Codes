@@ -6,9 +6,16 @@
 
 find case('ULVZ')
 
-phi_0: center location of ULVZ
-theta_0: colatitude of ULVZ 
+phi_0: center longitude of ULVZ, 0-360,  i.e. -172.3+360
+theta_0: colatitude of ULVZ, 0-180,      i.e. 90-15.4
 
+make very clean
+Error 1 ignore
+
+Runs_CSEM/ULVZ_20180910
+rm U*
+sh pre_sub_all.sh   to clean the mess
 receiver.dat
+macromesh.dat
 
-run sub_run.sh
+run sub_run.sh .  also change
