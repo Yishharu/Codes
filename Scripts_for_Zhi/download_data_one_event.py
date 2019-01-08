@@ -67,7 +67,7 @@ if len(cat)>1:
 
 # Select what stations are present at the time
 inventory = irisclient.get_stations(starttime=evstarttime,
-                                    endtime=eventtime)# Channel information does not seem to work ...,channel='BH*')
+                                    endtime=evendtime)# Channel information does not seem to work ...,channel='BH*')
 count = 0
 inventory.get_response
 

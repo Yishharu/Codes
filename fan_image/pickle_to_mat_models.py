@@ -13,18 +13,19 @@ import matplotlib.pyplot as plt
 
 save_path = '/home/zl382/Documents/MATLAB/'
 # Set phase to plot
-phases = ['Sdiff','Sdiff','Pdiff']
+phases = ['Sdiff','Sdiff','Sdiff','Sdiff']
 # Set component to plot
-components = ['BAT','BAR','BAZ']
+components = ['BAT','BAT','BAT','BAT']
 # Set distance
 distance = 106.0
 # Set filename for figure
 filename = 'Plots/Sdiff_T_B1.png'
 # Set models to plot
 #events=['REF_modelPICKLES','ULVZ2kmPICKLES','ULVZ5kmPICKLES']
-events=['REF_modelPICKLES','ULVZ2kmPICKLES','ULVZ5kmPICKLES','ULVZ10km_wavefieldPICKLES','ULVZ20kmPICKLES']
+events=['REF_modelPICKLES','ULVZ20km_5%vsPICKLES','ULVZ20km_10%vsPICKLES','ULVZ20kmPICKLES']
+#['REF_modelPICKLES','ULVZ2kmPICKLES','ULVZ5kmPICKLES','ULVZ10km_wavefieldPICKLES','ULVZ20kmPICKLES']
 # Set model titles
-titles = ['SHdiff','SVdiff','Pdiff']
+titles = ['PREM','5%vs 20km ULVZ','10%vs 20km ULVZ','20%vs 20km ULVZ']
 
 ref_phase = ['SKKS']
 # Set center frequencies fo the Fan

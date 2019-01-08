@@ -25,8 +25,7 @@ from scipy.signal import hilbert
 from pylab import *
 import matplotlib.patches as patches
 
-event = sys.argv[1]
-
+event = '20170509'
 syn = False # Plot synthetics
 real = True # Plot real data
 color = False # color by measured travel times
@@ -34,20 +33,32 @@ switch_yaxis = True
 
 ## Frequencies for filter
 fmin = 1/30 #Hz
-fmax = 1/10  #Hzseis
+fmax = 1/10 #Hzseis
 
 dist_range_1 = 90
 dist_range_2 = 100
 dist_range_3 = 110
 dist_range_4 = 120
 
-azim_min = 0
+azim_min = 40
 azim_max = 70
 
-time_min = -50
-time_max = 70
+dist_min=100
+dist_max=110
 
-norm_constant = 7
+time_min = -40
+time_max = 120
+
+select_time_min = -40
+select_time_max = -20
+
+select_az_min =  azim_min
+select_az_max = azim_max
+
+norm_constant = 10
+
+threshold_max = 1
+threshold_min = 0.1
 
 per_norm = False
 
@@ -72,16 +83,21 @@ if color:
     dtdt.append(float(val[4]))
     cNorm=colors.Normalize(vmin=-10,vmax=10)
     scalarMap=cm.ScalarMappable(norm=cNorm,cmap=plt.get_cmap('jet'))
+plt.subplot(1,1,1)
 
 # Loop through seismograms
 count = 0
-for s in range(90,len(seislist),1):
+for s in range(0,len(seislist),1):
    #try:
     seis = read(seislist[s],format='PICKLE') # read seismogram
     azis.append(seis[0].stats['az']) # list all azimuths
    # print(seis[0].stats['az'],seis[0].stats['dist'])
     seistoplot= seis.select(channel='BHT')[0]
     s_name = os.path.splitext(os.path.split(seislist[s])[1])[0]
+
+    if seis[0].stats['az']<azim_min or seis[0].stats['az']>azim_max \
+    or seis[0].stats['dist']<dist_min or seis[0].stats['dist']>dist_max:
+        continue
     print(s_name +' '+ str(s)+' / '+str(len(seislist)) + ' of '+event)
        # plot synthetics
     if syn:
@@ -93,20 +109,7 @@ for s in range(90,len(seislist),1):
     count = count+1   
        # Split seismograms by distance range (this needs to be adapted per event to produce a reasonable plot.
        
-  #  print(seis[0].stats.traveltimes['Sdiff'])
-    Phase = ['S','Sdiff']
-    for x in range (0,2):
-        if  seis[0].stats.traveltimes[Phase[x]]!=None:
-            phase = Phase[x]
-        if seis[0].stats['dist'] < dist_range_1:
-            plt.subplot(1,4,1)
-        elif seis[0].stats['dist'] < dist_range_2:
-            plt.subplot(1,4,2)
-        elif seis[0].stats['dist'] < dist_range_3:
-            plt.subplot(1,4,3)
-        elif seis[0].stats['dist'] < dist_range_4:
-            plt.subplot(1,4,4)
-    plt.text(101,np.round(seis[0].stats['az']),s_name, fontsize = 8)
+    plt.text(121,np.round(seis[0].stats['az']),s_name, fontsize = 8)
        # Filter data
       # if seis[0].stats.traveltimes['Sdiff']!=None:
     seistoplot.filter('highpass',freq=fmin,corners=2,zerophase=True)
@@ -116,65 +119,44 @@ for s in range(90,len(seislist),1):
         seissyn.filter('lowpass',freq=fmax,corners=2,zerophase=True)
           # Time shift to shift data to reference time
         #  tshift=UTCDateTime(seis[0].stats['starttime']) - UTCDateTime(seis[0].stats['eventtime']) #UTCDateTime('2016-08-31T03:11:40.700')#seis[0].stats['endtime']
+    phase_time = seis[0].stats.traveltimes['Sdiff'] or seis[0].stats.traveltimes['S']   
     if real:
-        plt.plot(seistoplot.timesarray-seis[0].stats.traveltimes[phase],seistoplot.data/norm+np.round(seis[0].stats['az']),'k')
+        plt.plot(seistoplot.timesarray-phase_time,seistoplot.data/norm+np.round(seis[0].stats['az']),'k')
     if syn:      
         print(np.max(seistoplot.data), np.max(seissyn.data))
-        plt.plot(seissyn.timesarray-seis[0].stats.traveltimes[phase],seissyn.data/norm+np.round(seis[0].stats['az']),'b')
+        plt.plot(seissyn.timesarray-phase_time,seissyn.data/norm+np.round(seis[0].stats['az']),'b')
     plt.xlim([time_min,time_max])
           # Plot travel time predictions
     for k in seis[0].stats.traveltimes.keys():
         if seis[0].stats.traveltimes[k]!=None and k =='Sdiff':
-            plt.plot(seis[0].stats.traveltimes[k]-seis[0].stats.traveltimes[phase],np.round(seis[0].stats['az']),'g',marker='o',markersize=4)
+            plt.plot(seis[0].stats.traveltimes[k]-phase_time,np.round(seis[0].stats['az']),'g',marker='o',markersize=4)
                      # plt.text(seis[0].stats.traveltimes[k]-seis[0].stats.traveltimes[phase],np.round(seis[0].stats['az'])-0.5, k)
-    Sdifftime = seis[0].stats.traveltimes[phase]               
+            
     timewindow = 3*20    
-#          w0 = np.argmin(np.abs(seistoplot.times-Sdifftime+timewindow/3))            
-#          w1 = np.argmin(np.abs(seistoplot.times-Sdifftime-timewindow*2/3))
+#          w0 = np.argmin(np.abs(seistoplot.times-phase_time+timewindow/3))            
+#          w1 = np.argmin(np.abs(seistoplot.times-phase_time-timewindow*2/3))
 #          window_wid = seistoplot.times[w1] - seistoplot.times[w0]
 #          window_hei = np.max(np.abs(hilbert(seistoplot.data[w0:w1])))/norm
-#        #                test_w0 = np.argmin(np.abs(seistoplot.times()-Sdifftime+(-1)))            
-#        #                test_w1 = np.argmin(np.abs(seistoplot.times()-Sdifftime-149))     
+#        #                test_w0 = np.argmin(np.abs(seistoplot.times()-phase_time+(-1)))            
+#        #                test_w1 = np.argmin(np.abs(seistoplot.times()-phase_time-149))     
 #        #                test_window_hei = np.max(np.abs(hilbert(seistoplot.data[test_w0:test_w1])))/norm
 #        #                print('Window difference: '+str( (test_window_hei-window_hei)/window_hei))
-#          gca().add_patch(patches.Rectangle((seistoplot.times[w0]-Sdifftime,np.round(seis[0].stats['az'])-window_hei),window_wid,2*window_hei,alpha = 0.2, color = 'red'))  # width height            
-    w0_ref = np.argmin(np.abs(seistoplot.timesarray-seis[0].stats['traveltimes'][phase]+50))        # arg of ref, adapative time window     
-    w1_ref = np.argmin(np.abs(seistoplot.timesarray-seis[0].stats['traveltimes'][phase]+20))   
+#          gca().add_patch(patches.Rectangle((seistoplot.times[w0]-phase_time,np.round(seis[0].stats['az'])-window_hei),window_wid,2*window_hei,alpha = 0.2, color = 'red'))  # width height            
+    w0_ref = np.argmin(np.abs(seistoplot.timesarray-phase_time-select_time_min))        # arg of ref, adapative time window     
+    w1_ref = np.argmin(np.abs(seistoplot.timesarray-phase_time-select_time_max))   
     A0 = np.max(np.abs(hilbert(seistoplot.data[w0_ref:w1_ref])))/norm                
-    gca().add_patch(patches.Rectangle((seistoplot.timesarray[w0_ref]-Sdifftime,np.round(seis[0].stats['az'])-A0),seistoplot.timesarray[w1_ref]-seistoplot.timesarray[w0_ref],2*A0,alpha = 0.05, color = 'y'))
+    gca().add_patch(patches.Rectangle((seistoplot.timesarray[w0_ref]-phase_time,np.round(seis[0].stats['az'])-A0),seistoplot.timesarray[w1_ref]-seistoplot.timesarray[w0_ref],2*A0,alpha = 0.05, color = 'y'))
     threshold = A0 #np.max(seistoplot.data/norm)
     print('NORM VALUE: ' + str(norm)+ ' ; ' + 'threshold = ' + str(threshold))    
-    if ((threshold>1s or threshold<0.01) and seis[0].stats['dist']>90) or ((threshold>1.55 or threshold<0.01) and seis[0].stats['dist']<90):  #(threshold>5 or threshold<0.01):
+    if ((threshold>threshold_max or threshold<threshold_min)):  #(threshold>5 or threshold<0.02):
         strange_trace.append([s,s_name,seis[0].stats['az'],seis[0].stats['dist'],threshold])   
 # Put labels on graphs
 print('!!!!!!!!!!!!!!!!!!!Stange Traces:----------------------->>>>>>')
 print(strange_trace)
-plt.subplot(1,4,1)
-plt.title(' Sdiff dist < %d' % dist_range_1)
+
 plt.ylim(azim_min,azim_max)
 plt.xlabel('time around predicted arrival (s)')
 plt.ylabel('azimuth (dg)')
-if switch_yaxis:
-   plt.gca().invert_yaxis()
-   
-plt.subplot(1,4,2)
-plt.title(' Sdiff dist < %d' % dist_range_2)
-plt.ylim(azim_min,azim_max)
-plt.xlabel('time around predicted arrival (s)')
-if switch_yaxis:
-   plt.gca().invert_yaxis()
-   
-plt.subplot(1,4,3)
-plt.title(' Sdiff dist < %d' % dist_range_3)
-plt.ylim(azim_min,azim_max)
-plt.xlabel('time around predicted arrival (s)')
-if switch_yaxis:
-   plt.gca().invert_yaxis()
-   
-plt.subplot(1,4,4)
-plt.title(' Sdiff dist < %d' % dist_range_4)
-plt.ylim(azim_min,azim_max)
-plt.xlabel('time around predicted arrival (s)')
 if switch_yaxis:
    plt.gca().invert_yaxis()
 
@@ -190,24 +172,14 @@ for trace in strange_trace:
     threshold = trace[4]    
     print(s_name, 'Trace#', s, '/', len(seislist))
     seis = read(seislist[s],format='PICKLE') # read seismogram
-    seistoplot = seis.select(channel='BHT')[0]
+    if real:
+        seistoplot = seis.select(channel='BHT')[0]
        # plot synthetics
     if syn:
         seissyn= seis.select(channel ='BXT')[0]       
     # Split seismograms by distance range (this needs to be adapted per event to produce a reasonable plot.
-
-    Phase = ['Sdiff', 'S']
-    for x in range (0,2):
-        if  seis[0].stats.traveltimes[Phase[x]]!=None:
-            phase = Phase[x]
-        if seis[0].stats['dist'] < dist_range_1:
-            plt.subplot(1,4,1)
-        elif seis[0].stats['dist'] < dist_range_2:
-            plt.subplot(1,4,2)
-        elif seis[0].stats['dist'] < dist_range_3:
-            plt.subplot(1,4,3)
-        elif seis[0].stats['dist'] < dist_range_4:
-            plt.subplot(1,4,4)    
+    if seis[0].stats['az']<select_az_min or seis[0].stats['az']>select_az_max:
+        continue
        # Filter data
       # if seis[0].stats.traveltimes['Sdiff']!=None:
     seistoplot.filter('highpass',freq=fmin,corners=2,zerophase=True)
@@ -215,7 +187,8 @@ for trace in strange_trace:
           # Time shift to shift data to reference time
       # tshift=seis[0].stats['starttime']-seis[0].stats['eventtime']  
    # print('max',np.max(seistoplot.timesarray))
-    [tr] = plt.plot(seistoplot.timesarray-seis[0].stats.traveltimes[phase],seistoplot.data/norm+np.round(seis[0].stats['az']),'r')
+    phase_time = seis[0].stats.traveltimes['Sdiff'] or seis[0].stats.traveltimes['S']   
+    [tr] = plt.plot(seistoplot.timesarray-phase_time,seistoplot.data/norm+np.round(seis[0].stats['az']),'r')
         
     print('azi ='+ str(azimuth) + ' ; '+'dist ='+ str(dist)+' ; '+ 'threshold = ' + str(threshold))
 

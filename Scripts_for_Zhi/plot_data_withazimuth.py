@@ -12,7 +12,8 @@ import time
 import glob
 import shutil
 import numpy as np
-import scipfrom obspy.io.xseed import Parser
+import scipy
+from obspy.io.xseed import Parser
 from obspy.clients.arclink import Client as ARCLINKClient
 from obspy.clients.fdsn import Client as IRISClient
 from subprocess import call

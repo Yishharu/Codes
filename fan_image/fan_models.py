@@ -15,7 +15,7 @@ matplotlib.rcParams.update({'font.size':20}) # Sets fontsize in figure
 save_path = '/home/zl382/Documents/MATLAB/'
 
 plot_row = 1
-plot_column = 3
+plot_column = 4
 
 # Set phase to plot
 phases = sio.loadmat(save_path + 'pickle_mat_interface'+ '.mat')['phases']
@@ -33,7 +33,8 @@ events = sio.loadmat(save_path + 'pickle_mat_interface'+ '.mat')['events']
 for i in range(len(events)):
     events[i] = events[i].strip()
 # Set model titles
-titles = ['REF_model','ULVZ2km','ULVZ5km','ULVZ10km','ULVZ20km']
+#titles = ['REF_model','ULVZ2km','ULVZ5km','ULVZ10km','ULVZ20km']
+titles = ['PREM','5%vs 20km ULVZ','10%vs 20km ULVZ','20%vs 20km ULVZ']
 #titles = ['REF_model','ULVZ2km','ULVZ5km']
 
 ref_phase = ['SKKS']
@@ -44,7 +45,7 @@ ref_phase = ['SKKS']
 s = 106.0
 
 plt.figure(figsize=(11.69,8.27))
-for j in [0,1,2]:#range(len(events)):
+for j in [0,1,2,3]:#range(len(events)):
     event = events[j]
 
     seisfile = '/raid3/zl382/Data/Synthetics/' +  event + '/SYN_' + str(s) + '.PICKLE'
@@ -74,9 +75,9 @@ for j in [0,1,2]:#range(len(events)):
             ref_phase_name = ref_phase[x]
             ref_phase_time = seis[0].stats.traveltimes[ref_phase[x]]
                 
-    w0 = np.argmin(np.abs(tr.times()-Sdifftime+50))
+    w0 = np.argmin(np.abs(tr.times()-Sdifftime+120))
     
-    w1 = np.argmin(np.abs(tr.times()-Sdifftime-70))
+    w1 = np.argmin(np.abs(tr.times()-Sdifftime-180))
 
         
     w_start_maxima = np.argmin(np.abs(tr.times()-Sdifftime+20))-w0;
