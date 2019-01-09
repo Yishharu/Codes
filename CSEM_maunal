@@ -15,7 +15,7 @@ Error 1 ignore
 Runs_CSEM/ULVZ_20180910
 rm U*
 sh pre_sub_all.sh   to clean the mess
-receiver.dat
-macromesh.dat
+receiver.dat    change receiver
+macromesh.dat    change source
 
 run sub_run.sh .  also change
