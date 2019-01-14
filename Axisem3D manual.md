@@ -25,3 +25,8 @@ vi inparam.model . add 3D feature . under src/volumeric 3D
 
 cyclinder$vs$Ref1D$$
 
+
+
+
+How to Generate Mesh?
+Need background model file first (this is 1D depth profile.)
