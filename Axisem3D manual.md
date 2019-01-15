@@ -30,3 +30,20 @@ cyclinder$vs$Ref1D$$
 
 How to Generate Mesh?
 Need background model file first (this is 1D depth profile.)
+
+> python -m salvus_mesh_lite.interface AxiSEM --save_yaml=input.yaml
+
+> python -m salvus_mesh_lite.interface --input_file=input.yaml
+
+or 
+
+>python -m salvus_mesh_lite.interface AxiSEM  --basic.model prem_ani --basic.period 10 --generate_plots
+
+or
+modify the model bm, discountinity and velocity profile
+name 
+number of layer
+discountinity depth
+velocity profile same just for mesh
+same for VPV VSV, QKappa, VPH, ETA
+> python -m mesh_lite .interface AxiSEM --basic.model ~/codes/build/prem_ani****.bm --basic.period 50 --generate
