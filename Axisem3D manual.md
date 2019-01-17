@@ -47,3 +47,19 @@ discountinity depth
 velocity profile same just for mesh
 same for VPV VSV, QKappa, VPH, ETA
 > python -m mesh_lite .interface AxiSEM --basic.model ~/codes/build/prem_ani****.bm --basic.period 50 --generate
+
+
+# MESHER - generate a Mesh
+We could generate mesh based on current model.(like prem_iso) 
+>python -m salvus_mesh_lite.interface AxiSEM  --basic.model prem_ani --basic.period 10 --generate_plots
+if we want to use our own model, we could redefine background model in bm file, add discountinity layer, modify VPV VSV, QKappa, VPH, ETA and give it another name.
+> python -m mesh_lite .interface AxiSEM --basic.model ~/codes/build/prem_ani****.bm --basic.period 50 --generate
+
+Remember Here only set up 1D model, the high-dimensional model is set up in inparam.model file in input.
+# SOLVER - Input file
+inparam.model
+
+# Postprocessing - Input file
+nc2ascii.py help to make axisem3d_synthetics.nc to ascii file.
+in ascii file, time RTZ component.
+
