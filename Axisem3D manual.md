@@ -59,7 +59,9 @@ if we want to use our own model, we could redefine background model in bm file, 
 
 Remember Here only set up 1D model, the high-dimensional model is set up in inparam.model file in input.
 ## SOLVER - Input file
-inparam.model
+inparam.model (2.5D model add to BG model)
+change to approriate frequency mesh file
+Dist, Azi of ULVZ, velocity reduction, Gaussian Height...
 
 ## Postprocessing - Input file
 nc2ascii.py help to make axisem3d_synthetics.nc to ascii file.
