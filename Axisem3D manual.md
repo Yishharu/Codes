@@ -48,14 +48,14 @@ velocity profile same just for mesh
 same for VPV VSV, QKappa, VPH, ETA
 > python -m mesh_lite .interface AxiSEM --basic.model ~/codes/build/prem_ani****.bm --basic.period 50 --generate
 
-
+(Salvus Conda does not work, use pip instead)
 ## MESHER - generate a Mesh
 We could generate mesh based on current model.(like prem_iso) 
 >python -m salvus_mesh_lite.interface AxiSEM  --basic.model prem_ani --basic.period 10 --generate_plots
 
 if we want to use our own model, we could redefine background model in bm file, add discountinity layer, modify VPV VSV, QKappa, VPH, ETA and give it another name.
 
-> python -m mesh_lite .interface AxiSEM --basic.model ~/codes/build/prem_ani****.bm --basic.period 50 --generate
+> python -m salvus_mesh_lite.interface AxiSEM --basic.model /raid1/zl382/AxiSEM3D/MESHER/prem_ani****.bm --basic.period 50 --generate_plots
 
 Remember Here only set up 1D model, the high-dimensional model is set up in inparam.model file in input.
 ## SOLVER - Input file
