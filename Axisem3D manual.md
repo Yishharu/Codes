@@ -65,3 +65,5 @@ inparam.model
 nc2ascii.py help to make axisem3d_synthetics.nc to ascii file.
 in ascii file, time RTZ component.
 
+## Postprocessing - Input file
+For Saluvs Mesh, bm file poly parameter?  Find models_1D.py in Salvus Mesh...
