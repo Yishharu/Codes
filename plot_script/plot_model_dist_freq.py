@@ -18,7 +18,7 @@ from pylab import *
 import matplotlib.patches as patches
 from scipy.signal import hilbert
 #events = os.listdir('/raid3/zl382/Data/Synthetics/*10km*')
-events = ['REF_modelPICKLES']# ['ULVZ20kmPICKLES'] #['ULVZ10km_wavefieldPICKLES']
+events = ['ULVZ20kmPICKLES'] #['ULVZ10km_wavefieldPICKLES']
 component = 'BAT'
 norm_constant = 12
 ## Plot synthetics
@@ -44,7 +44,7 @@ for event in events:
     seislist = sorted(glob.glob(dir + '*PICKLE'))
     azis = []
     dists = []    
-    seis = read(dir+'SYN_90.PICKLE',format='PICKLE')
+    seis = read(dir+'SYN_90.0.PICKLE',format='PICKLE')
     seistoplot = seis.select(channel = component)[0]    
     norm = np.max(seistoplot.data)/norm_constant     
 
@@ -62,9 +62,9 @@ for event in events:
             plt.subplot(plot_row, plot_column, i+1)
         print('i=',i)       
             # Loop through seismograms
-        for s in range(60,145,3):            
+        for s in range(90,145,3):            
             #print(s, '/', len(seislist))
-            seis = read(dir+'SYN_'+str(s)+'.PICKLE',format='PICKLE') # Read seismogram
+            seis = read(dir+'SYN_'+'%.1f' %(s)+'.PICKLE',format='PICKLE') # Read seismogram
             dists.append(seis[0].stats['dist'])# List all distances
             #    azis.append(seis[0].stats['az'])      # List all azimuths
             #    print('Azimuth: ', seis[0].stats['az'],'Distance: ',seis[0].stats['dist'])

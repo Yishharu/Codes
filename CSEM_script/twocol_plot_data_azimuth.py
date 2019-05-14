@@ -25,12 +25,12 @@ from scipy.signal import hilbert
 from pylab import *
 import matplotlib.patches as patches
 
-event = '20180910'#sys.argv[1]
+event = '20100320'#sys.argv[1]
 
 syn = True# Plot synthetics
 real = not syn # Plot real data
 color = False # color by measured travel times
-switch_yaxis = False
+switch_yaxis = True
 per_norm = False
 
 ## Frequencies for filter
@@ -41,8 +41,8 @@ dist_range_1 = 100
 dist_range_2 = 110
 
 
-azim_min = 0
-azim_max = 30
+azim_min = 35
+azim_max = 65
 
 time_min = -20
 time_max = 80
@@ -53,9 +53,9 @@ real_component = 'BHT'
 syn_component = 'BCT'
 
 if syn:
-    dir = '/raid3/zl382/Data/20180910/CSEM/ULVZ_20180910/'
+    dir = '/raid3/zl382/Data/20100320/CSEM/ULVZ_20100320/'
 else:
-    dir = '/raid3/zl382/Data/20180910/'
+    dir = '/raid3/zl382/Data/20100320/'
 
 # [x1,y1] = [20,312]
 # [x2,y2] = [25,325]
@@ -70,6 +70,7 @@ if plot_cut:
 
 ###################### Edit Before This Line ######################################
 
+print('Reading data %s' %(dir))
 seislist = glob.glob(dir + '*PICKLE')
 azis=[]
 dists=[]

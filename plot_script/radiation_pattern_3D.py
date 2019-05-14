@@ -10,13 +10,15 @@ theta_initial = np.linspace(0,2*np.pi,200)
 phi_initial = np.linspace(0,np.pi/2,200)
 
 theta, phi = np.meshgrid(theta_initial, phi_initial)
-
-delta = np.pi/2
-lamda = 0
  
-strike = 64*np.pi/180  ###
-delta = 30*np.pi/180  ## dip   90*np.pi//180
-lamda = -93*np.pi/180  ## slip   0
+strike_cmt = 64     # strike from Standard Global CMT Catalog
+delta_cmt = 30      # dip from Standard Global CMT Catalog
+lamda_cmt = -93     # slip   from Standard Global CMT Catalog
+################ Edit Before This Line ########################
+
+strike = np.deg2rad(strike_cmt)
+delta = np.deg2rad(delta_cmt)
+lamda = np.deg2rad(lamda_cmt)
 
 cotheta = np.pi/2 - theta  - strike ## theta_initial is latitude and theta is colatitude
 

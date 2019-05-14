@@ -22,9 +22,6 @@ dist_max = 110
 az_min = 45
 az_max = 65
 
-# data_path = '/raid2/sc845/Lowermost/EastPacific/Data/20161225/CSEM/'+model+'/'
-# newfilefolder= '/raid3/zl382/Data/20161225_synthetics/' +model+ '/fk_analysis' + '/'
-
 data_path = '/raid3/zl382/Data/' + event + '/' #'/raid3/zl382/Data/' + event + '/'
 newfilefolder= '/raid3/zl382/Data/' + event + '/' + 'high_freq_fk_analysis' + '/'
 seislist = glob.glob(data_path + '*PICKLE')

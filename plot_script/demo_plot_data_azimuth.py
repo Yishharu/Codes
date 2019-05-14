@@ -24,9 +24,9 @@ import matplotlib.cm as cm
 from scipy.signal import hilbert
 from pylab import *
 import matplotlib.patches as patches
-import matlab.engine
 
-event = '20120417'
+Location = 'Hawaii'
+Event = '20100320'
 
 syn = False# Plot synthetics
 real = True # Plot real data
@@ -46,22 +46,28 @@ dist_range_4 = 120
 time_min = -20
 time_max = 120
 
-azim_min = 40
-azim_max = 60
+azim_min = 37
+azim_max = 66
 
-dist_min = 110
-dist_max = 120
+dist_min = 101
+dist_max = 110
 
-norm_constant = 25
+norm_constant = 3
 
 real_component = 'BHT'
 syn_component = 'BXT'
 
-dir = '/raid3/zl382/Data/' + event + '/'# '/raid2/sc845/Lowermost/EastPacific/Data/20161225/'
+dir = '/raid1/zl382/Data/'+Location+'/'+Event + '/'# '/raid2/sc845/Lowermost/EastPacific/Data/20161225/'
 
-[x1,y1] = [20,63]
+# 10-20s post cursor
+# [x1,y1] = [10,65]
+# [x2,y2] = [30,50]
+# [x3,y3] = [50,35]
+
+# # 1-5s post cursor
+[x1,y1] = [30,65]
 [x2,y2] = [50,50]
-[x3,y3] = [70,40]
+[x3,y3] = [80,35]
 
 cut_x = np.linspace(x1,x2, num=10, endpoint=False)    # First Line
 cut_y = np.linspace(y1,y2, num=10, endpoint=False)
@@ -78,23 +84,31 @@ strange_trace = []
 
 # Loop through seismograms
 count = 0
-for s in range(0,len(seislist),1):
-    seis = read(seislist[s],format='PICKLE') # read seismogram
+location_dict = np.load(dir+'location.npy').item()
+
+
+for s, (s_name, (dist,azi)) in enumerate(location_dict.items()):
+    print('%s %d / %d of %s' %(s_name, s, len(location_dict), Event))
+    if azi<azim_min or azi>azim_max \
+    or dist<dist_min or dist>dist_max:
+        continue
+    full_path = dir+s_name+'.PICKLE'
+    if not os.path.exists(full_path):
+        continue
+    seis = read(dir+s_name+'.PICKLE',format='PICKLE') # read seismogram
+    seis.differentiate()
     seistoplot= seis.select(channel=real_component)[0]
-    s_name = os.path.splitext(os.path.split(seislist[s])[1])[0]
-    print('%s %d / %d of %s' %(s_name, s, len(seislist), event))
-   # print(s_name +' '+ str(s)+' / '+str(len(seislist)) + ' of '+event)
+
+   # print(s_name +' '+ str(s)+' / '+str(len(seislist)) + ' of '+Event)
     # print('dist: '+ str(seis[0].stats['dist'])+ 'az: '+str(seis[0].stats['az']))
 
-    # Split seismograms by distance range (this needs to be adapted per event to produce a reasonable plot.
-    if seis[0].stats['az']<azim_min or seis[0].stats['az']>azim_max \
-    or seis[0].stats['dist']<dist_min or seis[0].stats['dist']>dist_max:
-        continue
     phase_time = seis[0].stats.traveltimes['Sdiff'] or seis[0].stats.traveltimes['S']
     noise_time = seis[0].stats.traveltimes['P'] or seis[0].stats.traveltimes['Pdiff']-300
 
     align_time = seis[0].stats.traveltimes['Sdiff'] or seis[0].stats.traveltimes['S']
-
+    seistoplot.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)    
+    if syn:
+        seissyn.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)  
     if syn:
         seissyn= seis.select(channel = syn_component)[0]
     if per_norm:
@@ -103,9 +117,7 @@ for s in range(0,len(seislist),1):
         norm = np.max(seistoplot.data) / norm_constant
     count = count+1          
        # Filter data
-    seistoplot.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)    
-    if syn:
-        seissyn.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)   
+ 
 
  #   [wt, period, coi] = eng.cwt(seistoplot.data,delta,wname,'VoicesPerOctave', Nv,nargout=3)
     # data_filter = eng.icwt(wt, period, wname, [seconds(10) seconds(30)],'SignalMean', 0);
@@ -212,13 +224,14 @@ dists = np.array(dists)
 plt.subplot(1,1,1)
 #plt.title('100 < Sdiff distance < 110')
 # plt.ylim([])
-plt.ylim(azis.min()-4,azis.max()+4)
+plt.ylim(azis.min()-4.9,azis.max()+4.9)
 #plt.ylim(0,31)
 plt.xlabel('Time around predicted arrival (s)')
 plt.ylabel('Azimuth (deg)')
 if switch_yaxis:
    plt.gca().invert_yaxis()
-
+# plt.plot(cut_x,cut_y, '--', color='blue')
+# plt.plot(cut_x+50,cut_y, '--', color='blue')
 # plt.subplot(1,2,2)   
 # plt.title('100 < Sdiff distance < 110' )
 # plt.ylim(azis.min()-4,32)
@@ -238,7 +251,26 @@ if switch_yaxis:
 # plt.plot(cut_x,cut_y, '--', color='blue')
 
 
-plt.suptitle('Waveform with Azimuth\n Event %s    Real data: %s , Syn Data: %s \n freq: %s s - %s s' % (event, real_component, syn_component, str(1/fmax), str(1/fmin)), fontsize=20)
+# plt.suptitle('Waveform with Azimuth\n Event %s    Real data: %s , Syn Data: %s \n Dist %.0f - %.0f Freq: %s s - %s s' \
+#     % (Event, real_component, syn_component, dist_min, dist_max, str(1/fmax), str(1/fmin)), fontsize=20)
+
+
+# # Add trace
+# # Data Directory
+# dir = '/raid3/zl382/Data/20100320/fk_analysis/TA.T29A/'
+
+# StartWindow = 53
+# EndWindow = 73
+# stTOGETHER = read(dir+'Bundles.PICKLE')
+# T = np.load(dir+'BeamTime.npy')
+# stTOGETHER.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)
+# CenterSdifftime = stTOGETHER[0].stats.traveltimes['Sdiff'] or stTOGETHER[0].stats.traveltimes['S']
+# for i, st in enumerate(stTOGETHER):
+#     plt.plot(st.times(reftime=st.stats['eventtime'])-st.stats.traveltimes['Sdiff'], st.data /norm + np.round(st.stats['az']),'y')
+#     w1_cut = np.argmin(np.abs(st.times(reftime=st.stats['eventtime'])-CenterSdifftime-StartWindow-T[i]))
+#     w2_cut = np.argmin(np.abs(st.times(reftime=st.stats['eventtime'])-CenterSdifftime-EndWindow-T[i]))         # Real timewindow demo
+#     cut_trace = st.data[w1_cut:w2_cut]
+#     plt.plot(st.times(reftime=st.stats['eventtime'])[w1_cut:w2_cut]-st.stats.traveltimes['Sdiff'], cut_trace/norm + np.round(st.stats['az']),'r')
 
 # Save file and show plot
 #plt.savefig('/home/zl382/Pictures/Syn+Real/'+event+'data_with_azimuth.png')

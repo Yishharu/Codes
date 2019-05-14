@@ -15,8 +15,8 @@ from obspy import UTCDateTime
 
 import subprocess
 
-event = '20180910'
-modscsem = ['ULVZ_20180910']
+event = '20100320'
+modscsem = ['ULVZ_20100320']
 
 c=0
 savedist=[]

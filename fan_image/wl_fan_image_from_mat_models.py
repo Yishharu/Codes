@@ -82,7 +82,7 @@ for j in range(len(events)):
         
         w1 = np.argmin(np.abs(tr.times()-Sdifftime-70))
         
-        w_start_maxima = np.argmin(np.abs(tr.times()-Sdifftime+20))-w0;
+        w_start_maxima = np.argmin(np.abs(tr.times()-Sdifftime+20))-w0
         w_end_maxima = np.argmin(np.abs(tr.times()-Sdifftime-30))-w0
         
     
@@ -115,7 +115,7 @@ for j in range(len(events)):
                    
     #    plt.pcolormesh(x, y, np.abs(toplot), cmap='Greys'
         
-        plt.pcolor(tr.times()[w0:w1]-Sdifftime,T_toplot,toplot,cmap='Greys')    # Plot the fan image
+        plt.pcolor(tr.times()[w0:w1]-Sdifftime,T_toplot,toplot,cmap='seismic')    # Plot the fan image
         plt.ylim([-1,max(T_toplot)])
         
         maxima = np.argmax(toplot[:,w_start_maxima:w_end_maxima],axis=1)      # Plot the maxima

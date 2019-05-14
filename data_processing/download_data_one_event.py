@@ -11,9 +11,10 @@ from obspy.geodetics import kilometers2degrees
 import numpy as np
 import sys
 
-name = sys.argv[1] 
+area = sys.argv[1]
+event = sys.argv[2]
+dir='/raid1/zl382/Data/'+area+'/'+event+'/'
 
-dir='/raid3/zl382/Data/'+name+'/'
 cat = obspy.read_events(dir+'CMTSOLUTION')
 
 # load IRIS client
@@ -29,10 +30,10 @@ maxmag = cat[0].magnitudes[0].mag + 0.8
 maxrad = 5.0
 
 # Station paramaters
-distmin = float(sys.argv[2])
-distmax = float(sys.argv[3])
-azmin = float(sys.argv[4])  #True north azimuth
-azmax = float(sys.argv[5])
+distmin = float(sys.argv[3])
+distmax = float(sys.argv[4])
+azmin = float(sys.argv[5])  #True north azimuth
+azmax = float(sys.argv[6])
 lengthoftrace=60.*45.
 
 # define a filter band to prevent amplifying noise during the deconvolution
@@ -43,25 +44,21 @@ fl3 = 5.
 fl4 = 10.
 
 # Make directories for data
-dir='/raid3/zl382/Data'
 if not os.path.exists(dir):
     os.makedirs(dir)
 
-dir= dir+'/'+name
-if not os.path.exists(dir):
-    os.makedirs(dir)
 # save search parameter
-with open(dir+'/'+'catelog_parameter.txt','w') as f:
-    line_par = 'Catelog Parameter\n name = {0}\n latitude = {1:.4f}\n longitude = {2:.4f}\n starttime = {3}\n endtime = {4}\n maxrad = {5}\n minrag = {6}\n maxmag = {7}\n\n Station paramaters\n distmin = {8}\n distmax ={9}\n azmin = {10}\n azmax = {11}\n lengthoftrace = {12}\n'.format(name, latitude, longitude, starttime, endtime, maxrad, minmag, maxmag, distmin, distmax, azmin, azmax, lengthoftrace)
+with open(dir+'catelog_parameter.txt','w') as f:
+    line_par = 'Catelog Parameter\n event = {0}\n latitude = {1:.4f}\n longitude = {2:.4f}\n starttime = {3}\n endtime = {4}\n maxrad = {5}\n minrag = {6}\n maxmag = {7}\n\n Station paramaters\n distmin = {8}\n distmax ={9}\n azmin = {10}\n azmax = {11}\n lengthoftrace = {12}\n'.format(event, latitude, longitude, starttime, endtime, maxrad, minmag, maxmag, distmin, distmax, azmin, azmax, lengthoftrace)
     f.write(line_par)
 
-dirresp=dir+'/Responsefiles'
+dirresp=dir+'Responsefiles'
 if not os.path.exists(dirresp):
     os.makedirs(dirresp)
 
-dir=dir+'/Originals'
-if not os.path.exists(dir):
-    os.makedirs(dir)   
+dirorigin=dir+'Originals'
+if not os.path.exists(dirorigin):
+    os.makedirs(dirorigin)   
    
 # save event catalog
 cat=irisclient.get_events(latitude=latitude, longitude=longitude, maxradius=maxrad, starttime=starttime,endtime=endtime,minmagnitude=minmag)
@@ -118,7 +115,7 @@ for nw in inventory:
                 seis[0].stats['network']=nw.code
 
 
-                filename=dir+'/'+seis[0].stats.station+'.'+seis[0].stats.network+'.PICKLE'
+                filename=dirorigin+'/'+seis[0].stats.station+'.'+seis[0].stats.network+'.PICKLE'
                 print('writing to ', filename)
                 count = count +1
                 seis.write(filename,format='PICKLE')

@@ -15,9 +15,10 @@ from obspy import read
 import glob
 from obspy.signal.tf_misfit import cwt
 
+Location = 'Hawaii'
 event = '20100320' #sys.argv[1]
-data_path = '/raid3/zl382/Data/' + event + '/'
-newfilefolder= '/raid3/zl382/Data/' + event + '/' + 'STACK' + '/'
+data_path = '/raid3/zl382/Data/' +Location+'/'+ event + '/'
+newfilefolder= '/raid3/zl382/Data/' +Location+'/'+ event + '/' + 'STACK' + '/'
 ## Frequencies for filter
 f_min = 1/35. #Hz
 f_max = 1.  #Hzseis

@@ -23,11 +23,10 @@ import sys
 
 #Change event name, time and location beneath taken from the CMT catalog. 
 #Event name
-event=sys.argv[1]
-#event = '20100320ALL'
-
-dir='/raid3/zl382/Data/'+event + '/'
-seislist=glob.glob(dir+'/*PICKLE')
+area = sys.argv[1]
+event = sys.argv[2]
+dir='/raid1/zl382/Data/'+area+'/'+event+'/'
+seislist=glob.glob(dir+'*PICKLE')
 
 cat = obspy.read_events(dir+'CMTSOLUTION')
 # with open(dir +'/cmtsource.txt','r') as inf:

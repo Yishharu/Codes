@@ -26,7 +26,8 @@ from pylab import *
 import matplotlib.patches as patches
 import matlab.engine
 
-event = '20100320'
+Location = 'Hawaii'
+Event = '20100320'
 
 syn = False# Plot synthetics
 real = True # Plot real data
@@ -51,7 +52,7 @@ norm_constant = 10
 real_component = 'BHT'
 syn_component = 'BXT'
 
-dir = '/raid3/zl382/Data/' + event + '/'# '/raid2/sc845/Lowermost/EastPacific/Data/20161225/'
+dir = '/raid1/zl382/Data/' + event + '/'# '/raid2/sc845/Lowermost/EastPacific/Data/20161225/'
 
 [x1,y1] = [25,63]
 [x2,y2] = [30,52]

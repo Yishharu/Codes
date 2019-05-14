@@ -35,7 +35,7 @@ for i, seisname in enumerate(seislist):
   st[i].stats.coordinates = AttribDict({
       'latitude': seis[0].stats['stla'],
       'elevation': seis[0].stats['stelv']/1000,
-      'longitude': seis[0].stats['stla']})
+      'longitude': seis[0].stats['stlo']})
 st.resample(10)
 # Execute array_processing
 Sdifftime = seis[0].stats.traveltimes['Sdiff'] or seis[0].stats.traveltimes['S']

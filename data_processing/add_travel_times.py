@@ -14,23 +14,21 @@ import glob
 import shutil
 import numpy as np
 import scipy
-from obspy.io.xseed import Parser
-from obspy.clients.arclink import Client as ARCLINKClient
-from obspy.clients.fdsn import Client as IRISClient
 from subprocess import call
 import subprocess
 #from obspy.taup.taup import getTravelTimes
 import sys
 
 # Input event name as first argument
-event=sys.argv[1]
+area = sys.argv[1]
+event = sys.argv[2]
 # Add phase names as additional arguments (these are the TauP phase names)
 phase=[]
-for i in range(2,len(sys.argv)):
+for i in range(3,len(sys.argv)):
     phase.append(sys.argv[i])
 
 # This code assumes the data is in a Data directory and in PICKLE format. Change here if different. 
-dir = '/raid3/zl382/Data/'+event
+dir = '/raid1/zl382/Data/'+area+'/'+event
 seislist = glob.glob(dir + '/*PICKLE') 
 print(seislist)
 

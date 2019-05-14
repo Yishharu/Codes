@@ -11,14 +11,16 @@ import obspy.signal.rotate
 
 print(instaseis.__path__)
 
+# default ak135f
 if_velocity = False
 if_acceleration = False
 if_iasp91_2s = False
-if_prem_2s = True
+if_prem_2s = False
 if_prem_10s = False
 # input directory with PICKLE data as argument
-event = sys.argv[1]
-dr='/raid3/zl382/Data/'+event+'/'
+area = sys.argv[1]
+event = sys.argv[2]
+dr='/raid1/zl382/Data/'+area+'/'+event+'/'
 ###!!!! All previous synthetics can be removed from the PICKLE by this script
 # cleansyn = input("Do you want all previous synethetics removed? (y/n) ")
 # if cleansyn == 'y':

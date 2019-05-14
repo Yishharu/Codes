@@ -25,100 +25,73 @@ from scipy.signal import hilbert
 from pylab import *
 import matplotlib.patches as patches
 
-event = '20170509'
+Location = 'Hawaii'
+Event = '20180910'
 syn = False # Plot synthetics
 real = True # Plot real data
 color = False # color by measured travel times
 switch_yaxis = True
-
-## Frequencies for filter
-fmin = 1/30 #Hz
-fmax = 1/10 #Hzseis
-
-dist_range_1 = 90
-dist_range_2 = 100
-dist_range_3 = 110
-dist_range_4 = 120
-
-azim_min = 40
-azim_max = 70
-
-dist_min=100
-dist_max=110
-
-time_min = -40
-time_max = 120
-
-select_time_min = -40
-select_time_max = -20
-
-select_az_min =  azim_min
-select_az_max = azim_max
-
-norm_constant = 10
-
-threshold_max = 1
-threshold_min = 0.1
-
 per_norm = False
 
-dir = '/raid3/zl382/Data/' + event + '/'
+## Frequencies for filter
+fmin, fmax = 1/20, 1/10   # Hz
+
+dist_range_1, dist_range_2, dist_range_3, dist_range_4 = 94, 96, 100, 110
+
+azim_min, azim_max = 0, 20
+dist_min, dist_max = 100, 110
+select_az_min, select_az_max = 0,20
+
+time_min, time_max = -40, 120
+select_time_min, select_time_max = -30, -20
+
+norm_constant = 0.3
+
+threshold_max = 0.3
+threshold_min = 0.005
+
+component = 'BHT'
+###################################### Edit Before This Line ##################################
+dir = '/raid1/zl382/Data/'+Location+'/' + Event + '/'
 dirdump = dir + 'Dump/'
 if not os.path.exists(dirdump):
     os.makedirs(dirdump) 
-seislist = glob.glob(dir + '*PICKLE')
 azis=[]
 strange_trace = []
 
-# PLot measured differential travel times by coloring the lines
-if color:
-   dtsta=[]
-   dtnw=[]
-   dtdt=[]
-   rd=open('traveltimes_xcorr_12_30s_20130715.dat','r')
-   for line in rd.readlines():
-    val=line.split()
-    dtsta.append(val[0])
-    dtnw.append(val[1])
-    dtdt.append(float(val[4]))
-    cNorm=colors.Normalize(vmin=-10,vmax=10)
-    scalarMap=cm.ScalarMappable(norm=cNorm,cmap=plt.get_cmap('jet'))
-plt.subplot(1,1,1)
-
 # Loop through seismograms
 count = 0
-for s in range(0,len(seislist),1):
+location_dict = np.load(dir+'STALOCATION.npy').item()
+for s, (s_name, (dist,azi,stla,stlo,sazi)) in enumerate(location_dict.items()):
+    print('%s %d / %d of %s' %(s_name, s, len(location_dict), Event))
+    if azi<select_az_min or azi>select_az_max \
+    or dist<dist_min or dist>dist_max:
+        continue
    #try:
-    seis = read(seislist[s],format='PICKLE') # read seismogram
+    full_path = dir+s_name+'.PICKLE'
+    if not os.path.exists(full_path):
+        continue
+    seis = read(dir+s_name+'.PICKLE',format='PICKLE') # read seismogram
     azis.append(seis[0].stats['az']) # list all azimuths
    # print(seis[0].stats['az'],seis[0].stats['dist'])
-    seistoplot= seis.select(channel='BHT')[0]
-    s_name = os.path.splitext(os.path.split(seislist[s])[1])[0]
+    seistoplot= seis.select(channel=component)[0]
+    seistoplot.differentiate()
 
-    if seis[0].stats['az']<azim_min or seis[0].stats['az']>azim_max \
-    or seis[0].stats['dist']<dist_min or seis[0].stats['dist']>dist_max:
-        continue
-    print(s_name +' '+ str(s)+' / '+str(len(seislist)) + ' of '+event)
        # plot synthetics
     if syn:
-        seissyn= seis.select(channel ='BXT')[0]
-    if per_norm:
-        norm = np.max(seistoplot.data) / norm_constant
-    elif count == 0:
-        norm = np.max(seistoplot.data) / norm_constant
-    count = count+1   
-       # Split seismograms by distance range (this needs to be adapted per event to produce a reasonable plot.
+        seissyn= seis.select(channel ='BXT')[0] 
+       # Split seismograms by distance range (this needs to be adapted per Event to produce a reasonable plot.
        
     plt.text(121,np.round(seis[0].stats['az']),s_name, fontsize = 8)
        # Filter data
       # if seis[0].stats.traveltimes['Sdiff']!=None:
-    seistoplot.filter('highpass',freq=fmin,corners=2,zerophase=True)
-    seistoplot.filter('lowpass',freq=fmax,corners=2,zerophase=True)
-    if syn:
-        seissyn.filter('highpass',freq=fmin,corners=2,zerophase=True)
-        seissyn.filter('lowpass',freq=fmax,corners=2,zerophase=True)
-          # Time shift to shift data to reference time
-        #  tshift=UTCDateTime(seis[0].stats['starttime']) - UTCDateTime(seis[0].stats['eventtime']) #UTCDateTime('2016-08-31T03:11:40.700')#seis[0].stats['endtime']
+    seistoplot.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)
+    if per_norm:
+        norm = np.max(seistoplot.data) / norm_constant
+    elif count == 0:
+        norm = np.max(seistoplot.data) / norm_constant
+    count = count+1  
+
     phase_time = seis[0].stats.traveltimes['Sdiff'] or seis[0].stats.traveltimes['S']   
     if real:
         plt.plot(seistoplot.timesarray-phase_time,seistoplot.data/norm+np.round(seis[0].stats['az']),'k')
@@ -126,6 +99,7 @@ for s in range(0,len(seislist),1):
         print(np.max(seistoplot.data), np.max(seissyn.data))
         plt.plot(seissyn.timesarray-phase_time,seissyn.data/norm+np.round(seis[0].stats['az']),'b')
     plt.xlim([time_min,time_max])
+    plt.title('Sdiff dist %.0f - %.0f' %(dist_min, dist_max))
           # Plot travel time predictions
     for k in seis[0].stats.traveltimes.keys():
         if seis[0].stats.traveltimes[k]!=None and k =='Sdiff':
@@ -160,7 +134,7 @@ plt.ylabel('azimuth (dg)')
 if switch_yaxis:
    plt.gca().invert_yaxis()
 
-plt.suptitle('Waveform with Azimuth\n Event %s' % event)
+plt.suptitle('Waveform with Azimuth\n Event %s' % Event)
 
 # Hightlight the selected waveform 
 
@@ -170,10 +144,13 @@ for trace in strange_trace:
     azimuth = trace[2]
     dist = trace[3]
     threshold = trace[4]    
-    print(s_name, 'Trace#', s, '/', len(seislist))
-    seis = read(seislist[s],format='PICKLE') # read seismogram
+    print(s_name, 'Trace#', s, '/', len(location_dict))
+    full_path = dir+s_name+'.PICKLE'
+    seis = read(full_path,format='PICKLE') # read seismogram
+    
     if real:
-        seistoplot = seis.select(channel='BHT')[0]
+        seistoplot = seis.select(channel=component)[0]
+        seistoplot.differentiate()
        # plot synthetics
     if syn:
         seissyn= seis.select(channel ='BXT')[0]       
@@ -181,13 +158,12 @@ for trace in strange_trace:
     if seis[0].stats['az']<select_az_min or seis[0].stats['az']>select_az_max:
         continue
        # Filter data
-      # if seis[0].stats.traveltimes['Sdiff']!=None:
-    seistoplot.filter('highpass',freq=fmin,corners=2,zerophase=True)
-    seistoplot.filter('lowpass',freq=fmax,corners=2,zerophase=True)
-          # Time shift to shift data to reference time
-      # tshift=seis[0].stats['starttime']-seis[0].stats['eventtime']  
-   # print('max',np.max(seistoplot.timesarray))
+    seistoplot.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)
+
+    if per_norm:
+        norm = np.max(seistoplot.data) / norm_constant
     phase_time = seis[0].stats.traveltimes['Sdiff'] or seis[0].stats.traveltimes['S']   
+
     [tr] = plt.plot(seistoplot.timesarray-phase_time,seistoplot.data/norm+np.round(seis[0].stats['az']),'r')
         
     print('azi ='+ str(azimuth) + ' ; '+'dist ='+ str(dist)+' ; '+ 'threshold = ' + str(threshold))
@@ -199,19 +175,20 @@ for trace in strange_trace:
         likeness = input('Do you like the waveform (y/n/r)?')
         if (likeness == 'y'):
             like = True
-            if (s >= len(seislist)):
+            if (s >= strange_trace[-1][0]):
                 print('This is the last waveform')
         elif (likeness == 'n'):
             like = False
-            shutil.move(seislist[s],dirdump)
+            shutil.move(full_path,dirdump)
             print('# ' + str(s)+' '+s_name+' successfully moved to dump!!')
-            if (s >= len(seislist)):
+            if (s >= strange_trace[-1][0]):
                print('This is the last waveform')  
         elif (likeness == 'r'):
-            seis[0].data = - seis[0].data
-            seis.write(seislist[s],format='PICKLE')
+            for trace in seis.select(channel=component):
+                trace.data = -trace.data
+            seis.write(full_path,format='PICKLE')
             print('# ' + str(s)+' '+s_name+' successfully reversed!!')
-            if (s >= len(seislist)):
+            if (s >= strange_trace[-1][0]):
                print('This is the last waveform')   
 
     tr.set_visible(False)

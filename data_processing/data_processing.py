@@ -19,10 +19,11 @@ import sys
 import fileinput
 
 # Input eventname as argument
-event=sys.argv[1]
+area = sys.argv[1]
+event = sys.argv[2]
 # Data is assumed to be in PICKLE format in Data/#eventname/Originals/
-dir='/raid3/zl382/Data/'+event+'/'
-stalist=glob.glob(dir+'/Originals/*PICKLE') 
+dir='/raid1/zl382/Data/'+area+'/'+event+'/'
+stalist=glob.glob(dir+'Originals/*PICKLE') 
 #f_sta = open(dir+'STATIONS','w')  # write STATIONS file, SPECFEM-style
 #f_rec = open(dir+'receivers.dat','w')  # write receiver file
 #count = 0

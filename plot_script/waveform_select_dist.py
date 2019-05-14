@@ -1,186 +1,191 @@
-#!/usr/bin/env python3
-
-import obspy, obspy.signal, os.path, time, glob, shutil, scipy, subprocess, sys
-from obspy import read, UTCDateTime
-from obspy.core import Stream, Trace, event
-from obspy.taup.taup import getTravelTimes
-
+#/usr/bin/python3
+# Usage: python3 plot_data_azimuth.py [event]
+# Example: python3 plot_data_azimuth.py 20100320
+import obspy
+from obspy import read
+from obspy.core import Stream
+from obspy.core import Trace
+from obspy.core import event
+from obspy import UTCDateTime
 import obspy.signal
 import matplotlib.pyplot as plt
+import os.path
+import time
+import glob
+import shutil
 import numpy as np
+import scipy
 from obspy.io.xseed import Parser
-from obspy.clients.arclink import Client as ARCLINKClient
-from obspy.clients.fdsn import Client as IRISClient
 from subprocess import call
-from obspy.taup.taup import getTravelTimes
+import subprocess
+import sys
 import matplotlib.colors as colors
 import matplotlib.cm as cm
-import shutil
-import os
-import os.path
+from scipy.signal import hilbert
+from pylab import *
+import matplotlib.patches as patches
 
-
-#event = sys.argv[1]
-event='20100320'
-
-## Plot synthetics
-synthetics = ''
-while (synthetics != 'y' and synthetics != 'n'):
-    synthetics = input('Do you want to plot synthetics (y/n)?')
-    if (synthetics == 'y'):
-        syn = True
-    if (synthetics == 'n'):
-        syn = False
-
-real = True  # plot real data
+Location = 'Hawaii'
+Event = '20100320'
+syn = False # Plot synthetics
+real = True # Plot real data
 color = False # color by measured travel times
-switch_yaxis = True
-
+per_norm = False
 
 ## Frequencies for filter
-fmin = 0.05  #Hz
-fmax = 0.1   #Hz
+fmin, fmax = 1/20, 1/10   # Hz
 
-dir = '/raid3/zl382/Data/' + event + '/'
-dirdump = dir + 'Dump'
+azim_min, azim_max = 60, 65
+dist_min, dist_max = 88, 125
+select_dist_min, select_dist_max = 108, 111
+
+time_min, time_max = -40, 80
+select_time_min, select_time_max = 0, 20
+
+norm_constant = 1
+
+threshold_max = 0.3
+threshold_min = 0.005
+
+component = 'BHT'
+###################################### Edit Before This Line ##################################
+dir = '/raid1/zl382/Data/'+Location+'/' + Event + '/'
+dirdump = dir + 'Dump/'
 if not os.path.exists(dirdump):
-    os.makedirs(dirdump)
-    
-seislist = sorted(glob.glob(dir + '*PICKLE'))
-norm = None
-azis = []
-dists = []
-
+    os.makedirs(dirdump) 
+azis=[]
+strange_trace = []
 
 # Loop through seismograms
-for s in range(0,len(seislist),1):
+count = 0
+location_dict = np.load(dir+'STALOCATION.npy').item()
+for s, (s_name, (dist,azi,stla,stlo,sazi)) in enumerate(location_dict.items()):
+    print('%s %d / %d of %s' %(s_name, s, len(location_dict), Event))
+    if azi<azim_min or azi>azim_max \
+    or dist<select_dist_min or dist>select_dist_max:
+        continue
+   #try:
+    full_path = dir+s_name+'.PICKLE'
+    if not os.path.exists(full_path):
+        continue
+    seis = read(dir+s_name+'.PICKLE',format='PICKLE') # read seismogram
+    azis.append(seis[0].stats['az']) # list all azimuths
+   # print(seis[0].stats['az'],seis[0].stats['dist'])
+    seistoplot= seis.select(channel=component)[0]
+    seistoplot.differentiate()
 
-    print(s, '/', len(seislist))
-    seis = read(seislist[s],format='PICKLE') # Read seismogram
-    dists.append(seis[0].stats['dist'])   # List all distances
-    azis.append(seis[0].stats['az'])      # List all azimuths
-    print('Azimuth: ', seis[0].stats['az'],'Distance: ',seis[0].stats['dist'])
-    seistoplot = seis.select(channel = 'BHT')[0]
-
-    # plot synthetics
+       # plot synthetics
     if syn:
-        seissyn = seis.select(channel = 'BXT')[0]
+        seissyn= seis.select(channel ='BXT')[0] 
+       # Split seismograms by distance range (this needs to be adapted per Event to produce a reasonable plot.
+       
+    plt.text(121,np.round(seis[0].stats['az']),s_name, fontsize = 8)
+       # Filter data
+      # if seis[0].stats.traveltimes['Sdiff']!=None:
+    seistoplot.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)
+    if per_norm:
+        norm = np.max(seistoplot.data) / norm_constant
+    elif count == 0:
+        norm = np.max(seistoplot.data) / norm_constant
+    count = count+1  
 
-    # Plot seismograms
-    print(seis[0].stats.traveltimes['Sdiff'])
-
-    Phase = ['Sdiff', 'S']
-    for x in range (0,2):
-        if  seis[0].stats.traveltimes[Phase[x]]!=None:
-            phase = Phase[x]
-    plt.subplot(1,1,1)
-
-    # Filter data
-    seistoplot.filter('highpass',freq=fmin,corners=2,zerophase=True)
-    seistoplot.filter('lowpass',freq=fmax,corners=2,zerophase=True)
-    if syn:
-        seissyn.filter('highpass', freq=fmin,corners=2,zerophase=True)
-        seissyn.filter('lowpass',freq=fmax,corners=2,zerophase=True)
-
-    # Time shift to shift data to reference time
-    tshift = seis[0].stats['starttime'] - seis[0].stats['eventtime']
-
-    print('max',np.max(seistoplot.times()))
-
+    phase_time = seis[0].stats.traveltimes['Sdiff'] or seis[0].stats.traveltimes['S']   
     if real:
-        norm = None
-        if norm == None:
-            norm = 1.* np.max(abs(seistoplot.data)) / 2.7
-        
+        plt.plot(seistoplot.timesarray-phase_time,seistoplot.data/norm+np.round(dist),'k')
 
-    # Plot with real distances
-#    plt.plot(seistoplot.times() + tshift - seis[0].stats.traveltimes[phase], seistoplot.data / norm+ (seis[0].stats['dist']),'k')
-    # Plot with round distances
-    plt.plot(seistoplot.times() + tshift - seis[0].stats.traveltimes[phase], seistoplot.data / norm + np.round(seis[0].stats['dist']),'k')
+    plt.xlim([time_min,time_max])
 
-    if syn:
-        if norm == None:
-            norm = 20.*np.max(seissyn.data)
-        plt.plot(seissyn.times() - seis[0].stats.traveltimes[phase],seissyn.data/norm + np.round(seis[0].stats['dist']),'b')
-        plt.xlim([-20,200])
-
-    # Plot travel time predictions
+          # Plot travel time predictions
     for k in seis[0].stats.traveltimes.keys():
-        if seis[0].stats.traveltimes[k] != None:
-            plt.plot(seis[0].stats.traveltimes[k] - seis[0].stats.traveltimes[phase], np.round(seis[0].stats['dist']),'g', marker ='o', markersize=4)
-
-    # Plot the station name
-    s_name = os.path.splitext(os.path.split(seislist[s])[1])[0]
-    plt.text(200,seis[0].stats['dist'],s_name, fontsize = 8)
-
-
-ax = plt.subplot(1,1,1)
-plt.title('Waveform with distance')
-plt.ylabel('Distance (deg)')
-plt.xlabel('Time around predicted arrival (s)')
-plt.xlim([-20, 200])
-plt.ylim([126, 80])
-if switch_yaxis:
-    plt.gca().invert_yaxis()
-
-# Hightlight the selected waveform
-for s in range(400,len(seislist),1):
-    s_name = os.path.splitext(os.path.split(seislist[s])[1])[0]
-    print(s_name, 'Trace#', s, '/', len(seislist))
-    seis = read(seislist[s],format='PICKLE') # Read seismogram
-    dists.append(seis[0].stats['dist'])   # List all distances
-    azis.append(seis[0].stats['az'])      # List all azimuths
-    print('Azimuth: ', seis[0].stats['az'],'Distance: ',seis[0].stats['dist'])
-    seistoplot = seis.select(channel = 'BHT')[0]
-
-
-
-
-    # Plot seismograms
-    print('Predicted Sdiff time: ', seis[0].stats.traveltimes['Sdiff'])
-    print('Predicted S time: ', seis[0].stats.traveltimes['S'])
-
-    Phase = ['Sdiff', 'S']
-    for x in range (0,2):
-        if  seis[0].stats.traveltimes[Phase[x]]!=None:
-            phase = Phase[x]
-
-    # Filter data
-    seistoplot.filter('highpass',freq=fmin,corners=2,zerophase=True)
-    seistoplot.filter('lowpass',freq=fmax,corners=2,zerophase=True)
-
-
-    # Time shift to shift data to reference time
-    tshift = seis[0].stats['starttime'] - seis[0].stats['eventtime']
-
-    print('max',np.max(seistoplot.times()))
-
-    # Plot with real distances
-#    [tr] = ax.plot(seistoplot.times() + tshift - seis[0].stats.traveltimes[phase], seistoplot.data / norm + (seis[0].stats['dist']),'r')
-    # Plot with round distances
-
-    if real:
-        norm = None
-        if norm == None:
-            norm = 1.* np.max(abs(seistoplot.data)) / 2.7
+        if seis[0].stats.traveltimes[k]!=None and k =='Sdiff':
+            plt.plot(seis[0].stats.traveltimes[k]-phase_time,np.round(seis[0].stats['az']),'g',marker='o',markersize=4)
+                     # plt.text(seis[0].stats.traveltimes[k]-seis[0].stats.traveltimes[phase],np.round(seis[0].stats['az'])-0.5, k)
             
-    [tr] = ax.plot(seistoplot.times() + tshift - seis[0].stats.traveltimes[phase], seistoplot.data / norm + np.round(seis[0].stats['dist']),'r')
+    timewindow = 3*20    
+#          w0 = np.argmin(np.abs(seistoplot.times-phase_time+timewindow/3))            
+#          w1 = np.argmin(np.abs(seistoplot.times-phase_time-timewindow*2/3))
+#          window_wid = seistoplot.times[w1] - seistoplot.times[w0]
+#          window_hei = np.max(np.abs(hilbert(seistoplot.data[w0:w1])))/norm
+#        #                test_w0 = np.argmin(np.abs(seistoplot.times()-phase_time+(-1)))            
+#        #                test_w1 = np.argmin(np.abs(seistoplot.times()-phase_time-149))     
+#        #                test_window_hei = np.max(np.abs(hilbert(seistoplot.data[test_w0:test_w1])))/norm
+#        #                print('Window difference: '+str( (test_window_hei-window_hei)/window_hei))
+#          gca().add_patch(patches.Rectangle((seistoplot.times[w0]-phase_time,np.round(seis[0].stats['az'])-window_hei),window_wid,2*window_hei,alpha = 0.2, color = 'red'))  # width height            
+    w0_ref = np.argmin(np.abs(seistoplot.timesarray-phase_time-select_time_min))        # arg of ref, adapative time window     
+    w1_ref = np.argmin(np.abs(seistoplot.timesarray-phase_time-select_time_max))   
+    A0 = np.max(np.abs(hilbert(seistoplot.data[w0_ref:w1_ref])))/norm                
+    gca().add_patch(patches.Rectangle((seistoplot.timesarray[w0_ref]-phase_time,np.round(seis[0].stats['az'])-A0),seistoplot.timesarray[w1_ref]-seistoplot.timesarray[w0_ref],2*A0,alpha = 0.05, color = 'y'))
+    threshold = A0 #np.max(seistoplot.data/norm)
+    print('NORM VALUE: ' + str(norm)+ ' ; ' + 'threshold = ' + str(threshold))    
+    if ((threshold>threshold_max or threshold<threshold_min)):  #(threshold>5 or threshold<0.02):
+        strange_trace.append([s,s_name,seis[0].stats['az'],seis[0].stats['dist'],threshold])   
+# Put labels on graphs
+print('!!!!!!!!!!!!!!!!!!!Stange Traces:----------------------->>>>>>')
+print(strange_trace)
+
+plt.ylim(dist_min,dist_max)
+plt.xlabel('time around predicted arrival (s)')
+plt.ylabel('distance (dg)')
+plt.title('Sdiff azi %.0f - %.0f' %(azim_min, azim_max))
+
+plt.suptitle('Waveform with Azimuth\n Event %s' % Event)
+
+# Hightlight the selected waveform 
+
+for trace in strange_trace:
+    s = trace[0]
+    s_name = trace[1]
+    azimuth = trace[2]
+    dist = trace[3]
+    threshold = trace[4]    
+    print(s_name, 'Trace#', s, '/', len(location_dict))
+    full_path = dir+s_name+'.PICKLE'
+    seis = read(full_path,format='PICKLE') # read seismogram
+    
+    if real:
+        seistoplot = seis.select(channel=component)[0]
+        seistoplot.differentiate()
+       # plot synthetics
+    if syn:
+        seissyn= seis.select(channel ='BXT')[0]       
+    # Split seismograms by distance range (this needs to be adapted per event to produce a reasonable plot.
+    if dist<select_dist_min or dist>select_dist_max:
+        continue
+       # Filter data
+    seistoplot.filter('bandpass', freqmin=fmin,freqmax=fmax, zerophase=True)
+
+    if per_norm:
+        norm = np.max(seistoplot.data) / norm_constant
+    phase_time = seis[0].stats.traveltimes['Sdiff'] or seis[0].stats.traveltimes['S']   
+
+    [tr] = plt.plot(seistoplot.timesarray-phase_time,seistoplot.data/norm+np.round(dist),'r')
+        
+    print('azi ='+ str(azimuth) + ' ; '+'dist ='+ str(dist)+' ; '+ 'threshold = ' + str(threshold))
 
     plt.show(block=False)
 
-
     likeness = ''
-    while (likeness != 'y' and likeness != 'n'):
-        likeness = input('Do you like the waveform (y/n)?')
+    while (likeness != 'y' and likeness != 'n' and likeness != 'r'):
+        likeness = input('Do you like the waveform (y/n/r)?')
         if (likeness == 'y'):
             like = True
-            if (s >= len(seislist)):
+            if (s >= strange_trace[-1][0]):
                 print('This is the last waveform')
-        if (likeness == 'n'):
+        elif (likeness == 'n'):
             like = False
-            shutil.move(seislist[s],dirdump)
-            if (s >= len(seislist)):
-                print('This is the last waveform')
-                
+            shutil.move(full_path,dirdump)
+            print('# ' + str(s)+' '+s_name+' successfully moved to dump!!')
+            if (s >= strange_trace[-1][0]):
+               print('This is the last waveform')  
+        elif (likeness == 'r'):
+            for trace in seis.select(channel=component):
+                trace.data = -trace.data
+            seis.write(full_path,format='PICKLE')
+            print('# ' + str(s)+' '+s_name+' successfully reversed!!')
+            if (s >= strange_trace[-1][0]):
+               print('This is the last waveform')   
+
     tr.set_visible(False)
     plt.draw()
+ 
+plt.show()
