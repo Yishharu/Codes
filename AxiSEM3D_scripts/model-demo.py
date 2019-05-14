@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 
 import matplotlib.tri as tri
 
-dir = '/raid1/zl382/HPC_axisem3d_run/Gaus40_2s/output/plots/'
-model_path = dir+'vs_gllpnt_18_-162_116.87_3D.txt'
-ndata = 25
+dir = '/raid1/zl382/HPC_axisem3d_run/3s/S40RTS+ZD40_3s/output/plots/'
+model_path = dir + 'vs_vertex_18_-162_116.87_3D.txt'
+ndata = 4
 
 gll = [-1.000000000000, -0.654653670708, 0.000000000000, 0.654653670708, 1.000000000000]
 def gllpntCrds(nodeCrds):
@@ -75,8 +75,8 @@ dataPlot = dataPar.flatten()
 # savedata = np.concatenate((crdsPlot, dataPlot),axis=1)
 # np.savetxt(savename, savedata, fmt='%12f %12f %12f')
 
-y = crdsPlot[:,0]
-x = crdsPlot[:,1]
+x = crdsPlot[:,0]
+y = crdsPlot[:,1]
 
 triang = tri.Triangulation(x, y)
 
@@ -86,14 +86,14 @@ max_radius = 6371000
 
 # triang.set_mask(np.hypot(x[triang.triangles].mean(axis=1),
 #                                  y[triang.triangles].mean(axis=1))
-#                         > max_radius)
+#                         < min_radius)
 
-triang.set_mask(np.any([np.hypot(x[triang.triangles].min(axis=1),
-                                 y[triang.triangles].min(axis=1))
-                        < min_radius,
-                        np.hypot(x[triang.triangles].max(axis=1),
-                                 y[triang.triangles].max(axis=1))
-                        > max_radius], axis = 0))  
+# triang.set_mask(np.any([np.hypot(x[triang.triangles].min(axis=1),
+#                                  y[triang.triangles].min(axis=1))
+#                         < min_radius,
+#                         np.hypot(x[triang.triangles].max(axis=1),
+#                                  y[triang.triangles].max(axis=1))
+#                         > max_radius], axis = 0))  
 
 fig, ax = plt.subplots()
 # ax.set_aspect(0.5)
