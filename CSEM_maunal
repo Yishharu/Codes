@@ -18,4 +18,5 @@ sh pre_sub_all.sh   to clean the mess
 receiver.dat    change receiver
 macromesh.dat    change source
 
-run sub_run.sh .  also change
+edit sub_run.sh .   job name
+qsub -q deuss sub_run.sh .  also change
