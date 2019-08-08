@@ -1,7 +1,7 @@
 /CSEM: make very_clean
 /CSEM: make
 
-# Edit the model
+# Edit the model in the source code
 /CSEM/src/l_mail: vi models_sub.f90
 
 find case('ULVZ')
@@ -9,14 +9,16 @@ find case('ULVZ')
 phi_0: center longitude of ULVZ, 0-360,  i.e. -172.3+360
 theta_0: colatitude of ULVZ, 0-180,      i.e. 90-15.4
 
+# Compiling
 make very clean
 Error 1 ignore
 
+# Set up new folder to run
 Runs_CSEM/ULVZ_20180910
 rm U*
 sh pre_sub_all.sh   to clean the mess
 receiver.dat    change receiver
-macromesh.dat    change source
+macromesh.dat    change source or MESH
 
 edit sub_run.sh .   job name
 qsub -q deuss sub_run.sh .  also change
