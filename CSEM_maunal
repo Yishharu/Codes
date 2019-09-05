@@ -1,24 +1,27 @@
-/CSEM: make very_clean
-/CSEM: make
+# Set new source code directory for new model 
+mkdir CSEM-***
 
-# Edit the model in the source code
-/CSEM/src/l_mail: vi models_sub.f90
+# Modify Model in the source code
+/CSEM***$ vi src/l_mail/modeles_sub.f90
 
-find case('ULVZ')
-
+# Model for Hawaii ULVZ
+case('ULVZ')
 phi_0: center longitude of ULVZ, 0-360,  i.e. -172.3+360
 theta_0: colatitude of ULVZ, 0-180,      i.e. 90-15.4
+dvsh_tmp = -0.2d0
 
 # Compiling
-make very clean
-Error 1 ignore
+/CSEM***$ vi flags.mk     # Change to model directory !!
+/CSEM***$ make very clean
+/CSEM***$ make
+if OK, you can see make[1]: Leave directory ''
 
-# Set up new folder to run
+
+# Make new folder to run
 Runs_CSEM/ULVZ_20180910
 rm U*
 sh pre_sub_all.sh   to clean the mess
 receiver.dat    change receiver
 macromesh.dat    change source or MESH
-
-edit sub_run.sh .   job name
-qsub -q deuss sub_run.sh .  also change
+edit run.slurm .   job name
+sbatch run.slurm
