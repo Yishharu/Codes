@@ -1,6 +1,5 @@
-python -m salvus_mesher_lite.interface AxiSEM  --basic.model prem_ani --basic.period 10 --generate_plots
+python -m salvus_mesh_lite.interface AxiSEM --basic.model ./prem_iso_smooth_ulvz_30km.bm --basic.period 2 --advanced.elements_per_wavelength 1.5
 
-python -m salvus_mesher_lite.interface AxiSEM  --basic.model prem_ani --basic.period 10 --generate_plots
 
 modify the model bm, discountinity and velocity profile
 name 
