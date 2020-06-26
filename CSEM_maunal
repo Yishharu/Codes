@@ -21,7 +21,7 @@ if OK, you can see make[1]: Leave directory ''
 Runs_CSEM/ULVZ_20180910
 rm U*
 sh pre_sub_all.sh   to clean the mess
-receiver.dat    change receiver
+receivers.dat    change receiver
 macromesh.dat    change source or MESH
 edit run.slurm .   job name
 sbatch run.slurm
